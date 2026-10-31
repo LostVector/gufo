@@ -225,12 +225,31 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
       AssignError(error_msg, "a prefill batch exceeds the TP exchange window");
       return nullptr;
     }
+    exec.split_draft_subset = options.communicator->SupportsSplitDraftSubset();
     exec.all_reduce =
         rocm::Executor::TwoRankAllReduce(options.communicator, c.hidden_size);
     exec.reduce_status =
         rocm::Executor::TwoRankReduceStatus(options.communicator);
     exec.split_reduce =
         rocm::Executor::TwoRankSplitReduce(options.communicator, c.hidden_size);
+    if (c.ple_layer >= 0) {
+      // Share the measured short-prefill passes without staging wide prompts.
+      // Verification may still need more rows at higher decode concurrency.
+      exec.ple_gather = rocm::Executor::TwoRankPleGather(
+          options.communicator, c.ple_heads, c.PleEmbeddingDim(),
+          static_cast<std::uint32_t>(std::max<std::uint64_t>(
+              2,
+              std::min<std::uint64_t>(
+                  exec.max_batch, std::max<std::uint64_t>(
+                                      32, std::uint64_t{exec.max_speculative} *
+                                              options.decode_concurrency)))));
+      const auto communication_status = exec.reduce_status;
+      const auto gather_status = exec.ple_gather.status;
+      exec.reduce_status = [communication_status,
+                            gather_status](std::string* error) {
+        return communication_status(error) && gather_status(error);
+      };
+    }
   }
   exec.moe_observer = options.moe_observer;
   exec.max_context = options.max_context;
@@ -955,6 +974,7 @@ struct Session::PendingDecode {
   std::int32_t draft{0};
   bool draft_subset{false};  ///< this cycle drafts through the subset head
   bool sampled_subset_cost{false};
+  bool planned_greedy{false};
   /// Trailing chain tokens copied by prompt lookup (after the MTP drafts).
   std::uint32_t lookup{0};
   /// Committed index the copied tokens were taken from.
@@ -1056,6 +1076,8 @@ bool Session::PrepareDecode(const DecodeRequest& request,
   pending->policy_concurrency = MtpPolicyConcurrency(
       sampler.config().uses_random_sampling(), sampler.config().seed >= 0,
       batch_drafts.has_value(), occupancy);
+  pending->planned_greedy =
+      batch_drafts.has_value() && !sampler.config().uses_random_sampling();
   // A forced draft count (a TP2 rank 0's mirrored choice, made by PlanDecode
   // at the same price) overrides the session's own acceptance-history policy,
   // so both ranks run cycles of the same width even when their histories
@@ -1332,9 +1354,10 @@ bool Session::FinishDecode(const DecodeRequest& request,
   const std::uint32_t observed = mtp_all ? keep - 1 : mtp_accepted;
   // A target stop ends the request; it does not classify the remaining
   // proposals as failed predictions.
-  draft_length_.Observe(
-      observed, result->stop || mtp_all ? observed : mtp_drafts, base,
-      pending.policy_concurrency, pending.sampled_subset_cost);
+  draft_length_.Observe(observed,
+                        result->stop || mtp_all ? observed : mtp_drafts, base,
+                        pending.policy_concurrency, pending.sampled_subset_cost,
+                        pending.planned_greedy);
 
   // The next call knows the next sampled anchor. Defer draft catch-up until
   // then, retaining this session's target hidden rows across interleaving.

@@ -807,12 +807,14 @@ __device__ __forceinline__ void HcInjectPart(
 /// between the two passes, reduces the four stream norms in one block
 /// reduction, and quantizes each 32-wide block over its eight lanes with a
 /// four-code store. Rows of four streams up to 2,560 wide.
-template<typename XnT, bool kDefer = false, bool kInject = false>
+template<typename XnT, bool kDefer = false, bool kInject = false,
+         bool kPeer = false>
 __global__ void HcCombineVec4Kernel(
     float* res, const float* block_out, const float* inject,
     std::uint32_t inject_parts, const float* gamma, XnT* xn, void* xn_q8,
     std::uint32_t hidden, float eps, float* defer_w,
-    const float* inject_w = nullptr, float* inject_out = nullptr) {
+    const float* inject_w = nullptr, float* inject_out = nullptr,
+    const float* peer = nullptr) {
   constexpr std::uint32_t kStreams = 4;
   constexpr std::uint32_t kMaxChunks = 10;  // 4 x 2560 / 4 / kThreads
   __shared__ float shared[kStreams][kThreads / 32];
@@ -853,7 +855,14 @@ __global__ void HcCombineVec4Kernel(
       const std::uint32_t i = e - (s * hidden);
       const float ws = w[s];
       const float4 r = *reinterpret_cast<const float4*>(dst + e);
-      const float4 b = *reinterpret_cast<const float4*>(src + i);
+      float4 b = *reinterpret_cast<const float4*>(src + i);
+      if constexpr (kPeer) {
+        const float4 p = *reinterpret_cast<const float4*>(
+            peer + static_cast<std::size_t>(t) * hidden + i);
+        // Preserve the separately stored FP32 sum before HC multiply/add.
+        b = float4{__fadd_rn(b.x, p.x), __fadd_rn(b.y, p.y),
+                   __fadd_rn(b.z, p.z), __fadd_rn(b.w, p.w)};
+      }
       v[c] = float4{r.x + b.x * ws, r.y + b.y * ws, r.z + b.z * ws,
                     r.w + b.w * ws};
       if constexpr (!kDefer) {
@@ -6149,7 +6158,16 @@ bool HcCombineF16(float* res, const float* block_out, const float* inject,
                   std::uint32_t inject_parts, const float* gamma, __half* xn,
                   void* xn_q8, std::uint32_t n_tokens, std::uint32_t hidden,
                   std::uint32_t streams, float eps, hipStream_t stream,
-                  float* defer_w, float* inject_out, const float* inject_w) {
+                  float* defer_w, float* inject_out, const float* inject_w,
+                  const float* peer) {
+  // Peer route is admitted only for this non-deferred shape by Executor.
+  if (peer != nullptr) {
+    hipLaunchKernelGGL((HcCombineVec4Kernel<__half, false, false, true>),
+                       dim3(n_tokens), dim3(kThreads), 0, stream, res,
+                       block_out, inject, inject_parts, gamma, xn, xn_q8,
+                       hidden, eps, nullptr, nullptr, nullptr, peer);
+    return false;
+  }
   // F16 prefill keeps the same reduction even for a one-token tail.
   if (streams == 4 && hidden % 128 == 0 && hidden <= 2560) {
     if (inject_w != nullptr && defer_w != nullptr && gamma != nullptr) {
@@ -6165,7 +6183,7 @@ bool HcCombineF16(float* res, const float* block_out, const float* inject,
                                             : HcCombineVec4Kernel<__half>;
     hipLaunchKernelGGL(combine, dim3(n_tokens), dim3(kThreads), 0, stream, res,
                        block_out, inject, inject_parts, gamma, xn, xn_q8,
-                       hidden, eps, defer_w, nullptr, nullptr);
+                       hidden, eps, defer_w, nullptr, nullptr, nullptr);
     return defer_w != nullptr;
   }
   hipLaunchKernelGGL(HcCombineKernel<__half>, dim3(n_tokens, streams),

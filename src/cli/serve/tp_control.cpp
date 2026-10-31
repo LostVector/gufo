@@ -32,10 +32,10 @@ namespace gufo::server {
 namespace {
 
 constexpr std::uint32_t kMagic = 0x54504331U;  // "TPC1"
-constexpr std::uint16_t kVersion = 21;         // reasoning budgets, prefill
-                                               // lookahead, the control token
-                                               // proven by HMAC, and mirrored
-                                               // decode draft counts
+// Cooperative PLE adds ordered GPU collectives inside mirrored model calls.
+// Reject older schedules at the control handshake, before either rank runs
+// inference with a peer that would issue different collective operations.
+constexpr std::uint16_t kVersion = 22;
 constexpr std::uint16_t kHello = 1;
 constexpr std::uint16_t kCommand = 2;
 constexpr std::uint16_t kResponse = 3;
@@ -661,9 +661,20 @@ bool TpControlChannel::ReceiveFrame(std::uint16_t type, std::uint64_t* sequence,
   }
   std::size_t offset = 0;
   std::uint32_t magic = 0;
-  if (!ReadU32(header, &offset, &magic, error) || magic != kMagic ||
-      header[4] != kVersion || header[5] != 0 ||
-      header[6] != static_cast<std::uint8_t>(type) ||
+  if (!ReadU32(header, &offset, &magic, error) || magic != kMagic) {
+    SetError(error, "TP control frame header is invalid");
+    return false;
+  }
+  const auto peer_version = static_cast<std::uint16_t>(
+      header[4] | (static_cast<std::uint16_t>(header[5]) << 8));
+  if (peer_version != kVersion) {
+    SetError(error, "TP control protocol version mismatch (local " +
+                        std::to_string(kVersion) + ", peer " +
+                        std::to_string(peer_version) +
+                        "); both ranks must use matching builds");
+    return false;
+  }
+  if (header[6] != static_cast<std::uint8_t>(type) ||
       header[7] != static_cast<std::uint8_t>(type >> 8)) {
     SetError(error, "TP control frame header is invalid");
     return false;

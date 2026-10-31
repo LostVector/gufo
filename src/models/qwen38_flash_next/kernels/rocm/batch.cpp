@@ -937,14 +937,35 @@ bool Executor::ForwardBatch(std::span<const BatchItem> items,
     }
   }
   if (c.ple_layer >= 0) {
-    if (ngram_ == nullptr ||
-        !ngram_->StartRead(std::span(host_rows_).first(rows * c.ple_heads),
-                           std::span(host_emb_, static_cast<std::size_t>(rows) *
-                                                    c.PleEmbeddingDim()),
-                           ngram_owners_)) {
-      return Fail(error, "batched n-gram read could not start");
+    const bool cooperate = options_.ple_gather.CanGather(
+        rows, std::ranges::any_of(
+                  items, [](const auto& item) { return item.speculative; }));
+    if (cooperate) {
+      cooperative_rows_.assign(host_rows_.begin(),
+                               host_rows_.begin() + rows * c.ple_heads);
+      cooperative_tokens_ = rows;
+      cooperative_local_ok_ = true;
+      if (options_.ple_gather.local_owner)
+        cooperative_local_ok_ =
+            ngram_ != nullptr &&
+            ngram_->StartRead(
+                std::span(host_rows_).first(rows * c.ple_heads),
+                std::span(host_emb_,
+                          static_cast<std::size_t>(rows) * c.PleEmbeddingDim()),
+                ngram_owners_);
+      cooperative_pending_ = true;
+      ple_pending_ = true;
+    } else {
+      if (ngram_ == nullptr ||
+          !ngram_->StartRead(
+              std::span(host_rows_).first(rows * c.ple_heads),
+              std::span(host_emb_,
+                        static_cast<std::size_t>(rows) * c.PleEmbeddingDim()),
+              ngram_owners_)) {
+        return Fail(error, "batched n-gram read could not start");
+      }
+      ple_pending_ = true;
     }
-    ple_pending_ = true;
   }
 
   const Scratch base = s_;
@@ -1132,11 +1153,15 @@ bool Executor::ForwardBatch(std::span<const BatchItem> items,
   try {
     ok = body();
   } catch (...) {
+    if (cooperative_pending_)
+      DiscardPle();
     (void)hipStreamSynchronize(stream_);
     UseScratch(base);
     throw;
   }
   const auto status = hipStreamSynchronize(stream_);
+  if (cooperative_pending_)
+    DiscardPle();
   UseScratch(base);
   if (!ok || !Check(status, error) ||
       (options_.reduce_status && !options_.reduce_status(error))) {

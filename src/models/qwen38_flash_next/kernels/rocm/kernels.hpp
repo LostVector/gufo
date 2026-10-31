@@ -121,7 +121,7 @@ bool HcCombineF16(float* res, const float* block_out, const float* inject,
                   void* xn_q8, std::uint32_t n_tokens, std::uint32_t hidden,
                   std::uint32_t streams, float eps, hipStream_t stream,
                   float* defer_w = nullptr, float* inject_out = nullptr,
-                  const float* inject_w = nullptr);
+                  const float* inject_w = nullptr, const float* peer = nullptr);
 /// Applies the residual update a deferring HcCombineF16 left out (four
 /// streams), with the same arithmetic.
 void HcApplyDeferred(float* res, const float* block_out, const float* w,

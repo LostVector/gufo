@@ -248,9 +248,33 @@ public:
     std::function<bool(const float*, std::size_t, hipStream_t, std::string*)>
         start;
     std::function<bool(float*, std::size_t, hipStream_t, std::string*)> finish;
+    // Optional ordered finish without addition. Peer is consumed on the main
+    // stream before a later StartPartial event can release its reusable slot.
+    std::function<const float*(std::size_t, std::string*)> finish_peer;
   };
 
+  struct PleGather {
+    bool local_owner{false};
+    std::uint32_t max_tokens{0};
+    std::function<bool(std::span<const std::uint32_t>, float*, const float*,
+                       std::size_t, bool, hipStream_t, std::string*)>
+        exchange;
+    std::function<bool(std::string*)> status;
+
+    [[nodiscard]] bool CanGather(std::size_t tokens, bool speculative) const {
+      return exchange && tokens != 0 && tokens <= max_tokens &&
+             (speculative || tokens <= 32);
+    }
+  };
+  [[nodiscard]] static PleGather TwoRankPleGather(
+      std::shared_ptr<Communicator> communicator, std::uint32_t heads,
+      std::uint32_t embedding_dim, std::uint32_t max_tokens);
+
   struct Options {
+    PleGather ple_gather;
+    /// Enabled only after the communicator agrees on subset-head operation
+    /// order.
+    bool split_draft_subset{false};
     int device_index{0};
     /// Rows of one trunk batch; longer prompts are fed in chunks.
     std::uint32_t max_batch{1};
@@ -583,12 +607,18 @@ private:
   /// mixer's F32 `inject_w`, the fused MoE combine also leaves its inject
   /// partials in s_.inject (inject_fused_).
   void Combine(float* res, const float* gamma, std::uint32_t n_tokens,
-               const float* inject_w = nullptr) const;
+               const float* inject_w = nullptr,
+               const float* peer = nullptr) const;
   /// Hashes the batch's n-gram rows and starts reading them from disk, so
   /// the read overlaps the layers before the PLE one.
   bool PleFetch(Session& s, std::span<const std::int32_t> tokens,
                 bool speculative, std::string* error_msg) const;
   bool WaitPle(std::string* error_msg) const;
+  bool LocalPleFetch(Session& s, std::span<const std::int32_t> tokens,
+                     bool speculative, std::string* error_msg) const;
+  bool LocalWaitPle(std::string* error_msg) const;
+  void DiscardPle() const;
+
   /// Starts reading `next`'s rows into the prefetch buffer. Best effort: a
   /// prefetch that cannot start is skipped.
   void PrefetchPle(const Session& s, std::span<const std::int32_t> next) const;
@@ -688,10 +718,11 @@ private:
   /// block, the FFN mixer and the experts. Without `reduce`, a distributed
   /// rank's output is still its partial.
   bool MoePart(std::uint32_t il, std::uint32_t n_tokens, bool reduce,
-               std::string* error_msg) const;
+               std::string* error_msg, const float* peer = nullptr) const;
   /// The layer's final combine; returns whether it also normed the residual
   /// for the next mixer.
-  bool LayerBack(std::uint32_t il, std::uint32_t n_tokens) const;
+  bool LayerBack(std::uint32_t il, std::uint32_t n_tokens,
+                 const float* peer = nullptr) const;
   bool MtpBody(Session& session, std::uint32_t n, std::uint32_t pos, bool token,
                bool candidates, std::string* error_msg, std::uint32_t pool_grid,
                const float* hidden_source, MtpTrace* trace, bool kv_only,
@@ -870,6 +901,11 @@ private:
   mutable std::vector<std::uint32_t> host_rows_;
   mutable std::vector<NgramGatherOwner> ngram_owners_;
   mutable bool ple_pending_{false};
+  mutable bool cooperative_pending_{false};
+  mutable bool cooperative_local_ok_{true};
+  mutable std::size_t cooperative_tokens_{0};
+  mutable std::vector<std::uint32_t> cooperative_rows_;
+
   /// The rows a prefill chunk reads are a pure function of its tokens and
   /// the n-gram history before them, so prefetched rows are claimed only by
   /// a batch with that history whose tokens extend, or are extended by, the

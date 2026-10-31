@@ -2027,7 +2027,7 @@ const float* InjectWeights(const DeviceMixer& m) {
 }  // namespace
 
 void Executor::Combine(float* res, const float* gamma, std::uint32_t n_tokens,
-                       const float* inject_w) const {
+                       const float* inject_w, const float* peer) const {
   const Config& c = config();
   inject_fused_ = nullptr;
   // Wide batches hand the next mixer an F16 norm for its epilogue and the
@@ -2082,7 +2082,7 @@ void Executor::Combine(float* res, const float* gamma, std::uint32_t n_tokens,
         HcCombineF16(res, s_.block_out, s_.inject, inject_parts_, gamma,
                      s_.xn_half, s_.xn_q8t, n_tokens, c.hidden_size, c.hc_count,
                      c.rms_eps, stream_, defer_now ? s_.hc_defer_w : nullptr,
-                     s_.inject, defer_now ? fused_inject : nullptr);
+                     s_.inject, defer_now ? fused_inject : nullptr, peer);
     if (res_deferred_)
       inject_fused_ = fused_inject;
     return;
@@ -2244,6 +2244,68 @@ bool Executor::HcMix(const DeviceMixer& m, const float* res, bool normed,
 
 bool Executor::PleFetch(Session& session, std::span<const std::int32_t> tokens,
                         bool speculative, std::string* error_msg) const {
+  if (ple_pending_ && !WaitPle(error_msg))
+    return false;
+  if (!options_.ple_gather.CanGather(tokens.size(), speculative))
+    return LocalPleFetch(session, tokens, speculative, error_msg);
+  cooperative_tokens_ = tokens.size();
+  cooperative_rows_.resize(tokens.size() * config().ple_heads);
+  auto history = session.ngram_;
+  if (speculative) {
+    // A rejected draft restores any proper prefix, not just the whole chain.
+    // The owner records these through LocalPleFetch; the receiver must keep
+    // exactly the same n-gram rollback boundaries without reading the table.
+    for (std::size_t i = 0; i < tokens.size(); ++i) {
+      HashNgramRows(config(), history, tokens.subspan(i, 1),
+                    std::span(cooperative_rows_)
+                        .subspan(i * config().ple_heads, config().ple_heads));
+      if (!options_.ple_gather.local_owner && i + 1 < tokens.size())
+        session.ngram_snapshots_[i] = history;
+    }
+  } else {
+    HashNgramRows(config(), history, tokens, cooperative_rows_);
+  }
+  if (options_.ple_gather.local_owner) {
+    std::string local_error;
+    cooperative_local_ok_ =
+        LocalPleFetch(session, tokens, speculative, &local_error);
+  } else {
+    FinishPrefetch();
+    prefetch_.ready = false;
+    prefetch_.claimed = 0;
+    prefetch_.tail = false;
+    session.ngram_ = history;
+    cooperative_local_ok_ = true;
+  }
+  cooperative_pending_ = true;
+  ple_pending_ = true;
+  return true;
+}
+
+bool Executor::WaitPle(std::string* error_msg) const {
+  if (!cooperative_pending_)
+    return LocalWaitPle(error_msg);
+  bool ok = cooperative_local_ok_;
+  if (options_.ple_gather.local_owner && ok)
+    ok = LocalWaitPle(nullptr);
+  cooperative_pending_ = false;
+  ple_pending_ = false;
+  return options_.ple_gather.exchange(
+      cooperative_rows_, host_emb_, s_.ple_emb,
+      cooperative_tokens_ * config().PleEmbeddingDim(), ok, stream_, error_msg);
+}
+
+void Executor::DiscardPle() const {
+  if (ple_pending_ &&
+      (!cooperative_pending_ || options_.ple_gather.local_owner))
+    (void)LocalWaitPle(nullptr);
+  cooperative_pending_ = false;
+  ple_pending_ = false;
+}
+
+bool Executor::LocalPleFetch(Session& session,
+                             std::span<const std::int32_t> tokens,
+                             bool speculative, std::string* error_msg) const {
   if (ple_pending_ && !WaitPle(error_msg)) {
     return false;
   }
@@ -2317,7 +2379,7 @@ bool Executor::PleFetch(Session& session, std::span<const std::int32_t> tokens,
   return ple_pending_;
 }
 
-bool Executor::WaitPle(std::string* error_msg) const {
+bool Executor::LocalWaitPle(std::string* error_msg) const {
   bool ok = ple_pending_;
   if (ok && prefetch_.claimed != 0) {
     FinishPrefetch();
@@ -2347,6 +2409,14 @@ void Executor::PrefetchPle(const Session& session,
   // A paired prefill chunk (PrefillChunk) is the widest batch PleFetch reads.
   if (ple_pending_ || prefetch_.pending || next.empty() ||
       next.size() > PrefillChunk()) {
+    return;
+  }
+  // The receiving rank obtains these rows from the owner. Do not issue a
+  // redundant local read just because the previous pass hints this prefix.
+  // PleFetch still hashes/commits its history; a wider or diverging fetch can
+  // use the ordinary local path if it cannot participate in the exchange.
+  if (!options_.ple_gather.local_owner &&
+      options_.ple_gather.CanGather(next.size(), false)) {
     return;
   }
   // Hashed from the history after this batch, which PleFetch already
@@ -2769,6 +2839,9 @@ Executor::SplitReduce Executor::TwoRankSplitReduce(
                                 hipStream_t stream, std::string* error) {
     return communicator->StartPartial(data, bytes, stream, error);
   };
+  reduce.finish_peer = [communicator](std::size_t bytes, std::string* error) {
+    return communicator->FinishPartial(bytes, error);
+  };
   reduce.finish = [communicator = std::move(communicator), hidden](
                       float* data, std::size_t bytes, hipStream_t stream,
                       std::string* error) {
@@ -3086,23 +3159,36 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   if (!HcMix(head, res, false, s_.mixed, nullptr, 1, error_msg)) {
     return false;
   }
-  // A greedy draft over the full vocabulary needs only the argmax. Under TP
-  // each rank scores half of the vocabulary and the two candidates cross in
-  // one all-reduce row, held in the logits buffer's unused second half. A
-  // request-vocabulary draft is scored whole on both ranks alike.
-  const std::uint32_t half = output.rows / 2;
+  // A greedy draft needs only the argmax. Each rank scores one contiguous
+  // logical half and exchanges its winner. A request-vocabulary half can
+  // span the shared prefix and the session's masked extra rows; preserve
+  // logical subset indices until the global winner is remapped.
+  const std::uint32_t half = rows / 2;
+  const bool split_subset = draft != nullptr && options_.split_draft_subset &&
+                            model_->draft_output().type == output.type &&
+                            model_->draft_output().cols == output.cols &&
+                            prefix >= half;
   const std::size_t width = config().hidden_size;
-  if (draft == nullptr && token && !candidates &&
+  if ((draft == nullptr || split_subset) && token && !candidates &&
       model_->tp_world_size() == 2 && output.type == GgmlType::kQ8_0 &&
-      output.cols % 32 == 0 && output.rows % 2 == 0 && half >= width) {
+      output.cols % 32 == 0 && rows % 2 == 0 && half >= width) {
     const std::uint32_t rank = model_->tp_rank();
-    DeviceTensor part = output;
-    part.rows = half;
-    part.data = static_cast<std::uint8_t*>(output.data) +
-                static_cast<std::size_t>(rank) * half * (output.cols / 32) * 34;
+    DeviceTensor part = draft != nullptr ? model_->draft_output() : output;
+    const std::uint32_t first = rank * half;
+    part.rows = draft != nullptr ? std::min(half, prefix - first) : half;
+    part.data = static_cast<std::uint8_t*>(part.data) +
+                static_cast<std::size_t>(first) * (output.cols / 32) * 34;
     float* exchange = s_.logits + half;
     if (!Dense(part, s_.mixed, s_.logits, 1, error_msg)) {
       return false;
+    }
+    if (draft != nullptr && rank == 1) {
+      if (!Dense(DraftTable(*draft), s_.mixed, s_.logits + part.rows, 1,
+                 error_msg)) {
+        return false;
+      }
+      MaskDraftLogits(s_.logits + part.rows, draft->mtp_.draft_ids,
+                      kMtpDraftExtraRows, stream_);
     }
     SplitArgmaxPart(s_.logits, s_.mtp_argmax, exchange,
                     static_cast<std::uint32_t>(width), half, rank * half, rank,
@@ -3111,6 +3197,10 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
       return false;
     }
     SplitArgmaxFinish(exchange, s_.mtp_token, stream_);
+    if (draft != nullptr) {
+      RemapDraftIds(reinterpret_cast<std::uint32_t*>(s_.mtp_token), 1, prefix,
+                    draft->mtp_.draft_ids, stream_);
+    }
     return Check(
         hipMemcpyAsync(mtp_token_host_, s_.mtp_token, sizeof(std::int32_t),
                        hipMemcpyDeviceToHost, stream_),
@@ -3298,11 +3388,14 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
   struct PinnedInputGuard {
     hipStream_t stream;
     bool completed{false};
+    std::function<void()> discard;
     ~PinnedInputGuard() {
-      if (!completed)
+      if (!completed) {
+        discard();
         (void)hipStreamSynchronize(stream);
+      }
     }
-  } pinned_inputs{stream_};
+  } pinned_inputs{stream_, false, [this] { DiscardPle(); }};
   // Start the disk rows before protecting checkpoint rows, which can commit
   // device pages: layer 0 alone cannot hide the whole read.
   if (session.continuation_hooks_) {
@@ -3326,7 +3419,7 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
     session.PreserveSnapshots(session.position_, session.mtp_.position);
   } catch (...) {
     // The forward never ran; leave the n-gram window where it was.
-    (void)WaitPle(nullptr);
+    DiscardPle();
     session.ngram_ = ngram;
     throw;
   }
@@ -3716,8 +3809,9 @@ bool Executor::ForwardPair(Session& session,
     const std::int32_t* tokens;
     bool normed;
     std::uint32_t inject_parts;
-    std::uint32_t part;  ///< the next part to run
-    bool pending;        ///< its last part's sum is in flight
+    std::uint32_t part;           ///< the next part to run
+    bool pending;                 ///< its last part's sum is in flight
+    const float* peer = nullptr;  ///< consumed immediately by the next MoE part
   };
   const Scratch base = s_;
   std::array<Lane, 2> lanes{
@@ -3796,8 +3890,14 @@ bool Executor::ForwardPair(Session& session,
         if (!model_->layers()[il].mixer_split) {
           continue;
         }
-      } else if (!MoePart(il, lane.batch.n, false, error_msg)) {
-        return false;
+      } else {
+        // finish() has just completed this lane's attention exchange. Consume
+        // the peer on the main stream before publishing the next ready event.
+        const float* peer = lane.peer;
+        lane.peer = nullptr;
+        if (!MoePart(il, lane.batch.n, false, error_msg, peer)) {
+          return false;
+        }
       }
       if (!options_.split_reduce.start(s_.block_out, bytes(lane), stream_,
                                        error_msg)) {
@@ -3820,16 +3920,30 @@ bool Executor::ForwardPair(Session& session,
     in_flight[0] = in_flight[1];
     --flying;
     lane.pending = false;
-    if (!options_.split_reduce.finish(s_.block_out, bytes(lane), stream_,
-                                      error_msg)) {
+    const std::uint32_t part = lane.part - 1;
+    const std::uint32_t il = part / 2;
+    const bool fuse_peer =
+        options_.split_reduce.finish_peer && !options_.moe_observer &&
+        wide_mixer_ && MatrixRows(lane.batch.n) && c.hc_count == 4 &&
+        c.hidden_size % 128 == 0 && c.hidden_size <= 2560 &&
+        (part % 2 == 0 || (il + 1 < c.num_layers && !c.IsPleLayer(il + 1))) &&
+        !defer_residual_ && !res_deferred_ && !moe_pending_;
+    const float* peer = nullptr;
+    if (fuse_peer) {
+      peer = options_.split_reduce.finish_peer(bytes(lane), error_msg);
+      if (!peer)
+        return false;
+    } else if (!options_.split_reduce.finish(s_.block_out, bytes(lane), stream_,
+                                             error_msg)) {
       return false;
     }
-    const std::uint32_t part = lane.part - 1;
     if (part % 2 == 1) {
       if (options_.moe_observer) {
         options_.moe_observer(s_.block_out, bytes(lane), stream_);
       }
-      lane.normed = LayerBack(part / 2, lane.batch.n);
+      lane.normed = LayerBack(part / 2, lane.batch.n, peer);
+    } else {
+      lane.peer = peer;
     }
     return true;
   };
@@ -3987,26 +4101,27 @@ bool Executor::MixerPart(Session& session, std::uint32_t il,
 }
 
 bool Executor::MoePart(std::uint32_t il, std::uint32_t n_tokens, bool reduce,
-                       std::string* error_msg) const {
+                       std::string* error_msg, const float* peer) const {
   const DeviceLayer& l = model_->layers()[il];
   // Each combine also norms the residual for the mixer that follows it,
   // unless PLE rewrites the residual first.
-  Combine(s_.res, l.hc_ffn.norm.f32(), n_tokens, InjectWeights(l.hc_ffn));
+  Combine(s_.res, l.hc_ffn.norm.f32(), n_tokens, InjectWeights(l.hc_ffn), peer);
   return HcMix(l.hc_ffn, s_.res, true, s_.mixed, s_.inject, n_tokens,
                error_msg) &&
          Moe(l, s_.mixed, s_.block_out, n_tokens, error_msg, false, reduce);
 }
 
-bool Executor::LayerBack(std::uint32_t il, std::uint32_t n_tokens) const {
+bool Executor::LayerBack(std::uint32_t il, std::uint32_t n_tokens,
+                         const float* peer) const {
   const Config& c = config();
   const float* next_norm =
       il + 1 < c.num_layers
           ? (c.IsPleLayer(il + 1) ? nullptr
                                   : model_->layers()[il + 1].hc_attn.norm.f32())
           : nullptr;  // the head norms the rows it reads itself
-  Combine(
-      s_.res, next_norm, n_tokens,
-      next_norm ? InjectWeights(model_->layers()[il + 1].hc_attn) : nullptr);
+  Combine(s_.res, next_norm, n_tokens,
+          next_norm ? InjectWeights(model_->layers()[il + 1].hc_attn) : nullptr,
+          peer);
   return next_norm != nullptr;
 }
 

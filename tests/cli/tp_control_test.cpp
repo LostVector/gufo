@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
@@ -76,9 +77,63 @@ void RequireInvalidResponse(const TpControlResponse& response,
           message);
 }
 
+void TestProtocolVersionRejection() {
+  for (const std::uint16_t peer_version : {21U, 23U, 278U}) {
+    const auto port = FreePort();
+    int raw_peer = -1;
+    std::thread connector([&] {
+      for (unsigned attempt = 0; attempt < 100; ++attempt) {
+        const int fd = ::socket(AF_INET, SOCK_STREAM, 0);
+        Require(fd >= 0, "raw version peer socket");
+        sockaddr_in address{};
+        address.sin_family = AF_INET;
+        address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+        address.sin_port = htons(port);
+        if (::connect(fd, reinterpret_cast<sockaddr*>(&address),
+                      sizeof(address)) == 0) {
+          raw_peer = fd;
+          return;
+        }
+        ::close(fd);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      }
+      Require(false, "raw version peer connect");
+    });
+    std::string error;
+    auto server =
+        TpControlChannel::Listen(port, &error, std::chrono::milliseconds(250));
+    connector.join();
+    Require(server != nullptr && raw_peer >= 0, "version test connected");
+    // Independent wire header: little-endian TPC1 magic, peer version,
+    // hello type1, zero payload/sequence. Version must be rejected before
+    // attempting to parse a hello payload or authenticate an incompatible peer.
+    std::array<std::uint8_t, 20> header{0x31, 0x43, 0x50, 0x54};
+    header[4] = static_cast<std::uint8_t>(peer_version);
+    header[5] = static_cast<std::uint8_t>(peer_version >> 8);
+    header[6] = 1;
+    std::size_t sent = 0;
+    while (sent != header.size()) {
+      const auto bytes = ::send(raw_peer, header.data() + sent,
+                                header.size() - sent, MSG_NOSIGNAL);
+      Require(bytes > 0, "version header sent");
+      sent += static_cast<std::size_t>(bytes);
+    }
+    const TpControlConfig config{
+        .rank = 0, .world_size = 2, .auth_token = "version-test"};
+    const bool accepted = server->Handshake(config, &error);
+    ::close(raw_peer);
+    Require(
+        !accepted &&
+            error.find("protocol version mismatch (local 22, peer " +
+                       std::to_string(peer_version) + ")") != std::string::npos,
+        "incompatible version rejected before hello payload: " + error);
+  }
+}
+
 }  // namespace
 
 int main() {
+  TestProtocolVersionRejection();
   const auto port = FreePort();
   std::string client_error;
   std::shared_ptr<TpControlChannel> client;
