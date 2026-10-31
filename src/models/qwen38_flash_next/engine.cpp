@@ -218,6 +218,9 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
                 exec.max_batch, std::uint64_t{options.max_draft_tokens} + 1))
           : 1;
   exec.max_speculative = exec.max_logit_rows;
+  m->greedy_confidence_ =
+      !options.communicator || options.communicator->SupportsGreedyConfidence();
+  exec.greedy_confidence = m->greedy_confidence_;
   if (options.communicator) {
     // One exchange carries a whole prefill batch's partial sums.
     if (std::size_t{exec.max_batch} * c.hidden_size * sizeof(float) >
@@ -671,6 +674,7 @@ bool Session::RestoreSnapshotImpl(std::span<const std::uint8_t> payload,
   logits_ = std::move(logits);
   hidden_base_ = info.position - info.hidden_rows;
   draft_token_ = 0;
+  draft_confidence_ = 1.0F;
   draft_length_ = restored_policy;
   stats_ = {};
   valid_ = true;
@@ -741,6 +745,10 @@ bool Session::DraftCatchUp(std::int32_t next_token, bool propose,
   if (!exec.MtpForward(
           *session_, replay, hidden_row,
           {.token = propose && candidates == nullptr ? &draft_token_ : nullptr,
+           .confidence =
+               propose && candidates == nullptr && model_->greedy_confidence_
+                   ? &draft_confidence_
+                   : nullptr,
            .candidates = candidates,
            .kv_only = !propose,
            .draft_subset = draft_subset},
@@ -975,6 +983,8 @@ struct Session::PendingDecode {
   bool draft_subset{false};  ///< this cycle drafts through the subset head
   bool sampled_subset_cost{false};
   bool planned_greedy{false};
+  bool gated{false};
+  float draft_confidence{1.0F};
   /// Trailing chain tokens copied by prompt lookup (after the MTP drafts).
   std::uint32_t lookup{0};
   /// Committed index the copied tokens were taken from.
@@ -984,6 +994,10 @@ struct Session::PendingDecode {
   std::size_t lookup_cap{0};
   std::uint32_t policy_concurrency{0};
 };
+
+bool Session::GateStops(const PendingDecode& pending) {
+  return pending.gated && pending.draft_confidence < kMtpGateProbability;
+}
 
 void Session::AppendDraft(PendingDecode& pending) {
   if (pending.sampled) {
@@ -1083,7 +1097,7 @@ bool Session::PrepareDecode(const DecodeRequest& request,
   // so both ranks run cycles of the same width even when their histories
   // have drifted apart.
   const auto& forced = request.drafts ? request.drafts : batch_drafts;
-  const std::size_t width =
+  std::size_t width =
       MtpEnabled() && cap > 1
           ? 1 + (forced ? std::min<std::uint32_t>(*forced, cap - 1)
                         : draft_length_.Choose(
@@ -1091,6 +1105,11 @@ bool Session::PrepareDecode(const DecodeRequest& request,
                               static_cast<std::uint32_t>(tokens_.size()),
                               pending->policy_concurrency))
           : cap;
+  const bool gated =
+      model_->greedy_confidence_ && !sampler.config().uses_random_sampling();
+  if (gated && !forced && width > 1)
+    width =
+        1 + std::min<std::size_t>(cap - 1, model_->options_.max_draft_tokens);
   if (width == 0) {
     result->stop = true;
     return true;
@@ -1124,6 +1143,7 @@ bool Session::PrepareDecode(const DecodeRequest& request,
   pending->chain = {anchor};
   pending->draft = draft_token_;
   pending->width = width;
+  pending->gated = gated;
   pending->base = base;
   pending->speculative = true;
   pending->sampled = sampled;
@@ -1176,6 +1196,7 @@ bool Session::PrepareDecode(const DecodeRequest& request,
     return false;
   }
   pending->draft = draft_token_;
+  pending->draft_confidence = draft_confidence_;
   if (!defer_head) {
     while (pending->chain.size() < pending->width) {
       AppendDraft(*pending);
@@ -1186,10 +1207,16 @@ bool Session::PrepareDecode(const DecodeRequest& request,
       if (AppendLookup(*pending, stop_at_eos)) {
         break;
       }
+      if (GateStops(*pending)) {
+        pending->width = pending->chain.size();
+        break;
+      }
       if (pending->chain.size() < pending->width &&
           !exec.MtpForward(
               *session_, std::span<const std::int32_t>(&pending->draft, 1), -1,
               {.token = sampled ? nullptr : &pending->draft,
+               .confidence =
+                   pending->gated ? &pending->draft_confidence : nullptr,
                .candidates = sampled ? &pending->candidates : nullptr,
                .draft_subset = pending->draft_subset},
               error_msg)) {
@@ -1434,12 +1461,17 @@ std::optional<std::uint32_t> Session::PlanDecode(
   const bool subset_cost =
       sampled && gpu_verification && model_->draft_subset_ &&
       std::min(max_tokens, room) > 2 * model_->executor_->max_speculative();
-  return draft_length_.Choose(
+  const auto drafts = draft_length_.Choose(
       static_cast<std::uint32_t>(cap - 1),
       static_cast<std::uint32_t>(tokens_.size()),
       MtpPolicyConcurrency(sampled, sampler.config().seed >= 0, false,
                            occupancy),
       subset_cost);
+  // Mirror the actual unplanned cap before either rank enters the cycle.
+  return !sampled && model_->greedy_confidence_ && drafts != 0
+             ? std::min<std::uint32_t>(static_cast<std::uint32_t>(cap - 1),
+                                       model_->options_.max_draft_tokens)
+             : drafts;
 }
 
 template<class Request>
@@ -1677,6 +1709,7 @@ bool Session::DecodeBatchImpl(std::span<const DecodeRequest> requests,
           p.chain.size() < p.width) {
         heads.push_back({requests[i].session->session_.get(),
                          {.token = p.sampled ? nullptr : &p.draft,
+                          .confidence = p.gated ? &p.draft_confidence : nullptr,
                           .candidates = p.sampled ? &p.candidates : nullptr,
                           .draft_subset = p.draft_subset}});
       }
@@ -1699,6 +1732,14 @@ bool Session::DecodeBatchImpl(std::span<const DecodeRequest> requests,
       }
       if (session.AppendLookup(p, requests[i].stop_at_eos))
         continue;
+      if (GateStops(p)) {
+        if (batch_drafts && p.draft_confidence < kMtpBatchDropProbability) {
+          p.chain.pop_back();
+          p.speculative = p.chain.size() > 1;
+        }
+        p.width = p.chain.size();
+        continue;
+      }
       if (p.chain.size() < p.width)
         bodies.push_back({requests[i].session->session_.get(),
                           std::span<const std::int32_t>(&p.draft, 1), -1});

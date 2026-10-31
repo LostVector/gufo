@@ -585,6 +585,17 @@ struct ArgmaxCandidate {
 void Argmax(const float* logits, ArgmaxCandidate* scratch, std::int32_t* out,
             std::uint32_t n_tokens, std::uint32_t vocab, hipStream_t stream);
 
+/// Whole-row probability of the argmax, returned as float bits in out[1].
+void ArgmaxConfidence(const float* logits, std::int32_t* out,
+                      std::uint32_t rows, hipStream_t stream);
+/// Local stable normalizer in rank-owned padded exchange slot4/5.
+void SplitArgmaxConfidencePart(const float* logits, float* exchange,
+                               std::uint32_t count, std::uint32_t rank,
+                               hipStream_t stream);
+/// Original winner and globally normalized confidence after the same exchange.
+void SplitArgmaxConfidenceFinish(const float* exchange, std::int32_t* out,
+                                 hipStream_t stream);
+
 /// One rank's part of a vocabulary split across two ranks: the argmax of its
 /// `count` logits, whose first entry is vocabulary index `first`, written as
 /// (value, index) floats to slot `part` of `exchange`, whose other `width`

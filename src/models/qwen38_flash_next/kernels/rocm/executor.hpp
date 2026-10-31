@@ -275,6 +275,7 @@ public:
     /// Enabled only after the communicator agrees on subset-head operation
     /// order.
     bool split_draft_subset{false};
+    bool greedy_confidence{false};
     int device_index{0};
     /// Rows of one trunk batch; longer prompts are fed in chunks.
     std::uint32_t max_batch{1};
@@ -393,6 +394,7 @@ public:
   /// when only the draft state is needed.
   struct MtpOutput {
     std::int32_t* token{nullptr};
+    float* confidence{nullptr};
     MtpCandidateLogits* candidates{nullptr};
     MtpTrace* trace{nullptr};  ///< final-row diagnostic; disables graph capture
     /// Prefill and headless steps need only persistent KV. A full forward with

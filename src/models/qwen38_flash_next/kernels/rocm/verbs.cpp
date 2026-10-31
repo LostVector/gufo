@@ -42,11 +42,13 @@ namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
 
 constexpr std::uint32_t kWireMagic = 0x47554654U;  // "GUFT"
-constexpr std::uint32_t kWireVersion = 9;
+constexpr std::uint32_t kWireVersion = 10;
 constexpr std::uint32_t kPlacementGpuWindows = 1U;
 constexpr std::uint32_t kPlacementSplitDraftSubset = 2U;
-constexpr std::uint32_t kPlacementKnownFlags =
-    kPlacementGpuWindows | kPlacementSplitDraftSubset;
+constexpr std::uint32_t kPlacementGreedyConfidence = 4U;
+constexpr std::uint32_t kPlacementKnownFlags = kPlacementGpuWindows |
+                                               kPlacementSplitDraftSubset |
+                                               kPlacementGreedyConfidence;
 constexpr std::uint32_t kPlacementMagic = 0x4755504CU;   // "GUPL"
 constexpr std::uint32_t kCollectiveMagic = 0x47554348U;  // "GUCH"
 constexpr std::uint32_t kCollectiveVersion = 5;
@@ -588,7 +590,7 @@ public:
     }
     const Placement local_placement{
         .flags = (local_gpu ? kPlacementGpuWindows : 0U) |
-                 kPlacementSplitDraftSubset};
+                 kPlacementSplitDraftSubset | kPlacementGreedyConfidence};
     Placement remote_placement{};
     if (!control.SendAll(&local_placement, sizeof(local_placement), error) ||
         !control.RecvAll(&remote_placement, sizeof(remote_placement), error)) {
@@ -609,6 +611,8 @@ public:
         local_gpu && (remote_placement.flags & kPlacementGpuWindows) != 0;
     split_draft_subset_ = (local_placement.flags & remote_placement.flags &
                            kPlacementSplitDraftSubset) != 0;
+    greedy_confidence_ = (local_placement.flags & remote_placement.flags &
+                          kPlacementGreedyConfidence) != 0;
     if (local_gpu && !gpu_windows_) {
       gpu_unavailable_ = "the peer has no DMA-BUF windows";
     }
@@ -768,6 +772,9 @@ public:
   }
   [[nodiscard]] bool SupportsSplitDraftSubset() const noexcept override {
     return split_draft_subset_;
+  }
+  [[nodiscard]] bool SupportsGreedyConfidence() const noexcept override {
+    return greedy_confidence_;
   }
   [[nodiscard]] std::size_t MaxPartialBytes() const noexcept override {
     return kWindowBytes - data_offset_;
@@ -1779,6 +1786,7 @@ private:
   GpuWindows recv_gpu_;
   bool gpu_windows_{false};
   bool split_draft_subset_{false};
+  bool greedy_confidence_{false};
   std::string gpu_unavailable_;
   std::size_t data_offset_{kDataOffset};
   // The next exchange whose device receive window is not yet posted.

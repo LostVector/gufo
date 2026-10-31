@@ -13,6 +13,9 @@
 namespace gufo::models::qwen38_flash_next {
 
 inline constexpr std::uint32_t kMaxMtpDraftTokens = 7;
+// Upstream PR882 greedy gates; sampled proposal policy remains unchanged.
+inline constexpr float kMtpGateProbability = 0.85F;
+inline constexpr float kMtpBatchDropProbability = 0.6F;
 
 /// The occupancy an unplanned draft cycle is priced at, or 0 for the
 /// configured session count. Greedy output does not depend on the width, and

@@ -34,6 +34,10 @@ public:
   [[nodiscard]] virtual bool SupportsSplitDraftSubset() const noexcept {
     return false;
   }
+  /// Both peers support greedy confidence in the head exchange and policy.
+  [[nodiscard]] virtual bool SupportsGreedyConfidence() const noexcept {
+    return false;
+  }
   /// The largest partial one exchange carries.
   [[nodiscard]] virtual std::size_t MaxPartialBytes() const noexcept {
     return static_cast<std::size_t>(-1);

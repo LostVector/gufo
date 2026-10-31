@@ -151,6 +151,7 @@ private:
   MtpBatchController batch_policy_;
   /// MTP drafts may use the small head (draft_vocab.hpp).
   bool draft_subset_{false};
+  bool greedy_confidence_{false};
   /// Special tokens at the start of every session's draft table.
   std::uint32_t draft_specials_{0};
   /// Prefix and special tokens: always in the small head.
@@ -198,9 +199,10 @@ public:
   /// Benchmarks may continue past EOS by setting stop_at_eos to false.
   /// A greedy step prices its drafts as one of `occupancy` decoding requests,
   /// as DecodeBatch does for an unplanned cohort of that width.
-  /// `forced_drafts`, when given, fixes the cycle's draft count instead of
-  /// choosing it from this session's acceptance history (a TP2 rank 0's
-  /// choice, mirrored so both ranks run cycles of the same width).
+  /// `forced_drafts`, when given, fixes the cycle's draft cap instead of
+  /// choosing it from this session's acceptance history. Negotiated greedy
+  /// confidence may shorten this cap. The count is a TP2 rank 0's
+  /// choice, mirrored so both ranks run cycles of the same width.
   [[nodiscard]] bool DecodeStep(
       std::size_t max_tokens, sampling::SamplerState& sampler,
       DecodeResult* result, std::string* error_msg = nullptr,
@@ -361,6 +363,7 @@ private:
   static bool EvaluateBatchImpl(std::span<const AdvanceRequest> requests,
                                 std::string* error_msg);
   struct PendingDecode;
+  static bool GateStops(const PendingDecode& pending);
   /// `batch_drafts` forces the cycle's draft count for a batched step; a
   /// request's own `drafts` overrides it.
   bool PrepareDecode(const DecodeRequest& request, PendingDecode* pending,
@@ -379,6 +382,7 @@ private:
   std::vector<std::int32_t> tokens_;
   std::vector<float> logits_;
   std::int32_t draft_token_{0};
+  float draft_confidence_{1.0F};
   std::vector<float> verify_logits_;
   std::uint32_t hidden_base_{0};  ///< first position whose hidden row is kept
   MtpLengthController draft_length_;

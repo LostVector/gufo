@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include <bit>
 #include <stdexcept>
 
 #include "qfn_mmq.h"
@@ -470,6 +471,8 @@ bool Executor::MtpHeads(std::span<const MtpHeadItem> items,
         !item.session->mtp_enabled_ || item.session->mtp_.position == 0 ||
         !item.session->mtp_.residual_valid || item.output.kv_only ||
         item.output.trace != nullptr ||
+        (item.output.confidence != nullptr &&
+         (item.output.token == nullptr || !options_.greedy_confidence)) ||
         (item.output.token == nullptr && item.output.candidates == nullptr)) {
       return Fail(error, "invalid MTP head request");
     }
@@ -497,6 +500,8 @@ bool Executor::MtpHeads(std::span<const MtpHeadItem> items,
       }
       if (item.output.token != nullptr)
         *item.output.token = *mtp_token_host_;
+      if (item.output.confidence != nullptr)
+        *item.output.confidence = std::bit_cast<float>(mtp_token_host_[1]);
       if (item.output.candidates != nullptr)
         *item.output.candidates = *mtp_candidates_host_;
     }
@@ -611,13 +616,17 @@ bool Executor::MtpHeads(std::span<const MtpHeadItem> items,
       const auto count = std::min<std::size_t>(rows, kMtpCandidates);
       if (items[i].output.candidates == nullptr) {
         Argmax(logits_of(i), s_.mtp_argmax, s_.mtp_token, 1, rows, stream_);
+        if (options_.greedy_confidence)
+          ArgmaxConfidence(logits_of(i), s_.mtp_token, rows, stream_);
         if (table != nullptr)
           RemapDraftIds(reinterpret_cast<std::uint32_t*>(s_.mtp_token), 1,
                         static_cast<std::uint32_t>(prefix), table, stream_);
-        if (!Check(hipMemcpyAsync(batch_candidates_host_[i].ids.data(),
-                                  s_.mtp_token, sizeof(std::int32_t),
-                                  hipMemcpyDeviceToHost, stream_),
-                   error))
+        if (!Check(
+                hipMemcpyAsync(
+                    batch_candidates_host_[i].ids.data(), s_.mtp_token,
+                    (options_.greedy_confidence ? 2 : 1) * sizeof(std::int32_t),
+                    hipMemcpyDeviceToHost, stream_),
+                error))
           return false;
         continue;
       }
@@ -655,6 +664,9 @@ bool Executor::MtpHeads(std::span<const MtpHeadItem> items,
       continue;
     if (items[i].output.token != nullptr)
       *items[i].output.token = batch_candidates_host_[i].ids[0];
+    if (items[i].output.confidence != nullptr)
+      *items[i].output.confidence =
+          std::bit_cast<float>(batch_candidates_host_[i].ids[1]);
     if (items[i].output.candidates != nullptr)
       *items[i].output.candidates = batch_candidates_host_[i];
   }

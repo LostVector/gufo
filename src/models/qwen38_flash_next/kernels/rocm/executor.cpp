@@ -1256,7 +1256,7 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
     s.mtp_eproj = s.qkvz;
     s.mtp_res = s.res;
     s.mtp_argmax = Alloc<ArgmaxCandidate>(a, kArgmaxParts, error_msg);
-    s.mtp_token = Alloc<std::int32_t>(a, 1, error_msg);
+    s.mtp_token = Alloc<std::int32_t>(a, 2, error_msg);
     const auto candidate_ids = std::max<std::size_t>(
         MtpCandidateWorkspaceSize(c.vocab_size),
         e->options_.max_speculative * kArgmaxParts *
@@ -1267,7 +1267,7 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
     // Pack those scores behind the 64 returned IDs for one host transfer.
     s.mtp_scores = reinterpret_cast<float*>(s.mtp_ids + kMtpCandidates);
     if (!Check(e->host_allocations_.Allocate(&e->mtp_token_host_,
-                                             sizeof(std::int32_t)),
+                                             2 * sizeof(std::int32_t)),
                "pinned draft token", error_msg) ||
         !Check(e->host_allocations_.Allocate(&e->mtp_candidates_host_,
                                              sizeof(MtpCandidateLogits)),
@@ -3193,18 +3193,24 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
     SplitArgmaxPart(s_.logits, s_.mtp_argmax, exchange,
                     static_cast<std::uint32_t>(width), half, rank * half, rank,
                     stream_);
+    if (options_.greedy_confidence)
+      SplitArgmaxConfidencePart(s_.logits, exchange, half, rank, stream_);
     if (!AllReduce(exchange, 1, error_msg)) {
       return false;
     }
-    SplitArgmaxFinish(exchange, s_.mtp_token, stream_);
+    if (options_.greedy_confidence)
+      SplitArgmaxConfidenceFinish(exchange, s_.mtp_token, stream_);
+    else
+      SplitArgmaxFinish(exchange, s_.mtp_token, stream_);
     if (draft != nullptr) {
       RemapDraftIds(reinterpret_cast<std::uint32_t*>(s_.mtp_token), 1, prefix,
                     draft->mtp_.draft_ids, stream_);
     }
-    return Check(
-        hipMemcpyAsync(mtp_token_host_, s_.mtp_token, sizeof(std::int32_t),
-                       hipMemcpyDeviceToHost, stream_),
-        "draft token download", error_msg);
+    return Check(hipMemcpyAsync(mtp_token_host_, s_.mtp_token,
+                                (options_.greedy_confidence ? 2 : 1) *
+                                    sizeof(std::int32_t),
+                                hipMemcpyDeviceToHost, stream_),
+                 "draft token download", error_msg);
   }
   if (!(draft != nullptr ? DraftLogits(*draft, s_.mixed, s_.logits, error_msg)
                          : Dense(output, s_.mixed, s_.logits, 1, error_msg))) {
@@ -3219,13 +3225,16 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   }
   if (token) {
     Argmax(s_.logits, s_.mtp_argmax, s_.mtp_token, 1, rows, stream_);
+    if (options_.greedy_confidence)
+      ArgmaxConfidence(s_.logits, s_.mtp_token, rows, stream_);
     if (draft != nullptr)
       RemapDraftIds(reinterpret_cast<std::uint32_t*>(s_.mtp_token), 1, prefix,
                     draft->mtp_.draft_ids, stream_);
-    if (!Check(
-            hipMemcpyAsync(mtp_token_host_, s_.mtp_token, sizeof(std::int32_t),
-                           hipMemcpyDeviceToHost, stream_),
-            "draft token download", error_msg)) {
+    if (!Check(hipMemcpyAsync(
+                   mtp_token_host_, s_.mtp_token,
+                   (options_.greedy_confidence ? 2 : 1) * sizeof(std::int32_t),
+                   hipMemcpyDeviceToHost, stream_),
+               "draft token download", error_msg)) {
       return false;
     }
   }
@@ -5062,6 +5071,12 @@ bool Executor::MtpForward(Session& session,
                           std::int32_t hidden_row, MtpOutput output,
                           std::string* error_msg,
                           const float* hidden_source) const {
+  if (output.confidence != nullptr &&
+      (output.token == nullptr || !options_.greedy_confidence)) {
+    AssignError(error_msg,
+                "MTP confidence needs a negotiated greedy token output");
+    return false;
+  }
   DropReadyQ8();
   const auto n = static_cast<std::uint32_t>(tokens.size());
   if (session.owner_ != this ||
@@ -5146,6 +5161,8 @@ bool Executor::MtpForward(Session& session,
   }
   if (output.token != nullptr) {
     *output.token = *mtp_token_host_;
+    if (output.confidence != nullptr)
+      *output.confidence = std::bit_cast<float>(mtp_token_host_[1]);
   }
   if (output.candidates != nullptr) {
     *output.candidates = *mtp_candidates_host_;
