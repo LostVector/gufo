@@ -911,6 +911,7 @@ TextDecodeSelection TpMirroredRunner::SelectNext(
 
 void TpMirroredRunner::Advance(TextRunnerState& state,
                                TextRunnerToken token) const {
+  const TpSnapshotGate::Turn turn(snapshot_gate_);
   const std::lock_guard<std::recursive_mutex> call_lock(call_mutex_);
   auto& mirrored = Mirrored(state);
   const auto sent = Send(mirrored.id(), {.op = TpInstructionOp::kAdvance,
@@ -932,8 +933,7 @@ void TpMirroredRunner::Advance(TextRunnerState& state,
 TextDecodeStep TpMirroredRunner::DecodeStep(
     TextRunnerState& state, std::size_t max_tokens,
     sampling::SamplerState& sampler) const {
-  if (multi_token_decode_ && max_tokens >= 2)
-    snapshot_gate_.Wait();
+  const TpSnapshotGate::Turn turn(snapshot_gate_);
   const std::lock_guard<std::recursive_mutex> call_lock(call_mutex_);
   // A multi-token cycle is one instruction. It carries the sampler's draw
   // state, so rank 1, whose sampler otherwise matches, draws what rank 0 draws
@@ -982,6 +982,7 @@ TextDecodeStep TpMirroredRunner::DecodeStep(
 
 std::vector<TextDecodeStep> TpMirroredRunner::DecodeBatch(
     std::span<const TextRunnerDecode> decodes) const {
+  const TpSnapshotGate::Turn turn(snapshot_gate_);
   if (decodes.size() < 2 || !multi_token_decode_ ||
       std::ranges::any_of(decodes, [this](const TextRunnerDecode& decode) {
         return !CyclesMirrored(decode.state.get(), decode.sampler.get());
@@ -990,7 +991,6 @@ std::vector<TextDecodeStep> TpMirroredRunner::DecodeBatch(
     // an unmirrored constraint one token at a time.
     return TextModelRunner::DecodeBatch(decodes);
   }
-  snapshot_gate_.Wait();
   const std::lock_guard<std::recursive_mutex> call_lock(call_mutex_);
   // One instruction carries every member's budget and draw state, like the
   // decode each replaces, and the batch's draft count: rank 0 chooses it from
@@ -1061,6 +1061,7 @@ std::vector<TextDecodeStep> TpMirroredRunner::DecodeBatch(
 
 void TpMirroredRunner::AdvanceBatch(
     std::span<const TextRunnerAdvance> advances) const {
+  const TpSnapshotGate::Turn turn(snapshot_gate_);
   if (advances.size() < 2) {
     TextModelRunner::AdvanceBatch(advances);
     return;
