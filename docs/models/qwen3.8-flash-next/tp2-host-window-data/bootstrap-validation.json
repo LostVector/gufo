@@ -1,0 +1,9 @@
+{
+  "real10KiB_collective_new_new_exact": true,
+  "wire14_versus16_both_orders_reject": true,
+  "occupied_legacy_VA_old_factory_fails_EEXIST": true,
+  "occupied_legacy_VA_new_factory_maps_two_distinct_unused_windows_and_real_GPU_sum_exact": true,
+  "all_PIDs_gone_frozen_source_harness_binary": true,
+  "clean_transport_kernel_boot_topology_approved_idle": true,
+  "scope": "Actual provider bootstrap/MR/HIP mappings and10KiBGPU sum; process-local forced occupiedVA, no globalASLR/systemchange. Exact original occupant unknown. Full-model/cache/cancel/error/lifecycle/performance gates remain."
+}

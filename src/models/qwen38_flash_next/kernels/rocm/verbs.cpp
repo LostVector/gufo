@@ -34,17 +34,13 @@
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS MAP_ANON
 #endif
-#ifndef MAP_FIXED_NOREPLACE
-#define MAP_FIXED_NOREPLACE 0x100000
-#endif
 
 namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
 
 constexpr std::uint32_t kWireMagic = 0x47554654U;  // "GUFT"
-// Integrated ordinary target-head gather changes the collective schedule.
-// Both peers must also produce normalized draft confidence (wire18 baseline).
-constexpr std::uint32_t kWireVersion = 19;
+// Version20 adds OS-selected host windows to the integrated gather path.
+constexpr std::uint32_t kWireVersion = 20;
 constexpr std::uint32_t kPlacementGpuWindows = 1U;
 constexpr std::uint32_t kPlacementTargetHeadGather = 8U;
 constexpr std::uint32_t kPlacementKnownFlags =
@@ -73,8 +69,6 @@ constexpr std::uint64_t kRecvTag = 1ULL << 62;
 constexpr std::size_t kGpuLengthAlign = 32;
 constexpr int kGpuSendAccess = IBV_ACCESS_LOCAL_WRITE;
 constexpr int kGpuRecvAccess = IBV_ACCESS_LOCAL_WRITE;
-constexpr std::uintptr_t kSendAddress = 0x0000700000000000ULL;
-constexpr std::uintptr_t kRecvAddress = kSendAddress + kBufferBytes;
 // Overlapped exchanges started and not yet finished; each has its own
 // readiness event.
 constexpr std::size_t kStartedExchanges = 4;
@@ -134,31 +128,26 @@ std::string SystemError(const char* operation) {
   return std::string(operation) + ": " + std::strerror(errno);
 }
 
-bool MapFixedBuffer(std::uintptr_t address, std::size_t bytes, void** buffer,
-                    std::string* error) {
-  void* mapped =
-      ::mmap(reinterpret_cast<void*>(address), bytes, PROT_READ | PROT_WRITE,
-             MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0);
+bool MapHostBuffer(std::size_t bytes, void** buffer, std::string* error) {
+  // Each rank advertises its registered receive VA in Wire. Let the OS pick
+  // unused pages; a process-local mapping must not depend on one free hole.
+  void* mapped = ::mmap(nullptr, bytes, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
   if (mapped == MAP_FAILED) {
-    SetError(error, "fixed RDMA buffer mmap failed: " +
+    SetError(error, "RDMA host buffer mmap failed: " +
                         std::string(std::strerror(errno)));
-    return false;
-  }
-  if (reinterpret_cast<std::uintptr_t>(mapped) != address) {
-    ::munmap(mapped, bytes);
-    SetError(error, "fixed RDMA buffer address mismatch");
     return false;
   }
   if (hipHostRegister(mapped, bytes, hipHostRegisterMapped) != hipSuccess) {
     ::munmap(mapped, bytes);
-    SetError(error, "hipHostRegister for fixed RDMA buffer failed");
+    SetError(error, "hipHostRegister for RDMA host buffer failed");
     return false;
   }
   *buffer = mapped;
   return true;
 }
 
-void UnmapFixedBuffer(void* buffer, std::size_t bytes) {
+void UnmapHostBuffer(void* buffer, std::size_t bytes) {
   if (buffer == nullptr) {
     return;
   }
@@ -676,7 +665,11 @@ public:
         remote.mtu < IBV_MTU_256 || remote.mtu > IBV_MTU_4096 ||
         (gpu_windows_
              ? remote.recv_address != 0 || remote.recv_rkey != 0
-             : remote.recv_address != kRecvAddress || remote.recv_rkey == 0)) {
+             : remote.recv_address == 0 || remote.recv_address % 4096 != 0 ||
+                   remote.recv_address >
+                       std::numeric_limits<std::uint64_t>::max() -
+                           kBufferBytes ||
+                   remote.recv_rkey == 0)) {
       SetError(error, "verbs bootstrap metadata is invalid");
       return false;
     }
@@ -1181,11 +1174,11 @@ private:
 
   /// Maps and registers the host windows, used without device windows.
   [[nodiscard]] bool SetupHostWindows(std::string* error) {
-    if (!MapFixedBuffer(kSendAddress, kBufferBytes, &send_buffer_, error)) {
+    if (!MapHostBuffer(kBufferBytes, &send_buffer_, error)) {
       return false;
     }
     send_registered_ = true;
-    if (!MapFixedBuffer(kRecvAddress, kBufferBytes, &recv_buffer_, error)) {
+    if (!MapHostBuffer(kBufferBytes, &recv_buffer_, error)) {
       return false;
     }
     recv_registered_ = true;
@@ -1739,12 +1732,12 @@ private:
     send_gpu_.Release();
     recv_gpu_.Release();
     if (send_registered_) {
-      UnmapFixedBuffer(send_buffer_, kBufferBytes);
+      UnmapHostBuffer(send_buffer_, kBufferBytes);
       send_registered_ = false;
     }
     send_buffer_ = nullptr;
     if (recv_registered_) {
-      UnmapFixedBuffer(recv_buffer_, kBufferBytes);
+      UnmapHostBuffer(recv_buffer_, kBufferBytes);
       recv_registered_ = false;
     }
     recv_buffer_ = nullptr;
