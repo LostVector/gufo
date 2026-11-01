@@ -14,6 +14,18 @@ allocation and batched target-head review branches are not all included here.
 The old fixed-address host-window limitation is still present until the allocator
 patch is integrated.
 
+## Known integration issue found during the next stage
+
+Do not deploy this base checkpoint as a complete MTP integration. Subsequent
+code inspection found that its legacy TP full-vocabulary draft-head branch
+returns/copies only the token, while the newer upstream caller consumes a
+second confidence word. That branch can therefore report stale confidence.
+The operator tests and basic sum below do not exercise that production branch;
+they remain valid within their stated scope. The optimized integration branch
+is adapting the distributed normalizer and adding focused confidence checks
+before full-model qualification. This is an integration issue, not a diagnosis
+of the operational benchmarked branch, which is preserved separately.
+
 ## Reconciliation
 
 Twenty-nine files conflicted with current upstream. Resolution preserves:
