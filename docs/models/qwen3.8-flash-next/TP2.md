@@ -420,3 +420,11 @@ On both hosts, from one commit (record it and the binary hash):
    after a merge of upstream `main` in late September; not attributed.
 7. **Q8 against an official reference**: Gufo and llama.cpp differ by KL
    about 0.09; which is closer to the original model is open.
+
+
+## Experimental two-row target head
+
+The draft [two-row MTP target-head experiment](TP2_TARGET_HEAD.md) records an
+independent eight-pair decode result, retained startup timing flags, exact-boundary
+GPU failure tests and snapshot/cache checks. It uses a pinned experimental
+confidence-policy baseline; startup qualification remains open.

@@ -233,6 +233,12 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
         rocm::Executor::TwoRankAllReduce(options.communicator, c.hidden_size);
     exec.reduce_status =
         rocm::Executor::TwoRankReduceStatus(options.communicator);
+    exec.abort = [communicator = options.communicator](
+                     const std::string& error) { communicator->Abort(error); };
+    if (options.communicator->SupportsTargetHeadGather()) {
+      exec.target_head_gather =
+          rocm::Executor::TwoRankTargetHeadGather(options.communicator);
+    }
     exec.split_reduce =
         rocm::Executor::TwoRankSplitReduce(options.communicator, c.hidden_size);
   }

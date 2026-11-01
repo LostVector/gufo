@@ -266,9 +266,17 @@ public:
     /// batches that run a layer apart, so each batch's exchange overlaps the
     /// other's computation (see PrefillChunk).
     SplitReduce split_reduce;
+    /// Packed local vocabulary half to complete row-major logits on both
+    /// ranks. Only present after negotiating the target-head operation order.
+    std::function<bool(float*, std::size_t, std::uint32_t, hipStream_t,
+                       std::string*)>
+        target_head_gather;
     /// Called once the stream has drained after sums were queued: false with
     /// the first failure among them. Required with all_reduce under TP.
     std::function<bool(std::string*)> reduce_status;
+    /// A failed distributed GPU forward cannot leave its peer waiting for
+    /// collectives this rank will never enqueue. Not used by cache/sampling.
+    std::function<void(const std::string&)> abort;
     /// Diagnostic observer called with every MoE input and, under TP, every
     /// reduced MoE output, in forward order: a device buffer of rows x hidden
     /// floats pending on the given stream. Null in production; probes set it
@@ -292,6 +300,10 @@ public:
   /// The overlapped form of TwoRankAllReduce.
   [[nodiscard]] static SplitReduce TwoRankSplitReduce(
       std::shared_ptr<Communicator> communicator, std::uint32_t hidden);
+
+  [[nodiscard]] static std::function<bool(float*, std::size_t, std::uint32_t,
+                                          hipStream_t, std::string*)>
+  TwoRankTargetHeadGather(std::shared_ptr<Communicator> communicator);
 
   ~Executor();
   [[nodiscard]] hipStream_t stream() const noexcept { return stream_; }

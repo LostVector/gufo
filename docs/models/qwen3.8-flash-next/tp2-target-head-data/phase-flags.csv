@@ -1,0 +1,14 @@
+pair,baseline,candidate,case,rep,metric,baseline_ms,candidate_ms,delta_ms
+4,pair04-baseline,pair04-candidate,warmup,0,wall_ms,252.20083000021987,285.136627004249,32.935797004029155
+4,pair04-baseline,pair04-candidate,warmup,0,client_ttft_ms,158.78994499507826,192.18510900100227,33.395164005924016
+4,pair04-baseline,pair04-candidate,warmup,0,prefill_ms,149.69437599999998,184.009784,34.31540800000002
+4,pair04-baseline,pair04-candidate,warmup,0,server_ttft_ms,158.317939,191.618257,33.300318000000004
+4,pair04-baseline,pair04-candidate,warmup,0,raw.prefill_ms,149.69437599999998,184.009784,34.31540800000002
+4,pair04-baseline,pair04-candidate,warmup,0,raw.ttft_ms,158.317939,191.618257,33.300318000000004
+6,pair06-baseline,pair06-candidate,warmup,0,raw.cache_snapshot_ms,8.547355,11.723690000000001,3.1763350000000017
+8,pair08-baseline,pair08-candidate,warmup,0,wall_ms,249.82493100105785,285.9494040021673,36.124473001109436
+8,pair08-baseline,pair08-candidate,warmup,0,client_ttft_ms,156.75718600687105,191.361863995553,34.60467798868194
+8,pair08-baseline,pair08-candidate,warmup,0,prefill_ms,148.542781,183.26074599999998,34.71796499999999
+8,pair08-baseline,pair08-candidate,warmup,0,server_ttft_ms,156.247311,190.916867,34.669556
+8,pair08-baseline,pair08-candidate,warmup,0,raw.prefill_ms,148.542781,183.26074599999998,34.71796499999999
+8,pair08-baseline,pair08-candidate,warmup,0,raw.ttft_ms,156.247311,190.916867,34.669556
