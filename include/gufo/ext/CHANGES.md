@@ -1,5 +1,49 @@
 # Extension API changes
 
+## 0.1.10
+
+Text runners gain optional decode-plan agreement, prompt-context transfer and
+state/snapshot reuse veto hooks for mirrored execution. Default implementations
+preserve single-process behavior. `TextRunnerDecode` gains an optional per-member
+draft count; `ChatRequest` retains the original response-format JSON and envelope
+for peer constraint reconstruction. These are additive source contracts; rebuild
+extensions as usual. An optional `TextProvider::create_parallel` factory returns a host-only
+`TextParallelRuntime`: providers own GPU transport and runner creation; serving
+keeps control messages, scheduling and verdicts. `TextParallelTransportOptions`
+contains the existing bootstrap/device/RDMA settings without GPU types.
+
+## 0.1.9
+
+Embeddings (`embeddings.hpp`): `EmbeddingVideoOptions` gains
+`max_soft_tokens`, the per-frame vision budget (default
+`kDefaultVideoSoftTokens`, 140), and `kMaxVideoSoftTokens` bounds a request's
+video soft tokens. Additive; extensions that aggregate-initialize
+`EmbeddingVideoOptions` positionally keep the default.
+
+## 0.1.8
+
+Publish capability-neutral text generation contracts and registries:
+- Runner descriptors declare their sampling preset so omitted HTTP settings
+  retain model-specific defaults after extension loading.
+- Text (`include/gufo/ext/text.hpp`, `src/ext/text.hpp`):
+  `TextRunnerToken`, `TextPromptContext`, `TextPreparedPrompt`,
+  `TextRunnerRamCacheOptions`, `TextRunnerDiskCacheOptions`,
+  `TextExecutionPlanKind`, `TextExecutionPlan`, `TextRunnerCapabilities`,
+  `TextRunnerPersistenceDescriptor`, `TextRunnerDescriptor`,
+  `TextRunnerResourceClaim`, `TextRunnerMeasuredResources`,
+  `TextPrefillStep`, `TextRunnerNgramRows`, `TextDecodeSelection`,
+  `TextDecodeStep`, `TextRunnerState`, `TextRunnerSnapshot`,
+  `TextRunnerAdvance`, `TextRunnerDecode`, `InitialOutputState`,
+  `ChatRole`, `ChatMessage`, `ChatTool`, `ChatRequest`,
+  `TextModelRunner`, `TextRunner`, `HipTextModelRunner`,
+  `TextRunnerOptions`, `TextProvider`,
+  `RegisterTextProvider`, `FindTextProvider`, `ProbeTextProvider`,
+  `Registry::AddTextProvider`.
+- Tool Dialect (`src/ext/text.hpp`):
+  `ToolDialect`, `RegisterToolDialect`, `FindToolDialect`, `AllToolDialects`.
+- Extension migrations for Cards 20–22: Qwen 27B (`qwen`),
+  Qwen3.8 Flash-Next (`qwen38_flash_next`), and DeepSeek V4 Flash (`deepseek_v4_flash`).
+
 ## 0.1.7
 
 Sampling (`sampling.hpp`): `SamplerState` keeps a private `LogitRowScratch`

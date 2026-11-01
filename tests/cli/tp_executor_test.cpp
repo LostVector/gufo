@@ -892,13 +892,14 @@ private:
 /// kTp2CapabilityGaps. Give it its capable value in the check in main too.
 std::vector<std::pair<std::string_view, std::size_t>> CapabilityFields(
     const TextRunnerCapabilities& capabilities) {
-  const auto& [incremental_prefill, snapshot, fork,
+  const auto& [supports_vision, incremental_prefill, snapshot, fork,
                final_token_advance_required, incremental_text_is_exact,
                multi_token_decode, batched_multi_token_decode,
                batched_multi_token_decode_max_width, prefix_reuse,
                in_pass_checkpoint, partial_prefill_retention,
                prefill_rollback] = capabilities;
-  return {{"incremental_prefill", incremental_prefill},
+  return {{"supports_vision", supports_vision},
+          {"incremental_prefill", incremental_prefill},
           {"snapshot", snapshot},
           {"fork", fork},
           {"final_token_advance_required", final_token_advance_required},
@@ -951,6 +952,7 @@ int main() {
   // runner it wraps, apart from the listed gaps.
   {
     const TextRunnerCapabilities every{
+        .supports_vision = true,
         .incremental_prefill = true,
         .snapshot = true,
         .fork = true,

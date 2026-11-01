@@ -38,6 +38,7 @@
 #include "src/cli/serve/sampling_request.hpp"
 #include "src/cli/serve/tp_control.hpp"
 #include "src/core/diagnostics/gpu_queues.h"
+#include "src/core/gguf_reader.hpp"
 #include "src/core/platform/shutdown_signal.hpp"
 
 #if defined(ENGINE_ENABLE_HIP)
@@ -45,9 +46,6 @@
 #endif
 #include "src/cli/serve/audio_buffer.hpp"
 #include "src/cli/serve/trace.hpp"
-#ifdef GUFO_ENABLE_TP2_RDMA
-#include "src/models/qwen38_flash_next/kernels/rocm/verbs.hpp"
-#endif
 #include "src/cli/serve/tts_service.hpp"
 #include "src/cli/serve/video_jobs.hpp"
 #include "src/cli/video/video.hpp"
@@ -1554,7 +1552,7 @@ int RunServe(std::span<const char* const> args) {
           speculative_config.backend != server::TextSpeculativeBackend::kDFlash)
         throw std::invalid_argument("--draft-policy requires DFlash2");
       speculative_config.dflash_policy =
-          speculative::ParseDFlashDraftPolicy(draft_policy);
+          server::speculative::ParseDFlashDraftPolicy(draft_policy);
     } catch (const std::invalid_argument& exception) {
       std::cerr << "Error: " << exception.what() << '\n';
       return 2;
@@ -1618,9 +1616,9 @@ int RunServe(std::span<const char* const> args) {
         .world_size = tp_world_size,
         .hip_device = static_cast<int>(tp_device),
         .auth_token = tp_control_token,
+        .max_draft_tokens = speculative_config.max_draft_tokens,
     };
-    std::shared_ptr<models::qwen38_flash_next::rocm::Communicator>
-        tp_communicator;
+    std::shared_ptr<ext::TextParallelRuntime> tp_communicator;
     std::shared_ptr<server::TpControlChannel> tp_control;
     if (tp_world_size == 2 && tp_rank == 1) {
       // Rank 1 serves nothing and keeps nothing worth saving: stop at once on
@@ -1633,8 +1631,7 @@ int RunServe(std::span<const char* const> args) {
       (void)::sigaction(SIGINT, &stop, nullptr);
     }
     if (tp_world_size == 2) {
-#ifdef GUFO_ENABLE_TP2_RDMA
-      const models::qwen38_flash_next::rocm::IbrverbsConfig rdma_config{
+      const ext::TextParallelTransportOptions rdma_config{
           .rank = tp_rank,
           .world_size = tp_world_size,
           .bootstrap_host = tp_bootstrap_host,
@@ -1648,9 +1645,14 @@ int RunServe(std::span<const char* const> args) {
                                  static_cast<std::uint32_t>(tp_gid_index)),
       };
       std::string tp_error;
-      tp_communicator =
-          models::qwen38_flash_next::rocm::CreateIbrverbsCommunicator(
-              rdma_config, &tp_error);
+      const auto reader = core::GgufReader::OpenFile(model, &tp_error);
+      const auto* provider = reader ? ext::ProbeTextProvider(*reader) : nullptr;
+      if (!provider || !provider->create_parallel) {
+        std::cerr << "Error: selected model has no TP2 transport provider: "
+                  << tp_error << '\n';
+        return 2;
+      }
+      tp_communicator = provider->create_parallel(rdma_config, &tp_error);
       if (!tp_communicator) {
         std::cerr << "Error creating TP2 RDMA communicator: " << tp_error
                   << '\n';
@@ -1670,12 +1672,8 @@ int RunServe(std::span<const char* const> args) {
                   << '\n';
         return 1;
       }
-#else
-      std::cerr << "Error: this build has no TP2 RDMA support\n";
-      return 2;
-#endif
     }
-    tp_config.communicator = tp_communicator;
+    tp_config.runtime = tp_communicator;
     tp_config.control = tp_control;
     std::string err;
     ModelLoadLog load_log("text", model);

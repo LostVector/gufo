@@ -2,7 +2,7 @@
 # it compiles continuation_identity.cpp itself for its own fixture path and
 # a HIP-free compile, instead of linking gufo_serving.
 add_executable(qwen38_flash_next_continuation_identity_test continuation_identity_test.cpp
-  ${PROJECT_SOURCE_DIR}/src/cli/serve/continuation_identity.cpp)
+  ${PROJECT_SOURCE_DIR}/src/models/qwen38_flash_next/continuation_identity.cpp)
 target_include_directories(qwen38_flash_next_continuation_identity_test PRIVATE ${PROJECT_SOURCE_DIR})
 target_compile_definitions(qwen38_flash_next_continuation_identity_test PRIVATE
   GUFO_IDENTITY_FIXTURES="${CMAKE_CURRENT_SOURCE_DIR}/fixtures/continuation_identity")
@@ -46,7 +46,7 @@ if (ENGINE_ENABLE_HIP)
   foreach(name IN ITEMS mtp_ops blaslt_ops hc_mix_ops hc_route_ops gdn_ops
       attention_ops moe_epilogue_ops moe_ids_ops projection_ops routed_wmma_ops
       select_ops snapshot_copy verification_sampling)
-    add_qwen38_flash_next_test(${name} gufo_qwen38_flash_next "hip;gpu;gfx1151")
+    add_qwen38_flash_next_test(${name} gufo_qwen38_flash_next_hip "hip;gpu;gfx1151")
   endforeach()
   # The rope phase and RMS checks compare against the scalar CPU oracle.
   target_link_libraries(qwen38_flash_next_attention_ops_test PRIVATE
@@ -54,26 +54,26 @@ if (ENGINE_ENABLE_HIP)
 
   add_executable(qwen38_flash_next_session_test EXCLUDE_FROM_ALL session_test.cpp)
   target_link_libraries(qwen38_flash_next_session_test PRIVATE gufo_serving
-    gufo_qwen38_flash_next)
+    gufo_qwen38_flash_next_hip)
   add_executable(qwen38_flash_next_snapshot_test EXCLUDE_FROM_ALL snapshot_test.cpp
     device_headroom_fault.cpp)
   target_link_libraries(qwen38_flash_next_snapshot_test PRIVATE
-    gufo_qwen38_flash_next ${CMAKE_DL_LIBS})
+    gufo_qwen38_flash_next_hip ${CMAKE_DL_LIBS})
   add_executable(qwen38_flash_next_continuation_adapter_test EXCLUDE_FROM_ALL
     continuation_adapter_test.cpp reset_submission_fault.cpp)
   target_link_libraries(qwen38_flash_next_continuation_adapter_test PRIVATE
-    gufo_qwen38_flash_next ${CMAKE_DL_LIBS})
+    gufo_qwen38_flash_next_hip ${CMAKE_DL_LIBS})
   add_executable(qwen38_flash_next_continuation_probe EXCLUDE_FROM_ALL
     continuation_probe.cpp)
   target_link_libraries(qwen38_flash_next_continuation_probe PRIVATE
-    gufo_qwen38_flash_next)
+    gufo_qwen38_flash_next_hip)
   add_custom_target(qwen38_flash_next_model_tests
     DEPENDS qwen38_flash_next_session_test qwen38_flash_next_snapshot_test
       qwen38_flash_next_continuation_adapter_test)
 
   add_executable(qwen38_flash_next_tp_probe EXCLUDE_FROM_ALL tp_probe.cpp)
   target_link_libraries(qwen38_flash_next_tp_probe PRIVATE
-    gufo_qwen38_flash_next hip::host)
+    gufo_qwen38_flash_next_hip hip::host)
 
   # Batched-decode probe: the same program on both ranks over one RDMA pair,
   # with no control channel, scheduler or executor.
@@ -81,32 +81,32 @@ if (ENGINE_ENABLE_HIP)
     add_executable(qwen38_flash_next_tp_batched_probe EXCLUDE_FROM_ALL
       tp_batched_probe.cpp)
     target_link_libraries(qwen38_flash_next_tp_batched_probe PRIVATE
-      gufo_qwen38_flash_next hip::host)
+      gufo_qwen38_flash_next_hip hip::host)
   endif()
 
   add_executable(qwen38_flash_next_dense_gemm_bench EXCLUDE_FROM_ALL
     dense_gemm_bench.cpp)
   target_link_libraries(qwen38_flash_next_dense_gemm_bench PRIVATE
-    gufo_qwen38_flash_next hip::host)
+    gufo_qwen38_flash_next_hip hip::host)
 
   add_executable(qwen38_flash_next_hc_mix_bench EXCLUDE_FROM_ALL
     hc_mix_bench.cpp)
   target_link_libraries(qwen38_flash_next_hc_mix_bench PRIVATE
-    gufo_qwen38_flash_next hip::host)
+    gufo_qwen38_flash_next_hip hip::host)
 
   add_executable(qwen38_flash_next_attn_bench EXCLUDE_FROM_ALL attn_bench.cpp)
   target_link_libraries(qwen38_flash_next_attn_bench PRIVATE
-    gufo_qwen38_flash_next hip::host)
+    gufo_qwen38_flash_next_hip hip::host)
 
   add_executable(qwen38_flash_next_decode_attn_bench EXCLUDE_FROM_ALL
     decode_attn_bench.cpp)
   target_link_libraries(qwen38_flash_next_decode_attn_bench PRIVATE
-    gufo_qwen38_flash_next hip::host)
+    gufo_qwen38_flash_next_hip hip::host)
 
   add_executable(qwen38_flash_next_routed_gemm_bench EXCLUDE_FROM_ALL
     routed_gemm_bench.cpp)
   target_link_libraries(qwen38_flash_next_routed_gemm_bench PRIVATE
-    gufo_qwen38_flash_next hip::host)
+    gufo_qwen38_flash_next_hip hip::host)
 
   add_executable(qwen38_flash_next_gpu_probe EXCLUDE_FROM_ALL gpu_probe.cpp
     mtp_audit.cpp)

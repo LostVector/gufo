@@ -179,12 +179,12 @@ void CheckDeviceProbe() {
 
 void CheckExtensionApiVersion() {
   Expect(gufo::ext::kApiMajor == 0 && gufo::ext::kApiMinor == 1 &&
-             gufo::ext::kApiRevision == 7,
-         "API numeric constants match 0.1.7");
-  Expect(gufo::ext::kApiVersion == "0.1.7",
-         "API version literal matches 0.1.7");
-  Expect(gufo::ext::RuntimeApiVersion() == "0.1.7",
-         "Runtime API version matches 0.1.7");
+             gufo::ext::kApiRevision == 10,
+         "API numeric constants match 0.1.10");
+  Expect(gufo::ext::kApiVersion == "0.1.10",
+         "API version literal matches 0.1.10");
+  Expect(gufo::ext::RuntimeApiVersion() == "0.1.10",
+         "Runtime API version matches 0.1.10");
 }
 
 void CheckPlatformLeaves() {
@@ -195,6 +195,11 @@ void CheckPlatformLeaves() {
 }
 
 void CheckModalProviders() {
+  gufo::ext::RegisterTextProvider({.id = "test-text"});
+  Expect(gufo::ext::FindTextProvider("test-text") != nullptr,
+         "registered text provider is discoverable by id");
+  Expect(gufo::ext::FindTextProvider("test-text")->create_parallel == nullptr,
+         "ordinary providers require no parallel transport");
   gufo::ext::RegisterAsrProvider({.id = "test-asr"});
   Expect(gufo::ext::FindAsrProvider("test-asr") != nullptr,
          "find asr provider");
