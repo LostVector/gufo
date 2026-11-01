@@ -19,6 +19,7 @@ gufo_extension_target(
   LINK_LIBRARIES
     gufo_ext_runtime
     gufo_core
+    gufo_qwen_text
     Threads::Threads
 )
 
@@ -86,6 +87,7 @@ gufo_extension_target(
     provider.cpp
   LINK_LIBRARIES
     gufo_qwen38_flash_next
+    gufo_qwen_vision
     gufo_cache_hip
     gufo_qwen38_flash_next_mmq
     gufo_compare
