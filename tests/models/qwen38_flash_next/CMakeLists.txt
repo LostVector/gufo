@@ -51,6 +51,8 @@ if (ENGINE_ENABLE_HIP)
       select_ops snapshot_copy verification_sampling)
     add_qwen38_flash_next_test(${name} gufo_qwen38_flash_next_hip "hip;gpu;gfx1151")
   endforeach()
+  target_link_libraries(qwen38_flash_next_mtp_ops_test PRIVATE
+    gufo_qwen_kernels)
   # The rope phase and RMS checks compare against the scalar CPU oracle.
   target_link_libraries(qwen38_flash_next_attention_ops_test PRIVATE
     gufo_qwen38_flash_next_reference)

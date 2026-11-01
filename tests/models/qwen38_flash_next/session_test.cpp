@@ -1780,10 +1780,13 @@ void CheckServingSampling(const std::shared_ptr<qfn::Model>& model) {
   using Backend = server::InferenceBackend;
   Backend ar, mtp;
   std::string error;
-  Require(ar.load(model, &error, 6145, 2), error);
+  Require(ar.load(qfn::CreateQwenFlashNextTextRunner(model, 6145), &error, 2),
+          error);
   server::TextSpeculativeConfig options;
   options.backend = server::TextSpeculativeBackend::kMtp;
-  Require(mtp.load(model, &error, 6145, 2, {}, {}, options), error);
+  Require(mtp.load(qfn::CreateQwenFlashNextTextRunner(model, 6145, options),
+                   &error, 2),
+          error);
   struct Reference {
     gufo::test::SamplingCase test;
     std::string prompt;
