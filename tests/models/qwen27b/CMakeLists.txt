@@ -24,13 +24,16 @@ if (ENGINE_ENABLE_HIP)
   add_qwen27b_test(qwen_sampling_hip_test sampling_test.hip
     "hip;gpu;sampling;correctness")
   target_link_libraries(qwen_sampling_hip_test PRIVATE hip::host)
-  add_test(NAME qwen27b.cli-options COMMAND ${Python3_EXECUTABLE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/cli_test.py $<TARGET_FILE:gufo> --scope options)
-  set_tests_properties(qwen27b.cli-options PROPERTIES LABELS "qwen27b;cpu;cli")
-  add_test(NAME qwen27b.cli COMMAND ${Python3_EXECUTABLE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/cli_test.py $<TARGET_FILE:gufo>)
-  set_tests_properties(qwen27b.cli PROPERTIES
-    LABELS "qwen27b;gpu;hip;cli;external-model" SKIP_RETURN_CODE 77)
+  # The CLI tests drive the gufo binary, which Windows does not build yet.
+  if (TARGET gufo)
+    add_test(NAME qwen27b.cli-options COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/cli_test.py $<TARGET_FILE:gufo> --scope options)
+    set_tests_properties(qwen27b.cli-options PROPERTIES LABELS "qwen27b;cpu;cli")
+    add_test(NAME qwen27b.cli COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/cli_test.py $<TARGET_FILE:gufo>)
+    set_tests_properties(qwen27b.cli PROPERTIES
+      LABELS "qwen27b;gpu;hip;cli;external-model" SKIP_RETURN_CODE 77)
+  endif()
   add_qwen27b_test(qwen27b_target_test target_test.cpp
     "gpu;hip;target;external-model")
   add_qwen27b_test(qwen_mtp_gpu_test mtp_test.cpp "gpu;hip;mtp;external-model")
@@ -50,11 +53,16 @@ if (ENGINE_ENABLE_HIP)
     ${PROJECT_SOURCE_DIR}/src/cli/serve/component_text_cache.cpp
     ${PROJECT_SOURCE_DIR}/src/cli/serve/text_model_runner.cpp
     ${PROJECT_SOURCE_DIR}/src/cli/serve/text_generation_scheduler.cpp
-    ${PROJECT_SOURCE_DIR}/src/cli/serve/tp_executor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cli/serve/tp_disk_store.cpp
     ${PROJECT_SOURCE_DIR}/src/cli/serve/inference_backend.cpp)
   target_link_libraries(qwen_serving_test_support PUBLIC gufo_logging
-    gufo_core gufo_deepseek_v4_flash gufo_qwen38_flash_next gufo_cache_hip gufo_tp_control hip::host)
+    gufo_core gufo_deepseek_v4_flash gufo_qwen38_flash_next gufo_cache_hip hip::host)
+  if(NOT WIN32)
+    target_sources(qwen_serving_test_support PRIVATE
+      ${PROJECT_SOURCE_DIR}/src/cli/serve/tp_executor.cpp
+      ${PROJECT_SOURCE_DIR}/src/cli/serve/tp_disk_store.cpp)
+    target_link_libraries(qwen_serving_test_support PUBLIC gufo_tp_control)
+    target_compile_definitions(qwen_serving_test_support PRIVATE GUFO_HAS_TP2_CONTROL=1)
+  endif()
   add_executable(inference_backend_gpu_test serving_test.cpp)
   target_link_libraries(inference_backend_gpu_test PRIVATE qwen_serving_test_support)
   add_executable(qwen_vision_serving_test ../qwen/vision_serving_test.cpp)

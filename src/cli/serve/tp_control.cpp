@@ -32,10 +32,7 @@ namespace gufo::server {
 namespace {
 
 constexpr std::uint32_t kMagic = 0x54504331U;  // "TPC1"
-constexpr std::uint16_t kVersion = 21;         // reasoning budgets, prefill
-                                               // lookahead, the control token
-                                               // proven by HMAC, and mirrored
-                                               // decode draft counts
+constexpr std::uint16_t kVersion = 22;         // includes logprobs settings
 constexpr std::uint16_t kHello = 1;
 constexpr std::uint16_t kCommand = 2;
 constexpr std::uint16_t kResponse = 3;
@@ -181,7 +178,8 @@ bool ReadU64(std::span<const std::uint8_t> data, std::size_t* offset,
 
 [[nodiscard]] bool IsDefaultSampling(const sampling::SamplingConfig& config) {
   const sampling::SamplingConfig defaults;
-  return config.temperature == defaults.temperature &&
+  return config.logprobs == defaults.logprobs &&
+         config.temperature == defaults.temperature &&
          config.top_k == defaults.top_k && config.top_p == defaults.top_p &&
          config.min_p == defaults.min_p &&
          config.min_keep == defaults.min_keep && config.seed == defaults.seed &&
@@ -889,6 +887,8 @@ bool TpControlChannel::SendCommand(const TpControlCommand& command,
     AppendU64(&payload, config.repeat_last_n);
     AppendU32(&payload, FloatBits(config.frequency_penalty));
     AppendU32(&payload, FloatBits(config.presence_penalty));
+    // Zero means absent; one represents an explicitly requested zero.
+    AppendU32(&payload, config.logprobs ? *config.logprobs + 1U : 0U);
     // Request flags: bit 0 constrained decoding, bit 1 decoding past EOS,
     // bit 2 the constraint's source follows, bit 3 the reasoning budget
     // follows it.
@@ -1023,6 +1023,7 @@ bool TpControlChannel::ReceiveCommand(TpControlCommand* command,
     std::uint64_t repeat_last_n = 0;
     std::uint32_t frequency_penalty = 0;
     std::uint32_t presence_penalty = 0;
+    std::uint32_t logprobs = 0;
     std::uint32_t flags = 0;
     if (!ReadU32(command_prompt_, &offset, &temperature, error) ||
         !ReadU32(command_prompt_, &offset, &top_k, error) ||
@@ -1034,9 +1035,14 @@ bool TpControlChannel::ReceiveCommand(TpControlCommand* command,
         !ReadU64(command_prompt_, &offset, &repeat_last_n, error) ||
         !ReadU32(command_prompt_, &offset, &frequency_penalty, error) ||
         !ReadU32(command_prompt_, &offset, &presence_penalty, error) ||
+        !ReadU32(command_prompt_, &offset, &logprobs, error) ||
         !ReadU32(command_prompt_, &offset, &flags, error)) {
       return reject("TP control request sampling is truncated");
     }
+    if (logprobs > 21)
+      return reject("TP control request logprobs is invalid");
+    if (logprobs != 0)
+      config.logprobs = logprobs - 1;
     if (flags > 15 || ((flags & 4U) != 0 && (flags & 1U) == 0)) {
       return reject("TP control request flags are invalid");
     }

@@ -1,7 +1,5 @@
 #include "src/cli/serve/serve.hpp"
 
-#include <unistd.h>
-
 #include <algorithm>
 #include <atomic>
 #include <charconv>
@@ -39,6 +37,7 @@
 #include "src/cli/serve/sampling_request.hpp"
 #include "src/cli/serve/tp_control.hpp"
 #include "src/core/diagnostics/gpu_queues.h"
+#include "src/core/platform/shutdown_signal.hpp"
 
 #if defined(ENGINE_ENABLE_HIP)
 #include <hip/hip_runtime_api.h>
@@ -80,6 +79,10 @@ public:
         << std::chrono::duration_cast<std::chrono::milliseconds>(
                std::chrono::steady_clock::now() - start_)
                .count()
+        << " monotonic_us="
+        << std::chrono::duration_cast<std::chrono::microseconds>(
+               std::chrono::steady_clock::now().time_since_epoch())
+               .count()
         << ' ' << details << ' ' << server::Logger::MemoryStatus();
 #if defined(ENGINE_ENABLE_HIP)
     std::size_t free = 0, total = 0;
@@ -99,50 +102,8 @@ private:
   bool completed_{false};
 };
 
-// Reports a fatal signal on the way out. A driver or runtime failure during a
-// load can abort the process outright, which runs no destructor and no
-// terminate handler, leaving a log that stops at event=load_started. Only
-// async-signal-safe calls are allowed here, so the line is assembled by hand
-// and written straight to the descriptor.
-extern "C" void ReportFatalSignal(int number) {
-  static constexpr char kPrefix[] =
-      "[ERROR] [server] event=fatal_signal signal=";
-  char digits[8];
-  std::size_t length = 0;
-  int value = number;
-  if (value <= 0) {
-    digits[length++] = '0';
-  } else {
-    char reversed[8];
-    std::size_t count = 0;
-    while (value > 0 && count < sizeof(reversed)) {
-      reversed[count++] = static_cast<char>('0' + (value % 10));
-      value /= 10;
-    }
-    while (count > 0) {
-      digits[length++] = reversed[--count];
-    }
-  }
-  (void)::write(STDERR_FILENO, kPrefix, sizeof(kPrefix) - 1);
-  (void)::write(STDERR_FILENO, digits, length);
-  (void)::write(STDERR_FILENO, "\n", 1);
-  // Restore the default action and re-raise, so the exit status and any core
-  // dump still describe the original fault.
-  struct sigaction restore{};
-  restore.sa_handler = SIG_DFL;
-  (void)::sigemptyset(&restore.sa_mask);
-  (void)::sigaction(number, &restore, nullptr);
-  (void)::raise(number);
-}
-
 void InstallFatalSignalReporter() {
-  struct sigaction action{};
-  action.sa_handler = ReportFatalSignal;
-  (void)::sigemptyset(&action.sa_mask);
-  action.sa_flags = SA_RESETHAND;
-  for (const int number : {SIGABRT, SIGSEGV, SIGBUS, SIGILL, SIGFPE}) {
-    (void)::sigaction(number, &action, nullptr);
-  }
+  platform::InstallFatalSignalReporter();
 }
 
 // Installs a terminate handler that names the reason before the process dies.
@@ -247,6 +208,25 @@ constexpr std::string_view kVerboseHelp = "Shorthand for --log-level=debug";
 constexpr std::string_view kTraceHelp =
     "Append text request bodies, rendered prompts, generated text and replies "
     "to PATH as JSON Lines; the file holds client content";
+
+void AddCacheRamOption(gufo::cli::ArgParser& parser,
+                       server::TextRunnerRamCacheOptions* target) {
+  parser.AddCustomOption(
+      "", "--cache-ram-bytes", "N|off",
+      "Retained RAM-cache byte budget (default: 0 = auto: half of free "
+      "RAM, at most 32 GiB; explicit values may use free RAM minus 4 GiB). "
+      "off keeps no RAM checkpoints and commits no cache memory; "
+      "sessions still reuse their own live state, and --cache-disk still "
+      "works (Qwen and Flash-Next then use up to 512 MiB of backing for "
+      "disk captures)",
+      "Cache",
+      [target](std::string_view, std::string_view value, std::string* error) {
+        const auto parsed = server::ParseRamCacheOption(value, error);
+        if (parsed)
+          *target = *parsed;
+        return parsed.has_value();
+      });
+}
 
 void AddServerOptions(gufo::cli::ArgParser& parser, std::string* host,
                       int* port, std::size_t* session_count,
@@ -527,12 +507,17 @@ void AddSpeechOptions(ArgParser& parser, bool tts, SpeechOptions* options) {
 }
 
 void AddEmbeddingOptions(ArgParser& parser, std::filesystem::path* model,
-                         std::string* served_model_name) {
+                         std::string* served_model_name,
+                         std::string* default_prompt_name) {
   parser.AddOption("-m", "--model", "DIR", "EmbeddingGemma 2 model directory",
                    "Model", model);
   parser.AddOption("", "--served-model-name", "NAME",
                    "Public API model ID (default: embeddinggemma-2)", "Model",
                    served_model_name);
+  parser.AddOption("", "--default-prompt-name", "NAME",
+                   "Checkpoint prompt for text inputs without prompt_name "
+                   "(default: none)",
+                   "Model", default_prompt_name);
 }
 
 }  // namespace
@@ -556,9 +541,11 @@ void PrintServeHelp(std::string_view program_name,
   if (subcommand == "embedding") {
     std::filesystem::path model;
     std::string name = "embeddinggemma-2";
-    ArgParser parser(std::string(program_name) + " serve embedding",
-                     "Serve EmbeddingGemma 2 text and image embeddings.");
-    AddEmbeddingOptions(parser, &model, &name);
+    std::string default_prompt_name;
+    ArgParser parser(
+        std::string(program_name) + " serve embedding",
+        "Serve EmbeddingGemma 2 text, image and audio embeddings.");
+    AddEmbeddingOptions(parser, &model, &name, &default_prompt_name);
     ServerOptionHelpTargets server_help;
     AddServerOptionsForHelp(parser, &server_help, false);
     parser.PrintHelp();
@@ -634,7 +621,7 @@ void PrintServeHelp(std::string_view program_name,
         server::kDefaultMaxBufferedOutputBytes;
     std::size_t max_buffered_output_bytes_total =
         server::kDefaultMaxBufferedOutputBytesTotal;
-    std::size_t cache_ram_bytes = 0;
+    server::TextRunnerRamCacheOptions cache_ram;
     std::filesystem::path cache_disk_directory;
     std::size_t cache_disk_bytes =
         server::TextRunnerDiskCacheOptions::kDefaultCapacityBytes;
@@ -785,12 +772,7 @@ void PrintServeHelp(std::string_view program_name,
         "", "--max-buffered-output-total", "N",
         "Maximum queued stream bytes across requests (default: 262144)",
         "Scheduling", &max_buffered_output_bytes_total);
-    parser.AddOption(
-        "", "--cache-ram-bytes", "N",
-        "Retained RAM-cache byte budget (default: 0 = auto: half of free "
-        "RAM, at most 32 GiB; explicit values may use free RAM minus 4 GiB). "
-        "Flash-Next pins it about 1 GiB at a time as captures need it",
-        "Cache", &cache_ram_bytes);
+    AddCacheRamOption(parser, &cache_ram);
     parser.AddOption("", "--cache-disk", "DIR",
                      "Opt-in restart-safe continuation cache directory "
                      "(Flash-Next: owned by one process)",
@@ -832,7 +814,7 @@ void PrintServeHelp(std::string_view program_name,
       << "  tts       Serve Qwen3-TTS speech synthesis (/v1/audio/speech)\n"
       << "  asr       Serve Qwen3-ASR transcription "
          "(/v1/audio/transcriptions)\n"
-      << "  embedding Serve EmbeddingGemma 2 text and image embeddings "
+      << "  embedding Serve EmbeddingGemma 2 text, image and audio embeddings "
          "(/v1/embeddings)\n\n"
       << "Server:\n"
       << "  -i, --host <IP>        Bind address (default: 127.0.0.1)\n"
@@ -1025,9 +1007,11 @@ int RunServe(std::span<const char* const> args) {
   if (subcommand == "embedding") {
     std::filesystem::path model;
     std::string name = "embeddinggemma-2";
-    ArgParser parser("gufo serve embedding",
-                     "Serve EmbeddingGemma 2 text and image embeddings.");
-    AddEmbeddingOptions(parser, &model, &name);
+    std::string default_prompt_name;
+    ArgParser parser(
+        "gufo serve embedding",
+        "Serve EmbeddingGemma 2 text, image and audio embeddings.");
+    AddEmbeddingOptions(parser, &model, &name, &default_prompt_name);
     add_server_options(parser, false);
     if (!parser.Parse(sub_args, &parse_err)) {
       std::cerr << "Error: " << parse_err << '\n';
@@ -1044,12 +1028,21 @@ int RunServe(std::span<const char* const> args) {
       return 2;
     }
     ModelLoadLog load_log("embedding_gemma2", model);
+    std::map<std::string, std::string> prompts;
+    std::string prompts_error;
+    if (!server::LoadSentenceTransformerPrompts(model, &prompts,
+                                                &prompts_error)) {
+      std::cerr << "Error: " << prompts_error << '\n';
+      return 1;
+    }
     try {
       embeddings = std::make_shared<server::EmbeddingService>(
           server::EmbeddingServiceOptions{
               .model_root = model,
               .validate_model = true,
               .model_id = name,
+              .prompts = std::move(prompts),
+              .default_prompt_name = default_prompt_name,
               .runner = {},
           });
     } catch (const std::exception& error) {
@@ -1277,7 +1270,7 @@ int RunServe(std::span<const char* const> args) {
         server::kDefaultMaxBufferedOutputBytes;
     std::size_t max_buffered_output_bytes_total =
         server::kDefaultMaxBufferedOutputBytesTotal;
-    std::size_t cache_ram_bytes = 0;
+    server::TextRunnerRamCacheOptions cache_ram;
     std::filesystem::path cache_disk_directory;
     std::size_t cache_disk_bytes =
         server::TextRunnerDiskCacheOptions::kDefaultCapacityBytes;
@@ -1437,12 +1430,7 @@ int RunServe(std::span<const char* const> args) {
         "", "--max-buffered-output-total", "N",
         "Maximum queued stream bytes across requests (default: 262144)",
         "Scheduling", &max_buffered_output_bytes_total);
-    llm_parser.AddOption(
-        "", "--cache-ram-bytes", "N",
-        "Retained RAM-cache byte budget (default: 0 = auto: half of free "
-        "RAM, at most 32 GiB; explicit values may use free RAM minus 4 GiB). "
-        "Flash-Next pins it about 1 GiB at a time as captures need it",
-        "Cache", &cache_ram_bytes);
+    AddCacheRamOption(llm_parser, &cache_ram);
     llm_parser.AddOption("", "--cache-disk", "DIR",
                          "Opt-in restart-safe continuation cache directory "
                          "(Flash-Next: owned by one process)",
@@ -1631,6 +1619,7 @@ int RunServe(std::span<const char* const> args) {
     std::shared_ptr<models::qwen38_flash_next::rocm::Communicator>
         tp_communicator;
     std::shared_ptr<server::TpControlChannel> tp_control;
+#if defined(GUFO_HAS_TP2_CONTROL)
     if (tp_world_size == 2 && tp_rank == 1) {
       // Rank 1 serves nothing and keeps nothing worth saving: stop at once on
       // SIGINT or SIGTERM, also while loading. As a container's PID 1 it
@@ -1641,6 +1630,7 @@ int RunServe(std::span<const char* const> args) {
       (void)::sigaction(SIGTERM, &stop, nullptr);
       (void)::sigaction(SIGINT, &stop, nullptr);
     }
+#endif
     if (tp_world_size == 2) {
 #ifdef GUFO_ENABLE_TP2_RDMA
       const models::qwen38_flash_next::rocm::IbrverbsConfig rdma_config{
@@ -1725,9 +1715,7 @@ int RunServe(std::span<const char* const> args) {
             .staging_capacity_bytes = cache_disk_staging_bytes,
             .model_artifact_fingerprint = {},
         },
-        vision_model_path,
-        server::TextRunnerRamCacheOptions{.capacity_bytes = cache_ram_bytes},
-        tp_config, enable_yarn);
+        vision_model_path, cache_ram, tp_config, enable_yarn);
     if (loading) {
       loading->stop();
     }

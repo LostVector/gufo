@@ -14,9 +14,11 @@ void AssignError(std::string* error, const char* message) {
   }
 }
 
-bool OwnF16(hipDataType type, int m, int k) {
-  // m == 48 is a TP2 rank's half of the recurrent gates.
-  return type == HIP_R_16F && k == 2560 && (m == 96 || m == 48 || m == 513);
+bool OwnF16(hipDataType type, int k) {
+  // Every F16 projection of the hidden row (router, GDN alpha/beta at any
+  // expert count): library plans are chosen per token count, so a row's
+  // logits would depend on its pass width.
+  return type == HIP_R_16F && k == 2560;
 }
 
 bool OwnBf16(hipDataType type, int m, int k) {
@@ -138,7 +140,7 @@ bool BlasLt::Gemm(const void* weights, const void* input, float* out,
   // Library edge tiles change the accumulation order when the same token
   // moves within a batch. Router and recurrent-gate errors then amplify across
   // layers. Keep one K reduction for every row and prefill chunk size.
-  if (OwnF16(type, m, k)) {
+  if (OwnF16(type, k)) {
     return UnquantizedF16Gemm(weights, static_cast<const __half*>(input), out,
                               n, m, k, stream_);
   }
@@ -159,7 +161,7 @@ bool BlasLt::Prepare(hipDataType type, int m, int n, int k,
     AssignError(error, "hipBLASLt dimensions must be positive");
     return false;
   }
-  return OwnF16(type, m, k) || OwnBf16(type, m, k) ||
+  return OwnF16(type, k) || OwnBf16(type, m, k) ||
          FindPlan(type, m, n, k, error) != nullptr;
 }
 
@@ -175,7 +177,7 @@ BlasLt::Plan* BlasLt::FindPlan(hipDataType type, int m, int n, int k,
 }
 
 bool BlasLt::UsesOwnKernel(hipDataType type, int m, int k) {
-  return OwnF16(type, m, k) || OwnBf16(type, m, k);
+  return OwnF16(type, k) || OwnBf16(type, m, k);
 }
 
 bool BlasLt::LibraryGemm(const void* weights, const void* input, float* out,

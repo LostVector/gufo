@@ -280,6 +280,10 @@ public:
       const ChatRequest&) const override {
     return std::nullopt;
   }
+  [[nodiscard]] std::optional<std::string> RenderPrompt(
+      const ChatRequest&) const override {
+    return "toy rendered prompt";
+  }
   [[nodiscard]] std::string Decode(
       std::span<const TextRunnerToken> tokens) const override {
     std::string text;
@@ -936,6 +940,8 @@ int main() {
   {
     auto toy = std::make_shared<ToyRunner>(ToyOptions{});
     const TpMirroredRunner runner(toy, std::make_shared<CaptureSink>());
+    Require(runner.RenderPrompt(ChatRequest{}) == "toy rendered prompt",
+            "TP runner forwards rendered prompts");
     using Status = TextModelRunner::DeviceProbeStatus;
     for (const auto status :
          {Status::kUsable, Status::kPending, Status::kLost}) {

@@ -317,6 +317,14 @@ bool Model::HasMtp() const noexcept {
   return device_->has_mtp();
 }
 
+std::size_t Model::ExpandedQ8_0Tensors() const noexcept {
+  std::size_t count = 0;
+  for (const LayerWeights& layer : weights_->layers) {
+    count += qwen38_flash_next::ExpandedQ8_0Tensors(layer);
+  }
+  return count;
+}
+
 bool Model::InDraftSubset(std::int32_t token) const {
   return token >= 0 && (static_cast<std::uint32_t>(token) < kMtpDraftVocab ||
                         tokenizer_->IsSpecialToken(
@@ -722,6 +730,9 @@ bool Session::DraftCatchUp(std::int32_t next_token, bool propose,
   if (!exec.MtpForward(
           *session_, replay, hidden_row,
           {.token = propose && candidates == nullptr ? &draft_token_ : nullptr,
+           .confidence = model_->options_.tp_world_size == 1
+                             ? &draft_confidence_
+                             : nullptr,
            .candidates = candidates,
            .kv_only = !propose,
            .draft_subset = draft_subset},
@@ -949,6 +960,9 @@ struct Session::PendingDecode {
   bool gpu_greedy{false};
   bool gpu_verification{false};
   std::size_t width{0};
+  /// The chain stops after a proposal below its gate (GateStops).
+  bool gated{false};
+  float draft_confidence{1.0F};
   std::optional<sampling::SamplerState> draft_sampler;
   std::uint64_t draft_rng{0};
   MtpCandidateLogits candidates;
@@ -964,6 +978,14 @@ struct Session::PendingDecode {
   std::size_t lookup_cap{0};
   std::uint32_t policy_concurrency{0};
 };
+
+bool Session::GateStops(const PendingDecode& pending) {
+  if (!pending.gated)
+    return false;
+  return pending.sampled
+             ? pending.proposals.back().probability < kMtpSampledGateProbability
+             : pending.draft_confidence < kMtpGateProbability;
+}
 
 void Session::AppendDraft(PendingDecode& pending) {
   if (pending.sampled) {
@@ -1056,28 +1078,34 @@ bool Session::PrepareDecode(const DecodeRequest& request,
   pending->policy_concurrency = MtpPolicyConcurrency(
       sampler.config().uses_random_sampling(), sampler.config().seed >= 0,
       batch_drafts.has_value(), occupancy);
-  // A forced draft count (a TP2 rank 0's mirrored choice, made by PlanDecode
-  // at the same price) overrides the session's own acceptance-history policy,
-  // so both ranks run cycles of the same width even when their histories
-  // have drifted apart.
+  // A peer's plan fixes the maximum width on both ranks.
   const auto& forced = request.drafts ? request.drafts : batch_drafts;
-  const std::size_t width =
-      MtpEnabled() && cap > 1
-          ? 1 + (forced ? std::min<std::uint32_t>(*forced, cap - 1)
-                        : draft_length_.Choose(
-                              static_cast<std::uint32_t>(cap - 1),
-                              static_cast<std::uint32_t>(tokens_.size()),
-                              pending->policy_concurrency))
-          : cap;
+  std::uint32_t drafts = 0;
+  if (MtpEnabled() && cap > 1) {
+    drafts = forced ? std::min<std::uint32_t>(*forced, cap - 1)
+                    : draft_length_.Choose(
+                          static_cast<std::uint32_t>(cap - 1),
+                          static_cast<std::uint32_t>(tokens_.size()),
+                          pending->policy_concurrency);
+    if (model_->options_.tp_world_size == 1 && !forced && drafts != 0)
+      drafts = std::min<std::uint32_t>(static_cast<std::uint32_t>(cap - 1),
+                                       model_->options_.max_draft_tokens);
+  }
+  const std::size_t width = MtpEnabled() && cap > 1 ? 1 + drafts : cap;
   if (width == 0) {
     result->stop = true;
     return true;
   }
   const auto anchor = static_cast<std::int32_t>(sampler.Sample(logits_));
+  auto anchor_logprobs =
+      sampling::CollectLogprobs(logits_, anchor, sampler.config().logprobs);
   if (is_stop(anchor)) {
+    result->terminal_logprobs = std::move(anchor_logprobs);
     result->stop = true;
     return true;
   }
+  if (anchor_logprobs)
+    result->logprobs.push_back(std::move(*anchor_logprobs));
   if (!MtpEnabled() || width < 2) {
     if (MtpEnabled() && !defer_head &&
         !DraftCatchUp(anchor, false, error_msg)) {
@@ -1102,6 +1130,9 @@ bool Session::PrepareDecode(const DecodeRequest& request,
   pending->chain = {anchor};
   pending->draft = draft_token_;
   pending->width = width;
+  // Confidence is computed locally and can straddle the threshold across
+  // ranks; a forced plan must keep both collective sequences identical.
+  pending->gated = model_->options_.tp_world_size == 1;
   pending->base = base;
   pending->speculative = true;
   pending->sampled = sampled;
@@ -1136,24 +1167,27 @@ bool Session::PrepareDecode(const DecodeRequest& request,
   // Keep the established costs within two blocks of the remaining budget.
   // Full target rows (for example, active tool constraints) also keep their
   // original costs; the smaller-head curve does not price their transfers.
+  // With a confidence gate the curve only prices AR backoff (FinishDecode).
+  // Without one, it also selects the unplanned chain width.
   pending->sampled_subset_cost =
       sampled && gpu_verification && pending->draft_subset &&
       std::min(max_tokens, room) > 2 * exec.max_speculative();
-  if (pending->sampled_subset_cost && !forced) {
-    // Price the head actually used, after vocabulary fallback and the copy
-    // bypass. The policy depends only on committed history, not timings. A
-    // forced count (a batch plan, or a TP2 rank 0's choice) stands: rank 1
-    // must run the width rank 0 chose, not one from its own history.
+  if (!pending->gated && pending->sampled_subset_cost && !forced) {
+    // Without the confidence gate, price the smaller head after the anchor
+    // establishes that it is actually usable, as the TP2 controller did
+    // before the gate was introduced.
     pending->width =
         1 + draft_length_.Choose(static_cast<std::uint32_t>(cap - 1), base,
                                  pending->policy_concurrency, true);
   }
+
   if (!defer_head && !DraftCatchUp(anchor, true, error_msg,
                                    sampled ? &pending->candidates : nullptr,
                                    pending->draft_subset)) {
     return false;
   }
   pending->draft = draft_token_;
+  pending->draft_confidence = draft_confidence_;
   if (!defer_head) {
     while (pending->chain.size() < pending->width) {
       AppendDraft(*pending);
@@ -1164,10 +1198,16 @@ bool Session::PrepareDecode(const DecodeRequest& request,
       if (AppendLookup(*pending, stop_at_eos)) {
         break;
       }
+      if (GateStops(*pending)) {
+        pending->width = pending->chain.size();
+        break;
+      }
       if (pending->chain.size() < pending->width &&
           !exec.MtpForward(
               *session_, std::span<const std::int32_t>(&pending->draft, 1), -1,
               {.token = sampled ? nullptr : &pending->draft,
+               .confidence =
+                   pending->gated ? &pending->draft_confidence : nullptr,
                .candidates = sampled ? &pending->candidates : nullptr,
                .draft_subset = pending->draft_subset},
               error_msg)) {
@@ -1213,6 +1253,7 @@ bool Session::FinishDecode(const DecodeRequest& request,
   }
   std::uint32_t keep = 1;
   std::optional<std::int32_t> correction;
+  std::optional<std::int32_t> stop_token;
   bool cpu_rows = false;
   const auto download_remaining = [&](std::uint32_t first) {
     verify_logits_.resize(exec.max_speculative() * vocab);
@@ -1255,6 +1296,7 @@ bool Session::FinishDecode(const DecodeRequest& request,
         continue;
       }
       if (is_stop(prediction.index)) {
+        stop_token = prediction.index;
         result->stop = true;
         break;
       }
@@ -1279,6 +1321,7 @@ bool Session::FinishDecode(const DecodeRequest& request,
       const auto token = static_cast<std::int32_t>(verified.token);
       const bool accepted = verified.accepted;
       if (is_stop(token)) {
+        stop_token = token;
         result->stop = true;
         break;
       }
@@ -1295,9 +1338,29 @@ bool Session::FinishDecode(const DecodeRequest& request,
                                       chain[keep], sampler, is_stop);
     if (decision != DraftDecision::kAccept) {
       result->stop = decision == DraftDecision::kStop;
+      if (result->stop && sampler.config().logprobs) {
+        auto copy = sampler;
+        stop_token = static_cast<std::int32_t>(
+            copy.Sample(std::span<const float>(verify_logits_)
+                            .subspan((keep - 1) * vocab, vocab)));
+      }
       break;
     }
     ++keep;
+  }
+  if (sampler.config().logprobs) {
+    const auto rows = keep - 1 + (stop_token ? 1 : 0);
+    std::vector<float> raw(rows * vocab);
+    if (rows && !exec.ReadVerificationRows(0, raw, error_msg))
+      return false;
+    for (std::uint32_t i = 1; i < keep; ++i)
+      result->logprobs.push_back(*sampling::CollectLogprobs(
+          std::span<const float>(raw).subspan((i - 1) * vocab, vocab), chain[i],
+          sampler.config().logprobs));
+    if (stop_token)
+      result->terminal_logprobs = sampling::CollectLogprobs(
+          std::span<const float>(raw).subspan((keep - 1) * vocab, vocab),
+          *stop_token, sampler.config().logprobs);
   }
   if (!exec.Rollback(
           *session_, keep, error_msg,
@@ -1652,10 +1715,13 @@ bool Session::DecodeBatchImpl(std::span<const DecodeRequest> requests,
       auto& p = pending[i];
       if (!requests[i].session->session_->Cancelled() && p.speculative &&
           p.chain.size() < p.width) {
-        heads.push_back({requests[i].session->session_.get(),
-                         {.token = p.sampled ? nullptr : &p.draft,
-                          .candidates = p.sampled ? &p.candidates : nullptr,
-                          .draft_subset = p.draft_subset}});
+        heads.push_back(
+            {requests[i].session->session_.get(),
+             {.token = p.sampled ? nullptr : &p.draft,
+              .confidence =
+                  p.sampled || !p.gated ? nullptr : &p.draft_confidence,
+              .candidates = p.sampled ? &p.candidates : nullptr,
+              .draft_subset = p.draft_subset}});
       }
     }
     if (heads.empty())
@@ -1676,6 +1742,17 @@ bool Session::DecodeBatchImpl(std::span<const DecodeRequest> requests,
       }
       if (session.AppendLookup(p, requests[i].stop_at_eos))
         continue;
+      if (GateStops(p)) {
+        if (batch_drafts && !p.sampled &&
+            p.draft_confidence < kMtpBatchDropProbability) {
+          // Without proposals left the anchor decodes as an ordinary step;
+          // the catch-up already wrote its predictor row.
+          p.chain.pop_back();
+          p.speculative = p.chain.size() > 1;
+        }
+        p.width = p.chain.size();
+        continue;
+      }
       if (p.chain.size() < p.width)
         bodies.push_back({requests[i].session->session_.get(),
                           std::span<const std::int32_t>(&p.draft, 1), -1});

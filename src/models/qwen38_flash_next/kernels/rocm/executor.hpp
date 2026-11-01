@@ -369,6 +369,8 @@ public:
   /// when only the draft state is needed.
   struct MtpOutput {
     std::int32_t* token{nullptr};
+    /// With `token`: the draft head's softmax probability of it.
+    float* confidence{nullptr};
     MtpCandidateLogits* candidates{nullptr};
     MtpTrace* trace{nullptr};  ///< final-row diagnostic; disables graph capture
     /// Prefill and headless steps need only persistent KV. A full forward with
@@ -619,6 +621,8 @@ private:
                  bool project_output = true,
                  std::uint32_t checkpoint_tokens = 0) const;
   /// Without `reduce`, a distributed rank's output stays its partial.
+  /// Orders the main stream after the work queued on side_stream_.
+  bool JoinSide(std::string* error_msg) const;
   bool Moe(const DeviceLayer& l, const float* x, float* out,
            std::uint32_t n_tokens, std::string* error_msg,
            bool last_only = false, bool reduce = true) const;
@@ -649,7 +653,7 @@ private:
   /// With `draft`, the logits come from that session's small head and the
   /// returned IDs are remapped to token IDs.
   bool MtpHead(const DeviceMixer& head, const float* res, bool token,
-               bool candidates, const Session* draft,
+               bool confidence, bool candidates, const Session* draft,
                std::string* error_msg) const;
   /// Enqueues one trunk batch (control and token upload through logits).
   bool ForwardBody(Session& session, std::uint32_t n, std::uint32_t n_logits,
@@ -693,9 +697,9 @@ private:
   /// for the next mixer.
   bool LayerBack(std::uint32_t il, std::uint32_t n_tokens) const;
   bool MtpBody(Session& session, std::uint32_t n, std::uint32_t pos, bool token,
-               bool candidates, std::string* error_msg, std::uint32_t pool_grid,
-               const float* hidden_source, MtpTrace* trace, bool kv_only,
-               bool draft_subset) const;
+               bool confidence, bool candidates, std::string* error_msg,
+               std::uint32_t pool_grid, const float* hidden_source,
+               MtpTrace* trace, bool kv_only, bool draft_subset) const;
   /// Runs `body` eagerly, or as the session's captured graph for `key`
   /// when `graph` is set. A prefix may leave its work queued so the host
   /// can wait for disk reads while the GPU computes it.
@@ -712,7 +716,13 @@ private:
   mutable std::once_flag snapshot_allocator_once_;
   mutable std::shared_ptr<SnapshotAllocator> snapshot_allocator_;
   mutable std::shared_ptr<void> checkpoint_storage_;
-  hipStream_t stream_{nullptr};
+  /// The stream kernels are queued on. Overlapped work swaps in side_stream_
+  /// for its launches and joins back through side_done_ (JoinSide).
+  mutable hipStream_t stream_{nullptr};
+  hipStream_t side_stream_{nullptr};
+  hipEvent_t side_start_{nullptr};
+  hipEvent_t side_done_{nullptr};
+  mutable bool side_pending_{false};  ///< side_done_ not yet waited on
   hipEvent_t counts_ready_{nullptr};
   hipblasHandle_t blas_{nullptr};
   std::unique_ptr<BlasLt> blaslt_;

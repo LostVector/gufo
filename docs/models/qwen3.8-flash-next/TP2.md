@@ -420,3 +420,37 @@ On both hosts, from one commit (record it and the binary hash):
    after a merge of upstream `main` in late September; not attributed.
 7. **Q8 against an official reference**: Gufo and llama.cpp differ by KL
    about 0.09; which is closer to the original model is open.
+
+## ROCm 10.1 upstream integration
+
+The integration through upstream `12effe36` uses the pinned ROCm 10.1 toolchain.
+The `tp2-rdma` package and development shell retain RDMA support and select the
+same patched ROCr runtime as the default package. Build and run inside a Linux
+container; within it, use `nix develop .#tp2-rdma` and the release preset with
+`-DGUFO_ENABLE_TP2_RDMA=ON`. Benchmark the release executable, rather than an
+assertion-enabled operator-test binary.
+
+The USB4 userspace provider must match the selected libibverbs private ABI.
+The pinned rdma-core 65 requires a provider built against that version; the
+older `rdmav34` provider cannot be reused. This is a userspace dependency
+change and does not require replacing the kernel driver.
+
+Q8 inject weights follow upstream's F32 conversion on both ranks. Gathered
+rank-local alpha/beta projections expand Q8 rows to F32 before narrowing to
+F16, matching the full-model conversion. Side-stream shared-expert work is
+joined before reduction, including the non-owner's output clear. Attention
+and SSM launches retain rank-local geometry and row-independent arithmetic.
+
+Confidence-gated draft termination remains single-host. TP2 uses rank 0's
+mirrored draft plan, retaining its existing controller for unplanned cycles;
+independent confidence decisions could give the ranks different collective
+sequences. Unused confidence computation and readback are skipped on this
+path. Both ranks must run the same protocol version: version 22 carries the
+requested logprobs count, including the distinction between absent and zero.
+
+The TP wrapper forwards rendered prompts for the shared template/token-count
+APIs. Request `cache_persist=false` reaches the scheduler on TP2 as well as on
+one host, so rank 0 does not initiate persistence of either rank's snapshot.
+The component-cache migration remains separate from this integration.
+Linux-only TP control and disk sources are excluded from Windows builds;
+this does not add a Windows RDMA backend.

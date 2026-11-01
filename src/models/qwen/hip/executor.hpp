@@ -69,6 +69,10 @@ struct QwenGpuWeightRegion {
   void* device_data{nullptr};
   void* host_copy{nullptr};
   std::size_t size{0};
+  // Device placement, used whenever the heap has room: device_data is a
+  // hipMalloc allocation uploaded from the shard, and host_copy stays null.
+  // Mapped registration is the fallback when the heap is too small.
+  bool owns_device_allocation{false};
 };
 
 struct QwenGpuMemoryUsage {

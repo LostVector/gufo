@@ -32,7 +32,7 @@ target_link_libraries(qwen38_flash_next_reference_probe PRIVATE
 set_source_files_properties(reference_probe.cpp PROPERTIES COMPILE_OPTIONS "-O2")
 
 if (ENGINE_ENABLE_HIP)
-  foreach(name IN ITEMS mtp_ops blaslt_ops hc_mix_ops gdn_ops
+  foreach(name IN ITEMS mtp_ops blaslt_ops hc_mix_ops hc_route_ops gdn_ops
       attention_ops moe_epilogue_ops moe_ids_ops projection_ops routed_wmma_ops
       select_ops snapshot_copy verification_sampling)
     add_qwen38_flash_next_test(${name} gufo_qwen38_flash_next "hip;gpu;gfx1151")
@@ -47,11 +47,16 @@ if (ENGINE_ENABLE_HIP)
     ${PROJECT_SOURCE_DIR}/src/cli/serve/component_text_cache.cpp
     ${PROJECT_SOURCE_DIR}/src/cli/serve/text_model_runner.cpp
     ${PROJECT_SOURCE_DIR}/src/cli/serve/text_generation_scheduler.cpp
-    ${PROJECT_SOURCE_DIR}/src/cli/serve/tp_executor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cli/serve/tp_disk_store.cpp
     ${PROJECT_SOURCE_DIR}/src/cli/serve/inference_backend.cpp)
   target_link_libraries(qwen38_flash_next_session_test PRIVATE gufo_logging
-    gufo_qwen38_flash_next gufo_deepseek_v4_flash gufo_cache_hip gufo_tp_control hip::host)
+    gufo_qwen38_flash_next gufo_deepseek_v4_flash gufo_cache_hip hip::host)
+  if(NOT WIN32)
+    target_sources(qwen38_flash_next_session_test PRIVATE
+      ${PROJECT_SOURCE_DIR}/src/cli/serve/tp_executor.cpp
+      ${PROJECT_SOURCE_DIR}/src/cli/serve/tp_disk_store.cpp)
+    target_link_libraries(qwen38_flash_next_session_test PRIVATE gufo_tp_control)
+    target_compile_definitions(qwen38_flash_next_session_test PRIVATE GUFO_HAS_TP2_CONTROL=1)
+  endif()
   add_executable(qwen38_flash_next_snapshot_test EXCLUDE_FROM_ALL snapshot_test.cpp
     device_headroom_fault.cpp)
   target_link_libraries(qwen38_flash_next_snapshot_test PRIVATE
