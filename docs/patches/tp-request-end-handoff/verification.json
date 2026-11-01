@@ -1,0 +1,83 @@
+{
+  "all_72_request_identities_exact": true,
+  "six_histories_zero_trace_drops": true,
+  "summary": {
+    "baseline": {
+      "short-c2": {
+        "end_mutex_wait_ms": [
+          51.131624,
+          71.470667,
+          51.641219
+        ],
+        "worst_end_mutex_wait_ms": 71.470667,
+        "worker_response_ms": [
+          0.228103,
+          0.186294,
+          0.191555
+        ],
+        "last_content_to_HTTP_finish_ms": [
+          51.7225069925189,
+          72.08346898551099,
+          52.204841980710626
+        ]
+      },
+      "coding-c2": {
+        "end_mutex_wait_ms": [
+          32.919488,
+          39.016316,
+          117.559852
+        ],
+        "worst_end_mutex_wait_ms": 117.559852,
+        "worker_response_ms": [
+          0.203534,
+          0.33451,
+          0.189344
+        ],
+        "last_content_to_HTTP_finish_ms": [
+          33.32119600963779,
+          39.47186202276498,
+          118.37873701006174
+        ]
+      }
+    },
+    "candidate": {
+      "short-c2": {
+        "end_mutex_wait_ms": [
+          51.245691,
+          51.888212,
+          51.648009
+        ],
+        "worst_end_mutex_wait_ms": 51.888212,
+        "worker_response_ms": [
+          0.633751,
+          0.199704,
+          0.186754
+        ],
+        "last_content_to_HTTP_finish_ms": [
+          52.31613898649812,
+          52.66696898615919,
+          52.29037001845427
+        ]
+      },
+      "coding-c2": {
+        "end_mutex_wait_ms": [
+          32.749372,
+          38.012236,
+          33.066783
+        ],
+        "worst_end_mutex_wait_ms": 38.012236,
+        "worker_response_ms": [
+          0.248062,
+          0.247732,
+          0.209564
+        ],
+        "last_content_to_HTTP_finish_ms": [
+          33.194058982189745,
+          38.69371599284932,
+          33.50844999658875
+        ]
+      }
+    }
+  },
+  "scope": "Exploratory per-request CPU wait attribution; no p-value or throughput gain claim. Local monotonic clocks only, no cross-host timestamp subtraction. Workers have no Finish/End hook executions; absent worker trace is expected."
+}

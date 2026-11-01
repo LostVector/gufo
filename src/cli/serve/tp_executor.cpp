@@ -459,7 +459,12 @@ bool TpMirroredRunner::CyclesMirrored(
 }
 
 bool TpMirroredRunner::EndRequest(std::uint64_t sequence, std::string* error) {
+  // The HTTP result still waits for rank 1's verdict after the scheduler has
+  // published its terminal event. Let this completed request acquire the call
+  // mutex before a sibling repeatedly starts another decode or advance.
+  TpSnapshotGate::Pending pending(snapshot_gate_);
   const std::lock_guard<std::recursive_mutex> call_lock(call_mutex_);
+  pending.Acquired();
   const std::lock_guard<std::mutex> lock(mutex_);
   const auto found = requests_.find(sequence);
   if (found == requests_.end()) {

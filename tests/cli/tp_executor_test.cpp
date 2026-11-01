@@ -1623,47 +1623,68 @@ int main() {
   // (rank 1 would choose another), and every request produces what it
   // produces alone.
   const std::vector<TextRunnerToken> other{2, 4, 6, 8, 10, 12, 14};
-  for (const auto& [what, mtp, sampled] :
-       {std::tuple{"concurrent AR", false, false},
-        std::tuple{"concurrent sampled MTP", true, true},
-        std::tuple{"concurrent greedy MTP", true, false}}) {
-    const auto sampling =
-        sampled ? Sampled() : gufo::sampling::SamplingConfig{};
-    std::vector<TextRunnerToken> alone[2];
-    {
-      Pair solo({.mtp = mtp}, {.mtp = mtp});
-      alone[0] = solo.Run(prompt, 12, sampling).result.tokens;
-      alone[1] = solo.Run(other, 12, sampling).result.tokens;
+  // Unequal budgets exercise request finalization while its sibling keeps
+  // decoding, in either arrival order; both instruction digests must settle.
+  for (const auto limits :
+       {std::array<std::size_t, 2>{12, 12}, std::array<std::size_t, 2>{2, 32},
+        std::array<std::size_t, 2>{32, 2}, std::array<std::size_t, 2>{8, 32},
+        std::array<std::size_t, 2>{32, 8}}) {
+    for (const auto& [what, mtp, sampled] :
+         {std::tuple{"concurrent AR", false, false},
+          std::tuple{"concurrent sampled MTP", true, true},
+          std::tuple{"concurrent greedy MTP", true, false}}) {
+      const std::string label = std::string(what) +
+                                " budgets=" + std::to_string(limits[0]) + "," +
+                                std::to_string(limits[1]);
+      const auto sampling =
+          sampled ? Sampled() : gufo::sampling::SamplingConfig{};
+      std::vector<TextRunnerToken> alone[2];
+      {
+        Pair solo({.mtp = mtp}, {.mtp = mtp});
+        alone[0] = solo.Run(prompt, limits[0], sampling).result.tokens;
+        alone[1] = solo.Run(other, limits[1], sampling).result.tokens;
+      }
+      SubmissionGate gate(2);
+      Pair pair({.mtp = mtp,
+                 .prefill_hook = gate.Hook(),
+                 .width = 4,
+                 .batch_plan = 1},
+                {.mtp = mtp, .width = 4, .batch_plan = 2}, 2);
+      const auto submitted = [&gate] { gate.Submitted(); };
+      auto first = std::async(std::launch::async, [&] {
+        return pair.Run(prompt, limits[0], sampling, {}, {}, false, 0,
+                        submitted);
+      });
+      auto second = std::async(std::launch::async, [&] {
+        return pair.Run(other, limits[1], sampling, {}, {}, false, 0,
+                        submitted);
+      });
+      const auto a = first.get();
+      const auto b = second.get();
+      Require(a.worker_error.empty() && b.worker_error.empty(),
+              label + ": " + a.worker_error + b.worker_error);
+      Require(a.result.tokens == alone[0] && b.result.tokens == alone[1],
+              label + ": requests produce what they produce alone");
+      if (limits[0] != limits[1]) {
+        Require(a.result.tokens.size() != b.result.tokens.size(),
+                label + ": one request finishes before its sibling");
+      }
+      const auto log = pair.rank0().Log();
+      // A two-token request can finish from preview before the second
+      // state reaches decode. Longer peers must still exercise batching.
+      Require(std::min(limits[0], limits[1]) < 8 ||
+                  Count(log, mtp ? "decode batch 2" : "batch 2") > 0,
+              label + ": decoders run in batches");
+      Require(!mtp || Count(log, std::string("decode batch 2 plan ") +
+                                     (sampled ? "own" : "1")) ==
+                          Count(log, "decode batch"),
+              std::string(what) +
+                  ": a greedy batch drafts by rank 0's plan, a sampled one by "
+                  "each member's history");
+      pair.RequireSameCalls(label);
+      Require(pair.open_requests() == 0,
+              label + ": rank 1 closed both requests");
     }
-    SubmissionGate gate(2);
-    Pair pair(
-        {.mtp = mtp, .prefill_hook = gate.Hook(), .width = 4, .batch_plan = 1},
-        {.mtp = mtp, .width = 4, .batch_plan = 2}, 2);
-    const auto submitted = [&gate] { gate.Submitted(); };
-    auto first = std::async(std::launch::async, [&] {
-      return pair.Run(prompt, 12, sampling, {}, {}, false, 0, submitted);
-    });
-    auto second = std::async(std::launch::async, [&] {
-      return pair.Run(other, 12, sampling, {}, {}, false, 0, submitted);
-    });
-    const auto a = first.get();
-    const auto b = second.get();
-    Require(a.worker_error.empty() && b.worker_error.empty(),
-            std::string(what) + ": " + a.worker_error + b.worker_error);
-    Require(a.result.tokens == alone[0] && b.result.tokens == alone[1],
-            std::string(what) + ": requests produce what they produce alone");
-    const auto log = pair.rank0().Log();
-    Require(Count(log, mtp ? "decode batch 2" : "batch 2") > 0,
-            std::string(what) + ": decoders run in batches");
-    Require(!mtp || Count(log, std::string("decode batch 2 plan ") +
-                                   (sampled ? "own" : "1")) ==
-                        Count(log, "decode batch"),
-            std::string(what) +
-                ": a greedy batch drafts by rank 0's plan, a sampled one by "
-                "each member's history");
-    pair.RequireSameCalls(what);
-    Require(pair.open_requests() == 0,
-            std::string(what) + ": rank 1 closed both requests");
   }
 
   // The execution digest catches a result the ranks disagree on.
