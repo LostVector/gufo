@@ -116,3 +116,45 @@ integrated engine. Historical downstream speedups do not transfer automatically
 to it. Consolidate the remaining reviewed changes with their dependencies and
 run those checks before changing the operational default or merging this entire
 integration into the fork's main branch.
+
+## Optimized-branch follow-up: scheduling and confidence compatibility
+
+The optimized integration branch incorporates the MTP snapshot-handoff and
+recursive AR-fairness source from fork PRs #1 and #3. The exact gate header
+matches the reviewed PR; integrated gate and TP-executor CPU tests pass after
+each merge. Their historical speed results remain historical, not measurements
+of this newer upstream engine.
+
+Inspection then found a compatibility bug in the base checkpoint: its legacy
+TP full-vocabulary greedy draft-head branch wrote/copied only the token, while
+new upstream `MtpForward` also reads a confidence word. That path could leave
+confidence stale. The optimized branch now computes rank-local stable softmax
+denominators in the unused padded exchange slots, completes the global token
+and probability after the existing all-reduce, and copies both words back.
+The newer upstream confidence policy is retained. There is no extra collective
+or new option. Transport version 18 rejects old token-only payload peers.
+
+The focused GPU test checks 60 fixtures and 120 split-versus-full results against an
+independent F64 probability oracle at vocabularies 2, 10, 256, 99328 and 248320,
+including ties, nonfinite values, empty rank support, large shifts and near-gate
+probabilities. Output guards and foreign exchange slots are checked. The
+predeclared tolerance is 2e-6 times max(reference probability, 1e-5); worst observed
+absolute error was 7.75991e-8. A token-only finish negative control fails on the
+poisoned probability word. This control covers the kernel write contract, not
+the production `MtpHead` host-transfer route by itself.
+
+A real two-node native test then exercised the same pack/all-reduce/finish/
+two-word-download path using 248320-logit fixtures. Both ranks returned token 0
+and probability 1/248320 for uniform logits, token 124160 and probability .90001
+for a near-threshold fixture, and token 124160 and probability 1 with no finite logits
+on rank 0. The independent 10 KiB GPU sum also passed. Version 18/8 and 8/18 reject
+before inference. Both nodes returned to the approved idle driver baseline.
+This is an actual transport/component check, not full-model qualification or a
+throughput result. Files and raw outputs are in `confidence-protocol-v1` under
+the investigation directory above.
+
+The base binary is preserved for diagnosis. Because its MTP confidence is
+known to be stale on this branch, it must not serve as the performance reference
+for later optimizer gains. Apply this compatibility correction to both arms.
+Full-model/cache/cancellation qualification and the remaining target-head and
+lab-optimization integration are still outstanding.

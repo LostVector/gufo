@@ -42,7 +42,10 @@ namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
 
 constexpr std::uint32_t kWireMagic = 0x47554654U;  // "GUFT"
-constexpr std::uint32_t kWireVersion = 8;
+// Integrated upstream MTP consumes the split head's normalized confidence.
+// Old peers populate only token slots, so matching exchange payloads are
+// required.
+constexpr std::uint32_t kWireVersion = 18;
 constexpr std::uint32_t kPlacementMagic = 0x4755504CU;   // "GUPL"
 constexpr std::uint32_t kCollectiveMagic = 0x47554348U;  // "GUCH"
 constexpr std::uint32_t kCollectiveVersion = 5;

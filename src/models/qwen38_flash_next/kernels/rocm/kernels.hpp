@@ -646,6 +646,15 @@ void Argmax(const float* logits, ArgmaxCandidate* scratch, std::int32_t* out,
 void ArgmaxConfidence(const float* logits, std::int32_t* row,
                       std::uint32_t vocab, hipStream_t stream);
 
+/// Each rank's finite-logit softmax denominator in its own exchange slot.
+/// Call after SplitArgmaxPart, which clears every foreign slot.
+void SplitArgmaxConfidencePart(const float* logits, float* exchange,
+                               std::uint32_t count, std::uint32_t rank,
+                               hipStream_t stream);
+/// Complete token and whole-vocabulary confidence after summing the exchange.
+void SplitArgmaxConfidenceFinish(const float* exchange, std::int32_t* out,
+                                 hipStream_t stream);
+
 /// One rank's part of a vocabulary split across two ranks: the argmax of its
 /// `count` logits, whose first entry is vocabulary index `first`, written as
 /// (value, index) floats to slot `part` of `exchange`, whose other `width`

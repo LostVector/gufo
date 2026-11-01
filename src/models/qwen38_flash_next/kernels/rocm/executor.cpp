@@ -3208,7 +3208,7 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   if (!HcMix(head, res, false, s_.mixed, nullptr, 1, error_msg)) {
     return false;
   }
-  // A greedy draft over the full vocabulary needs only the argmax. Under TP
+  // A greedy draft returns its argmax and normalized confidence. Under TP
   // each rank scores half of the vocabulary and the two candidates cross in
   // one all-reduce row, held in the logits buffer's unused second half. A
   // request-vocabulary draft is scored whole on both ranks alike.
@@ -3229,12 +3229,13 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
     SplitArgmaxPart(s_.logits, s_.mtp_argmax, exchange,
                     static_cast<std::uint32_t>(width), half, rank * half, rank,
                     stream_);
+    SplitArgmaxConfidencePart(s_.logits, exchange, half, rank, stream_);
     if (!AllReduce(exchange, 1, error_msg)) {
       return false;
     }
-    SplitArgmaxFinish(exchange, s_.mtp_token, stream_);
+    SplitArgmaxConfidenceFinish(exchange, s_.mtp_token, stream_);
     return Check(
-        hipMemcpyAsync(mtp_token_host_, s_.mtp_token, sizeof(std::int32_t),
+        hipMemcpyAsync(mtp_token_host_, s_.mtp_token, 2 * sizeof(std::int32_t),
                        hipMemcpyDeviceToHost, stream_),
         "draft token download", error_msg);
   }
