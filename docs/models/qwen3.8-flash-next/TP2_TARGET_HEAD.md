@@ -70,13 +70,60 @@ Thirteen strict >5% AND >3ms comparisons concern three warmups:
   and wall aliases (12 comparisons).
 - Pair 6 `raw.cache_snapshot_ms` +3.176ms (11.724vs8.547ms), not yet localized.
 
-No 2K request has a strict timing flag. Separate pre-exec application captures
-localized the shared~33ms initial-prefill mode inside rank1n-gram `pread` calls,
-including on an unchanged baseline. That does not attribute these particular
-untraced requests, prove equal tail frequency or establish native NVMe service
-time. The snapshot metric may include waiting; it is not a pure copy timer.
-All flags and the individual request metrics are included. Startup qualification
-remains open; this draft does not claim blanket latency improvement or adoption.
+No 2K request has a strict timing flag in the confidence study. The original
+13 comparisons remain in the data; no individual untraced request is
+retrospectively relabeled or excluded.
+
+A later four-start BCCB application trace on the exact measured1caf/6c4f builds
+reproduces the slower warmup and identifies its critical path:
+
+| Start | Warmup prefill ms | Corsair n-gram wait ms | Longest Corsair pread ms | Snapshot metric ms |
+|---|---:|---:|---:|---:|
+| Baseline1 | 160.319 | 11.242 | 13.154 | 9.571 |
+| PR build1 | 151.777 | 0.002 | 2.320 | 9.549 |
+| PR build2 | 183.276 | 33.983 | 36.453 | 9.572 |
+| Baseline2 | 149.467 | 0.003 | 2.131 | 10.593 |
+
+![Observed warmup prefill and Corsair read wait](tp2-target-head-data/startup-path.png)
+
+PR build2's +33.808ms prefill difference against baseline2 coincides with a
+33.983ms `WaitRead`/`LocalWaitPle` interval on Corsair. EVO's corresponding HIP
+event host wait increases by33.763ms. This localizes the reproduced delay to
+remote n-gram read progress; it is not a measured HIP launch tax or pure GPU
+computation increase. Application `pread` wall time does not establish native
+NVMe service time or the underlying cause of the slow reads.
+
+No head-gather call was observed inside any captured `Session::Sync`, or
+anywhere in either complete candidate eight-token warmup. The recorded Forward
+row counts are12,7 (prefill), then4,4 (verification), which do not meet this PR's
+two-row gather guard. The same gather probe does activate during later2K
+requests. This excludes executed target-head sharding as the source of the
+reproduced warmup delay; it does not prove equal startup-tail frequency across
+builds or exclude effects of setup or the environment.
+
+All12 canonical outputs and MTP work match. All eight application captures pass
+internal pairing/ring/depth/recursion checks; sources, binaries, process exits,
+counters, kernel windows, boot flags, topology and final native idle state pass.
+Independent kernel uprobe missed counters remain unavailable. Function spans
+are inclusive and overlap; they must not be added or compared by subtracting
+host timestamps across machines.
+
+The original +3.176ms snapshot outlier did not recur and remains unresolved.
+Snapshot metrics in this capture range9.549–10.593ms; `SaveSnapshot` spans are
+only part of that metric. A separate earlier worker/consumer trace measured
+allocation/GPU/TP work plus sub-millisecond post-worker consumption lag, but did
+not reproduce or explain the original excess. Neither capture proves absence
+or timing equivalence. This is ready for review with disclosed limitations,
+not a blanket latency or default-adoption claim.
+
+[Trace summary and exact binary/workload identities](tp2-target-head-data/startup-trace-summary.json)
+and [all recorded spans intersecting each initial SessionSync](tp2-target-head-data/startup-first-sync-spans.csv)
+provide the retained application evidence. Recompute the eight initial read/wait
+intervals with
+`python3 docs/models/qwen3.8-flash-next/tp2-target-head-data/check-startup.py`. The complete eight local capture
+artifacts and exact commands are in the investigation's
+`tp-cache-retention/target-head-review-startup-trace-v1/`; existing collector
+ABI fixtures on both hosts were reused without changing the recorder or kernel.
 
 ## GPU execution failure propagation
 
