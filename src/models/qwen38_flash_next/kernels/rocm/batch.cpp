@@ -616,8 +616,11 @@ bool Executor::MtpHeads(std::span<const MtpHeadItem> items,
       const auto count = std::min<std::size_t>(rows, kMtpCandidates);
       if (items[i].output.candidates == nullptr) {
         Argmax(logits_of(i), s_.mtp_argmax, s_.mtp_token, 1, rows, stream_);
-        if (options_.greedy_confidence)
+        if (options_.greedy_confidence) {
           ArgmaxConfidence(logits_of(i), s_.mtp_token, rows, stream_);
+          if (!Check(hipGetLastError(), error))
+            return false;
+        }
         if (table != nullptr)
           RemapDraftIds(reinterpret_cast<std::uint32_t*>(s_.mtp_token), 1,
                         static_cast<std::uint32_t>(prefix), table, stream_);

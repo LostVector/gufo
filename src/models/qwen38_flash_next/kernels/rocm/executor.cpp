@@ -3193,14 +3193,20 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
     SplitArgmaxPart(s_.logits, s_.mtp_argmax, exchange,
                     static_cast<std::uint32_t>(width), half, rank * half, rank,
                     stream_);
-    if (options_.greedy_confidence)
+    if (options_.greedy_confidence) {
       SplitArgmaxConfidencePart(s_.logits, exchange, half, rank, stream_);
+      if (!Check(hipGetLastError(), "draft local confidence launch", error_msg))
+        return false;
+    }
     if (!AllReduce(exchange, 1, error_msg)) {
       return false;
     }
-    if (options_.greedy_confidence)
+    if (options_.greedy_confidence) {
       SplitArgmaxConfidenceFinish(exchange, s_.mtp_token, stream_);
-    else
+      if (!Check(hipGetLastError(), "draft confidence finish launch",
+                 error_msg))
+        return false;
+    } else
       SplitArgmaxFinish(exchange, s_.mtp_token, stream_);
     if (draft != nullptr) {
       RemapDraftIds(reinterpret_cast<std::uint32_t*>(s_.mtp_token), 1, prefix,
@@ -3225,8 +3231,11 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   }
   if (token) {
     Argmax(s_.logits, s_.mtp_argmax, s_.mtp_token, 1, rows, stream_);
-    if (options_.greedy_confidence)
+    if (options_.greedy_confidence) {
       ArgmaxConfidence(s_.logits, s_.mtp_token, rows, stream_);
+      if (!Check(hipGetLastError(), "draft confidence launch", error_msg))
+        return false;
+    }
     if (draft != nullptr)
       RemapDraftIds(reinterpret_cast<std::uint32_t*>(s_.mtp_token), 1, prefix,
                     draft->mtp_.draft_ids, stream_);
