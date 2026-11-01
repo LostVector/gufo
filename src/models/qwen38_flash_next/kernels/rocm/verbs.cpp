@@ -39,8 +39,8 @@ namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
 
 constexpr std::uint32_t kWireMagic = 0x47554654U;  // "GUFT"
-// Version16 negotiates host-window addresses rather than requiring fixed VAs.
-constexpr std::uint32_t kWireVersion = 16;
+// Version17 adds batched target-head gathers to dynamic host windows.
+constexpr std::uint32_t kWireVersion = 17;
 constexpr std::uint32_t kPlacementGpuWindows = 1U;
 constexpr std::uint32_t kPlacementSplitDraftSubset = 2U;
 constexpr std::uint32_t kPlacementGreedyConfidence = 4U;

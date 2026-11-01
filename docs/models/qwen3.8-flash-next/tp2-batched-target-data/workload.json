@@ -1,0 +1,60 @@
+{
+  "model_files": [
+    {
+      "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf",
+      "bytes": 10946624,
+      "sha256": "4448186216b3af4cc558bbce2c3213f01608f8f8b2e5267a9767971dd3ec8082",
+      "url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF/resolve/38bb39ee97821de2c9009abb7e93950eec396e66/UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf"
+    },
+    {
+      "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00002-of-00004.gguf",
+      "bytes": 49859583136,
+      "sha256": "3f342f1c1580473f1ee94ddd5b28206e8c07a70fa1a366f59d1d6c922919a6c9",
+      "url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF/resolve/38bb39ee97821de2c9009abb7e93950eec396e66/UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00002-of-00004.gguf"
+    },
+    {
+      "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00003-of-00004.gguf",
+      "bytes": 49376141504,
+      "sha256": "56758f40269cad5cd9b0d3d6fbae0f40f6d5be6de49e4ab392dbe83157d9cbd3",
+      "url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF/resolve/38bb39ee97821de2c9009abb7e93950eec396e66/UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00003-of-00004.gguf"
+    },
+    {
+      "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00004-of-00004.gguf",
+      "bytes": 12087983520,
+      "sha256": "753bda48b98ba4f1636134a90a967de1b2d3908a236c026e464777342e53510a",
+      "url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF/resolve/38bb39ee97821de2c9009abb7e93950eec396e66/UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00004-of-00004.gguf"
+    }
+  ],
+  "shared_MTP_file": {
+    "name": "mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf",
+    "bytes": 2786568256,
+    "sha256": "5ff54097406a905cf3a724c709124ceb0e3e10235ee862298969e91c96fa96e6"
+  },
+  "binaries": {
+    "baseline": {
+      "name": "gufo-rdma-address-allocation-v1",
+      "sha256": "e8157ddba559f3f0c4f7b057e7ec6a022b00057ea6fbad48667751cc7a4f27bf"
+    },
+    "candidate": {
+      "name": "gufo-batched-target-head-dynamic-v1",
+      "sha256": "fc08a5f14d5ec2fb97ae8ddb05f76aa1da56b9f8fefa4d56274cd0a6644e46cd"
+    }
+  },
+  "settings": {
+    "quant": "UD-Q4_K_XL",
+    "MTP": "sharedQ8_0/enabled/pinneddefaultcontroller",
+    "context_capacity": 65536,
+    "sessions": 2,
+    "chunk": 2048,
+    "cache_RAM_bytes": 1073741824,
+    "driver": "81C6/TX32 unchanged in all arms",
+    "device": "existing lexical-first HTTPHCA0",
+    "thinking": "off",
+    "sampling": "greedy"
+  },
+  "actual_contexts": "NaturalC2short39tokenprompts; codingC2shortprompts; first/repeatC1exact2048tokens. 65536iscapacity, not actual prompt length. 32768prompt only a tokenizer identity sentinel in this performance client; separate quality tests use actual32K.",
+  "runtime": "BothAMDStrixHalo128GB,gfx1151,kernel7.3.0-strix-test,ROCm7.14.1,Clang23,approved81C6nativeTX32/fourrails/crossed40+20. No power/driver/kernel/boot changes.",
+  "prompts_sha256": "2ba6658d00add58ebfa0f0c3904a680b6ab201c8f9ee8ff45e2b9db9b9f7e3a6",
+  "request_records_sha256": "a8be86f2591724f3c4a96408f1bc65e1eae83bb1de30cbf1b3f4cf90169a7bde",
+  "settings_note": "BothalreadyMTP/ordinaryhead/allocator. Wire16parent versus17candidate, eachpairmatchingbuilds. Fulloutputweightsremain onbothnodes. Same frozen input files; full112GBshards not rehashed during this study. Historical pinned checksums retained; actual canonical outputs/token/prompt identities strict."
+}
