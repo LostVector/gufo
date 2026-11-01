@@ -17,6 +17,9 @@ function(add_qwen38_flash_next_test name library labels)
   set(target qwen38_flash_next_${name}_test)
   add_executable(${target} ${name}_test.cpp)
   target_link_libraries(${target} PRIVATE ${library})
+  if (library STREQUAL "gufo_qwen38_flash_next_hip")
+    target_link_libraries(${target} PRIVATE hip::host)
+  endif()
   add_test(NAME qwen38_flash_next.${name} COMMAND ${target})
   set_tests_properties(qwen38_flash_next.${name} PROPERTIES
     LABELS "qwen38_flash_next;${labels}")
@@ -58,15 +61,15 @@ if (ENGINE_ENABLE_HIP)
   add_executable(qwen38_flash_next_snapshot_test EXCLUDE_FROM_ALL snapshot_test.cpp
     device_headroom_fault.cpp)
   target_link_libraries(qwen38_flash_next_snapshot_test PRIVATE
-    gufo_qwen38_flash_next_hip ${CMAKE_DL_LIBS})
+    gufo_qwen38_flash_next_hip hip::host ${CMAKE_DL_LIBS})
   add_executable(qwen38_flash_next_continuation_adapter_test EXCLUDE_FROM_ALL
     continuation_adapter_test.cpp reset_submission_fault.cpp)
   target_link_libraries(qwen38_flash_next_continuation_adapter_test PRIVATE
-    gufo_qwen38_flash_next_hip ${CMAKE_DL_LIBS})
+    gufo_qwen38_flash_next_hip hip::host ${CMAKE_DL_LIBS})
   add_executable(qwen38_flash_next_continuation_probe EXCLUDE_FROM_ALL
     continuation_probe.cpp)
   target_link_libraries(qwen38_flash_next_continuation_probe PRIVATE
-    gufo_qwen38_flash_next_hip)
+    gufo_qwen38_flash_next_hip hip::host)
   add_custom_target(qwen38_flash_next_model_tests
     DEPENDS qwen38_flash_next_session_test qwen38_flash_next_snapshot_test
       qwen38_flash_next_continuation_adapter_test)
