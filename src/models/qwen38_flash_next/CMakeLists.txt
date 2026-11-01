@@ -29,7 +29,7 @@ if (GUFO_ENABLE_TP2_RDMA)
   target_include_directories(gufo_qwen38_flash_next_rdma PRIVATE
     ${PROJECT_SOURCE_DIR})
   target_link_libraries(gufo_qwen38_flash_next_rdma PRIVATE
-    PkgConfig::IBVERBS Threads::Threads ${CMAKE_DL_LIBS} hip::host)
+    PkgConfig::IBVERBS Threads::Threads hip::host)
   target_link_libraries(gufo_qwen38_flash_next PRIVATE
     gufo_qwen38_flash_next_rdma)
   target_compile_definitions(gufo_qwen38_flash_next PUBLIC
