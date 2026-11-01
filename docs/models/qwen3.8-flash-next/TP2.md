@@ -423,7 +423,7 @@ On both hosts, from one commit (record it and the binary hash):
 
 ## ROCm 10.1 upstream integration
 
-The integration through upstream `12effe36` uses the pinned ROCm 10.1 toolchain.
+The integration through upstream `eb1d52e6` (#894) uses the pinned ROCm 10.1 toolchain.
 The `tp2-rdma` package and development shell retain RDMA support and select the
 same patched ROCr runtime as the default package. Build and run inside a Linux
 container; within it, use `nix develop .#tp2-rdma` and the release preset with
@@ -447,6 +447,21 @@ independent confidence decisions could give the ranks different collective
 sequences. Unused confidence computation and readback are skipped on this
 path. Both ranks must run the same protocol version: version 22 carries the
 requested logprobs count, including the distinction between absent and zero.
+
+Upstream's register-resident routed prefill kernels (#890) pair gate/up only
+for Q4_K and Q5_K. Q8_0 expert gates therefore take the separate WMMA gate and
+up projections on the routed tile map in prefill as in decode batches; the
+down projection uses the shared 128-token map whenever the gate pairs. The
+fork's earlier paired Q8_0 kernel with adaptive 64/128-token tiles was
+dropped with upstream's rewrite of that kernel. Only the expert-local
+combine of a decode batch (`MoePart`) joins the next HC mixer's single launch
+(#894) under TP2; the combine after the all-reduce keeps its own launch.
+
+With `--cache-ram-bytes off`, rank 0's generic continuation cache keeps live
+states only. A commit then records the state's actual frontier (prompt plus
+reply); recording the prompt snapshot's tokens instead let a later prompt that
+shares only the earlier prompt reuse a state that had moved past it
+("reused prefix does not match checkpoint").
 
 The TP wrapper forwards rendered prompts for the shared template/token-count
 APIs. Request `cache_persist=false` reaches the scheduler on TP2 as well as on
