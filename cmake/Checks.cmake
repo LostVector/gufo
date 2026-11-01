@@ -25,7 +25,7 @@ set(gufo_pr_targets
   audio_websocket_test
   text_generation_scheduler_test
   component_text_cache_test text_model_runner_test continuation_disk_store_test
-  bench_cli_test prompt_cli_test eval_http_client_test tp_control_test tp_disk_store_test
+  bench_cli_test prompt_cli_test eval_http_client_test tp_control_test tp_disk_store_test tp_snapshot_gate_test
   # BEGIN GENERATED MODEL PR TARGETS
   deepseek_v4_flash_continuation_identity_test ds4_chat_template_test ds4_cli_test
   ds4_sampling_test embedding_gemma2_batch_scheduler_test embedding_gemma2_config_test
