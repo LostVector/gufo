@@ -290,7 +290,7 @@ public:
   [[nodiscard]] NgramTotals NgramRowTotals() const noexcept;
 
   /// Compatibility version; bump on payload or inference arithmetic changes.
-  static constexpr std::uint32_t kSnapshotPayloadVersion = 18;
+  static constexpr std::uint32_t kSnapshotPayloadVersion = 19;
   /// Bytes a snapshot of the current context occupies.
   [[nodiscard]] std::uint64_t SnapshotBytes() const;
   [[nodiscard]] std::uint64_t PrefillCheckpointBytes(
@@ -398,6 +398,10 @@ private:
   MtpDraftVocab draft_vocab_;
   bool draft_vocab_stale_{false};
   std::vector<std::int32_t> draft_added_;
+  // First remaining budget supplied after Sync/ResetDraftPolicy; zero is unset.
+  // Kept across cycles/restores so a long request does not become a short tail.
+  std::uint32_t request_decode_budget_{0};
+  [[nodiscard]] bool GreedyConfidenceAllowed(std::size_t max_tokens) const;
   /// After the token history is replaced: the table restarts from it.
   void ForgetDraftVocab() noexcept { draft_vocab_stale_ = true; }
   /// Brings the draft table up to the committed tokens.

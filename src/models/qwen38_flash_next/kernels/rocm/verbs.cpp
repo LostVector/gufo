@@ -42,7 +42,7 @@ namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
 
 constexpr std::uint32_t kWireMagic = 0x47554654U;  // "GUFT"
-constexpr std::uint32_t kWireVersion = 10;
+constexpr std::uint32_t kWireVersion = 12;
 constexpr std::uint32_t kPlacementGpuWindows = 1U;
 constexpr std::uint32_t kPlacementSplitDraftSubset = 2U;
 constexpr std::uint32_t kPlacementGreedyConfidence = 4U;

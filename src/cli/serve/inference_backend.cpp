@@ -2969,8 +2969,14 @@ public:
       return std::nullopt;
     }
     auto& qfn = RequireQwenFlashNextState(state);
+    // Greedy planning needs the remaining request budget for short-tail
+    // policy, just as DecodeStepPlanned does. The engine bounds each block.
+    // Preserve the sampled planner's established pricing and proposals.
     const auto budget =
-        std::min<std::size_t>(max_tokens, std::uint64_t{max_draft_tokens_} + 1);
+        sampler.config().uses_random_sampling()
+            ? std::min<std::size_t>(max_tokens,
+                                    std::uint64_t{max_draft_tokens_} + 1)
+            : max_tokens;
     return qfn.session().PlanDecode(budget, sampler,
                                     static_cast<std::uint32_t>(occupancy));
   }

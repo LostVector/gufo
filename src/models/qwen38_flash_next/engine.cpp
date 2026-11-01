@@ -55,7 +55,7 @@ struct SessionSnapshotHeader {
   MtpLengthState draft_policy;
   std::uint32_t image_identity_bytes;
   std::uint32_t policy_concurrency;
-  std::uint32_t reserved{0};
+  std::uint32_t request_decode_budget{0};
   speculative::PromptLookup<>::State lookup;
 };
 static_assert(std::is_trivially_copyable_v<SessionSnapshotHeader>);
@@ -427,6 +427,7 @@ void Session::ResetDraftPolicy() {
   // A fully reused prompt can start decoding without SyncImpl. It still
   // starts a new request: do not inherit a copy cursor or widen its first step.
   lookup_.BeginRequest();
+  request_decode_budget_ = 0;
 }
 
 std::uint32_t Session::Position() const noexcept {
@@ -448,6 +449,7 @@ void Session::ResetImpl(bool reuse_mtp) {
   tokens_.clear();
   ForgetDraftVocab();
   lookup_.Clear();
+  request_decode_budget_ = 0;
   hidden_base_ = 0;
   draft_length_.Reset();
   model_->executor_->MtpRewind(*session_, 0);
@@ -541,6 +543,7 @@ std::unique_ptr<SessionSnapshot> Session::SaveSnapshotImpl(
       .draft_policy = draft_length_.State(),
       .image_identity_bytes = static_cast<std::uint32_t>(identity.size()),
       .policy_concurrency = model_->DecodeConcurrency(),
+      .request_decode_budget = request_decode_budget_,
       .lookup = lookup_.Save(),
   };
   std::memcpy(out, &header, sizeof(header));
@@ -604,6 +607,7 @@ bool Session::RestoreSnapshotImpl(std::span<const std::uint8_t> payload,
   if (header.vocab_size != model_->VocabSize() || header.token_count == 0 ||
       header.policy_concurrency != model_->DecodeConcurrency() ||
       header.token_count > ContextSize() ||
+      header.request_decode_budget > ContextSize() ||
       (header.image_identity_bytes != 0 && header.image_identity_bytes != 32) ||
       payload.size() != SessionSnapshotHostBytes(header.token_count,
                                                  header.vocab_size,
@@ -671,6 +675,7 @@ bool Session::RestoreSnapshotImpl(std::span<const std::uint8_t> payload,
   tokens_ = std::move(tokens);
   ForgetDraftVocab();
   lookup_.Restore(header.lookup);
+  request_decode_budget_ = header.request_decode_budget;
   logits_ = std::move(logits);
   hidden_base_ = info.position - info.hidden_rows;
   draft_token_ = 0;
@@ -926,6 +931,7 @@ bool Session::SyncImpl(std::span<const std::int32_t> prompt,
     return false;
   }
   lookup_.BeginRequest();
+  request_decode_budget_ = 0;
   if (!valid_)
     Reset();
   // Recurrent state cannot be rewound, so any divergence restarts the
@@ -1079,6 +1085,10 @@ bool Session::PrepareDecode(const DecodeRequest& request,
   const std::size_t room = ContextSize() - tokens_.size();
   const std::size_t cap =
       std::min<std::size_t>({max_tokens, room, exec.max_speculative()});
+  const bool first_request_cycle = request_decode_budget_ == 0;
+  if (first_request_cycle)
+    request_decode_budget_ =
+        static_cast<std::uint32_t>(std::min(max_tokens, room));
   // Head eligibility is MtpDraftSubsetAllowed. Sampled cohorts are never
   // jointly planned (DecodeBatchImpl), so a sampled request decides the same
   // way alone and in any batch. A greedy request decoding alone has no
@@ -1105,9 +1115,11 @@ bool Session::PrepareDecode(const DecodeRequest& request,
                               static_cast<std::uint32_t>(tokens_.size()),
                               pending->policy_concurrency))
           : cap;
-  const bool gated =
-      model_->greedy_confidence_ && !sampler.config().uses_random_sampling();
-  if (gated && !forced && width > 1)
+  const bool gated = GreedyConfidenceAllowed(max_tokens) &&
+                     !sampler.config().uses_random_sampling();
+  // The first cycle has no request-local acceptance evidence yet. Keep the
+  // controller's cap there; confidence can stop it early and widen later.
+  if (gated && !first_request_cycle && !forced && width > 1)
     width =
         1 + std::min<std::size_t>(cap - 1, model_->options_.max_draft_tokens);
   if (width == 0) {
@@ -1438,6 +1450,15 @@ bool Session::DecodeStep(std::size_t max_tokens,
   return ok;
 }
 
+bool Session::GreedyConfidenceAllowed(std::size_t max_tokens) const {
+  const auto budget =
+      request_decode_budget_ != 0
+          ? request_decode_budget_
+          : std::min<std::size_t>(max_tokens, ContextSize() - tokens_.size());
+  return model_->greedy_confidence_ &&
+         budget > 2 * model_->executor_->max_speculative();
+}
+
 std::optional<std::uint32_t> Session::PlanDecode(
     std::size_t max_tokens, const sampling::SamplerState& sampler,
     std::uint32_t occupancy) const {
@@ -1468,7 +1489,8 @@ std::optional<std::uint32_t> Session::PlanDecode(
                            occupancy),
       subset_cost);
   // Mirror the actual unplanned cap before either rank enters the cycle.
-  return !sampled && model_->greedy_confidence_ && drafts != 0
+  return !sampled && request_decode_budget_ != 0 &&
+                 GreedyConfidenceAllowed(max_tokens) && drafts != 0
              ? std::min<std::uint32_t>(static_cast<std::uint32_t>(cap - 1),
                                        model_->options_.max_draft_tokens)
              : drafts;
@@ -1486,6 +1508,7 @@ bool Session::RunIsolatedBatch(std::span<const Request> requests,
   std::array<std::uint64_t, 8> epochs{};
   std::array<sampling::SamplerState::DrawState, 8> draws{};
   std::array<speculative::PromptLookup<>::State, 8> lookup_states{};
+  std::array<std::uint32_t, 8> request_budgets{};
   std::vector<Request> active;
   active.reserve(requests.size());
   Model* model = nullptr;
@@ -1531,6 +1554,7 @@ bool Session::RunIsolatedBatch(std::span<const Request> requests,
     if constexpr (std::is_same_v<Request, DecodeRequest>) {
       draws[i] = r.sampler->SaveDrawState();
       lookup_states[i] = r.session->lookup_.Save();
+      request_budgets[i] = r.session->request_decode_budget_;
     }
     auto copy = r;
     copy.outcome = &outcome;
@@ -1562,6 +1586,7 @@ bool Session::RunIsolatedBatch(std::span<const Request> requests,
         if constexpr (std::is_same_v<Request, DecodeRequest>) {
           r.sampler->RestoreDrawState(draws[i]);
           session.lookup_.Restore(lookup_states[i]);
+          session.request_decode_budget_ = request_budgets[i];
         }
         try {
           if constexpr (std::is_same_v<Request, DecodeRequest>) {
