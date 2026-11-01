@@ -53,7 +53,7 @@ Confidence gating remains unchanged. A preliminary fixture exceeded the supporte
 eight-session limit and was rejected at load; its failure is retained separately.
 Normal HTTP cache/cancellation checks also pass on the actual production server:
 four greedy/sampled keep/discard interrupted-assistant cache cases and nine
-cancellation/control records (38 underlying HTTP requests). Cached continuations
+cancellation/control records (37 inference POSTs plus a readiness GET). Cached continuations
 match fresh controls; both victim roles leave a live width-two survivor matching
 its solo result, and post-cancellation replay matches. All substantive completed
 requests exercise MTP. SHA-checked binaries/settings, frozen sources, task-owned
