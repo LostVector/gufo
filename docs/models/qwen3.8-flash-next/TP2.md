@@ -420,6 +420,16 @@ On both hosts, from one commit (record it and the binary hash):
    after a merge of upstream `main` in late September; not attributed.
 7. **Q8 against an official reference**: Gufo and llama.cpp differ by KL
    about 0.09; which is closer to the original model is open.
+8. **`tool-native-schemas` after a reused reply**: its literal-history case
+   reuses a live state whose 24 reply tokens were decoded, then prefills the
+   tool result. Under TP2 the model then adds a warning after `DONE`
+   (end-of-text -2.61 against `\n\n` -0.13; one host: -0.31 against -1.36;
+   a fresh TP2 prefill of the same 408 tokens: -0.51 against -1.07). Rank
+   kernels are not the cause: `tp_probe --decode-tail 60` on that prompt
+   differs from prefill by at most 4.61 logits under TP2 and 3.81 on one
+   host, bit-identical between the `rdma` build of `0b6978aa` and the
+   integration. That `rdma` build fails the same isolated replay; it passed
+   the suite only because earlier cases left it a different checkpoint.
 
 ## ROCm 10.1 upstream integration
 
