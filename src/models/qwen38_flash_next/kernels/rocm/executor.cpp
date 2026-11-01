@@ -8,10 +8,10 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
-#include <limits>
 #include <gufo/ext/experimental/managed_alloc.hpp>
 #include <gufo/ext/experimental/snapshot_transfer.hpp>
 #include <gufo/ext/platform/pages.hpp>
+#include <limits>
 #include <memory>
 #include <stdexcept>
 #include <string_view>
@@ -2777,13 +2777,13 @@ bool Executor::Attention(const DeviceLayer& l, Session::AttentionState& s,
   // Narrow batches split each row's key tiles over kAttnSplits blocks so a
   // decode step at depth fills the device.
   const bool split = !MatrixRows(n_tokens);
-  rocm::Attention(
-      s_.q, s.k_cache, s.v_cache, mask, mask_words_, s_.ctx,
-      split ? s_.attn_partials : nullptr, kAttnSplits, n_tokens, pos,
-      heads.attn, heads.attn_kv, heads.attn_dim, c.compress_ratio, stream_,
-      split ? s_.attn_lists : nullptr, split ? s_.attn_counts : nullptr,
-      c.compress_ratio > 0 ? c.indexer_top_k / c.compress_ratio : 0,
-      c.indexer_top_k);
+  rocm::Attention(s_.q, s.k_cache, s.v_cache, mask, mask_words_, s_.ctx,
+                  split ? s_.attn_partials : nullptr, kAttnSplits, n_tokens,
+                  pos, heads.attn, heads.attn_kv, heads.attn_dim,
+                  c.compress_ratio, stream_, split ? s_.attn_lists : nullptr,
+                  split ? s_.attn_counts : nullptr,
+                  c.compress_ratio > 0 ? c.indexer_top_k / c.compress_ratio : 0,
+                  c.indexer_top_k);
   const std::uint32_t q_dim = heads.AttentionQDim();
   const std::size_t ctx_count = static_cast<std::size_t>(n_tokens) * q_dim;
   // A decode batch's output projection reads the gate's Q8_1 rows.
@@ -3663,9 +3663,9 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
           return false;
         // The next layer's mixer follows in this pass (without a PLE step:
         // next_norm is null before a PLE layer).
-        Combine(s_.res, next_norm, rows, next_inject,
-                il + 1 < end_layer ? &model_->layers()[il + 1].hc_attn
-                                   : nullptr);
+        Combine(
+            s_.res, next_norm, rows, next_inject,
+            il + 1 < end_layer ? &model_->layers()[il + 1].hc_attn : nullptr);
         return true;
       };
       if (skipped != 0) {

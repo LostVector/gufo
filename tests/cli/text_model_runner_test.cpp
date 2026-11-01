@@ -2191,8 +2191,8 @@ void TestRamCacheOffCommitsLiveFrontier() {
   };
   for (const bool continues : {false, true}) {
     auto stats = std::make_shared<FakeStats>();
-    auto runner = std::make_shared<SnapshotRunner>(stats, 64, 256,
-                                                   std::size_t{64} << 30);
+    auto runner =
+        std::make_shared<SnapshotRunner>(stats, 64, 256, std::size_t{64} << 30);
     TextRunnerPool pool(runner, 1, std::nullopt, {.enabled = false});
     replied(pool);
     if (continues) {
@@ -2202,8 +2202,9 @@ void TestRamCacheOffCommitsLiveFrontier() {
       next.Invalidate();
     } else {
       auto edited = pool.Acquire({1, 2, 3, 5});
-      Expect(!edited.cache_hit(), "a prompt sharing only the old prompt "
-                                  "cannot reuse the live state");
+      Expect(!edited.cache_hit(),
+             "a prompt sharing only the old prompt "
+             "cannot reuse the live state");
       Expect(edited.Prefill(4).decode_ready, "the edited prompt prefills");
       edited.Invalidate();
     }
