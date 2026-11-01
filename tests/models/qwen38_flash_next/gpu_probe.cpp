@@ -43,7 +43,7 @@
 #include <vector>
 
 #include "src/core/gguf_reader.hpp"
-#include "src/models/qwen/tokenizer.hpp"
+#include "src/families/qwen/text/tokenizer.hpp"
 #include "src/models/qwen38_flash_next/distributed/tp_partition.hpp"
 #include "src/models/qwen38_flash_next/draft_vocab.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/communicator.hpp"

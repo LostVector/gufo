@@ -3,12 +3,12 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <gufo/ext/gguf_reader.hpp>
 #include <memory>
 #include <span>
 #include <string>
 #include <vector>
 
-#include "src/core/gguf_reader.hpp"
 #include "src/models/qwen38_flash_next/distributed/tp_partition.hpp"
 #include "src/models/qwen38_flash_next/weights.hpp"
 
