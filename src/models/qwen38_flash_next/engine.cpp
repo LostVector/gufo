@@ -34,6 +34,10 @@ namespace {
 // next-chunk prefetch overlaps that read. Prefill logits do not depend on
 // the chunk size (pre-budget queries always take the dense attention tiles).
 constexpr std::uint32_t kPrefillChunkTokens = 16384;
+// TP2 exchanges a whole batch's partial sums through one RDMA window (48 MiB,
+// about 4,900 rows of 2,560 floats) and overlaps two batches a layer apart,
+// so its ranks keep 4,096-token chunks.
+constexpr std::uint32_t kTpPrefillChunkTokens = 4096;
 // A prompt ending this close past a chunk finishes in that chunk: a separate
 // tail pass costs about as much as this many more chunk rows.
 constexpr std::uint32_t kPrefillTailTokens = 128;
@@ -301,11 +305,16 @@ std::uint32_t Model::VocabSize() const noexcept {
   return weights_->config.vocab_size;
 }
 
+std::uint32_t Model::PrefillChunkTokens() const noexcept {
+  return options_.tp_world_size > 1 ? kTpPrefillChunkTokens
+                                    : kPrefillChunkTokens;
+}
+
 std::uint32_t Model::PrefillCapacity() const noexcept {
   // Whole chunks per trunk batch: two batches per step under TP2.
   const std::uint32_t batches =
       executor_->PrefillChunk() / executor_->max_batch();
-  return std::min(batches * kPrefillChunkTokens, options_.max_context);
+  return std::min(batches * PrefillChunkTokens(), options_.max_context);
 }
 
 std::uint32_t Model::PrefillPairLead(std::uint32_t tokens) const noexcept {
@@ -313,7 +322,7 @@ std::uint32_t Model::PrefillPairLead(std::uint32_t tokens) const noexcept {
 }
 
 std::uint32_t Model::PrefillThroughCapacity() const noexcept {
-  return std::min(kPrefillChunkTokens + kPrefillTailTokens,
+  return std::min(PrefillChunkTokens() + kPrefillTailTokens,
                   options_.max_context);
 }
 

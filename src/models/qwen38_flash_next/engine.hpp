@@ -96,6 +96,9 @@ public:
   [[nodiscard]] std::int32_t EosToken() const noexcept;
   [[nodiscard]] bool IsStopToken(std::int32_t token) const noexcept;
   [[nodiscard]] std::uint32_t VocabSize() const noexcept;
+  /// Rows of one prefill chunk: smaller under TP, whose exchange window
+  /// carries a whole batch.
+  [[nodiscard]] std::uint32_t PrefillChunkTokens() const noexcept;
   /// Prompt tokens one prefill step feeds: under TP, up to two trunk
   /// batches run as an overlapped pair.
   [[nodiscard]] std::uint32_t PrefillCapacity() const noexcept;
