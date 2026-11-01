@@ -59,7 +59,16 @@ its solo result, and post-cancellation replay matches. All substantive completed
 requests exercise MTP. SHA-checked binaries/settings, frozen sources, task-owned
 process cleanup, both final idle inventories and checked driver/kernel windows
 pass. This is candidate-only correctness, not matched request-time equivalence.
-Peer-loss/new-head failure recovery and release measurements remain outstanding.
+Borrowed same-session and cross-session restoration, serialized cross-session
+restoration and snapshot-file round trips also pass at short and actual 32K
+contexts for greedy and sampled requests: 104 records, 44 gathered heads and
+32 complete post-replay state comparisons per rank. Tokens, full logits, RNG,
+positions and proposal work match the full-projection reference. File round trips
+use the same loaded model process; this does not establish HTTP disk-cache restart
+or peer-loss recovery.
+
+Peer-loss/new-head failure recovery, applicable HTTP disk-cache restart checks
+and release measurements remain outstanding.
 
 ## Historical initial reconciliation
 
@@ -165,8 +174,8 @@ transport snapshots are under
 
 ## Remaining gates
 
-Complete current-source peer-loss/new-head failure recovery and any required
-serialized/disk-cache qualification. Then measure matched release prefill/decode
+Complete current-source peer-loss/new-head failure recovery and applicable HTTP
+disk-cache restart qualification. Then measure matched release prefill/decode
 with identical upstream, confidence correction and allocator in both arms.
 Historical downstream speedups do not transfer automatically. Cooperative PLE
 reads, peer-combine and subset-head sharding remain separately planned ports.
