@@ -21,7 +21,8 @@ if (GUFO_ENABLE_TP2_RDMA)
       "GUFO_ENABLE_TP2_RDMA requires ENGINE_ENABLE_HIP")
   endif()
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(IBVERBS REQUIRED IMPORTED_TARGET libibverbs)
+  # GLOBAL: the root link-graph report resolves this library's interface.
+  pkg_check_modules(IBVERBS REQUIRED IMPORTED_TARGET GLOBAL libibverbs)
   add_library(gufo_qwen38_flash_next_rdma STATIC
     kernels/rocm/verbs.cpp)
   target_compile_features(gufo_qwen38_flash_next_rdma PRIVATE cxx_std_20)
