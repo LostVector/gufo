@@ -67,8 +67,39 @@ positions and proposal work match the full-projection reference. File round trip
 use the same loaded model process; this does not establish HTTP disk-cache restart
 or peer-loss recovery.
 
-Peer-loss/new-head failure recovery, applicable HTTP disk-cache restart checks
-and release measurements remain outstanding.
+## Current failure and disk-restart checks
+
+The refreshed fault harness pins the exact production local-copy return PC and
+requires a live outer `ForwardBatch` stack frame. Seven CPU-only arming/range/
+geometry/ancestor/one-shot controls pass. Injected HIP copy API failures on each
+rank and a task-owned rank-1 process exit all produce explicit non-normal errors
+on both HTTP streams within the predeclared ten-second bound, without a socket
+error or transport timeout being accepted as a pass. Complete request times are
+0.61, 0.90 and 0.93 seconds; these include admission and prefill, not just abort
+handling. Each fault is followed by a fresh process pair: all nine recovery
+outputs and proposal/acceptance work match a newly acquired current-engine
+control. All fourteen rank/phase counter windows have zero checked error deltas;
+final PID, idle, boot, topology and kernel checks pass. This establishes bounded
+failure containment and fresh restart recovery, not transparent reconnection,
+a physical GPU failure or a cable-loss guarantee.
+
+The current upstream disk-startup fixture also passes with a real two-host
+lifecycle and only its TP2 cache log signature adapted. Both processes are
+restarted with independent, initially empty task-owned identity/cache directories.
+A cold 2,294-token prompt evaluates all tokens, RAM reuse evaluates none, and
+restoration after restart reports an actual disk hit with 2,287 cached tokens
+and seven evaluated tokens. All three outputs match exactly, with 18 draft
+proposals and 15 accepted on each request. Both ranks' checkpoint inventories
+and changed process identities are verified; checked counters stay clean.
+The two worker-control-close errors occur during deliberate head shutdown and
+are classified explicitly, with no unknown server errors. This is greedy disk
+restore coverage, not sampled restore, cancellation during restore or physical
+storage-failure coverage. Initial artifact hashing is normal engine identity
+validation; no separate n-gram-table warming or system change is performed.
+
+Raw frozen protocols and outputs are in `integrated-head-faults-v1` and
+`integrated-disk-restart-v1` alongside the earlier qualification directories.
+Matched release performance remains unmeasured on this integration.
 
 ## Historical initial reconciliation
 
@@ -174,8 +205,7 @@ transport snapshots are under
 
 ## Remaining gates
 
-Complete current-source peer-loss/new-head failure recovery and applicable HTTP
-disk-cache restart qualification. Then measure matched release prefill/decode
+Build the release profile and measure matched prefill/decode
 with identical upstream, confidence correction and allocator in both arms.
 Historical downstream speedups do not transfer automatically. Cooperative PLE
 reads, peer-combine and subset-head sharding remain separately planned ports.
