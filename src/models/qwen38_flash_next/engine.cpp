@@ -19,6 +19,7 @@
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
 #include "src/models/qwen38_flash_next/mtp_sampling.hpp"
 #include "src/models/qwen38_flash_next/ngram.hpp"
+#include "src/models/qwen38_flash_next/prefill_rows.hpp"
 #include "src/models/qwen38_flash_next/weights.hpp"
 
 namespace gufo::models::qwen38_flash_next {
@@ -33,10 +34,8 @@ namespace {
 // activations stay cached. Each chunk's n-gram gather grows with it;
 // next-chunk prefetch overlaps that read. Prefill logits do not depend on
 // the chunk size (pre-budget queries always take the dense attention tiles).
-constexpr std::uint32_t kPrefillChunkTokens = 16384;
-// A prompt ending this close past a chunk finishes in that chunk: a separate
-// tail pass costs about as much as this many more chunk rows.
-constexpr std::uint32_t kPrefillTailTokens = 128;
+// PlanPrefillRows preserves this local default and caps TP batches to the
+// communicator's actual exchange capacity.
 
 void AssignError(std::string* error_msg, std::string_view message) {
   if (error_msg != nullptr) {
@@ -224,8 +223,9 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
   exec.max_speculative = exec.max_logit_rows;
   if (options.communicator) {
     // One exchange carries a whole prefill batch's partial sums.
-    if (std::size_t{exec.max_batch} * c.hidden_size * sizeof(float) >
-        options.communicator->MaxPartialBytes()) {
+    if (exec.max_batch == 0 ||
+        std::size_t{exec.max_batch} * c.hidden_size * sizeof(float) >
+            options.communicator->MaxPartialBytes()) {
       AssignError(error_msg, "a prefill batch exceeds the TP exchange window");
       return nullptr;
     }
@@ -311,7 +311,12 @@ std::uint32_t Model::PrefillCapacity() const noexcept {
   // Whole chunks per trunk batch: two batches per step under TP2.
   const std::uint32_t batches =
       executor_->PrefillChunk() / executor_->max_batch();
-  return std::min(batches * kPrefillChunkTokens, options_.max_context);
+  const auto rows =
+      options_.communicator
+          ? PlanPrefillRows(options_.max_context, weights_->config.hidden_size,
+                            options_.communicator->MaxPartialBytes())
+          : PlanPrefillRows(options_.max_context, weights_->config.hidden_size);
+  return std::min(batches * rows.chunk, options_.max_context);
 }
 
 std::uint32_t Model::PrefillPairLead(std::uint32_t tokens) const noexcept {
@@ -319,8 +324,12 @@ std::uint32_t Model::PrefillPairLead(std::uint32_t tokens) const noexcept {
 }
 
 std::uint32_t Model::PrefillThroughCapacity() const noexcept {
-  return std::min(kPrefillChunkTokens + kPrefillTailTokens,
-                  options_.max_context);
+  const auto rows =
+      options_.communicator
+          ? PlanPrefillRows(options_.max_context, weights_->config.hidden_size,
+                            options_.communicator->MaxPartialBytes())
+          : PlanPrefillRows(options_.max_context, weights_->config.hidden_size);
+  return rows.through;
 }
 
 bool Model::HasMtp() const noexcept {

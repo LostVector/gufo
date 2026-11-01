@@ -6,6 +6,8 @@
 #include <optional>
 #include <string>
 
+#include "src/models/qwen38_flash_next/prefill_rows.hpp"
+
 namespace {
 
 using gufo::core::GgmlType;
@@ -39,6 +41,25 @@ ModelWeights OneLayer(TensorRef gate, TensorRef up, TensorRef down) {
 }  // namespace
 
 int main() {
+  using gufo::models::qwen38_flash_next::PlanPrefillRows;
+  const auto local = PlanPrefillRows(65536, 2560);
+  Require(local.chunk == 16384 && local.through == 16512,
+          "preserve upstream local chunk and short tail");
+  const auto native = PlanPrefillRows(65536, 2560, (48U << 20) - 4096);
+  Require(native.chunk == 4096 && native.through == 4224,
+          "native window caps a complete trunk batch including its tail");
+  for (const auto context : {1U, 127U, 128U, 4096U, 16384U, 65536U}) {
+    for (std::size_t bytes = 0; bytes < (50U << 20); bytes += 7919) {
+      const auto rows = PlanPrefillRows(context, 2560, bytes);
+      Require(rows.chunk <= rows.through && rows.through <= context &&
+                  std::size_t{rows.through} * 2560 * sizeof(float) <= bytes,
+              "chunk and tail always fit context and exchange bounds");
+      Require(rows.chunk > 0 || bytes < 2560 * sizeof(float),
+              "every window fitting one token makes progress");
+    }
+  }
+  Require(PlanPrefillRows(65536, 0).through == 0,
+          "invalid hidden size cannot divide by zero");
   std::string error;
   const auto single = TpPartition::Create(640, 0, 1, &error);
   Require(single.has_value(), error.c_str());

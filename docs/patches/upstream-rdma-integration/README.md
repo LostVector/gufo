@@ -1,18 +1,73 @@
 # Current-upstream RDMA integration checkpoint
 
-This experimental integration reconciles `gufo-org/gufo` main at
-`8f5aece0c27ca35e3a0831da9ff960e8be78b30e` with the RDMA source at
-`0b6978aa1709f2ef863f5407e4ca7261191e9046`. The main-side parent also contains
-the separately reviewed cache-retention and MTP-backoff patches. Canonical
-upstream remains **gufo-org/gufo**. The measured optimization branches are
-preserved separately.
+The working integration branch is `integrate/tp2-optimized-current-upstream`.
+Canonical upstream is **gufo-org/gufo**, pinned here to
+`bdf800de477e980904c26aad483123af7dfa6583`. Neuhaus supplies the RDMA lineage,
+not the canonical upstream cadence. Source ports from fork PRs #1–#7 are now
+included, together with the distributed draft-confidence compatibility fix.
+Existing PRs remain drafts until the combined engine passes its remaining gates.
+No operational default has changed and no new release speedup is claimed.
 
-This is an integration checkpoint, not a new performance release or a claim
-that the complete optimized TP2 stack has been consolidated. In particular,
-the separate snapshot-handoff/fairness, ordinary target-head, dynamic host-window
-allocation and batched target-head review branches are not all included here.
-The old fixed-address host-window limitation is still present until the allocator
-patch is integrated.
+The current transport is version 21, using OS-selected registered host windows.
+Both nodes must use the same qualified build. The original fixed-address/token-only
+checkpoints below are retained for diagnosis and must not be deployed or used
+as optimizer performance references.
+
+## Current full-model checks
+
+The first actual model load exposed an incompatibility missed by component tests:
+upstream's 16,384-row chunk plus 128-row tail exceeds the native transport's
+48 MiB partial-sum window at 2,560 floats per row. `PlanPrefillRows` preserves
+upstream's local chunk and selects a smaller whole power-of-two chunk, including
+tail space, when the communicator requires it. On this transport each trunk
+batch holds 4,096 chunk rows plus up to 128 tail rows; existing split reduction
+still permits two trunk batches per prefill step. The bounds remain checked at
+load. Focused capacity tests include small contexts, insufficient windows and
+transport limits. This is a load-compatibility fix, not a measured speedup.
+
+With that correction, real TP2 model replay passes at short and actual 32,768-token
+prefixes (65,536-token capacity): 72 paired cases, 576 session-stage records,
+115 actual gathered heads and 144 complete materialized state comparisons per rank.
+Gathered and full projection arms match tokens, complete finite-logit hashes,
+positions, sampler RNG, draft/acceptance work and state bytes. Cross-rank records
+also match. All eligible packed widths 2–7 actually execute, as does width 8's
+fallback, plus mixed-AR and pure-AR fallbacks. Production confidence gating is
+retained: requested draft caps are recorded separately from actual packed rows.
+The old fixed-width fixture's early stop is retained as an invalid assumption,
+not presented as a model mismatch. Driver/kernel windows and final idle checks pass.
+
+This uses a test-only host predicate toggle/counters linked against production
+model/GPU/transport objects. It establishes equality within its exercised paths,
+not release throughput, HTTP lifecycle behavior or arbitrary long-context shapes.
+Raw scripts, frozen source hashes, build commands, records and checks are in
+`tp-cache-retention/integrated-head-quality-v3` in the investigation directory.
+The ordinary two-row path also passes against full projection and an independent
+AR teacher at short and actual 32K contexts: 160 records and 80 gathered heads per
+rank, with exact full logits, greedy choices, seeded sampled replay and cross-session
+snapshot continuation. Four materialized end-state pairs match byte for byte.
+Supplementary real-model tests exercise actual all-MTP fallback widths 9, 10 and 12
+using eight supported sessions with zero/one-proposal caps: 48 records and 24 full
+state pairs per rank match, and no gathered head runs. These wider fallback cases
+use short, distinct prefixes and 256-token session capacity; they are not 32K cases.
+Confidence gating remains unchanged. A preliminary fixture exceeded the supported
+eight-session limit and was rejected at load; its failure is retained separately.
+Normal HTTP cache/cancellation checks also pass on the actual production server:
+four greedy/sampled keep/discard interrupted-assistant cache cases and nine
+cancellation/control records (38 underlying HTTP requests). Cached continuations
+match fresh controls; both victim roles leave a live width-two survivor matching
+its solo result, and post-cancellation replay matches. All substantive completed
+requests exercise MTP. SHA-checked binaries/settings, frozen sources, task-owned
+process cleanup, both final idle inventories and checked driver/kernel windows
+pass. This is candidate-only correctness, not matched request-time equivalence.
+Peer-loss/new-head failure recovery and release measurements remain outstanding.
+
+## Historical initial reconciliation
+
+The initial checkpoint combined upstream
+`8f5aece0c27ca35e3a0831da9ff960e8be78b30e` with RDMA source
+`0b6978aa1709f2ef863f5407e4ca7261191e9046`, plus cache-retention and MTP-backoff
+patches. The following sections describe those earlier checkpoints; later source
+ports and corrected confidence supersede their limitations.
 
 ## Reconciliation
 
@@ -40,7 +95,7 @@ Restoring the existing generic 64-row dispatch fixed that failure without
 removing the new 128-row path. The failure and diagnostic run are retained in
 the investigation, rather than discarded as noise.
 
-## Validation
+## Initial checkpoint validation
 
 Environment: two 128 GB Strix Halo hosts, gfx1151, Linux 7.3.0-strix-test,
 private ROCm 7.14.1 / Clang 23; approved native driver unchanged. No kernel,
@@ -110,12 +165,13 @@ transport snapshots are under
 
 ## Remaining gates
 
-Full two-node model/HTTP correctness, long-context/cache/cancellation behavior,
-and matched release prefill/decode measurements have not been run on this
-integrated engine. Historical downstream speedups do not transfer automatically
-to it. Consolidate the remaining reviewed changes with their dependencies and
-run those checks before changing the operational default or merging this entire
-integration into the fork's main branch.
+Complete current-source peer-loss/new-head failure recovery and any required
+serialized/disk-cache qualification. Then measure matched release prefill/decode
+with identical upstream, confidence correction and allocator in both arms.
+Historical downstream speedups do not transfer automatically. Cooperative PLE
+reads, peer-combine and subset-head sharding remain separately planned ports.
+Finish qualification before changing the operational default or merging the
+complete integration into the fork's main branch.
 
 ## Optimized-branch follow-up: scheduling and confidence compatibility
 
