@@ -2820,6 +2820,47 @@ Executor::TwoRankAllReduce(std::shared_ptr<Communicator> communicator,
   };
 }
 
+std::function<bool(float*, std::size_t, std::uint32_t, hipStream_t,
+                   std::string*)>
+Executor::TwoRankTargetHeadGather(std::shared_ptr<Communicator> communicator) {
+  return [communicator = std::move(communicator)](
+             float* data, std::size_t half_values, std::uint32_t rows,
+             hipStream_t stream, std::string* error) {
+    const auto rank = communicator->rank();
+    if (rank > 1 || rows == 0 || half_values == 0 ||
+        half_values > std::numeric_limits<std::size_t>::max() /
+                          (sizeof(float) * std::size_t{rows} * 2)) {
+      AssignError(error, "invalid head gather shape or rank");
+      return false;
+    }
+    const std::size_t half_pitch = half_values * sizeof(float);
+    Communicator::QueuedPartial queued;
+    if (!communicator->QueuePartial(half_pitch * rows, &queued, error))
+      return false;
+    StagePartial(data, queued.send, half_values * rows, queued.arrivals,
+                 queued.ready, queued.value, stream);
+    WaitValue(queued.arrived, queued.value, queued.wait_ticks, queued.timed_out,
+              stream);
+    // Staging consumes the packed local rows before any expansion. Expand
+    // all local rows first so a peer copy cannot overwrite unread sources.
+    for (std::uint32_t row = rows; row-- > 0;) {
+      float* src = data + std::size_t{row} * half_values;
+      float* dst = data + (std::size_t{row} * 2 + rank) * half_values;
+      if (src != dst && !Check(hipMemcpyAsync(dst, src, half_pitch,
+                                              hipMemcpyDeviceToDevice, stream),
+                               "head gather local row placement", error))
+        return false;
+    }
+    // Existing queued-window lifetime and Drain/CheckQueued failure handling
+    // apply. Copying, rather than adding, retains the original logit bits.
+    return Check(
+        hipMemcpy2DAsync(data + std::size_t{1 - rank} * half_values,
+                         half_pitch * 2, queued.peer, half_pitch, half_pitch,
+                         rows, hipMemcpyDeviceToDevice, stream),
+        "head gather peer row placement", error);
+  };
+}
+
 std::function<bool(std::string*)> Executor::TwoRankReduceStatus(
     std::shared_ptr<Communicator> communicator) {
   return [communicator = std::move(communicator)](std::string* error) {
@@ -3267,7 +3308,15 @@ bool Executor::Run(Session& session, std::uint64_t key, bool graph,
   // Host-driven communication is not graph-safe yet. Keep the distributed
   // path eager until the communicator has an explicit capture protocol.
   if (model_->tp_world_size() > 1) {
-    graph = false;
+    bool ok = body();
+    if (ok) {
+      session.warmed_.insert(key);
+      ok = !synchronize || Drain("forward", error_msg);
+    }
+    if (!ok && options_.abort) {
+      options_.abort(error_msg != nullptr ? *error_msg : std::string{});
+    }
+    return ok;
   }
   // A batch shape runs eagerly once before it is captured: the first pass
   // grows the GEMM tier's arena, which capture forbids.
@@ -3745,13 +3794,41 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
     return false;
   }
   if (n_logits > 0) {
+    // Preserve the trunk mode before selecting decode arithmetic for its head.
+    const bool target_head_decode = !prefill_phase;
     PrefillPhase head_phase(false);
     // Only the requested tail needs the head's normalization.
     const std::size_t skip = static_cast<std::size_t>(n - n_logits);
     const DeviceMixer& head = model_->hc_head();
     if (!HcMix(head, s_.res + skip * c.HcDim(), false, s_.mixed, nullptr,
-               n_logits, error_msg) ||
-        !Dense(model_->output(), s_.mixed, s_.logits, n_logits, error_msg)) {
+               n_logits, error_msg)) {
+      return false;
+    }
+    const auto& output = model_->output();
+    // Reuse the measured two-row head gather only for ordinary MTP target
+    // verification. AR, prefill, wider verification and true batches keep
+    // their existing routes. Both ranks reconstruct every original logit.
+    const bool gather_head =
+        target_head_decode && session.mtp_enabled_ && n_logits == 2 &&
+        model_->tp_world_size() == 2 && options_.target_head_gather &&
+        output.type == GgmlType::kQ8_0 && output.rows == 248320 &&
+        output.cols == 2560 && c.hidden_size == 2560;
+    if (gather_head) {
+      auto part = output;
+      part.rows /= 2;
+      const auto rank = model_->tp_rank();
+      if (rank >= 2) {
+        AssignError(error_msg, "target head gather rank out of range");
+        return false;
+      }
+      part.data = static_cast<std::uint8_t*>(part.data) +
+                  std::size_t{rank} * part.rows * (part.cols / 32) * 34;
+      if (!Dense(part, s_.mixed, s_.logits, n_logits, error_msg) ||
+          !options_.target_head_gather(s_.logits, part.rows, n_logits, stream_,
+                                       error_msg)) {
+        return false;
+      }
+    } else if (!Dense(output, s_.mixed, s_.logits, n_logits, error_msg)) {
       return false;
     }
     if (download_logits &&

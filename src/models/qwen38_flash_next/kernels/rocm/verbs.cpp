@@ -42,13 +42,14 @@ namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
 
 constexpr std::uint32_t kWireMagic = 0x47554654U;  // "GUFT"
-constexpr std::uint32_t kWireVersion = 12;
+constexpr std::uint32_t kWireVersion = 14;
 constexpr std::uint32_t kPlacementGpuWindows = 1U;
 constexpr std::uint32_t kPlacementSplitDraftSubset = 2U;
 constexpr std::uint32_t kPlacementGreedyConfidence = 4U;
-constexpr std::uint32_t kPlacementKnownFlags = kPlacementGpuWindows |
-                                               kPlacementSplitDraftSubset |
-                                               kPlacementGreedyConfidence;
+constexpr std::uint32_t kPlacementTargetHeadGather = 8U;
+constexpr std::uint32_t kPlacementKnownFlags =
+    kPlacementGpuWindows | kPlacementSplitDraftSubset |
+    kPlacementGreedyConfidence | kPlacementTargetHeadGather;
 constexpr std::uint32_t kPlacementMagic = 0x4755504CU;   // "GUPL"
 constexpr std::uint32_t kCollectiveMagic = 0x47554348U;  // "GUCH"
 constexpr std::uint32_t kCollectiveVersion = 5;
@@ -590,7 +591,8 @@ public:
     }
     const Placement local_placement{
         .flags = (local_gpu ? kPlacementGpuWindows : 0U) |
-                 kPlacementSplitDraftSubset | kPlacementGreedyConfidence};
+                 kPlacementSplitDraftSubset | kPlacementGreedyConfidence |
+                 kPlacementTargetHeadGather};
     Placement remote_placement{};
     if (!control.SendAll(&local_placement, sizeof(local_placement), error) ||
         !control.RecvAll(&remote_placement, sizeof(remote_placement), error)) {
@@ -613,6 +615,8 @@ public:
                            kPlacementSplitDraftSubset) != 0;
     greedy_confidence_ = (local_placement.flags & remote_placement.flags &
                           kPlacementGreedyConfidence) != 0;
+    target_head_gather_ = (local_placement.flags & remote_placement.flags &
+                           kPlacementTargetHeadGather) != 0;
     if (local_gpu && !gpu_windows_) {
       gpu_unavailable_ = "the peer has no DMA-BUF windows";
     }
@@ -775,6 +779,9 @@ public:
   }
   [[nodiscard]] bool SupportsGreedyConfidence() const noexcept override {
     return greedy_confidence_;
+  }
+  [[nodiscard]] bool SupportsTargetHeadGather() const noexcept override {
+    return target_head_gather_;
   }
   [[nodiscard]] std::size_t MaxPartialBytes() const noexcept override {
     return kWindowBytes - data_offset_;
@@ -974,6 +981,31 @@ public:
     ++queued_;
     jobs_ready_.notify_one();
     return true;
+  }
+
+  void Abort(const std::string& error) noexcept override {
+    {
+      std::lock_guard lock(mutex_);
+      poisoned_ = true;
+      // Release and notify before optional error-string allocation. Neither
+      // this rank nor its peer may wait for more work from a failed forward.
+      if (flags_ != nullptr) {
+        Flag<std::uint64_t>(kArrivedOffset)
+            .store(std::numeric_limits<std::uint64_t>::max(),
+                   std::memory_order_release);
+      }
+      if (control_ != nullptr) {
+        (void)::shutdown(control_->fd(), SHUT_RDWR);
+      }
+      if (first_error_.empty()) {
+        try {
+          first_error_ = error.empty() ? "local GPU execution failed" : error;
+        } catch (...) {
+          // The poison flag and notification do not depend on allocation.
+        }
+      }
+    }
+    jobs_ready_.notify_all();
   }
 
   [[nodiscard]] bool CheckQueued(std::string* error) override {
@@ -1434,15 +1466,15 @@ private:
         // ends once the stream has drained finds nothing in flight.
         if (job.queued) {
           --queued_;
+          // Serialize publication with Abort: a successful in-flight transfer
+          // must never overwrite its terminal arrival value with an ordinal.
+          Flag<std::uint64_t>(kArrivedOffset)
+              .store(poisoned_ ? std::numeric_limits<std::uint64_t>::max()
+                               : job.operation_id + 1,
+                     std::memory_order_release);
         }
       }
       if (job.queued) {
-        // A failure releases every wait: the stream runs to its end and the
-        // caller learns of the failure from CheckQueued.
-        Flag<std::uint64_t>(kArrivedOffset)
-            .store(failed ? std::numeric_limits<std::uint64_t>::max()
-                          : job.operation_id + 1,
-                   std::memory_order_release);
         continue;
       }
       {
@@ -1787,6 +1819,7 @@ private:
   bool gpu_windows_{false};
   bool split_draft_subset_{false};
   bool greedy_confidence_{false};
+  bool target_head_gather_{false};
   std::string gpu_unavailable_;
   std::size_t data_offset_{kDataOffset};
   // The next exchange whose device receive window is not yet posted.

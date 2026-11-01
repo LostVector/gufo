@@ -96,6 +96,15 @@ public:
   /// After the stream has drained: false with the first failure of a queued
   /// exchange.
   [[nodiscard]] virtual bool CheckQueued(std::string* error) = 0;
+  /// Both peers negotiated the extra two-row MTP target-head gather.
+  /// Other communicators retain replicated scoring and collective order.
+  [[nodiscard]] virtual bool SupportsTargetHeadGather() const noexcept {
+    return false;
+  }
+  /// Terminates this communicator after local GPU execution failed. Native
+  /// transports must release queued GPU waits and notify the peer; no later
+  /// operation may succeed. Unsupported test communicators may do nothing.
+  virtual void Abort(const std::string&) noexcept {}
 };
 
 }  // namespace gufo::models::qwen38_flash_next::rocm
