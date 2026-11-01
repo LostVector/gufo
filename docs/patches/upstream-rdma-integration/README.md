@@ -158,3 +158,40 @@ known to be stale on this branch, it must not serve as the performance reference
 for later optimizer gains. Apply this compatibility correction to both arms.
 Full-model/cache/cancellation qualification and the remaining target-head and
 lab-optimization integration are still outstanding.
+
+## Target-head and host-window ports
+
+The optimized branch now also ports PR #5's ordinary two-row target-head gather,
+PR #6's OS-selected registered host windows, and PR #7's batched gather. The
+ordinary path retains its original two-row MTP guard; packed all-MTP batches
+retain the 2–7-row guard, with other paths falling back to the existing full
+projection. The newer upstream confidence policy and its corrected distributed
+probability output stay intact. Older policy prototypes were not imported.
+
+Transport versions 19, 20 and 21 identify the successive integration stages;
+the combined port uses 21. All peers must use matching builds. The archived
+measurements and wire versions in the individual PR documents describe their
+original reviewed revisions, not a new speed result for this branch.
+
+The complete combined server builds. The allocator's CPU regression passes,
+using production mapping helpers and a simulated HIP registrar. It is supported
+by a separate real two-node test on the unchanged native driver: GPU sum and
+confidence checks plus gathers at 1, 2, 3, 7 and 12 rows. Every gathered word
+matches exactly, including negative zero and NaN payload bits. Helper coverage
+at 1/12 rows does not expand production eligibility beyond the guards above.
+
+The same test passes with the legacy fixed address deliberately occupied on
+both processes. The new host windows select unused addresses; an old fixed-VA
+build fails with EEXIST as expected. Mixed version 21/18 and 18/21 peers reject.
+Across the normal and occupied positive runs, 24,832,000 float values are compared
+bitwise on the two hosts. The actual transport reports mapped host windows;
+DMA-BUF registration is unsupported here, so this is not a zero-copy claim.
+Checked driver error/retry/drop deltas remain zero and final inventories are
+idle. Raw fixed-sequence results are in `head-protocol-v1` in the investigation.
+
+The imported statistical data still reconstructs its original paired estimates
+and timing flags. CSV line endings were normalized only in this integration
+copy; raw compressed requests/prompts and numeric rows were retained. Full-model
+projection/state/caching/failure qualification and matched release performance
+measurements remain required. Cooperative PLE reads, peer-combine and subset-head
+sharding from the older lab baseline remain separately planned ports.

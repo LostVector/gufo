@@ -31,8 +31,9 @@ struct IbrverbsConfig {
 /// immediate data of a header and the partial into the peer's next receive
 /// window; completions arrive through an event-driven completion channel,
 /// and the bootstrap socket stays open only to detect a lost peer. Overlapped
-/// exchanges run on a background thread. Both processes map the same fixed
-/// send and receive windows. Callers must bind the same control scope before
+/// exchanges run on a background thread. Each process selects its registered
+/// host-window addresses and advertises its receive VA/rkey during bootstrap.
+/// Callers must bind the same control scope before
 /// model execution; every collective carries and validates its operation
 /// ordinal.
 [[nodiscard]] std::shared_ptr<Communicator> CreateIbrverbsCommunicator(

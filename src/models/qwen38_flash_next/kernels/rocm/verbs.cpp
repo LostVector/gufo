@@ -39,8 +39,8 @@ namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
 
 constexpr std::uint32_t kWireMagic = 0x47554654U;  // "GUFT"
-// Version20 adds OS-selected host windows to the integrated gather path.
-constexpr std::uint32_t kWireVersion = 20;
+// Version21 adds batched head gathers to dynamic integrated host windows.
+constexpr std::uint32_t kWireVersion = 21;
 constexpr std::uint32_t kPlacementGpuWindows = 1U;
 constexpr std::uint32_t kPlacementTargetHeadGather = 8U;
 constexpr std::uint32_t kPlacementKnownFlags =

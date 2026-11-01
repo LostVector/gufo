@@ -1,0 +1,7 @@
+{
+  "new_new_real_GPU_10KiB_sum_exact": true,
+  "wire16_versus17_both_orders_reject": true,
+  "occupied_legacyVA_combined_build_collective_exact": true,
+  "PIDs_frozen_harness_binaries_counter_kernel_boot_topology_approved_idle_pass": true,
+  "scope": "Actual nativeprovider bootstrap and10KiBGPUcollective, including deliberately occupied legacyVA. Combined-model/state/cache/recovery/performance still separate."
+}

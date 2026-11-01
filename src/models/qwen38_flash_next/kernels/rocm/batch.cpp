@@ -1137,22 +1137,56 @@ bool Executor::ForwardBatch(std::span<const BatchItem> items,
       }
     }
     UseScratch(base);
-    return HcMixBatch(model_->hc_head(), base.res, false, base.mixed, nullptr,
-                      rows, error) &&
-           DenseBatch(model_->output(), base.mixed, batch_logits_, rows, error);
+    if (!HcMixBatch(model_->hc_head(), base.res, false, base.mixed, nullptr,
+                    rows, error))
+      return false;
+    const auto& output = model_->output();
+    // Real-weight completed-operation tests support these packed row counts.
+    // Preserve the full-vocabulary result on both ranks and all other routes.
+    const bool gather_head =
+        rows >= 2 && rows <= 7 && model_->tp_world_size() == 2 &&
+        options_.target_head_gather && output.type == core::GgmlType::kQ8_0 &&
+        output.rows == 248320 && output.cols == 2560 && c.hidden_size == 2560 &&
+        std::all_of(items.begin(), items.end(), [](const BatchItem& item) {
+          return item.session->mtp_enabled_;
+        });
+    if (!gather_head)
+      return DenseBatch(output, base.mixed, batch_logits_, rows, error);
+    auto part = output;
+    part.rows /= 2;
+    const auto rank = model_->tp_rank();
+    if (rank >= 2)
+      return Fail(error, "batched target head gather rank out of range");
+    part.data = static_cast<std::uint8_t*>(part.data) +
+                std::size_t{rank} * part.rows * (part.cols / 32) * 34;
+    return DenseBatch(part, base.mixed, batch_logits_, rows, error) &&
+           options_.target_head_gather(batch_logits_, part.rows, rows, stream_,
+                                       error);
+  };
+  // A failed GPU body can leave a peer or this stream waiting for a
+  // collective that will never be submitted. Abort before synchronizing.
+  const auto abort_execution = [&] {
+    if (model_->tp_world_size() > 1 && options_.abort) {
+      const std::string empty;
+      options_.abort(error != nullptr ? *error : empty);
+    }
   };
   bool ok = false;
   try {
     ok = body();
   } catch (...) {
+    abort_execution();
     (void)hipStreamSynchronize(stream_);
     UseScratch(base);
     throw;
   }
+  if (!ok)
+    abort_execution();
   const auto status = hipStreamSynchronize(stream_);
   UseScratch(base);
   if (!ok || !Check(status, error) ||
       (options_.reduce_status && !options_.reduce_status(error))) {
+    abort_execution();
     return false;
   }
   for (std::size_t i = 0; i < items.size(); ++i) {

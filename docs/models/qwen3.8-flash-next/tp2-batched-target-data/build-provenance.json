@@ -1,0 +1,14 @@
+{
+  "binary_sha256": "fc08a5f14d5ec2fb97ae8ddb05f76aa1da56b9f8fefa4d56274cd0a6644e46cd",
+  "parent_binary_sha256": "e8157ddba559f3f0c4f7b057e7ec6a022b00057ea6fbad48667751cc7a4f27bf",
+  "source_files_changed": [
+    "src/models/qwen38_flash_next/kernels/rocm/verbs.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/batch.cpp"
+  ],
+  "changed_archive_members": [
+    "batch.cpp.o",
+    "verbs.cpp.o"
+  ],
+  "qualified_batch_object_reused_exactly": true,
+  "headers_GPU_all_other_objects_unchanged": true
+}
