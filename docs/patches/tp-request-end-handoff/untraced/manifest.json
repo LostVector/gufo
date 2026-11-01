@@ -1,0 +1,102 @@
+{
+  "base_commit": "ac8f6ed7d4f47ee532971c2da03f26d7943d66f8",
+  "candidate_production_commit": "5ba11d7b6a1d6235f06d6f6f1f59be86c5bd0ef8",
+  "binaries": {
+    "baseline": {
+      "name": "gufo-end-control",
+      "sha256": "c21c26ebdb4edd2cf5b86c88fb35d3b87952f059cc3bc1f1ebfaa3aeb4cf814e"
+    },
+    "candidate": {
+      "name": "gufo-end-handoff",
+      "sha256": "c455bef45de93254a1986540fb8a3082ced2c01f7092f0442b78824440ee71ef"
+    }
+  },
+  "protocol_sha256": "712d09ac4af4030f7f1ca2cfa3275d633225fb6d72688874a4efc2f1884ac780",
+  "files": [
+    {
+      "phase": "pair01-baseline",
+      "role": "baseline",
+      "file": "data/pair01-baseline.jsonl.gz",
+      "sha256": "ecf8451edc21ac479f68ce3476562d600d6be25d2fcdad20596b0095c446a115",
+      "raw_sha256": "786023a1f5eb0adb54b82a9aa284b4b0317a776070ec92526bfd158a687ca2b4"
+    },
+    {
+      "phase": "pair01-candidate",
+      "role": "candidate",
+      "file": "data/pair01-candidate.jsonl.gz",
+      "sha256": "2925159beac3fbf092689ada163e1bd918dfde123a34b82a4b334c5467c14764",
+      "raw_sha256": "5464bbf833252ce67cc8c86c2591a384192cdca1f49bc5071e6e3e5264fff837"
+    },
+    {
+      "phase": "pair02-candidate",
+      "role": "candidate",
+      "file": "data/pair02-candidate.jsonl.gz",
+      "sha256": "36c85aa0381fca09b412a2684e372e94146318888849af75b466e0a4d7f83f3b",
+      "raw_sha256": "71148473ba41f72c5292e2421b1b816531ed7d67f02c264855085b5d04a35886"
+    },
+    {
+      "phase": "pair02-baseline",
+      "role": "baseline",
+      "file": "data/pair02-baseline.jsonl.gz",
+      "sha256": "60d0871636bf905f25988fc4d081f68dc0b4253aaaf466d63e110ba6bf707972",
+      "raw_sha256": "f515cfb13afcf49573d3912a72d9ebf780dea07e1a30e9ec3fe1dd3d8ea6fd62"
+    },
+    {
+      "phase": "pair03-baseline",
+      "role": "baseline",
+      "file": "data/pair03-baseline.jsonl.gz",
+      "sha256": "19171c11bb1783926dc36435a73af2fe9abe22398f1f046b2a39dd4f7f921960",
+      "raw_sha256": "bc07d4535d64dbdcff2fef04dc490e56bd453a12a98d9ce53efeaa4a813ba50f"
+    },
+    {
+      "phase": "pair03-candidate",
+      "role": "candidate",
+      "file": "data/pair03-candidate.jsonl.gz",
+      "sha256": "8f9c5b9ce5f644575b4d5e7217386705e61bdeece564b28e9aeea6e13f740812",
+      "raw_sha256": "63b3ce59a8abc781f47519748fad65482fe446c37850b76402b42ed490e0e4b1"
+    },
+    {
+      "phase": "pair04-candidate",
+      "role": "candidate",
+      "file": "data/pair04-candidate.jsonl.gz",
+      "sha256": "e1441ba57bd26e49afb6bbd55b24e8381bec30fc99a0ea452fb59009c543eb06",
+      "raw_sha256": "6037c4f750d3e22dc11e1db64d9ae9504a640d131d3ba411ed779959b892573f"
+    },
+    {
+      "phase": "pair04-baseline",
+      "role": "baseline",
+      "file": "data/pair04-baseline.jsonl.gz",
+      "sha256": "9232f70b5f8e5954c52a8999ca1609b88cc30ce6b15895d14325a329e5091bd7",
+      "raw_sha256": "ecad10b3a42d32b2be9a11db523212dbfa284c103ea2b1c776f7cb698f30d91b"
+    },
+    {
+      "phase": "pair05-baseline",
+      "role": "baseline",
+      "file": "data/pair05-baseline.jsonl.gz",
+      "sha256": "49d443ca2164e2ebfb35e5ad60437fbf6f683e56afae1038579e02eb8c4e1d66",
+      "raw_sha256": "6fe98952a3a17334afb1486d63ff18a60a1f4a466d7e4e9d9f1105e95326f676"
+    },
+    {
+      "phase": "pair05-candidate",
+      "role": "candidate",
+      "file": "data/pair05-candidate.jsonl.gz",
+      "sha256": "33a85641d87b8ad74b03da848ce4d818d4fdaf3557f94faac7e1228ee4af8b79",
+      "raw_sha256": "5313af80157e48f746ae41bee8806eaee84ed249ccc746c114c4d515128c8eb4"
+    },
+    {
+      "phase": "pair06-candidate",
+      "role": "candidate",
+      "file": "data/pair06-candidate.jsonl.gz",
+      "sha256": "68b31d0a8dca73a21c3872b81cbaee4e5dd729b214b9c130e182771fe161de2b",
+      "raw_sha256": "c74f8cc3f407f4aa93d42b4d8f07f970c1e2d3e8311740c6e138a8f25de52b02"
+    },
+    {
+      "phase": "pair06-baseline",
+      "role": "baseline",
+      "file": "data/pair06-baseline.jsonl.gz",
+      "sha256": "51826adcff977fe7e347cc84352b93f3be010146c8382f1cbc8ba35869e275ac",
+      "raw_sha256": "c23ed9e7b822ab24cdab4dfaf5ec78c88f7d9ec8cdf6bfc30285251ec2f3ad4a"
+    }
+  ],
+  "scope": "Fixed six balanced-order pairs, untraced one-object release control/candidate. Raw client measurements independently verifiable here; local source/harness/runtime/driver/kernel checks recorded in the accompanying host-validation report. No throughput significance claim."
+}

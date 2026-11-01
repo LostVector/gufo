@@ -1,0 +1,57 @@
+{
+  "phase": "pair04-candidate",
+  "case": "short-c2",
+  "scope": "Client timing localization only. Shared streaming pauses before either request produces its final content token. EndRequest is downstream of scheduler completion; no CPU/kernel attribution for these earlier gaps is claimed.",
+  "observations": [
+    {
+      "actor": 0,
+      "gaps": [
+        {
+          "gap_ms": 105.296781,
+          "end_after_wave_start_ms": 485.6091559827328,
+          "before_first_last_content_ms": 2996.509438
+        },
+        {
+          "gap_ms": 91.092226,
+          "end_after_wave_start_ms": 1560.3491719663143,
+          "before_first_last_content_ms": 1921.769422
+        },
+        {
+          "gap_ms": 123.551235,
+          "end_after_wave_start_ms": 1719.6279379725456,
+          "before_first_last_content_ms": 1762.490656
+        },
+        {
+          "gap_ms": 74.89867,
+          "end_after_wave_start_ms": 1794.543596982956,
+          "before_first_last_content_ms": 1687.574997
+        }
+      ]
+    },
+    {
+      "actor": 1,
+      "gaps": [
+        {
+          "gap_ms": 96.004209,
+          "end_after_wave_start_ms": 424.6835379898548,
+          "before_first_last_content_ms": 3057.435056
+        },
+        {
+          "gap_ms": 91.119225,
+          "end_after_wave_start_ms": 1560.409919977188,
+          "before_first_last_content_ms": 1921.708674
+        },
+        {
+          "gap_ms": 123.574563,
+          "end_after_wave_start_ms": 1719.6704659759998,
+          "before_first_last_content_ms": 1762.448128
+        },
+        {
+          "gap_ms": 74.87396,
+          "end_after_wave_start_ms": 1794.5764059722424,
+          "before_first_last_content_ms": 1687.542188
+        }
+      ]
+    }
+  ]
+}

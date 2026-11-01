@@ -42,8 +42,9 @@ identities match. C2 adaptive work may vary and is retained in the raw records.
 
 These are exploratory ranges over three histories per arm, not confidence bounds
 or an inferential throughput claim. The remaining one-call wait is expected.
-Untraced confirmation and current-patch cache/cancellation/failure checks remain
-pending; the patch stays a draft. Earlier head-optimization confidence results are
+Untraced confirmation and current-patch cache/cancellation checks now pass as
+described below; current-candidate process-local failure/recovery checks also pass.
+The patch stays a draft with unresolved timing flags. Earlier head-optimization confidence results are
 separate and are not pooled with these profiles.
 
 The first complete control history was retained after the collector wrongly
@@ -60,6 +61,84 @@ scheduler chunk 2,048 and RAM cache 1 GiB; requests bypass cache reads. Actual
 prefixes in the focused concurrent cases are short, not 64K prompts. Worker
 verdict responses use the TCP control channel; the intervals below are not RDMA
 payload latency measurements.
+
+## Untraced confirmation
+
+Six fixed pairs with balanced control/candidate order replayed the same history
+on fresh model processes: 144 requests, all output/prompt/cache-work identities
+exact. Both binaries have tracing removed. The candidate replaces only
+`tp_executor.cpp.o` with the committed production change at `5ba11d7b`; every
+other release/GPU/native object is unchanged. The binary embeds the parent
+revision, so the [manifest](untraced/manifest.json) records both source and binary
+identities explicitly.
+
+Client-measured last-content-to-HTTP-finish latency for the first-finishing actor:
+
+| Request (six per arm) | Control median | Candidate median | Control worst | Candidate worst |
+| --- | ---: | ---: | ---: | ---: |
+| Short C2, actor 1 | 53.38 ms | 46.36 ms | 306.94 ms | 52.77 ms |
+| Coding C2, actor 0 | 40.02 ms | 35.94 ms | 746.83 ms | 39.32 ms |
+
+![Individual completion tails in six untraced pairs](untraced/completion-tails.png)
+
+This confirms the completion-tail effect without tracing. It is a descriptive
+sample, not a universal latency bound or throughput significance claim. Unaffected
+C1 pp2048/tg128 preserves exact proposal/acceptance/round/width work; median
+server-accounted decode is 67.41 versus 67.47 tokens/s, with no speed claim.
+
+Thirteen [per-request timing flags](untraced/timing-flags.csv) exceed both 5% and
+3 ms and are retained. Coding TTFT has approximately 253/316 ms modes in both
+arms; maximum inter-token times also vary in both. Pair 4 candidate short actor 1
+is 322.7 ms slower wall / 345.6 ms slower server-accounted decode than its matched
+control, with 45 versus 42 draft rounds. Another candidate has the same actor's
+79 proposals / 62 accepted / 45 rounds but 153.6 ms less decode time. Adaptive
+work alone therefore does not explain the entire outlier. Both actors exhibit
+shared 75–124 ms streaming pauses in the slower run, ending 1.7–1.9 seconds before
+the first final content token; [client gap localization](untraced/pair04-shared-gaps.json)
+does not assign those pauses to a CPU, GPU, storage or transport cause. These
+flags remain inconclusive and advisory; they are not waived or called fixed by
+the request-finalization change.
+
+Current-candidate greedy/sampled cached continuation passes for keeping and
+discarding interrupted assistant output. C2 cancellation in either slot preserves
+the live width-2 survivor's solo output and subsequent victim replay. The
+[lifecycle report](untraced/lifecycle-validation.json) records these four cache
+cases and nine cancellation/control records; these are not thirteen HTTP calls.
+Checked transport error deltas are zero; process/boot/topology/kernel and final
+idle checks pass. The [host report](untraced/host-validation.json) is the original
+correctness gate output: its legacy `records_per_variant: 12` field means records
+per **start**, with 72 per arm and 144 total here.
+
+Reproduce all client identities, first-finisher tails and timing flags with:
+
+```sh
+python3 docs/patches/tp-request-end-handoff/untraced/verify.py
+```
+
+The verifier checks the included raw client records and hashes. It does not
+independently recreate the original host environment. Instrumented and untraced
+studies are kept separate.
+
+## Current-candidate process-local failure containment
+
+The [fault report](untraced/fault-validation.json) pins new return-PC and live
+`ForwardBatch` ancestry checks against the untraced candidate executable. The
+injection shim and its seven CPU-only negative/positive controls are unchanged
+and reused by exact source/artifact hashes; previous production failure results
+are not reused. A fresh current-engine control precedes the three injected cases.
+
+Simulated rank-0 and rank-1 HIP copy API errors, and task-owned rank-1 process
+exit, each produce explicit non-normal errors on both concurrent streams without
+timeout. Complete capture durations are 0.603, 0.912 and 0.932 seconds respectively;
+these include request admission/prefill and are not pure abort latency. A fresh
+process pair after each fault reproduces all nine recovery outputs and
+proposal/acceptance/round/width work exactly. Fourteen rank/phase transport-counter
+windows have zero checked error deltas; kernel, frozen source/harness/settings,
+boot/topology, process cleanup and final idle checks pass.
+
+This qualifies simulated process-local failure containment and fresh recovery. It
+does not establish physical cable-loss handling, actual GPU hardware-fault
+recovery, or transparent reconnection within the same model processes.
 
 ## Reproduction
 

@@ -1,0 +1,72 @@
+{
+  "all_144_prompt_output_cachework_identities_exact": true,
+  "c1_proposal_acceptance_rounds_and_width_exact": true,
+  "timing_flags": 13,
+  "first_finisher_completion_tails": [
+    {
+      "case": "short-c2",
+      "actor": 1,
+      "role": "baseline",
+      "n": 6,
+      "median_ms": 53.37628848850727,
+      "worst_ms": 306.94234001636505,
+      "values_ms": [
+        52.254299998283386,
+        236.2805040180683,
+        46.868318021297455,
+        53.68454399704933,
+        306.94234001636505,
+        53.06803297996521
+      ]
+    },
+    {
+      "case": "short-c2",
+      "actor": 1,
+      "role": "candidate",
+      "n": 6,
+      "median_ms": 46.35711398720741,
+      "worst_ms": 52.774500995874405,
+      "values_ms": [
+        46.751751989126205,
+        52.774500995874405,
+        45.96247598528862,
+        32.14470899105072,
+        31.875706017017365,
+        51.908838003873825
+      ]
+    },
+    {
+      "case": "coding-c2",
+      "actor": 0,
+      "role": "baseline",
+      "n": 6,
+      "median_ms": 40.018208503723145,
+      "worst_ms": 746.8317839801311,
+      "values_ms": [
+        32.13398998975754,
+        40.85077899694443,
+        39.18563801050186,
+        32.28254398703575,
+        250.38087099790573,
+        746.8317839801311
+      ]
+    },
+    {
+      "case": "coding-c2",
+      "actor": 0,
+      "role": "candidate",
+      "n": 6,
+      "median_ms": 35.94189999997616,
+      "worst_ms": 39.32055401802063,
+      "values_ms": [
+        38.60766500234604,
+        39.091760993003845,
+        32.03560197353363,
+        32.32992300391197,
+        39.32055401802063,
+        33.27613499760628
+      ]
+    }
+  ],
+  "scope": "Descriptive six-pair untraced confirmation. Timings flagged at both 5% and 3ms; no waiver, significance or throughput claim. This verifier checks client records, not the original host environment."
+}
