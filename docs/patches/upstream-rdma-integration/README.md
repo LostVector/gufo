@@ -195,3 +195,25 @@ copy; raw compressed requests/prompts and numeric rows were retained. Full-model
 projection/state/caching/failure qualification and matched release performance
 measurements remain required. Cooperative PLE reads, peer-combine and subset-head
 sharding from the older lab baseline remain separately planned ports.
+
+## Upstream refresh before model qualification
+
+Canonical upstream advanced to `bdf800de477e980904c26aad483123af7dfa6583`
+after the initial integration, adding the Qwen prefill GDN fusion and DeepSeek
+decode/sampling changes. The optimized branch merges those two commits without
+source conflicts. The earlier component checkpoint remains pinned separately;
+its old binary is preserved rather than relabeled as the new engine.
+
+On the refreshed source, the complete server builds. Selected MTP, GDN,
+attention and projection GPU suites pass together; sampling, logit-sampler,
+TP-executor and snapshot-gate CPU suites pass. Extension metadata checks pass
+with the existing private dependency prefix. The initial standalone metadata
+run could not find OpenSSL development files in its nested CMake process; that
+failure is retained and was resolved through test-process environment settings,
+without installing a system dependency or weakening the check. These are still
+component/integration checks, not full-model or performance qualification.
+
+Future optimizer comparisons must use the same refreshed upstream, corrected
+confidence path and dynamic host windows in both arms. The older preserved
+binaries serve provenance and diagnosis; comparing across upstream changes
+would conflate their effects with target-head or driver improvements.
