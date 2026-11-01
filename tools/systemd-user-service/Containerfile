@@ -1,13 +1,13 @@
-# ROCm 7.2.3 build and runtime environment for gufo with TP2 over RDMA.
+# ROCm 10.1 build and runtime environment for gufo with TP2 over RDMA.
 # The units run the gufo binary built from the checkout inside this image:
 #
-#   podman build -t localhost/gufo-tp2-dev:7.2.3 tools/systemd-user-service
+#   podman build -t localhost/gufo-tp2-dev:10.1 tools/systemd-user-service
 #
 # ibverbs-providers supplies the user-space RDMA drivers (mlx4/mlx5 for
 # InfiniBand and RoCE, irdma for Intel E810, and others). The first stage adds
 # usb4_rdma for USB4 cables with thunderbolt-ibverbs, built against the
 # image's rdma-core 50.0 from that project's patches.
-FROM docker.io/rocm/dev-ubuntu-24.04:7.2.3 AS usb4-rdma
+FROM docker.io/rocm/dev-ubuntu-24.04:10.1.0-full AS usb4-rdma
 
 ARG RDMA_CORE=50.0
 ARG RDMA_CORE_SHA256=405b9dd551120da9d1b8944c5ad24ab1f478fb13caedf5bf0d47053a6d6e20cc
@@ -31,7 +31,7 @@ RUN curl -fsSLO https://github.com/linux-rdma/rdma-core/releases/download/v${RDM
   && ninja -C build usb4_rdma-rdmav34 \
   && cp build/lib/libusb4_rdma-rdmav34.so /src/
 
-FROM docker.io/rocm/dev-ubuntu-24.04:7.2.3
+FROM docker.io/rocm/dev-ubuntu-24.04:10.1.0-full
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     build-essential cmake ninja-build pkg-config python3 python3-numpy \
