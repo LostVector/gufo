@@ -6,6 +6,7 @@
   "purpose": "Qwen3.8-Flash-Next CPU reference and ROCm runtime, including the continuation layout and the ngram draft model.",
   "consumers": [
     "gufo_llm_cli",
-    "gufo_serving"
+    "gufo_serving",
+    "gufo"
   ]
 }

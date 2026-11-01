@@ -37,3 +37,5 @@ Seeded replay is checked within the same execution configuration.
 For numerical comparisons, lower KL divergence, total variation, relative L2
 and word-error rate are better; higher cosine similarity and image PSNR are
 better. These bounded checks are not broad capability or perceptual scores.
+
+Flash-Next also supports two-host inference; see the [TP2 guide](qwen3.8-flash-next/TP2.md).

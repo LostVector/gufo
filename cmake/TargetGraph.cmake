@@ -56,8 +56,13 @@ function(gufo_link_graph_entry TARGET OUT)
     elseif("${item}" MATCHES "^\\$<(LINK_ONLY|BUILD_INTERFACE):([^>]+)>$")
       # CMAKE_MATCH_ is only valid after the enclosing if() finished, so the
       # target test goes in its own command.
-      if(TARGET "${CMAKE_MATCH_2}")
-        list(APPEND entries "${CMAKE_MATCH_2}")
+      set(unwrapped "${CMAKE_MATCH_2}")
+      if(TARGET "${unwrapped}")
+        list(APPEND entries "${unwrapped}")
+      elseif(IS_ABSOLUTE "${unwrapped}" OR "${unwrapped}" MATCHES "^-" OR
+             "${unwrapped}" IN_LIST GUFO_LINK_GRAPH_SYSTEM_LIBS)
+        # Static PRIVATE links wrap legitimate system libraries too. Apply
+        # the same classification as plain items without hiding target edges.
       else()
         message(FATAL_ERROR "Link graph: unclassified interface item '${item}' on ${TARGET}")
       endif()

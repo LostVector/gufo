@@ -1,7 +1,7 @@
 # Gufo: The ***Open Source*** Strix Halo AI engine 
 
 <p align="center">
-  <img src="assets/gufo-logo.jpg" alt="Gufo logo" width="180">
+  <img src="assets/gufo-logo.jpg" alt="Gufo logo" width="180"><img src="assets/gufo-logo.jpg" alt="Gufo logo" width="180">
 </p>
 
 Gufo is a vertical local inference engine for Linux and Windows, specifically built and optimized for AMD Strix Halo hardware:
@@ -12,8 +12,11 @@ Ryzen AI MAX+ 395 systems with Radeon 8060S (`gfx1151`), up to 128 GiB of unifie
 See the [changelog](CHANGELOG.md) and [GitHub Releases](https://github.com/gufo-org/gufo/releases)
 for user-facing changes and release history.
 
-> [!TIP]
-> Check out **[Gufo RDMA for Dual Strix Halo](https://github.com/neuhaus/gufo)**, a Gufo variant that has not been merged yet!
+> [!NOTE]
+> This fork integrates Gufo's experimental two-host tensor-parallel RDMA path.
+> Canonical upstream is [gufo-org/gufo](https://github.com/gufo-org/gufo).
+> See the [TP2 setup guide](docs/models/qwen3.8-flash-next/TP2.md) for
+> matching builds, transport requirements and validation limits.
 
 ## Models and benchmarks
 
@@ -35,6 +38,14 @@ named speculative mode. Peaks include repetitive output; aggregate tg sums
 individual request decode rates. Qwen27B's single-user peak uses the short-prompt
 C1 workload. Audio excludes loading.
 Each model guide lists the required files and complete benchmark settings.
+
+**Two hosts.** Qwen3.8 Flash-Next can also run across two Strix Halo hosts
+connected by InfiniBand, RoCE v2 or USB4 cables, with tensor parallelism over
+RDMA (TP2): faster
+decode and prefill than one host, and room for checkpoints that do not fit one.
+It is the only model with multi-host support so far and needs an optional build
+with libibverbs (`-DGUFO_ENABLE_TP2_RDMA=ON`); see
+[TP2](docs/models/qwen3.8-flash-next/TP2.md).
 
 ## Philosophy
 

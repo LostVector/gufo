@@ -404,7 +404,13 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
                         static_cast<std::uint32_t>(tiles.size()), f32_rows,
                         d_bounds, d_rows_token, d_rows_slot, nullptr, d_f16,
                         nullptr, m, k, nullptr)) {
-    throw std::runtime_error("routed F16 GEMM rejected the shape");
+    throw std::runtime_error(
+        "routed F16 GEMM rejected: type=" +
+        std::to_string(static_cast<int>(type)) +
+        " tokens=" + std::to_string(n_tokens) +
+        " experts=" + std::to_string(experts) + " m=" + std::to_string(m) +
+        " k=" + std::to_string(k) + " tile_rows=" + std::to_string(f32_rows) +
+        " tiles=" + std::to_string(tiles.size()));
   }
   // The F16-output route (the up and down projections' rows) must match
   // the F32 output to F16 rounding.
@@ -436,13 +442,19 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
 
   // Prefill pairs gate/up for buckets the separate 16- and 48-row tiles take.
   if ((tile_rows == 16 || tile_rows == 48) &&
-      (type == q::WeightType::kQ4_K || type == q::WeightType::kQ5_K)) {
+      (type == q::WeightType::kQ4_K || type == q::WeightType::kQ5_K ||
+       (type == q::WeightType::kQ8_0 && used > 1))) {
     // Different gate/up weights, with the up scale small enough that these
     // deliberately large synthetic weights do not overflow the F16 output.
     auto up = w.packed;
-    const std::size_t block_bytes = type == q::WeightType::kQ4_K ? 144 : 176;
+    const bool q8 = type == q::WeightType::kQ8_0;
+    const std::size_t block_bytes = q8                             ? 34
+                                    : type == q::WeightType::kQ4_K ? 144
+                                                                   : 176;
+    const std::vector<std::size_t> scales =
+        q8 ? std::vector<std::size_t>{0} : std::vector<std::size_t>{0, 2};
     for (std::size_t b = 0; b < up.size(); b += block_bytes) {
-      for (std::size_t offset : {0U, 2U}) {
+      for (std::size_t offset : scales) {
         __half scale;
         std::memcpy(&scale, up.data() + b + offset, sizeof(scale));
         scale = __float2half(__half2float(scale) / 1024.0F);
@@ -465,8 +477,7 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
       throw std::runtime_error("separate routed SwiGLU launch failed");
     }
     const auto separate = Download(d_f16_half, slots * m);
-    {
-      constexpr std::uint32_t pair_rows = 128;
+    for (const std::uint32_t pair_rows : {64U, 128U}) {
       std::vector<std::int32_t> gate_tiles;
       for (std::size_t e = 0; e < experts; ++e) {
         for (std::uint32_t j = 0; j < (counts[e] + pair_rows - 1) / pair_rows;
@@ -478,8 +489,8 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
       auto launch_pair = [&] {
         if (!q::RoutedGatedF16Gemm(
                 d_w, d_up, type, d_x_half, d_gate_tiles,
-                static_cast<std::uint32_t>(gate_tiles.size()), d_bounds,
-                d_rows_token, d_rows_slot, d_pair, m, k, nullptr)) {
+                static_cast<std::uint32_t>(gate_tiles.size()), pair_rows,
+                d_bounds, d_rows_token, d_rows_slot, d_pair, m, k, nullptr)) {
           throw std::runtime_error("paired routed SwiGLU launch failed");
         }
       };
@@ -673,9 +684,9 @@ void ReportVectorAccuracy() {
   }
 }
 
-void CheckVectorGrouping(bool down = false) {
+void CheckVectorGrouping(bool down = false, int down_cols = 640) {
   constexpr int experts = 8;
-  const int cols = down ? 640 : 2560;
+  const int cols = down ? down_cols : 2560;
   const int tokens = down ? 640 : 64;
   const int used = down ? 1 : 3;
   constexpr std::size_t guard = 16;
@@ -930,10 +941,10 @@ void CheckGatedDecodeShape() {
     auto* single = Upload(std::vector<float>(count, 0.0F));
     auto* batch = Upload(std::vector<float>(count, 0.0F));
     for (int t = 0; t < tokens; ++t)
-      if (qfn_mmq_moe_gated_vec(static_cast<int>(type), wa, wb, dx + t * cols,
-                                di + t * used,
-                                single + std::size_t{t} * used * rows, rows,
-                                cols, 1, experts, used, nullptr))
+      if (qfn_mmq_moe_gated_vec(
+              static_cast<int>(type), wa, wb, dx + t * cols, di + t * used,
+              single + static_cast<std::size_t>(t) * used * rows, rows, cols, 1,
+              experts, used, nullptr))
         throw std::runtime_error("single-token gated launch failed");
     const auto reference = Download(single, count);
     for (int n = 2; n <= tokens; ++n) {
@@ -941,8 +952,9 @@ void CheckGatedDecodeShape() {
                                 rows, cols, n, experts, used, nullptr))
         throw std::runtime_error("multi-token gated launch failed");
       const auto out = Download(batch, count);
-      if (std::memcmp(reference.data(), out.data(),
-                      std::size_t{n} * used * rows * sizeof(float)) != 0) {
+      if (std::memcmp(
+              reference.data(), out.data(),
+              static_cast<std::size_t>(n) * used * rows * sizeof(float)) != 0) {
         std::size_t i = 0;
         while (std::memcmp(&reference[i], &out[i], sizeof(float)) == 0)
           ++i;
@@ -1020,7 +1032,7 @@ std::vector<__half> PairedSwiglu(const Routing& r, const void* gate,
   std::uint32_t n = 0;
   auto* tiles = r.Tiles(128, &n);
   auto* out = Upload(std::vector<__half>(r.slots * m, __float2half(-7.0F)));
-  if (!q::RoutedGatedF16Gemm(gate, up, type, x, tiles, n, r.d_bounds,
+  if (!q::RoutedGatedF16Gemm(gate, up, type, x, tiles, n, 128, r.d_bounds,
                              r.d_rows_token, r.d_rows_slot, out, m, k, nullptr))
     throw std::runtime_error("paired routed launch rejected");
   CheckHip(hipDeviceSynchronize(), "paired routed launch");
@@ -1244,6 +1256,8 @@ int main() {
     ReportVectorAccuracy();
     CheckVectorGrouping();
     CheckVectorGrouping(true);
+    // A TP2 rank's share of every expert: 320 of the 640 intermediate units.
+    CheckVectorGrouping(true, 320);
     CheckPairedMmq();
     bool ok = true;
     // Gate/up view: 64 experts, top-10, 640 x 2560 Q4_K.
@@ -1257,6 +1271,9 @@ int main() {
          ok;
     // Q5_K gate/up view (one layer).
     ok = Ok(Run(q::WeightType::kQ5_K, 300, 10, 64, 640, 2560, 0x5A5A0001U)) &&
+         ok;
+    // Q8_0 gate/up view (the full Q8 model), separate and paired.
+    ok = Ok(Run(q::WeightType::kQ8_0, 300, 10, 64, 640, 2560, 0x08080001U)) &&
          ok;
     // Q8_0 down view (five layers keep Q8_0 down projections).
     ok = Ok(Run(q::WeightType::kQ8_0, 3000, 1, 64, 2560, 640, 0x0C0FFEE0U,
@@ -1286,6 +1303,27 @@ int main() {
     ok = Ok(Run(q::WeightType::kQ8_0, 3000, 1, 64, 2560, 640, 0x16160004U,
                 16)) &&
          ok;
+    // A TP2 rank's share of every expert: gate/up keep 320 of 640 output rows
+    // (a half-filled final 128-row tile), down keeps 320 of 640 inputs.
+    for (const std::uint32_t tile : {48U, 16U}) {
+      ok = Ok(Run(q::WeightType::kQ4_K, 300, 10, 64, 320, 2560, 0x32000001U,
+                  tile)) &&
+           ok;
+      ok = Ok(Run(q::WeightType::kQ5_K, 300, 10, 64, 320, 2560, 0x32000002U,
+                  tile)) &&
+           ok;
+      ok = Ok(Run(q::WeightType::kQ8_0, 300, 10, 64, 320, 2560, 0x32000005U,
+                  tile)) &&
+           ok;
+    }
+    for (const std::uint32_t tile : {64U, 16U}) {
+      ok = Ok(Run(q::WeightType::kQ5_1, 3000, 1, 64, 2560, 320, 0x32000003U,
+                  tile)) &&
+           ok;
+      ok = Ok(Run(q::WeightType::kQ8_0, 3000, 1, 64, 2560, 320, 0x32000004U,
+                  tile)) &&
+           ok;
+    }
     return ok ? 0 : 1;
   } catch (const std::exception& error) {
     std::cerr << error.what() << '\n';

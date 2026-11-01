@@ -26,6 +26,8 @@ endfunction()
 add_qwen38_flash_next_test(config gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(continuation_layout gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(ngram gufo_qwen38_flash_next "cpu")
+add_qwen38_flash_next_test(tp_partition gufo_qwen38_flash_next "cpu")
+add_qwen38_flash_next_test(rdma_gid gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(mtp_sampling gufo_core "cpu")
 add_qwen38_flash_next_test(rope_scaling gufo_qwen38_flash_next "cpu")
 # The HF-oracle/off-bit-identity checks link the scalar model oracle, so
@@ -68,6 +70,19 @@ if (ENGINE_ENABLE_HIP)
   add_custom_target(qwen38_flash_next_model_tests
     DEPENDS qwen38_flash_next_session_test qwen38_flash_next_snapshot_test
       qwen38_flash_next_continuation_adapter_test)
+
+  add_executable(qwen38_flash_next_tp_probe EXCLUDE_FROM_ALL tp_probe.cpp)
+  target_link_libraries(qwen38_flash_next_tp_probe PRIVATE
+    gufo_qwen38_flash_next hip::host)
+
+  # Batched-decode probe: the same program on both ranks over one RDMA pair,
+  # with no control channel, scheduler or executor.
+  if (GUFO_ENABLE_TP2_RDMA)
+    add_executable(qwen38_flash_next_tp_batched_probe EXCLUDE_FROM_ALL
+      tp_batched_probe.cpp)
+    target_link_libraries(qwen38_flash_next_tp_batched_probe PRIVATE
+      gufo_qwen38_flash_next hip::host)
+  endif()
 
   add_executable(qwen38_flash_next_dense_gemm_bench EXCLUDE_FROM_ALL
     dense_gemm_bench.cpp)

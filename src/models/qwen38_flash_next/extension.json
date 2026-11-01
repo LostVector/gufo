@@ -100,6 +100,18 @@
       "ctest": "qwen38_flash_next\\.continuation_layout",
       "check_pr": true,
       "windows_build": true
+    },
+    {
+      "target": "qwen38_flash_next_tp_partition_test",
+      "ctest": "qwen38_flash_next\\.tp_partition",
+      "check_pr": true,
+      "windows_build": true
+    },
+    {
+      "target": "qwen38_flash_next_rdma_gid_test",
+      "ctest": "qwen38_flash_next\\.rdma_gid",
+      "check_pr": true,
+      "windows_build": true
     }
   ],
   "test_labels": [

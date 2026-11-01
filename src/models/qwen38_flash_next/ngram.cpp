@@ -79,14 +79,15 @@ std::unique_ptr<NgramTable> NgramTable::Open(
     platform::PlatformFile file, std::uint64_t file_offset, std::uint64_t rows,
     std::uint32_t row_dim, core::GgmlType type, std::string* error_msg) {
   std::unique_ptr<NgramTable> t(new NgramTable());
-  const bool blocked =
-      type == core::GgmlType::kIQ4_NL || type == core::GgmlType::kQ8_0;
-  const std::size_t block = blocked ? 32 : 1;
-  const std::size_t block_bytes = type == core::GgmlType::kIQ4_NL ? 18
-                                  : type == core::GgmlType::kQ8_0 ? 34
-                                                                  : 2;
-  if ((!blocked && type != core::GgmlType::kBF16) || row_dim == 0 ||
-      row_dim % block != 0) {
+  const bool supported = type == core::GgmlType::kIQ4_NL ||
+                         type == core::GgmlType::kBF16 ||
+                         type == core::GgmlType::kQ8_0;
+  const std::size_t row_bytes =
+      type == core::GgmlType::kBF16 ? static_cast<std::size_t>(row_dim) * 2
+      : (type == core::GgmlType::kIQ4_NL || type == core::GgmlType::kQ8_0)
+          ? gufo::quant::QuantizedRowBytes(type, row_dim)
+          : 0;
+  if (!supported || row_bytes == 0) {
     if (error_msg != nullptr) {
       *error_msg = "unsupported n-gram table format";
     }
@@ -94,7 +95,7 @@ std::unique_ptr<NgramTable> NgramTable::Open(
   }
   t->type_ = type;
   t->row_dim_ = row_dim;
-  t->row_bytes_ = row_dim / block * block_bytes;
+  t->row_bytes_ = row_bytes;
   t->cache_count_ = std::bit_floor(kCacheBytes / t->row_bytes_);
   t->cache_entries_ = std::make_unique<CacheEntry[]>(t->cache_count_);
   t->cache_rows_.resize(t->cache_count_ * t->row_bytes_);
