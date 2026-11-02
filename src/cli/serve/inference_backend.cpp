@@ -103,7 +103,8 @@ struct InferenceBackend::Impl {
     TpRequest(std::shared_ptr<const State> state,
               std::shared_ptr<std::atomic<std::size_t>> open,
               std::uint64_t sequence)
-        : state_(std::move(state)),
+        : runner_(state->tp_runner),
+          broker_(state->response_broker),
           open_(std::move(open)),
           sequence_(sequence) {}
 
@@ -119,10 +120,9 @@ struct InferenceBackend::Impl {
       std::call_once(end_once_, [&] {
         try {
           std::string error;
-          if (!state_->tp_runner->EndRequest(sequence_, &error)) {
+          if (!runner_->EndRequest(sequence_, &error)) {
             end_problem_ = std::move(error);
-            state_->response_broker->FailAll("TP request end failed: " +
-                                             end_problem_);
+            broker_->FailAll("TP request end failed: " + end_problem_);
           }
         } catch (...) {
           end_failure_ = std::current_exception();
@@ -156,20 +156,19 @@ struct InferenceBackend::Impl {
           note(end_problem_);
         } else {
           TpControlResponse response;
-          if (!state_->response_broker->WaitForResponse(sequence_, &response,
-                                                        &error)) {
+          if (!broker_->WaitForResponse(sequence_, &response, &error)) {
             note("TP worker response failed: " + error);
           } else if (!response.error.empty()) {
             note("TP worker failed: " + response.error);
           }
         }
-        if (!state_->tp_runner->AwaitDependencies(sequence_)) {
+        if (!runner_->AwaitDependencies(sequence_)) {
           note("TP request reused a state rank 1 rejected");
         }
         // A request the ranks disagree about leaves a state that may differ
         // between them; it is never reused, and the cache replaces it in
         // time. Other requests keep theirs.
-        state_->tp_runner->Settle(sequence_, problem.empty());
+        runner_->Settle(sequence_, problem.empty());
         settled = true;
       } catch (...) {
         try {
@@ -182,7 +181,7 @@ struct InferenceBackend::Impl {
       if (!settled) {
         // Requests that reused this one's state wait for its verdict.
         try {
-          state_->tp_runner->Settle(sequence_, false);
+          runner_->Settle(sequence_, false);
         } catch (...) {
         }
       }
@@ -191,7 +190,10 @@ struct InferenceBackend::Impl {
     }
 
   private:
-    std::shared_ptr<const State> state_;
+    // Retain transport/model resources without retaining the scheduler that
+    // owns the queued completion callback.
+    std::shared_ptr<TpMirroredRunner> runner_;
+    std::shared_ptr<TpResponseBroker> broker_;
     std::shared_ptr<std::atomic<std::size_t>> open_;
     std::uint64_t sequence_{0};
     std::once_flag end_once_;
@@ -403,7 +405,11 @@ struct InferenceBackend::Impl {
               .stop_at_eos = stop_at_eos,
               .stop_sequences = std::move(stop_sequences),
               .return_progress = return_progress,
-              .before_terminal = [tp] { tp->QueueEnd(); },
+              .before_terminal =
+                  [weak = std::weak_ptr<TpRequest>(tp)] {
+                    if (auto request = weak.lock())
+                      request->QueueEnd();
+                  },
           });
       generation->BindScheduledRequest(std::move(scheduled));
       return generation;
