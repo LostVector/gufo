@@ -106,3 +106,7 @@ if parser.parse_args().statistics:
     for result,report in zip(results[:2],summary['metrics'][:2]): assert result['holm_adjusted_p']==report['holm_adjusted_p']
 print('PASS: exported hashes,240identities,exactC1work,26C2changes,pairedrates and all27flags/15requestcomparisons.')
 print('Scope: checks exported data; does not rerun inference, certify hardware or establish equivalence.')
+
+# The newer diagnostic is separate from, and never pooled into, the timing study.
+import subprocess, sys
+subprocess.run([sys.executable, str(p/'ragged-round-trace/check.py')], check=True)

@@ -85,7 +85,7 @@
   "files": {
     "cooperative-ple-http-smoke-v2-validation.json": "96b2db265591f97478dcce12cde9f620ded4ff569c0876c580204111f1a5c349",
     "production-build-rules.md": "a5aa9e8ab7e64c55cd933ad6302367f3c17625b3b19ca016fc1a5d4cc2d45872",
-    "check.py": "4eb3f0f4be6c233c6263440e39b60512e573c82752cadef543838379280d8cb2",
+    "check.py": "d58450f4bc02f2601a8dbdc9ab0e3529c10ee61a1d8e6b9d38ec842ec04f3d08",
     "timing-flags.csv": "82cd4f920e9855875b672fed777cf613d777fd032c50df4e9392715a6c8c8c6c",
     "cooperative-ple-release-comparison-v2-pair08-baseline.jsonl.gz": "6e174140ee13a5b9a176739a8b5cf9e13bd697c6518d3d60169f04d0172690a0",
     "cooperative-ple-production-compile-command-comparison.json": "367080b326e05e495422b0edc6714bdde276f6a306cae5302f9ed7d75c750606",
@@ -124,7 +124,7 @@
     "cooperative-ple-release-comparison-v2-pair05-candidate.jsonl.gz": "5522abc9be96bfd2365f6094b6ad65e4d1e6bb90530a5531e3bbf0b85861f030",
     "cooperative-ple-release-comparison-v2-pair09-baseline.jsonl.gz": "8622b5fec390ee9ea33f777936ac5aaf22f45bcf165b2aed675935ae69421af4",
     "release-build-provenance.json": "c6e52f7399d06acda89de836fc97f5b92ae59d346e292df2a6185c54a0219862",
-    "README.md": "eb3cf2d3daeba43b7ab9c8235fad006f2c3880a6508f3c0ec013a8ce58640100",
+    "README.md": "745e2a1e8f8838fa1187f9dfa98b3d1deb9e5d76cd561ea2966d52f34d1bd651",
     "cooperative-ple-release-comparison-v2-pair01-candidate.jsonl.gz": "e466bf033d83cd8e8e7d6ec96282bf76219f4856800fdf9ce46dff0c1dc35f25",
     "cooperative-ple-release-comparison-v2-pair03-candidate.jsonl.gz": "de97cab143f88db4dfe6e49488ad38ed93425e541d2fa2a2ebc2135f88425591",
     "cooperative-ple-release-comparison-v2-pair02-candidate.jsonl.gz": "286a206ab23fe96393f0ddff5071808febca2c0ba1d01c2b7fa19ebfd80f2372",
@@ -162,6 +162,20 @@
     "wider-concurrency/matched-progress.png": "f08189be5d0b3ce3656ed8dcb5bd9aab8186d2244da5522a07d1a3508d97901b",
     "wider-concurrency/README.md": "bae2d7cc077945a13dc76df482e502e8a60cb6657de858d43d02e6e90b454fa7",
     "wider-concurrency/phase-flags.csv": "4cbeb61bc16800a514c87f361ed64a871ffb0ee183f11fdb028d96bfa2431091",
-    "wider-concurrency/timing-flag-review.json": "9bab8898aa11e06ff6c2ad3430e1412c3626c6379950943f380a54537809d3c4"
+    "wider-concurrency/timing-flag-review.json": "9bab8898aa11e06ff6c2ad3430e1412c3626c6379950943f380a54537809d3c4",
+    "ragged-round-trace/validation.json": "589eec5eaea0c47dc013d43f0e01449fddb178fd1f2beb5beed9903056b4b8c6",
+    "ragged-round-trace/round-analysis.json": "55315d8abfe2b81bac624d3389862d39a9a2e05852b014ad717fb32c93b3991c",
+    "ragged-round-trace/probes.json": "65ebb52cbf8a8c051358b62308aa4e5bd9cdbd4a2a6d96b8087d491b63e28bff",
+    "ragged-round-trace/recorder-v5.zip": "288f6704b0a00176ead60a7102ef41ee01a55e75b390bb16b8f4fc622c9fd2cc",
+    "ragged-round-trace/host-partition.pdf": "15174019c4403b6238b9a6de5dec64d6f7dc18e3c05676654c725678bd53d97d",
+    "ragged-round-trace/design.json": "51e02be9c4622bc039676dec389d259067a5a964dec8751f15024ac0f5e5a3de",
+    "ragged-round-trace/adaptive-work.csv": "1d995145efa0affac9d1bc3ef1cee2e2be6b208ec8cfd4a2615fc2da8a3804d0",
+    "ragged-round-trace/acquisition.zip": "98d06670fff3f283f318353ebc665393eae28a12320b18690534b765d79911a6",
+    "ragged-round-trace/host-partition.png": "eabdee955460b231726e7d152abdcae4f911f6f2c9df1fc2e1f172e3e501f9e9",
+    "ragged-round-trace/README.md": "f514e70f1a17f284aae4fe0c97a65a0a9e02d742ad1d373ebd78426821c2c4ec",
+    "ragged-round-trace/phase-flags.csv": "d4bc3d617acfc2954ca1234dafabb50c8802d2d606b21529901a2ae18e28a31f",
+    "ragged-round-trace/rounds.csv": "267abefb2438ffac0efa30ea2132bfdd8f850da04d52b4f83d6a32a578339311",
+    "ragged-round-trace/check.py": "20cef09a6b48425945be6b301c326118d72c09d3e6331a2c475512b52e8828fc",
+    "ragged-round-trace/peer-work-check.json": "6faaa3c9e7f13ee44d24bb189b0d44d2486498e8c40a2c89c29e2c8ec88c6902"
   }
 }

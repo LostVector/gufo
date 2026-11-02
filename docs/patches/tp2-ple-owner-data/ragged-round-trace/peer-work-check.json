@@ -1,0 +1,149 @@
+[
+  {
+    "phase": "before-baseline",
+    "peer_counter_triples": [
+      [
+        7,
+        16,
+        9
+      ],
+      [
+        12,
+        21,
+        15
+      ],
+      [
+        24,
+        44,
+        30
+      ],
+      [
+        54,
+        86,
+        61
+      ]
+    ],
+    "head_counter_triples": [
+      [
+        7,
+        16,
+        9
+      ],
+      [
+        12,
+        21,
+        15
+      ],
+      [
+        24,
+        44,
+        30
+      ],
+      [
+        54,
+        86,
+        61
+      ]
+    ],
+    "same_multiset": true,
+    "scope": "Per-session totals compared as multiset; no crosshost time or ordinal actor mapping."
+  },
+  {
+    "phase": "first-candidate",
+    "peer_counter_triples": [
+      [
+        7,
+        16,
+        9
+      ],
+      [
+        13,
+        22,
+        15
+      ],
+      [
+        24,
+        45,
+        31
+      ],
+      [
+        50,
+        88,
+        63
+      ]
+    ],
+    "head_counter_triples": [
+      [
+        7,
+        16,
+        9
+      ],
+      [
+        13,
+        22,
+        15
+      ],
+      [
+        24,
+        45,
+        31
+      ],
+      [
+        50,
+        88,
+        63
+      ]
+    ],
+    "same_multiset": true,
+    "scope": "Per-session totals compared as multiset; no crosshost time or ordinal actor mapping."
+  },
+  {
+    "phase": "after-baseline",
+    "peer_counter_triples": [
+      [
+        7,
+        17,
+        9
+      ],
+      [
+        10,
+        23,
+        21
+      ],
+      [
+        24,
+        47,
+        32
+      ],
+      [
+        57,
+        85,
+        58
+      ]
+    ],
+    "head_counter_triples": [
+      [
+        7,
+        17,
+        9
+      ],
+      [
+        10,
+        23,
+        21
+      ],
+      [
+        24,
+        47,
+        32
+      ],
+      [
+        57,
+        85,
+        58
+      ]
+    ],
+    "same_multiset": true,
+    "scope": "Per-session totals compared as multiset; no crosshost time or ordinal actor mapping."
+  }
+]

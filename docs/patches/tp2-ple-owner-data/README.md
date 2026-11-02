@@ -107,7 +107,14 @@ The [portable fixture qualification](portable-fixture-qualification.json) record
 positive and old-fix-removal negative controls plus identical production
 preprocessing for the guarded readiness access. Latest integration source text
 therefore differs from2669e07c by test-only guards; performance is not relabeled.
-Remaining latency qualification precedes default integration. No production default or upstream-ready RDMA integration
+The [request-identified round trace](ragged-round-trace/README.md) now reproduces
+the ragged difference with exact counter attribution:18batch steps versus12,
+244.129ms more inside batch-engine calls, and less than1ms outside traced work
+in the candidate publication interval. Those calls include GPU/host/transport;
+this is not a pure GPU/CPU timing split. A slower33-token reply coexists with a
+faster complete wave. Actual learned cost/width inputs remain the next diagnostic,
+and all old/new flags stay visible. Remaining latency qualification precedes
+default integration. No production default or upstream-ready RDMA integration
 is claimed. Earlier testing-enabled candidate measurements and rejected partial
 timingv1 remain preserved; corrected production timingv2 is fresh. See the
 [build-mode erratum](cooperative-ple-build-mode-erratum.json) and
