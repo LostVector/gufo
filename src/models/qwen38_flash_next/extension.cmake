@@ -90,6 +90,7 @@ gufo_extension_target(
     gufo_qwen38_flash_next
     gufo_qwen_vision
     gufo_cache_hip
+    gufo_qwen_vision
     gufo_qwen38_flash_next_mmq
     gufo_compare
     hip::host

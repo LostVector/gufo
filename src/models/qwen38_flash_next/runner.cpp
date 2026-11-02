@@ -1110,9 +1110,7 @@ private:
 std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
     std::shared_ptr<Model> model, std::uint32_t max_context,
     const ext::TextSpeculativeConfig& speculative_config,
-    std::string artifact_fingerprint, std::string draft_artifact_fingerprint,
-    std::uint32_t decode_concurrency) {
-  (void)decode_concurrency;
+    std::string artifact_fingerprint, std::string draft_artifact_fingerprint) {
   if (!model)
     throw std::invalid_argument("Flash-Next model must not be null");
   if (max_context == 0)
@@ -1216,8 +1214,8 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
               use_mtp ? options.speculative.draft_model_path : std::string{},
           .max_draft_tokens = options.speculative.max_draft_tokens,
           .vision_model_path = options.vision_model_path,
-          .decode_concurrency = static_cast<std::uint32_t>(
-              std::clamp<std::size_t>(options.session_count, 1, 8)),
+          .decode_concurrency =
+              DecodeConcurrencyForSessions(options.session_count),
           .tp_rank = communicator ? communicator->rank() : 0,
           .tp_world_size = communicator ? communicator->world_size() : 1,
           .hip_device = communicator ? communicator->device_index() : 0,
@@ -1270,7 +1268,7 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
   }
   return CreateQwenFlashNextTextRunner(std::move(model), max_context,
                                        options.speculative, model_fingerprint,
-                                       draft_fingerprint, 1);
+                                       draft_fingerprint);
 }
 
 }  // namespace gufo::models::qwen38_flash_next
