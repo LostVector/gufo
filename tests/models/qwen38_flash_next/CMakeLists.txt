@@ -53,13 +53,15 @@ if (ENGINE_ENABLE_HIP)
   endforeach()
   target_link_libraries(qwen38_flash_next_mtp_ops_test PRIVATE
     gufo_qwen_kernels)
+  target_link_libraries(qwen38_flash_next_hc_mix_ops_test PRIVATE
+    gufo_qwen38_flash_next_mmq)
   # The rope phase and RMS checks compare against the scalar CPU oracle.
   target_link_libraries(qwen38_flash_next_attention_ops_test PRIVATE
     gufo_qwen38_flash_next_reference)
 
   add_executable(qwen38_flash_next_session_test EXCLUDE_FROM_ALL session_test.cpp)
   target_link_libraries(qwen38_flash_next_session_test PRIVATE gufo_serving
-    gufo_qwen38_flash_next_hip)
+    gufo_qwen38_flash_next_hip hip::host gufo_core)
   add_executable(qwen38_flash_next_snapshot_test EXCLUDE_FROM_ALL snapshot_test.cpp
     device_headroom_fault.cpp)
   target_link_libraries(qwen38_flash_next_snapshot_test PRIVATE
@@ -92,29 +94,29 @@ if (ENGINE_ENABLE_HIP)
   add_executable(qwen38_flash_next_dense_gemm_bench EXCLUDE_FROM_ALL
     dense_gemm_bench.cpp)
   target_link_libraries(qwen38_flash_next_dense_gemm_bench PRIVATE
-    gufo_qwen38_flash_next_hip hip::host)
+    gufo_qwen38_flash_next_hip hip::host gufo_core)
 
   add_executable(qwen38_flash_next_hc_mix_bench EXCLUDE_FROM_ALL
     hc_mix_bench.cpp)
   target_link_libraries(qwen38_flash_next_hc_mix_bench PRIVATE
-    gufo_qwen38_flash_next_hip hip::host)
+    gufo_qwen38_flash_next_hip gufo_qwen38_flash_next_mmq hip::host gufo_core)
 
   add_executable(qwen38_flash_next_attn_bench EXCLUDE_FROM_ALL attn_bench.cpp)
   target_link_libraries(qwen38_flash_next_attn_bench PRIVATE
-    gufo_qwen38_flash_next_hip hip::host)
+    gufo_qwen38_flash_next_hip hip::host gufo_core)
 
   add_executable(qwen38_flash_next_decode_attn_bench EXCLUDE_FROM_ALL
     decode_attn_bench.cpp)
   target_link_libraries(qwen38_flash_next_decode_attn_bench PRIVATE
-    gufo_qwen38_flash_next_hip hip::host)
+    gufo_qwen38_flash_next_hip hip::host gufo_core)
 
   add_executable(qwen38_flash_next_routed_gemm_bench EXCLUDE_FROM_ALL
     routed_gemm_bench.cpp)
   target_link_libraries(qwen38_flash_next_routed_gemm_bench PRIVATE
-    gufo_qwen38_flash_next_hip hip::host)
+    gufo_qwen38_flash_next_hip hip::host gufo_core)
 
   add_executable(qwen38_flash_next_gpu_probe EXCLUDE_FROM_ALL gpu_probe.cpp
     mtp_audit.cpp)
   target_link_libraries(qwen38_flash_next_gpu_probe PRIVATE
-    gufo_qwen38_flash_next_reference)
+    gufo_qwen38_flash_next_reference gufo_qwen38_flash_next_hip hip::host gufo_core)
 endif()
