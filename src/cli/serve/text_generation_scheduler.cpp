@@ -2213,6 +2213,16 @@ TextRequestPhase TextGenerationScheduler::Request::phase() const noexcept {
                : TextRequestPhase::kTerminal;
 }
 
+#ifdef GUFO_CACHE_TESTING
+bool SnapshotPendingForTesting(
+    const TextGenerationScheduler::Request& request) {
+  return request && request.impl_->request->runner_request.SnapshotPending();
+}
+bool PreviewPendingForTesting(const TextGenerationScheduler::Request& request) {
+  return request && request.impl_->request->preview_token.has_value();
+}
+#endif
+
 TextGenerationScheduler::Result TextGenerationScheduler::Request::Wait(
     const TokenCallback& on_token, const ProgressCallback& on_progress,
     const StartCallback& on_start) {
