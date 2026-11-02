@@ -10,20 +10,23 @@ one-host tables.
 ## Current fork checkpoint
 
 The maintained combined branch is `tp2`; fork `main` mirrors `gufo-org/gufo`.
-The November2 canonical intake includes upstream snapshot `8ab834a5`, native RDMA,
-shared eligible PLE table reads and scheduler-ordered request completion. Its
-qualified production source is `5e766353`; it adds measured heap-impact RAM-cache
-admission and clearer capacity errors without changing model kernels or TP
-scheduling. See the [current intake record](../../patches/tp2-adoption/upstream-8ab834a5.md)
-for exact source, binary, CI and focused cache coverage. This is not a new speedup
-or latency-equivalence claim. The [previous intake](../../patches/tp2-adoption/upstream-773a1641.md)
-preserves its actual32K continuation and retained inconclusive startup timings.
-The [original adoption record](../../patches/tp2-adoption/README.md) and earlier
-[integration record](../../patches/upstream-rdma-integration/README.md) retain their
-historical source and measurements. Independent Q8-reuse and fused-HC drafts are
-not included in this maintained branch.
-Both peers must use the same wire22 build and registered host windows. The older
-DMA-BUF/wire8 descriptions below concern different experimental checkpoints.
+The November2 compatibility intake includes canonical `9bd24d26`, native RDMA,
+shared eligible PLE table reads and scheduler-ordered request completion.
+Qualified production source is `75de9f82`; it preserves the model/TP/cache code
+and adopts canonical serving aliases, root health and permissive modality fields.
+Canonical upstream removes public HTTP API-key support; the separate TP control
+HMAC authentication remains. See the [current intake record](../../patches/tp2-adoption/upstream-9bd24d26.md)
+for exact source/binary/CI and focused native startup/cache/cancel coverage.
+This is not a new speedup or latency-equivalence claim. The
+[previous intake](../../patches/tp2-adoption/upstream-8ab834a5.md) retains cache
+admission/capacity checks; [earlier records](../../patches/tp2-adoption/upstream-773a1641.md)
+preserve their actual32K continuation and inconclusive startup timings.
+Independent Q8-reuse and fused-HC drafts remain excluded.
+
+The validated baseline uses matched wire22 builds and registered host windows
+(`dmabuf_verbs=0` in the driver setup). GPU DMA-BUF registration being refused in
+this baseline is expected; separate descriptor-mode experiments use another
+transport configuration. Older DMA-BUF/wire8 descriptions below are historical.
 
 The tested text-serving configuration is UD-Q4_K_XL target/shared-Q8_0 MTP,
 `--context 65536 --sessions 2 --prefill-chunk 2048`,
