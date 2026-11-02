@@ -124,7 +124,7 @@
     "cooperative-ple-release-comparison-v2-pair05-candidate.jsonl.gz": "5522abc9be96bfd2365f6094b6ad65e4d1e6bb90530a5531e3bbf0b85861f030",
     "cooperative-ple-release-comparison-v2-pair09-baseline.jsonl.gz": "8622b5fec390ee9ea33f777936ac5aaf22f45bcf165b2aed675935ae69421af4",
     "release-build-provenance.json": "c6e52f7399d06acda89de836fc97f5b92ae59d346e292df2a6185c54a0219862",
-    "README.md": "4e60eb8163b65e2a76fba64846d89c41b19dc2540ee434f8a96b914bb66a173f",
+    "README.md": "83e9c2b248bc3c473df15cdc0f3f4e0480777b6ef02c27d13c131b50d71fa708",
     "cooperative-ple-release-comparison-v2-pair01-candidate.jsonl.gz": "e466bf033d83cd8e8e7d6ec96282bf76219f4856800fdf9ce46dff0c1dc35f25",
     "cooperative-ple-release-comparison-v2-pair03-candidate.jsonl.gz": "de97cab143f88db4dfe6e49488ad38ed93425e541d2fa2a2ebc2135f88425591",
     "cooperative-ple-release-comparison-v2-pair02-candidate.jsonl.gz": "286a206ab23fe96393f0ddff5071808febca2c0ba1d01c2b7fa19ebfd80f2372",
@@ -140,6 +140,17 @@
     "event-fault-shim-selftest.json": "8f3c0f2a0bf01d74c5dad05eb5b6f3fbd5d0c1924b88595ab5e776afa98bf025",
     "ple-owner-review-http-lifecycle-v1-validation.json": "8842c000e441d3f56226d6422f32c1d21a3adbdd11ee52b97b2d7b1590384a77",
     "review-ple-event-target.json": "331ab0bf121d100826af796bf109af962b015ac507d21579e74ebbd10d3c79e4",
-    "ple-owner-review-release-binary.json": "3220bea327490f63c086f1ac5b4cf4c0aaa3ccadae14b092a25630c6acb82381"
+    "ple-owner-review-release-binary.json": "3220bea327490f63c086f1ac5b4cf4c0aaa3ccadae14b092a25630c6acb82381",
+    "latency-trace/validation.json": "d7a514e3713c4072f5e5aaaef54fa4eee37bd2d3036860772d4bd5efc07aaf13",
+    "latency-trace/analysis.json": "a093f883516c85a3025e29d368f45c2db10f7d511a4c6dc8a062e7910f94b8ba",
+    "latency-trace/analysis-provenance.json": "84ea6cdaa4ae5abff0734b164744b397597bbc2145d3f9f033ffb4a24cd348a4",
+    "latency-trace/probes.json": "0ae003de0ca0f7bc34f6d74ed26b801cea2cef8b5deb5d3efbae9e70c593d65f",
+    "latency-trace/publication-timeline.png": "d6b23b0fe705c2eccaf1792f28c5e043c4ae7cf4687ef9506218cb7a865dcf13",
+    "latency-trace/publication-timeline.pdf": "e8f7ac9e2e340959439d6e9e3d21cce3e4bc021844854885557fc99ee8cd708f",
+    "latency-trace/design.json": "45bfc0a592a444a46512c934fc46d0db5d11c4d66e8edba068e27e440ac7f395",
+    "latency-trace/adaptive-work.csv": "679d245b3c3e76104ecb198de425cc36a9bbf63d386012840571c550b1f943c2",
+    "latency-trace/acquisition.zip": "3e9f7d41caea871c29d71f35623efa7eb552dea7e1f8b14698bdc3f3960df307",
+    "latency-trace/README.md": "4bbae066763a97f161338b998e5abad94dd8b9516a24452623a99a483a5eca3d",
+    "latency-trace/phase-flags.csv": "e121dbea6ab8fa5157f14911b5cd2d4f09312d916b9d323de1142ca0f8250b23"
   }
 }

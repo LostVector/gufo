@@ -12,8 +12,8 @@ prefill chunk2048,1GiB RAM cache, approved81C6/TX32 native driver and crossed40+
 links. All77 common model/family compiler commands match after path normalization;
 only2 additional PLE implementation sources are candidate-only. These are
 measurements of those sources, not a later integration revision. The review
-branch additionally merges maintained `tp2` f75bed09 (RAM-off cache correctness
-and Windows macro fixes); the tables do not qualify that later combined binary.
+branch additionally merges maintained `tp2` e39d2ad2 (RAM-off cache correctness
+and portable test/platform fixes); the tables do not qualify that later combined binary.
 The combined source2669e07c has separate production runtime/failure qualification
 below; the performance table remains attributed to the measured prototype.
 
@@ -92,8 +92,13 @@ report-variable typo after successful failure handling. Fresh v3 corrects the
 oracle/typo and completes every stage. These were fixture failures, not passing
 runs or production fixes.
 
-Wider concurrency and bounded request-identified attribution of the retained
-latency flags remain before default integration. No production default or upstream-ready RDMA integration
+The [bounded request-identified B/C/B trace](latency-trace/README.md) now
+reproduces the C2 TTFT mode in both candidate and baseline. Actor0's roughly61ms
+publication gap is occupied by actor1 prefill; the new callback queues work in
+microseconds, without measuring completed transfer time. Warmup's roughly35ms
+mode is localized inside the first Forward host span, with GPU/peer/host
+attribution unresolved. All new and prior flags remain; wider concurrency and
+remaining latency qualification precede default integration. No production default or upstream-ready RDMA integration
 is claimed. Earlier testing-enabled candidate measurements and rejected partial
 timingv1 remain preserved; corrected production timingv2 is fresh. See the
 [build-mode erratum](cooperative-ple-build-mode-erratum.json) and

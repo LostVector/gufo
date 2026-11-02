@@ -1,0 +1,1683 @@
+{
+  "phases": [
+    {
+      "phase": "before-baseline",
+      "requests": [
+        {
+          "case": "warmup",
+          "repetition": 0,
+          "actor": 0,
+          "request_pointer": 125762548018496,
+          "prefill_shapes": [
+            12,
+            7
+          ],
+          "client_ttft_ms": 148.23860800242983,
+          "server_ttft_ms": 147.444192,
+          "last_prefill_to_first_publication_ms": 0.036559,
+          "first_publication_after_client_start_ms": 147.993676,
+          "first_content_after_client_start_ms": 148.218939,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 4,
+                "sum_host_span_ms": 3.165756,
+                "max_host_span_ms": 2.163526
+              },
+              "inner_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 7.676111000000001,
+                "max_host_span_ms": 6.586343
+              },
+              "forward": {
+                "calls": 4,
+                "sum_host_span_ms": 216.693827,
+                "max_host_span_ms": 77.662264
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 0.02721,
+                "max_host_span_ms": 0.02721
+              },
+              "mtp_forward": {
+                "calls": 9,
+                "sum_host_span_ms": 13.417529,
+                "max_host_span_ms": 2.471926
+              },
+              "tp_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 139.550637,
+                "max_host_span_ms": 77.688582
+              },
+              "tp_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 7.7779679999999995,
+                "max_host_span_ms": 6.651312
+              },
+              "start_read": {
+                "calls": 4,
+                "sum_host_span_ms": 0.649761,
+                "max_host_span_ms": 0.315941
+              },
+              "step_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 139.67569400000002,
+                "max_host_span_ms": 77.77956
+              },
+              "prepare_first_snapshot": {
+                "calls": 3,
+                "sum_host_span_ms": 0.08762600000000001,
+                "max_host_span_ms": 0.074787
+              },
+              "publish": {
+                "calls": 8,
+                "sum_host_span_ms": 0.034317,
+                "max_host_span_ms": 0.009169
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 3,
+                "sum_host_span_ms": 0.034049,
+                "max_host_span_ms": 0.028889
+              },
+              "decode_step": {
+                "calls": 2,
+                "sum_host_span_ms": 90.42627300000001,
+                "max_host_span_ms": 47.702387
+              },
+              "decode_batch": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 1,
+          "actor": 0,
+          "request_pointer": 125762548058128,
+          "prefill_shapes": [
+            2041,
+            7
+          ],
+          "client_ttft_ms": 1112.0534889923874,
+          "server_ttft_ms": 1111.515645,
+          "last_prefill_to_first_publication_ms": 0.029659,
+          "first_publication_after_client_start_ms": 1111.847565,
+          "first_content_after_client_start_ms": 1112.043839,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 43,
+                "sum_host_span_ms": 41.960943,
+                "max_host_span_ms": 2.969911
+              },
+              "inner_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 5.270432,
+                "max_host_span_ms": 3.981541
+              },
+              "forward": {
+                "calls": 43,
+                "sum_host_span_ms": 2553.8657319999998,
+                "max_host_span_ms": 1046.531323
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 0.01138,
+                "max_host_span_ms": 0.01138
+              },
+              "mtp_forward": {
+                "calls": 104,
+                "sum_host_span_ms": 254.893922,
+                "max_host_span_ms": 19.589565
+              },
+              "tp_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1106.8865640000001,
+                "max_host_span_ms": 1046.558463
+              },
+              "tp_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 5.450118,
+                "max_host_span_ms": 4.077179
+              },
+              "start_read": {
+                "calls": 43,
+                "sum_host_span_ms": 2.361949,
+                "max_host_span_ms": 0.412058
+              },
+              "step_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1106.9869800000001,
+                "max_host_span_ms": 1046.63877
+              },
+              "prepare_first_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.183206,
+                "max_host_span_ms": 0.075558
+              },
+              "publish": {
+                "calls": 113,
+                "sum_host_span_ms": 0.238382,
+                "max_host_span_ms": 0.0074
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.078508,
+                "max_host_span_ms": 0.040769
+              },
+              "decode_step": {
+                "calls": 42,
+                "sum_host_span_ms": 1679.268618,
+                "max_host_span_ms": 64.104798
+              },
+              "decode_batch": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 2,
+          "actor": 0,
+          "request_pointer": 125762548058128,
+          "prefill_shapes": [
+            2041,
+            7
+          ],
+          "client_ttft_ms": 1117.5187750195619,
+          "server_ttft_ms": 1116.70133,
+          "last_prefill_to_first_publication_ms": 0.025959,
+          "first_publication_after_client_start_ms": 1117.230664,
+          "first_content_after_client_start_ms": 1117.497286,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 43,
+                "sum_host_span_ms": 6.640251999999999,
+                "max_host_span_ms": 2.799797
+              },
+              "inner_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 4.950463,
+                "max_host_span_ms": 3.882524
+              },
+              "forward": {
+                "calls": 43,
+                "sum_host_span_ms": 2539.985674,
+                "max_host_span_ms": 1050.735697
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 0.02028,
+                "max_host_span_ms": 0.02028
+              },
+              "mtp_forward": {
+                "calls": 104,
+                "sum_host_span_ms": 257.166155,
+                "max_host_span_ms": 21.445461
+              },
+              "tp_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1111.1894940000002,
+                "max_host_span_ms": 1050.777076
+              },
+              "tp_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 5.1103570000000005,
+                "max_host_span_ms": 3.979451
+              },
+              "start_read": {
+                "calls": 43,
+                "sum_host_span_ms": 1.915301,
+                "max_host_span_ms": 0.65776
+              },
+              "step_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1111.474666,
+                "max_host_span_ms": 1050.850494
+              },
+              "prepare_first_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.163105,
+                "max_host_span_ms": 0.076407
+              },
+              "publish": {
+                "calls": 113,
+                "sum_host_span_ms": 0.155874,
+                "max_host_span_ms": 0.00734
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.074777,
+                "max_host_span_ms": 0.043508
+              },
+              "decode_step": {
+                "calls": 42,
+                "sum_host_span_ms": 1661.233404,
+                "max_host_span_ms": 63.590292
+              },
+              "decode_batch": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 0,
+          "request_pointer": 125762548021200,
+          "prefill_shapes": [
+            32,
+            7
+          ],
+          "client_ttft_ms": 329.74034402286634,
+          "server_ttft_ms": 328.912629,
+          "last_prefill_to_first_publication_ms": 61.147866,
+          "first_publication_after_client_start_ms": 329.582539,
+          "first_content_after_client_start_ms": 329.729575,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 76,
+                "sum_host_span_ms": 70.104027,
+                "max_host_span_ms": 4.416468
+              },
+              "inner_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 9.536545,
+                "max_host_span_ms": 3.904434
+              },
+              "forward": {
+                "calls": 17,
+                "sum_host_span_ms": 748.93621,
+                "max_host_span_ms": 101.372586
+              },
+              "end": {
+                "calls": 2,
+                "sum_host_span_ms": 50.845713,
+                "max_host_span_ms": 50.832853
+              },
+              "mtp_forward": {
+                "calls": 74,
+                "sum_host_span_ms": 82.497602,
+                "max_host_span_ms": 2.595363
+              },
+              "tp_prefill": {
+                "calls": 4,
+                "sum_host_span_ms": 324.741983,
+                "max_host_span_ms": 101.394996
+              },
+              "tp_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 11.73028,
+                "max_host_span_ms": 4.525365
+              },
+              "start_read": {
+                "calls": 76,
+                "sum_host_span_ms": 5.536146,
+                "max_host_span_ms": 0.293642
+              },
+              "step_prefill": {
+                "calls": 4,
+                "sum_host_span_ms": 324.945897,
+                "max_host_span_ms": 101.483943
+              },
+              "prepare_first_snapshot": {
+                "calls": 131,
+                "sum_host_span_ms": 0.605441,
+                "max_host_span_ms": 0.090078
+              },
+              "publish": {
+                "calls": 256,
+                "sum_host_span_ms": 0.734397,
+                "max_host_span_ms": 0.01156
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 131,
+                "sum_host_span_ms": 0.208512,
+                "max_host_span_ms": 0.038279
+              },
+              "decode_step": {
+                "calls": 12,
+                "sum_host_span_ms": 457.18888499999997,
+                "max_host_span_ms": 50.806414
+              },
+              "decode_batch": {
+                "calls": 58,
+                "sum_host_span_ms": 2690.180282,
+                "max_host_span_ms": 63.603133
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 1,
+          "request_pointer": 125753555538304,
+          "prefill_shapes": [
+            32,
+            7
+          ],
+          "client_ttft_ms": 319.37415298307315,
+          "server_ttft_ms": 318.663225,
+          "last_prefill_to_first_publication_ms": 0.120367,
+          "first_publication_after_client_start_ms": 319.211988,
+          "first_content_after_client_start_ms": 319.361283,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 65,
+                "sum_host_span_ms": 60.232913,
+                "max_host_span_ms": 1.840215
+              },
+              "inner_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 9.536545,
+                "max_host_span_ms": 3.904434
+              },
+              "forward": {
+                "calls": 6,
+                "sum_host_span_ms": 340.673829,
+                "max_host_span_ms": 96.279418
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 50.832853,
+                "max_host_span_ms": 50.832853
+              },
+              "mtp_forward": {
+                "calls": 60,
+                "sum_host_span_ms": 53.512824,
+                "max_host_span_ms": 2.211364
+              },
+              "tp_prefill": {
+                "calls": 3,
+                "sum_host_span_ms": 223.346987,
+                "max_host_span_ms": 96.293958
+              },
+              "tp_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 11.73028,
+                "max_host_span_ms": 4.525365
+              },
+              "start_read": {
+                "calls": 64,
+                "sum_host_span_ms": 4.874114,
+                "max_host_span_ms": 0.293642
+              },
+              "step_prefill": {
+                "calls": 3,
+                "sum_host_span_ms": 223.461954,
+                "max_host_span_ms": 96.383265
+              },
+              "prepare_first_snapshot": {
+                "calls": 122,
+                "sum_host_span_ms": 0.571941,
+                "max_host_span_ms": 0.090078
+              },
+              "publish": {
+                "calls": 236,
+                "sum_host_span_ms": 0.684579,
+                "max_host_span_ms": 0.01156
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 122,
+                "sum_host_span_ms": 0.196912,
+                "max_host_span_ms": 0.038279
+              },
+              "decode_step": {
+                "calls": 3,
+                "sum_host_span_ms": 144.023524,
+                "max_host_span_ms": 50.806414
+              },
+              "decode_batch": {
+                "calls": 58,
+                "sum_host_span_ms": 2690.180282,
+                "max_host_span_ms": 63.603133
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        }
+      ],
+      "C2_schedule": [
+        {
+          "actor": 0,
+          "prefill_intervals_ms": [
+            [
+              2.36612,
+              103.850063
+            ],
+            [
+              202.456161,
+              268.434673
+            ]
+          ],
+          "publication_ms": 329.582539,
+          "postprefill_gap_ms": 61.147866,
+          "other_request_prefill_inside_gap_ms": 61.100177
+        },
+        {
+          "actor": 1,
+          "prefill_intervals_ms": [
+            [
+              106.066256,
+              202.449521
+            ],
+            [
+              268.439683,
+              329.53986
+            ]
+          ],
+          "publication_ms": 329.660227,
+          "postprefill_gap_ms": 0.120367,
+          "other_request_prefill_inside_gap_ms": 0.0
+        }
+      ],
+      "warmup_prefill_Forward_ms": [
+        77.662264,
+        61.515655
+      ],
+      "span_counts_per_rank": [
+        {
+          "9": 10,
+          "6": 10,
+          "3": 107,
+          "8": 166,
+          "1": 166,
+          "5": 291,
+          "7": 10,
+          "2": 10,
+          "10": 220,
+          "11": 490,
+          "12": 220,
+          "13": 98,
+          "4": 5,
+          "14": 58
+        },
+        {
+          "3": 107,
+          "8": 166,
+          "1": 166,
+          "5": 291,
+          "2": 10,
+          "13": 98,
+          "14": 58
+        }
+      ]
+    },
+    {
+      "phase": "first-candidate",
+      "requests": [
+        {
+          "case": "warmup",
+          "repetition": 0,
+          "actor": 0,
+          "request_pointer": 135584802680128,
+          "prefill_shapes": [
+            12,
+            7
+          ],
+          "client_ttft_ms": 147.3899430129677,
+          "server_ttft_ms": 146.731333,
+          "last_prefill_to_first_publication_ms": 0.029119,
+          "first_publication_after_client_start_ms": 147.094902,
+          "first_content_after_client_start_ms": 147.368294,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              },
+              "inner_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 7.40817,
+                "max_host_span_ms": 6.473917
+              },
+              "forward": {
+                "calls": 4,
+                "sum_host_span_ms": 213.735914,
+                "max_host_span_ms": 77.41497
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 0.028439,
+                "max_host_span_ms": 0.028439
+              },
+              "mtp_forward": {
+                "calls": 9,
+                "sum_host_span_ms": 13.595534,
+                "max_host_span_ms": 2.701589
+              },
+              "tp_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 138.929416,
+                "max_host_span_ms": 77.43746
+              },
+              "tp_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 7.605443999999999,
+                "max_host_span_ms": 6.538905
+              },
+              "start_read": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              },
+              "step_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 139.042382,
+                "max_host_span_ms": 77.533947
+              },
+              "prepare_first_snapshot": {
+                "calls": 3,
+                "sum_host_span_ms": 0.071438,
+                "max_host_span_ms": 0.063228
+              },
+              "publish": {
+                "calls": 8,
+                "sum_host_span_ms": 0.018389,
+                "max_host_span_ms": 0.00681
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 3,
+                "sum_host_span_ms": 0.029339,
+                "max_host_span_ms": 0.025999
+              },
+              "decode_step": {
+                "calls": 2,
+                "sum_host_span_ms": 88.296166,
+                "max_host_span_ms": 45.729605
+              },
+              "decode_batch": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              },
+              "ple_collective_callback": {
+                "calls": 4,
+                "sum_host_span_ms": 0.723889,
+                "max_host_span_ms": 0.688119
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 1,
+          "actor": 0,
+          "request_pointer": 135584802719760,
+          "prefill_shapes": [
+            2041,
+            7
+          ],
+          "client_ttft_ms": 1112.5643640116323,
+          "server_ttft_ms": 1111.886104,
+          "last_prefill_to_first_publication_ms": 0.02662,
+          "first_publication_after_client_start_ms": 1112.238364,
+          "first_content_after_client_start_ms": 1112.546554,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 1,
+                "sum_host_span_ms": 2.281492,
+                "max_host_span_ms": 2.281492
+              },
+              "inner_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 4.507126,
+                "max_host_span_ms": 3.315151
+              },
+              "forward": {
+                "calls": 43,
+                "sum_host_span_ms": 2543.798427,
+                "max_host_span_ms": 1046.586702
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 0.028919,
+                "max_host_span_ms": 0.028919
+              },
+              "mtp_forward": {
+                "calls": 104,
+                "sum_host_span_ms": 256.998858,
+                "max_host_span_ms": 20.193817
+              },
+              "tp_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1107.309,
+                "max_host_span_ms": 1046.611981
+              },
+              "tp_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 4.820576,
+                "max_host_span_ms": 3.598382
+              },
+              "start_read": {
+                "calls": 1,
+                "sum_host_span_ms": 0.525884,
+                "max_host_span_ms": 0.525884
+              },
+              "step_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1107.399498,
+                "max_host_span_ms": 1046.684519
+              },
+              "prepare_first_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.189328,
+                "max_host_span_ms": 0.058599
+              },
+              "publish": {
+                "calls": 113,
+                "sum_host_span_ms": 0.167975,
+                "max_host_span_ms": 0.007549
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.064149,
+                "max_host_span_ms": 0.02131
+              },
+              "decode_step": {
+                "calls": 42,
+                "sum_host_span_ms": 1669.429509,
+                "max_host_span_ms": 63.952893
+              },
+              "decode_batch": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              },
+              "ple_collective_callback": {
+                "calls": 42,
+                "sum_host_span_ms": 0.35418700000000003,
+                "max_host_span_ms": 0.02024
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 2,
+          "actor": 0,
+          "request_pointer": 135584802719760,
+          "prefill_shapes": [
+            2041,
+            7
+          ],
+          "client_ttft_ms": 1113.4802460146602,
+          "server_ttft_ms": 1112.800976,
+          "last_prefill_to_first_publication_ms": 0.038278,
+          "first_publication_after_client_start_ms": 1113.241163,
+          "first_content_after_client_start_ms": 1113.469847,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 1,
+                "sum_host_span_ms": 2.719729,
+                "max_host_span_ms": 2.719729
+              },
+              "inner_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 4.936592,
+                "max_host_span_ms": 3.600962
+              },
+              "forward": {
+                "calls": 43,
+                "sum_host_span_ms": 2553.035123,
+                "max_host_span_ms": 1046.758247
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 0.021609,
+                "max_host_span_ms": 0.021609
+              },
+              "mtp_forward": {
+                "calls": 104,
+                "sum_host_span_ms": 258.16153,
+                "max_host_span_ms": 20.198107
+              },
+              "tp_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1107.439196,
+                "max_host_span_ms": 1046.792845
+              },
+              "tp_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 5.057459,
+                "max_host_span_ms": 3.66891
+              },
+              "start_read": {
+                "calls": 1,
+                "sum_host_span_ms": 0.658151,
+                "max_host_span_ms": 0.658151
+              },
+              "step_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1107.64745,
+                "max_host_span_ms": 1046.865993
+              },
+              "prepare_first_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.212073,
+                "max_host_span_ms": 0.091508
+              },
+              "publish": {
+                "calls": 113,
+                "sum_host_span_ms": 0.285574,
+                "max_host_span_ms": 0.014289
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.091097,
+                "max_host_span_ms": 0.049899
+              },
+              "decode_step": {
+                "calls": 42,
+                "sum_host_span_ms": 1680.379474,
+                "max_host_span_ms": 64.281133
+              },
+              "decode_batch": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              },
+              "ple_collective_callback": {
+                "calls": 42,
+                "sum_host_span_ms": 0.449248,
+                "max_host_span_ms": 0.025269
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 0,
+          "request_pointer": 135584802682832,
+          "prefill_shapes": [
+            32,
+            7
+          ],
+          "client_ttft_ms": 327.01803601230495,
+          "server_ttft_ms": 326.345576,
+          "last_prefill_to_first_publication_ms": 61.269123,
+          "first_publication_after_client_start_ms": 326.820052,
+          "first_content_after_client_start_ms": 327.001336,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              },
+              "inner_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 8.335452,
+                "max_host_span_ms": 3.292042
+              },
+              "forward": {
+                "calls": 17,
+                "sum_host_span_ms": 746.553671,
+                "max_host_span_ms": 99.890651
+              },
+              "end": {
+                "calls": 2,
+                "sum_host_span_ms": 51.375017,
+                "max_host_span_ms": 51.354128
+              },
+              "mtp_forward": {
+                "calls": 76,
+                "sum_host_span_ms": 84.333322,
+                "max_host_span_ms": 2.557324
+              },
+              "tp_prefill": {
+                "calls": 4,
+                "sum_host_span_ms": 322.878849,
+                "max_host_span_ms": 99.899911
+              },
+              "tp_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 10.695011,
+                "max_host_span_ms": 4.267682
+              },
+              "start_read": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              },
+              "step_prefill": {
+                "calls": 4,
+                "sum_host_span_ms": 323.045353,
+                "max_host_span_ms": 99.987467
+              },
+              "prepare_first_snapshot": {
+                "calls": 131,
+                "sum_host_span_ms": 0.494783,
+                "max_host_span_ms": 0.061498
+              },
+              "publish": {
+                "calls": 256,
+                "sum_host_span_ms": 0.586766,
+                "max_host_span_ms": 0.013519
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 131,
+                "sum_host_span_ms": 0.180265,
+                "max_host_span_ms": 0.033399
+              },
+              "decode_step": {
+                "calls": 12,
+                "sum_host_span_ms": 456.23132,
+                "max_host_span_ms": 51.325209
+              },
+              "decode_batch": {
+                "calls": 58,
+                "sum_host_span_ms": 2682.900907,
+                "max_host_span_ms": 63.943593
+              },
+              "ple_collective_callback": {
+                "calls": 75,
+                "sum_host_span_ms": 0.998745,
+                "max_host_span_ms": 0.031779
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 1,
+          "request_pointer": 135556214379632,
+          "prefill_shapes": [
+            32,
+            7
+          ],
+          "client_ttft_ms": 316.83249899651855,
+          "server_ttft_ms": 316.319595,
+          "last_prefill_to_first_publication_ms": 0.084018,
+          "first_publication_after_client_start_ms": 316.586367,
+          "first_content_after_client_start_ms": 316.81831,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              },
+              "inner_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 8.335452,
+                "max_host_span_ms": 3.292042
+              },
+              "forward": {
+                "calls": 6,
+                "sum_host_span_ms": 338.331737,
+                "max_host_span_ms": 96.895519
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 51.354128,
+                "max_host_span_ms": 51.354128
+              },
+              "mtp_forward": {
+                "calls": 62,
+                "sum_host_span_ms": 55.212212,
+                "max_host_span_ms": 2.293202
+              },
+              "tp_prefill": {
+                "calls": 3,
+                "sum_host_span_ms": 222.978938,
+                "max_host_span_ms": 96.901899
+              },
+              "tp_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 10.695011,
+                "max_host_span_ms": 4.267682
+              },
+              "start_read": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              },
+              "step_prefill": {
+                "calls": 3,
+                "sum_host_span_ms": 223.057886,
+                "max_host_span_ms": 96.960008
+              },
+              "prepare_first_snapshot": {
+                "calls": 122,
+                "sum_host_span_ms": 0.466134,
+                "max_host_span_ms": 0.061498
+              },
+              "publish": {
+                "calls": 236,
+                "sum_host_span_ms": 0.534636,
+                "max_host_span_ms": 0.013519
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 122,
+                "sum_host_span_ms": 0.171335,
+                "max_host_span_ms": 0.033399
+              },
+              "decode_step": {
+                "calls": 3,
+                "sum_host_span_ms": 141.690663,
+                "max_host_span_ms": 51.325209
+              },
+              "decode_batch": {
+                "calls": 58,
+                "sum_host_span_ms": 2682.900907,
+                "max_host_span_ms": 63.943593
+              },
+              "ple_collective_callback": {
+                "calls": 64,
+                "sum_host_span_ms": 0.863809,
+                "max_host_span_ms": 0.031779
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        }
+      ],
+      "C2_schedule": [
+        {
+          "actor": 0,
+          "prefill_intervals_ms": [
+            [
+              1.598453,
+              101.58592
+            ],
+            [
+              200.695134,
+              265.550929
+            ]
+          ],
+          "publication_ms": 326.820052,
+          "postprefill_gap_ms": 61.269123,
+          "other_request_prefill_inside_gap_ms": 61.242083
+        },
+        {
+          "actor": 1,
+          "prefill_intervals_ms": [
+            [
+              103.732226,
+              200.692234
+            ],
+            [
+              265.554949,
+              326.797032
+            ]
+          ],
+          "publication_ms": 326.88105,
+          "postprefill_gap_ms": 0.084018,
+          "other_request_prefill_inside_gap_ms": 0.0
+        }
+      ],
+      "warmup_prefill_Forward_ms": [
+        77.41497,
+        61.141176
+      ],
+      "span_counts_per_rank": [
+        {
+          "9": 10,
+          "6": 10,
+          "3": 107,
+          "15": 163,
+          "5": 293,
+          "7": 10,
+          "2": 10,
+          "10": 220,
+          "11": 490,
+          "12": 220,
+          "13": 98,
+          "4": 5,
+          "8": 2,
+          "1": 2,
+          "14": 58
+        },
+        {
+          "3": 107,
+          "8": 166,
+          "1": 166,
+          "15": 163,
+          "5": 293,
+          "2": 10,
+          "13": 98,
+          "14": 58
+        }
+      ]
+    },
+    {
+      "phase": "after-baseline",
+      "requests": [
+        {
+          "case": "warmup",
+          "repetition": 0,
+          "actor": 0,
+          "request_pointer": 124376414432576,
+          "prefill_shapes": [
+            12,
+            7
+          ],
+          "client_ttft_ms": 182.018051011255,
+          "server_ttft_ms": 181.503866,
+          "last_prefill_to_first_publication_ms": 0.032469,
+          "first_publication_after_client_start_ms": 181.866045,
+          "first_content_after_client_start_ms": 182.005871,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 4,
+                "sum_host_span_ms": 4.02828,
+                "max_host_span_ms": 3.054169
+              },
+              "inner_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 7.094018,
+                "max_host_span_ms": 6.102308
+              },
+              "forward": {
+                "calls": 4,
+                "sum_host_span_ms": 251.183099,
+                "max_host_span_ms": 112.216373
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 0.014339,
+                "max_host_span_ms": 0.014339
+              },
+              "mtp_forward": {
+                "calls": 9,
+                "sum_host_span_ms": 13.43624,
+                "max_host_span_ms": 2.522305
+              },
+              "tp_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 173.703208,
+                "max_host_span_ms": 112.245572
+              },
+              "tp_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 7.527865,
+                "max_host_span_ms": 6.472847
+              },
+              "start_read": {
+                "calls": 4,
+                "sum_host_span_ms": 0.581362,
+                "max_host_span_ms": 0.269112
+              },
+              "step_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 173.818265,
+                "max_host_span_ms": 112.341999
+              },
+              "prepare_first_snapshot": {
+                "calls": 3,
+                "sum_host_span_ms": 0.074448,
+                "max_host_span_ms": 0.065988
+              },
+              "publish": {
+                "calls": 8,
+                "sum_host_span_ms": 0.021268,
+                "max_host_span_ms": 0.00737
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 3,
+                "sum_host_span_ms": 0.028038999999999998,
+                "max_host_span_ms": 0.024369
+              },
+              "decode_step": {
+                "calls": 2,
+                "sum_host_span_ms": 90.756713,
+                "max_host_span_ms": 47.808064
+              },
+              "decode_batch": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 1,
+          "actor": 0,
+          "request_pointer": 124376414472208,
+          "prefill_shapes": [
+            2041,
+            7
+          ],
+          "client_ttft_ms": 1115.3996490174904,
+          "server_ttft_ms": 1114.773987,
+          "last_prefill_to_first_publication_ms": 0.026989,
+          "first_publication_after_client_start_ms": 1115.146506,
+          "first_content_after_client_start_ms": 1115.388499,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 43,
+                "sum_host_span_ms": 38.888722,
+                "max_host_span_ms": 2.285832
+              },
+              "inner_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 5.1027569999999995,
+                "max_host_span_ms": 4.035519
+              },
+              "forward": {
+                "calls": 43,
+                "sum_host_span_ms": 2559.785004,
+                "max_host_span_ms": 1048.98957
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 0.02472,
+                "max_host_span_ms": 0.02472
+              },
+              "mtp_forward": {
+                "calls": 104,
+                "sum_host_span_ms": 255.505865,
+                "max_host_span_ms": 20.678524
+              },
+              "tp_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1110.057078,
+                "max_host_span_ms": 1049.016989
+              },
+              "tp_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 5.287592,
+                "max_host_span_ms": 4.091578
+              },
+              "start_read": {
+                "calls": 43,
+                "sum_host_span_ms": 2.878547,
+                "max_host_span_ms": 0.425447
+              },
+              "step_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1110.160724,
+                "max_host_span_ms": 1049.100866
+              },
+              "prepare_first_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.196864,
+                "max_host_span_ms": 0.067688
+              },
+              "publish": {
+                "calls": 113,
+                "sum_host_span_ms": 0.281171,
+                "max_host_span_ms": 0.01269
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.079499,
+                "max_host_span_ms": 0.032029
+              },
+              "decode_step": {
+                "calls": 42,
+                "sum_host_span_ms": 1680.739903,
+                "max_host_span_ms": 64.583513
+              },
+              "decode_batch": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 2,
+          "actor": 0,
+          "request_pointer": 124376414476320,
+          "prefill_shapes": [
+            2041,
+            7
+          ],
+          "client_ttft_ms": 1123.8994949962944,
+          "server_ttft_ms": 1123.210196,
+          "last_prefill_to_first_publication_ms": 0.026549,
+          "first_publication_after_client_start_ms": 1123.635963,
+          "first_content_after_client_start_ms": 1123.882335,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 43,
+                "sum_host_span_ms": 6.924437999999999,
+                "max_host_span_ms": 2.395688
+              },
+              "inner_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 5.019261,
+                "max_host_span_ms": 3.901294
+              },
+              "forward": {
+                "calls": 43,
+                "sum_host_span_ms": 2568.37193,
+                "max_host_span_ms": 1056.69835
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 0.01247,
+                "max_host_span_ms": 0.01247
+              },
+              "mtp_forward": {
+                "calls": 104,
+                "sum_host_span_ms": 256.400511,
+                "max_host_span_ms": 20.754021
+              },
+              "tp_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1117.6041129999999,
+                "max_host_span_ms": 1056.726389
+              },
+              "tp_capture": {
+                "calls": 2,
+                "sum_host_span_ms": 5.127587,
+                "max_host_span_ms": 3.976681
+              },
+              "start_read": {
+                "calls": 43,
+                "sum_host_span_ms": 1.81145,
+                "max_host_span_ms": 0.643791
+              },
+              "step_prefill": {
+                "calls": 2,
+                "sum_host_span_ms": 1117.857976,
+                "max_host_span_ms": 1056.802247
+              },
+              "prepare_first_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.166321,
+                "max_host_span_ms": 0.071617
+              },
+              "publish": {
+                "calls": 113,
+                "sum_host_span_ms": 0.159341,
+                "max_host_span_ms": 0.00877
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 43,
+                "sum_host_span_ms": 0.061349,
+                "max_host_span_ms": 0.03081
+              },
+              "decode_step": {
+                "calls": 42,
+                "sum_host_span_ms": 1682.00489,
+                "max_host_span_ms": 65.499057
+              },
+              "decode_batch": {
+                "calls": 0,
+                "sum_host_span_ms": 0,
+                "max_host_span_ms": 0
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 0,
+          "request_pointer": 124376414435280,
+          "prefill_shapes": [
+            32,
+            7
+          ],
+          "client_ttft_ms": 263.2286279986147,
+          "server_ttft_ms": 262.515289,
+          "last_prefill_to_first_publication_ms": 0.026639,
+          "first_publication_after_client_start_ms": 263.125431,
+          "first_content_after_client_start_ms": 263.221608,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 76,
+                "sum_host_span_ms": 71.302287,
+                "max_host_span_ms": 4.36886
+              },
+              "inner_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 9.905365,
+                "max_host_span_ms": 3.820346
+              },
+              "forward": {
+                "calls": 17,
+                "sum_host_span_ms": 753.052799,
+                "max_host_span_ms": 100.677547
+              },
+              "end": {
+                "calls": 2,
+                "sum_host_span_ms": 44.826192999999996,
+                "max_host_span_ms": 44.807483
+              },
+              "mtp_forward": {
+                "calls": 78,
+                "sum_host_span_ms": 86.227722,
+                "max_host_span_ms": 2.33597
+              },
+              "tp_prefill": {
+                "calls": 4,
+                "sum_host_span_ms": 321.353265,
+                "max_host_span_ms": 100.686457
+              },
+              "tp_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 122.879315,
+                "max_host_span_ms": 65.011171
+              },
+              "start_read": {
+                "calls": 76,
+                "sum_host_span_ms": 5.958811,
+                "max_host_span_ms": 0.203144
+              },
+              "step_prefill": {
+                "calls": 4,
+                "sum_host_span_ms": 321.496511,
+                "max_host_span_ms": 100.760975
+              },
+              "prepare_first_snapshot": {
+                "calls": 132,
+                "sum_host_span_ms": 0.545022,
+                "max_host_span_ms": 0.053998
+              },
+              "publish": {
+                "calls": 256,
+                "sum_host_span_ms": 0.695123,
+                "max_host_span_ms": 0.019219
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 132,
+                "sum_host_span_ms": 0.18376699999999999,
+                "max_host_span_ms": 0.020809
+              },
+              "decode_step": {
+                "calls": 12,
+                "sum_host_span_ms": 461.729184,
+                "max_host_span_ms": 46.828533
+              },
+              "decode_batch": {
+                "calls": 58,
+                "sum_host_span_ms": 2697.46858,
+                "max_host_span_ms": 66.71913
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 1,
+          "request_pointer": 124368294367616,
+          "prefill_shapes": [
+            32,
+            7
+          ],
+          "client_ttft_ms": 319.8855189839378,
+          "server_ttft_ms": 319.339175,
+          "last_prefill_to_first_publication_ms": 0.020519,
+          "first_publication_after_client_start_ms": 319.738903,
+          "first_content_after_client_start_ms": 319.861919,
+          "per_rank_window_spans": [
+            {
+              "ngram_wait": {
+                "calls": 66,
+                "sum_host_span_ms": 61.77951,
+                "max_host_span_ms": 2.602102
+              },
+              "inner_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 9.905365,
+                "max_host_span_ms": 3.820346
+              },
+              "forward": {
+                "calls": 7,
+                "sum_host_span_ms": 369.595006,
+                "max_host_span_ms": 96.851711
+              },
+              "end": {
+                "calls": 1,
+                "sum_host_span_ms": 44.807483,
+                "max_host_span_ms": 44.807483
+              },
+              "mtp_forward": {
+                "calls": 64,
+                "sum_host_span_ms": 58.014726,
+                "max_host_span_ms": 2.245493
+              },
+              "tp_prefill": {
+                "calls": 3,
+                "sum_host_span_ms": 220.666808,
+                "max_host_span_ms": 96.857961
+              },
+              "tp_capture": {
+                "calls": 4,
+                "sum_host_span_ms": 122.879315,
+                "max_host_span_ms": 65.011171
+              },
+              "start_read": {
+                "calls": 65,
+                "sum_host_span_ms": 5.319549,
+                "max_host_span_ms": 0.203144
+              },
+              "step_prefill": {
+                "calls": 3,
+                "sum_host_span_ms": 220.735536,
+                "max_host_span_ms": 96.910649
+              },
+              "prepare_first_snapshot": {
+                "calls": 124,
+                "sum_host_span_ms": 0.523602,
+                "max_host_span_ms": 0.053998
+              },
+              "publish": {
+                "calls": 236,
+                "sum_host_span_ms": 0.637373,
+                "max_host_span_ms": 0.019219
+              },
+              "prepare_prompt_snapshot": {
+                "calls": 124,
+                "sum_host_span_ms": 0.178107,
+                "max_host_span_ms": 0.020809
+              },
+              "decode_step": {
+                "calls": 4,
+                "sum_host_span_ms": 174.958061,
+                "max_host_span_ms": 46.828533
+              },
+              "decode_batch": {
+                "calls": 58,
+                "sum_host_span_ms": 2697.46858,
+                "max_host_span_ms": 66.71913
+              }
+            },
+            {
+              "omitted": "No cross-host clock alignment; use full peer trace with ordinal/model boundaries."
+            }
+          ]
+        }
+      ],
+      "C2_schedule": [
+        {
+          "actor": 0,
+          "prefill_intervals_ms": [
+            [
+              2.063128,
+              102.824103
+            ],
+            [
+              201.939376,
+              263.098792
+            ]
+          ],
+          "publication_ms": 263.125431,
+          "postprefill_gap_ms": 0.026639,
+          "other_request_prefill_inside_gap_ms": 0.0
+        },
+        {
+          "actor": 1,
+          "prefill_intervals_ms": [
+            [
+              105.024227,
+              201.934876
+            ],
+            [
+              267.369375,
+              330.034846
+            ]
+          ],
+          "publication_ms": 330.055365,
+          "postprefill_gap_ms": 0.020519,
+          "other_request_prefill_inside_gap_ms": 0.0
+        }
+      ],
+      "warmup_prefill_Forward_ms": [
+        112.216373,
+        61.149226
+      ],
+      "span_counts_per_rank": [
+        {
+          "9": 10,
+          "6": 10,
+          "3": 107,
+          "8": 166,
+          "1": 166,
+          "5": 295,
+          "7": 10,
+          "2": 10,
+          "10": 221,
+          "11": 490,
+          "12": 221,
+          "13": 98,
+          "4": 5,
+          "14": 58
+        },
+        {
+          "3": 107,
+          "8": 166,
+          "1": 166,
+          "5": 295,
+          "2": 10,
+          "13": 98,
+          "14": 58
+        }
+      ]
+    }
+  ],
+  "strict_flags": [
+    {
+      "control": "after-baseline",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "client_ttft_ms",
+      "baseline_ms": 263.2286279986147,
+      "candidate_ms": 327.01803601230495,
+      "delta_ms": 63.78940801369026
+    },
+    {
+      "control": "after-baseline",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "server_ttft_ms",
+      "baseline_ms": 262.515289,
+      "candidate_ms": 326.345576,
+      "delta_ms": 63.830287
+    },
+    {
+      "control": "after-baseline",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "raw.ttft_ms",
+      "baseline_ms": 262.515289,
+      "candidate_ms": 326.345576,
+      "delta_ms": 63.830287
+    }
+  ],
+  "adaptive_work_differences": [
+    {
+      "control": "before-baseline",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_tokens",
+      "baseline": 85,
+      "candidate": 86
+    },
+    {
+      "control": "after-baseline",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_tokens",
+      "baseline": 84,
+      "candidate": 86
+    },
+    {
+      "control": "after-baseline",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "raw.draft_rounds",
+      "baseline": 55,
+      "candidate": 56
+    }
+  ],
+  "scope": "One fixed observed B/C/B of frozen measured production sources and exact original first-five-request history. Per-request windows overlap in C2; span sums include nested and peer/GPU work, are not additive wall components or pure CPU tax. No crosshost clock alignment; peer spans joined only by its own local request time window are NOT valid across hosts, so per-rank1 aggregates below intentionally omitted. Publication is host attempt, not hardware-ready/delivery. No causal/speed/equivalence claim or prior flag waiver."
+}
