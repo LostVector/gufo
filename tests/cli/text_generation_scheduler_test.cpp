@@ -1,7 +1,5 @@
 #include "src/cli/serve/text_generation_scheduler.hpp"
 
-#include <unistd.h>
-
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -139,15 +137,6 @@ struct FakeControl {
     Expect(entered, "timed out waiting for blocked prefill");
   }
 
-  void WaitForCaptureFinished(TextRunnerToken label) {
-    std::unique_lock<std::mutex> lock(mutex);
-    const bool finished = condition.wait_for(lock, kTestTimeout, [&] {
-      return std::ranges::find(finished_captures, label) !=
-             finished_captures.end();
-    });
-    Expect(finished, "timed out waiting for a prompt capture to finish");
-  }
-
   void ReleaseAdvance() {
     {
       const std::lock_guard<std::mutex> lock(mutex);
@@ -192,8 +181,6 @@ struct FakeControl {
   std::condition_variable condition;
   std::vector<Event> events;
   std::vector<std::vector<TextRunnerToken>> advance_batches;
-  // Labels whose asynchronous prompt capture finished, in order.
-  std::vector<TextRunnerToken> finished_captures;
   std::optional<TextRunnerToken> block_advance_label;
   std::optional<TextRunnerToken> block_prefill_label;
   std::optional<TextRunnerToken> throw_advance_label;
@@ -231,22 +218,6 @@ struct FakeControl {
   std::optional<std::size_t> stop_after;
   std::optional<std::size_t> eos_after;
   std::function<void()> snapshot_callback;
-};
-
-// Records its label as a finished capture when its thread exits.
-struct CaptureExit {
-  ~CaptureExit() {
-    if (!control)
-      return;
-    {
-      const std::lock_guard<std::mutex> lock(control->mutex);
-      control->finished_captures.push_back(label);
-    }
-    control->condition.notify_all();
-  }
-
-  std::shared_ptr<FakeControl> control;
-  TextRunnerToken label{0};
 };
 
 class FakeState final : public TextRunnerState {
@@ -496,12 +467,6 @@ public:
       const TextRunnerState& state) const override {
     if (control_->snapshot_callback)
       control_->snapshot_callback();
-    // The pool runs a prompt capture on its own thread, whose future becomes
-    // ready when this returns and before the thread exits. Recorded at thread
-    // exit, a capture is one the scheduler already sees as finished.
-    thread_local CaptureExit capture_exit;
-    capture_exit.control = control_;
-    capture_exit.label = RequireFakeState(state).label;
     return std::make_unique<SnapshotState>(RequireFakeState(state));
   }
   void RestoreOrFork(
@@ -2582,23 +2547,26 @@ void TestMixedStepsContinueAfterPromptCapture() {
         release.acquire();
       }
     };
+    // Keep the peer active until the first request finishes, then cancel it.
+    // std::async may use persistent worker threads, so thread-local destruction
+    // cannot be used to observe when its snapshot future becomes ready.
+    control->max_context = 1 << 20;
     control->block_advance_label = 2;
     auto scheduler = MakeScheduler(control, 2);
     auto first = scheduler->Submit({1, 10}, 7, 0.0F);
     Expect(entered.try_acquire_for(kTestTimeout),
            "the previewed request captures its prompt");
-    auto second = scheduler->Submit({2, 20}, 30, 0.0F);
+    auto second = scheduler->Submit({2, 20}, 0, 0.0F);
     control->WaitForAdvance(2);
     release.release();
-    // The scheduler sees a capture finish only between steps. Holding the
-    // peer until the capture has finished keeps it decoding when the preview
-    // resumes; otherwise it can finish first and the preview advances alone.
-    control->WaitForCaptureFinished(1);
     control->ReleaseAdvance();
     Expect(first.Wait().tokens == ExpectedTokens(1, 7),
            "a preview is advanced once by a batched step");
-    Expect(second.Wait().tokens == ExpectedTokens(2, 30),
-           "the batched peer keeps its output");
+    second.Cancel();
+    const auto peer = second.Wait();
+    Expect(peer.cancelled && !peer.tokens.empty() &&
+               peer.tokens == ExpectedTokens(2, peer.tokens.size()),
+           "the active batched peer keeps its exact output prefix");
     const auto batches = control->AdvanceBatches();
     Expect(std::ranges::any_of(batches,
                                [](const auto& batch) {
