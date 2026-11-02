@@ -1964,6 +1964,100 @@ void TestSessionStatesFollowAdmittedRequests() {
          "multi-token decoding is reported as speculative");
 }
 
+void TestBeforeTerminalSchedulingHook() {
+  {
+    auto control = std::make_shared<FakeControl>();
+    auto scheduler = MakeScheduler(control, 2);
+    std::binary_semaphore entered{0}, release{0};
+    std::atomic<unsigned> calls{0};
+    auto metadata = ClientMetadata("completed");
+    metadata.before_terminal = [&] {
+      ++calls;
+      entered.release();
+      Expect(release.try_acquire_for(kTestTimeout), "completion hook released");
+    };
+    auto request =
+        scheduler->Submit({1, 10}, 2, 0.0F, {}, false, std::move(metadata));
+    Expect(entered.try_acquire_for(kTestTimeout), "completion hook reached");
+    auto follower = scheduler->Submit({2, 20}, 1, 0.0F);
+    auto waiting =
+        std::async(std::launch::async, [&] { return request.Wait(); });
+    Expect(request.phase() != TextRequestPhase::kTerminal &&
+               waiting.wait_for(std::chrono::milliseconds{0}) ==
+                   std::future_status::timeout,
+           "terminal publication follows the completion hook");
+    const auto events = control->Events();
+    Expect(EventIndex(events, EventKind::kAdvance, 1, 1) < events.size(),
+           "request model work finishes before the completion hook");
+    Expect(EventIndex(events, EventKind::kPrefill, 2) == events.size(),
+           "the next request cannot overtake the completion hook");
+    release.release();
+    Expect(waiting.get().completion_tokens == 2 &&
+               follower.Wait().completion_tokens == 1 && calls == 1,
+           "hook runs once and preserves both request results");
+  }
+  {
+    auto control = std::make_shared<FakeControl>();
+    control->block_advance_label = 1;
+    auto scheduler = MakeScheduler(control, 1);
+    auto active = scheduler->Submit({1, 10}, 2, 0.0F);
+    control->WaitForAdvance(1);
+    std::atomic<unsigned> calls{0};
+    auto metadata = ClientMetadata("cancelled");
+    metadata.before_terminal = [&] { ++calls; };
+    auto queued =
+        scheduler->Submit({2, 20}, 1, 0.0F, {}, false, std::move(metadata));
+    queued.Cancel();
+    control->ReleaseAdvance();
+    Expect(queued.Wait().cancelled && !active.Wait().cancelled && calls == 1,
+           "queued cancellation invokes its hook once without model work");
+    const auto events = control->Events();
+    Expect(EventIndex(events, EventKind::kPrefill, 2) == events.size(),
+           "cancelled request never acquires a state");
+  }
+  {
+    auto control = std::make_shared<FakeControl>();
+    auto scheduler = MakeScheduler(control, 1);
+    std::atomic<unsigned> calls{0};
+    auto metadata = ClientMetadata("hook-failure");
+    metadata.before_terminal = [&] {
+      ++calls;
+      throw std::runtime_error("injected completion hook failure");
+    };
+    auto failed =
+        scheduler->Submit({1, 10}, 1, 0.0F, {}, false, std::move(metadata));
+    bool rejected = false;
+    try {
+      (void)failed.Wait();
+    } catch (const std::runtime_error& error) {
+      rejected =
+          std::string_view(error.what()) == "injected completion hook failure";
+    }
+    Expect(rejected && calls == 1,
+           "hook failure is explicit and does not invoke the hook again");
+    Expect(scheduler->Submit({3, 30}, 1, 0.0F).Wait().completion_tokens == 1,
+           "a hook failure does not strand the scheduler");
+  }
+  {
+    auto control = std::make_shared<FakeControl>();
+    control->throw_advance_label = 1;
+    auto scheduler = MakeScheduler(control, 1);
+    std::atomic<unsigned> calls{0};
+    auto metadata = ClientMetadata("model-failure");
+    metadata.before_terminal = [&] { ++calls; };
+    auto failed =
+        scheduler->Submit({1, 10}, 2, 0.0F, {}, false, std::move(metadata));
+    bool rejected = false;
+    try {
+      (void)failed.Wait();
+    } catch (const std::runtime_error&) {
+      rejected = true;
+    }
+    Expect(rejected && calls == 0,
+           "model failures preserve the caller finalization fallback");
+  }
+}
+
 void TestQueuedAndPrefillCancellation() {
   {
     auto control = std::make_shared<FakeControl>();
@@ -3192,6 +3286,7 @@ void TestBackendPreservesModelSamplingPreset() {
 #endif
 
 int main() {
+  TestBeforeTerminalSchedulingHook();
 #if defined(ENGINE_ENABLE_HIP)
   TestBackendPreservesModelSamplingPreset();
 #endif
