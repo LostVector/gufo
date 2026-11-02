@@ -73,6 +73,8 @@ if (WIN32)
   # the cache tests that fork or wrap libc symbols, and the 1,250-chunk
   # per-file fsync stress in component_text_cache_test.
   set(gufo_pr_linux_only
+    # These control/disk fixtures use POSIX sockets and mkdtemp.
+    tp_control_test tp_disk_store_test
     gguf_reader_test gguf_identity_test platform_publish_test
     platform_prefault_test trace_test http_server_signals_test
     http_server_test audio_websocket_test continuation_disk_store_test

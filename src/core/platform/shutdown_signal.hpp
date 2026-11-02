@@ -54,6 +54,9 @@ inline void IgnoreSocketPipeSignal() noexcept {
 /// Windows).
 void InstallFatalSignalReporter() noexcept;
 
+/// Worker-only termination: exit immediately on SIGINT/SIGTERM, even as PID1.
+void InstallImmediateTerminationHandlers() noexcept;
+
 }  // namespace gufo::platform
 
 #endif  // GUFO_CORE_PLATFORM_SHUTDOWN_SIGNAL_HPP_
