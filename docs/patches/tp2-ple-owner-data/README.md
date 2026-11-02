@@ -14,7 +14,8 @@ only2 additional PLE implementation sources are candidate-only. These are
 measurements of those sources, not a later integration revision. The review
 branch additionally merges maintained `tp2` f75bed09 (RAM-off cache correctness
 and Windows macro fixes); the tables do not qualify that later combined binary.
-Fresh combined-build/runtime qualification remains explicit before adoption.
+The combined source2669e07c has separate production runtime/failure qualification
+below; the performance table remains attributed to the measured prototype.
 
 ## Measured results
 
@@ -59,9 +60,40 @@ placement metadata in both rank orders before model/collective execution.
 The same approved module/boot/topology and idle state and checked error/kernel
 conditions pass. These do not qualify every asynchronous-reuse pattern.
 
-Actual new-path owner-read/API error and peer-exit/recovery, wider concurrency,
-and bounded request-identified attribution of the latency flags remain before
-default integration. No production default or upstream-ready RDMA integration
+The combined production binary at source `2669e07c` now passes a fresh
+[twelve-request replay](ple-owner-review-http-smoke-v1-validation.json) and
+[cache/two-role cancellation lifecycle](ple-owner-review-http-lifecycle-v1-validation.json).
+Its [binary/build record](ple-owner-review-release-binary.json) pins the exact
+BUILD_TESTING=OFF release artifact; these checks do not remeasure the table above.
+
+[Live owner failure checks](ple-owner-live-faults-v3-validation.json) inject one
+aligned O_DIRECT PLE read EIO or terminate the task-owned rank1 process after
+streaming begins. Both give explicit stream errors, automatically exit the
+failed pair, refuse new connections, and recover with eight exact actual-MTP
+outputs across independent fresh restarts. Failure-to-stream-error was186.8ms
+for EIO and195.1ms for process loss in these observations, not transport latency.
+
+[Event-record failure checks](ple-owner-event-faults-v1-validation.json) inject
+one correctly typed `hipEventRecord` error at the new PLE callback on each rank.
+Four already-live client streams fail explicitly; both failed pairs exit and
+eight fresh recovery outputs match. The shim omits the real API only at the
+selected failed call; its [five CPU controls](event-fault-shim-selftest.json)
+include an eight-thread one-failure race. The [exact call-site record](review-ple-event-target.json)
+is valid only for the pinned binary. This is process-local API-return injection,
+not a physical GPU/cable fault, precise collective-inflight loss, or transparent
+in-process reconnect test.
+
+The [qualification harness archive](combined-qualification-harness.zip) preserves
+frozen study protocols and their hash-verified harness inputs plus the typed
+shim sources. It needs the same lab setup as the timing acquisition. Failed
+fixture attempts remain in the lab: v1 expected a surviving HTTP500 server but
+current serving intentionally exits a failed TP pair; v2 then hit an undefined
+report-variable typo after successful failure handling. Fresh v3 corrects the
+oracle/typo and completes every stage. These were fixture failures, not passing
+runs or production fixes.
+
+Wider concurrency and bounded request-identified attribution of the retained
+latency flags remain before default integration. No production default or upstream-ready RDMA integration
 is claimed. Earlier testing-enabled candidate measurements and rejected partial
 timingv1 remain preserved; corrected production timingv2 is fresh. See the
 [build-mode erratum](cooperative-ple-build-mode-erratum.json) and

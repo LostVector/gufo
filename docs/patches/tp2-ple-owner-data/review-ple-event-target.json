@@ -1,0 +1,17 @@
+{
+  "binary": {
+    "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-ple-owner-review-2669e07c",
+    "sha256": "74b0ee77ce491d308c8c2d6514bba2062e1c879258d26d0bff4ed67d12413fc8",
+    "source_commit": "2669e07c564e22d8bb327a009f26f654cea10fb4",
+    "build_testing": false,
+    "source_tree": "5c54eb84ea1dd5e8112d7a2ef398a6b1e7d1ad90"
+  },
+  "symbol": "std::_Function_handler<bool (std::span<unsigned int const, 18446744073709551615ul>, float*, float const*, unsigned long, bool, ihipStream_t*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*), gufo::models::qwen38_flash_next::rocm::Executor::TwoRankPleGather(std::shared_ptr<gufo::models::qwen38_flash_next::rocm::Communicator>, unsigned int, unsigned int, unsigned int)::$_0>::_M_invoke(std::_Any_data const&, std::span<unsigned int const, 18446744073709551615ul>&&, float*&&, float const*&&, unsigned long&&, bool&&, ihipStream_t*&&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*&&)",
+  "function_begin": 94201120,
+  "function_end": 94201831,
+  "api": "hipEventRecord",
+  "call_address": 94201766,
+  "return_pc": 94201771,
+  "return_pc_hex": "0x59d67ab",
+  "scope": "Fresh current-review binary exact CPU return PC in new PLE exchange callback. Use only with this executable hash. Selection is not a fault execution or performance measurement."
+}
