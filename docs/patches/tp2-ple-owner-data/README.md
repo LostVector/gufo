@@ -152,3 +152,14 @@ are exported here; no generic network simulator is substituted.
 decisions, a bidirectional timing-estimate input swap at the first width
 divergence, and all additional flags. This is a separate diagnostic, not
 an additional performance pair or a claim that a replacement policy wins.
+
+## Completion and startup attribution
+
+[Completion-tail sends](completion-tail/README.md) separate the roughly51ms
+EndRequest pre-send interval from21–27us sends. [Startup HIP waits](startup-hip/README.md)
+locate the high startup mode inside an event wait on an unchanged baseline.
+Both preserve the frozen production history and all earlier flags.
+Run `python3 check-new-latency.py` for an independent raw-span audit.
+
+[Current review scope and remaining limitations](REVIEW.md) separate code-review
+readiness from timing qualification and default integration.

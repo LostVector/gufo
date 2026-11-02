@@ -110,3 +110,5 @@ print('Scope: checks exported data; does not rerun inference, certify hardware o
 # The newer diagnostic is separate from, and never pooled into, the timing study.
 import subprocess, sys
 subprocess.run([sys.executable, str(p/'ragged-round-trace/check.py')], check=True)
+
+subprocess.run([sys.executable, str(p/"check-new-latency.py")], check=True)
