@@ -145,3 +145,10 @@ acquisition/analysis scripts remain in the lab's
 `tp-cache-retention/cooperative-ple-release-comparison-v2` and
 `fork-integration-v1/*cooperative-ple*`. The frozen design/sequence and raw records
 are exported here; no generic network simulator is substituted.
+
+## Captured batch-policy decisions
+
+[Exact policy-input replay](ragged-policy-trace/README.md) records104 real
+decisions, a bidirectional timing-estimate input swap at the first width
+divergence, and all additional flags. This is a separate diagnostic, not
+an additional performance pair or a claim that a replacement policy wins.

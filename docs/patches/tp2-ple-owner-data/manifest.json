@@ -124,7 +124,7 @@
     "cooperative-ple-release-comparison-v2-pair05-candidate.jsonl.gz": "5522abc9be96bfd2365f6094b6ad65e4d1e6bb90530a5531e3bbf0b85861f030",
     "cooperative-ple-release-comparison-v2-pair09-baseline.jsonl.gz": "8622b5fec390ee9ea33f777936ac5aaf22f45bcf165b2aed675935ae69421af4",
     "release-build-provenance.json": "c6e52f7399d06acda89de836fc97f5b92ae59d346e292df2a6185c54a0219862",
-    "README.md": "745e2a1e8f8838fa1187f9dfa98b3d1deb9e5d76cd561ea2966d52f34d1bd651",
+    "README.md": "af07caf5e7caf6670e566ac008f22629a0a02d4384661d82c78b654382c141b4",
     "cooperative-ple-release-comparison-v2-pair01-candidate.jsonl.gz": "e466bf033d83cd8e8e7d6ec96282bf76219f4856800fdf9ce46dff0c1dc35f25",
     "cooperative-ple-release-comparison-v2-pair03-candidate.jsonl.gz": "de97cab143f88db4dfe6e49488ad38ed93425e541d2fa2a2ebc2135f88425591",
     "cooperative-ple-release-comparison-v2-pair02-candidate.jsonl.gz": "286a206ab23fe96393f0ddff5071808febca2c0ba1d01c2b7fa19ebfd80f2372",
@@ -176,6 +176,15 @@
     "ragged-round-trace/phase-flags.csv": "d4bc3d617acfc2954ca1234dafabb50c8802d2d606b21529901a2ae18e28a31f",
     "ragged-round-trace/rounds.csv": "267abefb2438ffac0efa30ea2132bfdd8f850da04d52b4f83d6a32a578339311",
     "ragged-round-trace/check.py": "20cef09a6b48425945be6b301c326118d72c09d3e6331a2c475512b52e8828fc",
-    "ragged-round-trace/peer-work-check.json": "6faaa3c9e7f13ee44d24bb189b0d44d2486498e8c40a2c89c29e2c8ec88c6902"
+    "ragged-round-trace/peer-work-check.json": "6faaa3c9e7f13ee44d24bb189b0d44d2486498e8c40a2c89c29e2c8ec88c6902",
+    "ragged-policy-trace/README.md": "37cae3ff193ee5368c20d059e64f92f96c69de399ef2165753526fde65156af9",
+    "ragged-policy-trace/acquisition.zip": "61d9aba63249f16cf6b427c81c813f824d8af067eb343e8b8ef1e54acd93dd51",
+    "ragged-policy-trace/adaptive-work.csv": "cb4bd434528028e45c5eb078d25254e47d4e47d9caf0f9a59583e431984b2e92",
+    "ragged-policy-trace/choice-analysis.json": "5500e026dcf9a0297c1457d97287b9498643347e35959e7c687850d8a5344107",
+    "ragged-policy-trace/choices.json": "7a05d5219db282c0665bf702f6f5f9280e1b8887d40f17807889541c48650561",
+    "ragged-policy-trace/divergence-analysis.json": "9748c7464f68a47ff8267464d882cd044c5a803fba9da05782a770835c14a9b6",
+    "ragged-policy-trace/phase-flags.csv": "f68f51e9eb4b2cc42de696b616f047e847aa074773d2e853192a3da119d1c2b7",
+    "ragged-policy-trace/round-analysis.json": "60655b77163ffba9592eaccb889482f09439cd953991f9e176ab4d83d47e7ff4",
+    "ragged-policy-trace/validation.json": "1b1e73666e91ed04655b216732ba120413a176e2a021051c629d742141423c47"
   }
 }
