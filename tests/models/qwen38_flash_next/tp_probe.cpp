@@ -6,6 +6,9 @@
 // token and the final logits: a prefill must not depend on its steps.
 // --decode-tail K instead feeds the last K tokens one at a time, as decoding
 // does: a token must compute the same whether prefilled or decoded.
+// --split S --decode-span D prefills S tokens, decodes the next D one at a
+// time and prefills the rest on top, as a request reusing a decoded reply
+// does, and compares the final logits with one prefill of the whole prompt.
 // --top N prints the prompt's N highest next-token logits before decoding,
 // to compare a close choice between TP2 and one host (--prompt-file reads a
 // rendered prompt, special tokens included).
@@ -109,6 +112,7 @@ int main(int argc, char** argv) {
   std::string rdma_device;
   std::uint32_t split = 0;
   std::uint32_t decode_tail = 0;
+  std::uint32_t decode_span = 0;
   std::uint32_t top = 0;
 
   for (int i = 1; i < argc; ++i) {
@@ -139,6 +143,11 @@ int main(int argc, char** argv) {
     } else if (arg == "--decode-tail") {
       if (!ParseUint(next(), &decode_tail)) {
         Fail("--decode-tail requires an unsigned integer");
+        return 2;
+      }
+    } else if (arg == "--decode-span") {
+      if (!ParseUint(next(), &decode_span)) {
+        Fail("--decode-span requires an unsigned integer");
         return 2;
       }
     } else if (arg == "--split") {
@@ -275,6 +284,9 @@ int main(int argc, char** argv) {
     std::vector<std::uint64_t> hashes;
   };
   const auto rows = std::make_shared<RowHashes>();
+  if (decode_span != 0) {
+    decode_tail = 1;  // compare through the decoding branch below
+  }
   if (split != 0 || decode_tail != 0) {
     options.moe_observer = [rows](const float* data, std::size_t bytes,
                                   ihipStream_t* stream) {
@@ -340,9 +352,17 @@ int main(int argc, char** argv) {
       if (in_two && decode_tail != 0) {
         // Decoding: one token per forward; only the last one's observations
         // are kept, to compare with the last row of the prefill.
-        for (std::size_t t = split; ok && t < all.size(); ++t) {
+        const std::size_t end =
+            decode_span != 0
+                ? std::min<std::size_t>(all.size() - 1, split + decode_span)
+                : all.size();
+        for (std::size_t t = split; ok && t < end; ++t) {
           rows->hashes.clear();
           ok = session->Evaluate(all[t], &error);
+        }
+        if (ok && end < all.size()) {
+          rows->hashes.clear();
+          ok = session->Sync(all, &error);
         }
       } else {
         ok = session->Sync(all, &error);
@@ -381,6 +401,23 @@ int main(int argc, char** argv) {
         "logits_differing=%zu max_abs_diff=%.9g\n",
         rank, prompt_tokens.size(), split, whole->first.size(),
         parts->first.size(), first, differing, max_diff);
+    if (top > 0) {
+      for (const auto* logits : {&whole->second, &parts->second}) {
+        std::vector<std::int32_t> order(logits->size());
+        for (std::size_t i = 0; i < order.size(); ++i)
+          order[i] = static_cast<std::int32_t>(i);
+        const auto count = std::min<std::size_t>(top, order.size());
+        std::partial_sort(order.begin(), order.begin() + count, order.end(),
+                          [&](std::int32_t a, std::int32_t b) {
+                            return (*logits)[a] > (*logits)[b];
+                          });
+        std::printf("rank=%u %s top:", rank,
+                    logits == &whole->second ? "prefill" : "split");
+        for (std::size_t i = 0; i < count; ++i)
+          std::printf(" %d=%.4f", order[i], (*logits)[order[i]]);
+        std::printf("\n");
+      }
+    }
     return 0;
   }
   const auto prompt_tokens = model->Tokenize(prompt);
