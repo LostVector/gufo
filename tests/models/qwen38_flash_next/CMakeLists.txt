@@ -17,6 +17,9 @@ function(add_qwen38_flash_next_test name library labels)
   set(target qwen38_flash_next_${name}_test)
   add_executable(${target} ${name}_test.cpp)
   target_link_libraries(${target} PRIVATE ${library})
+  if (library STREQUAL "gufo_qwen38_flash_next_hip")
+    target_link_libraries(${target} PRIVATE hip::host gufo_core)
+  endif()
   add_test(NAME qwen38_flash_next.${name} COMMAND ${target})
   set_tests_properties(qwen38_flash_next.${name} PROPERTIES
     LABELS "qwen38_flash_next;${labels}")
@@ -27,6 +30,8 @@ add_qwen38_flash_next_test(runner_options gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(config gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(continuation_layout gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(ngram gufo_qwen38_flash_next "cpu")
+add_qwen38_flash_next_test(tp_partition gufo_qwen38_flash_next "cpu")
+add_qwen38_flash_next_test(rdma_gid gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(mtp_sampling gufo_core "cpu")
 add_qwen38_flash_next_test(rope_scaling gufo_qwen38_flash_next "cpu")
 # The HF-oracle/off-bit-identity checks link the scalar model oracle, so
@@ -51,6 +56,10 @@ if (ENGINE_ENABLE_HIP)
       select_ops snapshot_copy verification_sampling)
     add_qwen38_flash_next_test(${name} qwen38_flash_next_test_hip "hip;gpu;gfx1151")
   endforeach()
+  target_link_libraries(qwen38_flash_next_mtp_ops_test PRIVATE
+    gufo_qwen_kernels)
+  target_link_libraries(qwen38_flash_next_hc_mix_ops_test PRIVATE
+    gufo_qwen38_flash_next_mmq)
   # The rope phase and RMS checks compare against the scalar CPU oracle.
   target_link_libraries(qwen38_flash_next_attention_ops_test PRIVATE
     gufo_qwen38_flash_next_reference)
@@ -74,6 +83,19 @@ if (ENGINE_ENABLE_HIP)
   add_custom_target(qwen38_flash_next_model_tests
     DEPENDS qwen38_flash_next_session_test qwen38_flash_next_snapshot_test
       qwen38_flash_next_continuation_adapter_test)
+
+  add_executable(qwen38_flash_next_tp_probe EXCLUDE_FROM_ALL tp_probe.cpp)
+  target_link_libraries(qwen38_flash_next_tp_probe PRIVATE
+    gufo_qwen38_flash_next_hip hip::host)
+
+  # Batched-decode probe: the same program on both ranks over one RDMA pair,
+  # with no control channel, scheduler or executor.
+  if (GUFO_ENABLE_TP2_RDMA)
+    add_executable(qwen38_flash_next_tp_batched_probe EXCLUDE_FROM_ALL
+      tp_batched_probe.cpp)
+    target_link_libraries(qwen38_flash_next_tp_batched_probe PRIVATE
+      gufo_qwen38_flash_next_hip hip::host)
+  endif()
 
   add_executable(qwen38_flash_next_dense_gemm_bench EXCLUDE_FROM_ALL
     dense_gemm_bench.cpp)
@@ -103,4 +125,11 @@ if (ENGINE_ENABLE_HIP)
     mtp_audit.cpp)
   target_link_libraries(qwen38_flash_next_gpu_probe PRIVATE
     gufo_qwen38_flash_next_reference qwen38_flash_next_test_hip)
+endif()
+
+# Requires two real native RDMA peers; intentionally outside automatic CTest.
+if (ENGINE_ENABLE_HIP AND GUFO_ENABLE_TP2_RDMA)
+  add_executable(qwen38_flash_next_ple_owner_probe EXCLUDE_FROM_ALL ple_owner_probe.cpp)
+  target_link_libraries(qwen38_flash_next_ple_owner_probe PRIVATE
+    qwen38_flash_next_test_hip gufo_qwen38_flash_next_rdma)
 endif()

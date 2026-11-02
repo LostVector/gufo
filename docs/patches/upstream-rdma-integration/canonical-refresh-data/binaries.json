@@ -1,0 +1,10 @@
+{
+  "baseline": {
+    "name": "gufo-end-handoff",
+    "sha256": "c455bef45de93254a1986540fb8a3082ced2c01f7092f0442b78824440ee71ef"
+  },
+  "candidate": {
+    "name": "gufo-gufo-org-extensions-tp2-739eb86a",
+    "sha256": "8b7f125ab4ea55fd024bcba678f86b7c93c48f549aaa6b0712355f36716e2195"
+  }
+}

@@ -1,0 +1,273 @@
+{
+  "baseline": {
+    "binary_sha256": "5ce244cf22cbb5d9d3d39551139ec8804d89399da8704057ec9f21a1051a5d71",
+    "functions": [
+      {
+        "id": 1,
+        "tag": "ngram_wait",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZN4gufo6models17qwen38_flash_next10NgramTable8WaitReadEv",
+        "demangled": "gufo::models::qwen38_flash_next::NgramTable::WaitRead()",
+        "address": 94005584,
+        "file_offset": 94001488
+      },
+      {
+        "id": 2,
+        "tag": "inner_capture",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZNK4gufo6models17qwen38_flash_next12_GLOBAL__N_123QwenFlashNextTextRunner15CaptureSnapshotERKNS_3ext15TextRunnerStateENS1_7Session12SnapshotModeE",
+        "demangled": "gufo::models::qwen38_flash_next::(anonymous namespace)::QwenFlashNextTextRunner::CaptureSnapshot(gufo::ext::TextRunnerState const&, gufo::models::qwen38_flash_next::Session::SnapshotMode) const",
+        "address": 93760896,
+        "file_offset": 93756800
+      },
+      {
+        "id": 3,
+        "tag": "forward",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZNK4gufo6models17qwen38_flash_next4rocm8Executor7ForwardERNS2_7SessionESt4spanIKiLm18446744073709551615EEjPfNS3_11ForwardModeEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPNS2_17PrefillCheckpointES8_",
+        "demangled": "gufo::models::qwen38_flash_next::rocm::Executor::Forward(gufo::models::qwen38_flash_next::rocm::Session&, std::span<int const, 18446744073709551615ul>, unsigned int, float*, gufo::models::qwen38_flash_next::rocm::Executor::ForwardMode, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, gufo::models::qwen38_flash_next::rocm::PrefillCheckpoint*, std::span<int const, 18446744073709551615ul>) const",
+        "address": 93938224,
+        "file_offset": 93934128
+      },
+      {
+        "id": 4,
+        "tag": "end",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZN4gufo6server16TpMirroredRunner10EndRequestEmPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE",
+        "demangled": "gufo::server::TpMirroredRunner::EndRequest(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*)",
+        "address": 91852944,
+        "file_offset": 91848848
+      },
+      {
+        "id": 5,
+        "tag": "mtp_forward",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZNK4gufo6models17qwen38_flash_next4rocm8Executor10MtpForwardERNS2_7SessionESt4spanIKiLm18446744073709551615EEiNS3_9MtpOutputEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPKf",
+        "demangled": "gufo::models::qwen38_flash_next::rocm::Executor::MtpForward(gufo::models::qwen38_flash_next::rocm::Session&, std::span<int const, 18446744073709551615ul>, int, gufo::models::qwen38_flash_next::rocm::Executor::MtpOutput, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, float const*) const",
+        "address": 93946128,
+        "file_offset": 93942032
+      },
+      {
+        "id": 6,
+        "tag": "tp_prefill",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZNK4gufo6server16TpMirroredRunner7PrefillERNS_3ext15TextRunnerStateESt4spanIKjLm18446744073709551615EEmm",
+        "demangled": "gufo::server::TpMirroredRunner::Prefill(gufo::ext::TextRunnerState&, std::span<unsigned int const, 18446744073709551615ul>, unsigned long, unsigned long) const",
+        "address": 91833552,
+        "file_offset": 91829456
+      },
+      {
+        "id": 7,
+        "tag": "tp_capture",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZNK4gufo6server16TpMirroredRunner7CaptureERKNS_3ext15TextRunnerStateEb",
+        "demangled": "gufo::server::TpMirroredRunner::Capture(gufo::ext::TextRunnerState const&, bool) const",
+        "address": 91867600,
+        "file_offset": 91863504
+      },
+      {
+        "id": 8,
+        "tag": "start_read",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZN4gufo6models17qwen38_flash_next10NgramTable9StartReadESt4spanIKjLm18446744073709551615EES3_IfLm18446744073709551615EES3_IKNS1_16NgramGatherOwnerELm18446744073709551615EE",
+        "demangled": "gufo::models::qwen38_flash_next::NgramTable::StartRead(std::span<unsigned int const, 18446744073709551615ul>, std::span<float, 18446744073709551615ul>, std::span<gufo::models::qwen38_flash_next::NgramGatherOwner const, 18446744073709551615ul>)",
+        "address": 94009120,
+        "file_offset": 94005024
+      },
+      {
+        "id": 9,
+        "tag": "step_prefill",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZN4gufo6server23TextGenerationScheduler4Impl11StepPrefillERKSt10shared_ptrINS0_12_GLOBAL__N_116ScheduledRequestEEbb",
+        "demangled": "gufo::server::TextGenerationScheduler::Impl::StepPrefill(std::shared_ptr<gufo::server::(anonymous namespace)::ScheduledRequest> const&, bool, bool)",
+        "address": 91135488,
+        "file_offset": 91131392
+      },
+      {
+        "id": 10,
+        "tag": "prepare_first_snapshot",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZN4gufo6server23TextGenerationScheduler4Impl20PrepareFirstSnapshotERKSt10shared_ptrINS0_12_GLOBAL__N_116ScheduledRequestEE",
+        "demangled": "gufo::server::TextGenerationScheduler::Impl::PrepareFirstSnapshot(std::shared_ptr<gufo::server::(anonymous namespace)::ScheduledRequest> const&)",
+        "address": 91155728,
+        "file_offset": 91151632
+      },
+      {
+        "id": 11,
+        "tag": "publish",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZN4gufo6server23TextGenerationScheduler4Impl16PublishSelectionERKSt10shared_ptrINS0_12_GLOBAL__N_116ScheduledRequestEERKNS_3ext19TextDecodeSelectionE",
+        "demangled": "gufo::server::TextGenerationScheduler::Impl::PublishSelection(std::shared_ptr<gufo::server::(anonymous namespace)::ScheduledRequest> const&, gufo::ext::TextDecodeSelection const&)",
+        "address": 91158368,
+        "file_offset": 91154272
+      },
+      {
+        "id": 12,
+        "tag": "prepare_prompt_snapshot",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZN4gufo6server14TextRunnerPool7Request21PreparePromptSnapshotEv",
+        "demangled": "gufo::server::TextRunnerPool::Request::PreparePromptSnapshot()",
+        "address": 91246128,
+        "file_offset": 91242032
+      },
+      {
+        "id": 13,
+        "tag": "decode_step",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZN4gufo6models17qwen38_flash_next7Session10DecodeStepEmRNS_8sampling12SamplerStateEPNS2_12DecodeResultEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEbjSt8optionalIjE",
+        "demangled": "gufo::models::qwen38_flash_next::Session::DecodeStep(unsigned long, gufo::sampling::SamplerState&, gufo::models::qwen38_flash_next::Session::DecodeResult*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, bool, unsigned int, std::optional<unsigned int>)",
+        "address": 93803680,
+        "file_offset": 93799584
+      },
+      {
+        "id": 14,
+        "tag": "decode_batch",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-published-fbacf9cc",
+        "symbol": "_ZN4gufo6models17qwen38_flash_next7Session15DecodeBatchImplESt4spanIKNS2_13DecodeRequestELm18446744073709551615EEPKSt8optionalIjEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE",
+        "demangled": "gufo::models::qwen38_flash_next::Session::DecodeBatchImpl(std::span<gufo::models::qwen38_flash_next::Session::DecodeRequest const, 18446744073709551615ul>, std::optional<unsigned int> const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*)",
+        "address": 93804656,
+        "file_offset": 93800560
+      }
+    ]
+  },
+  "candidate": {
+    "binary_sha256": "95bc4c433f547df7e143bcc69fb1fd973a922bb43dfb47f6203cd1332b042fd5",
+    "functions": [
+      {
+        "id": 1,
+        "tag": "ngram_wait",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZN4gufo6models17qwen38_flash_next10NgramTable8WaitReadEv",
+        "demangled": "gufo::models::qwen38_flash_next::NgramTable::WaitRead()",
+        "address": 94056432,
+        "file_offset": 94052336
+      },
+      {
+        "id": 2,
+        "tag": "inner_capture",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZNK4gufo6models17qwen38_flash_next12_GLOBAL__N_123QwenFlashNextTextRunner15CaptureSnapshotERKNS_3ext15TextRunnerStateENS1_7Session12SnapshotModeE",
+        "demangled": "gufo::models::qwen38_flash_next::(anonymous namespace)::QwenFlashNextTextRunner::CaptureSnapshot(gufo::ext::TextRunnerState const&, gufo::models::qwen38_flash_next::Session::SnapshotMode) const",
+        "address": 93807712,
+        "file_offset": 93803616
+      },
+      {
+        "id": 3,
+        "tag": "forward",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZNK4gufo6models17qwen38_flash_next4rocm8Executor7ForwardERNS2_7SessionESt4spanIKiLm18446744073709551615EEjPfNS3_11ForwardModeEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPNS2_17PrefillCheckpointES8_",
+        "demangled": "gufo::models::qwen38_flash_next::rocm::Executor::Forward(gufo::models::qwen38_flash_next::rocm::Session&, std::span<int const, 18446744073709551615ul>, unsigned int, float*, gufo::models::qwen38_flash_next::rocm::Executor::ForwardMode, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, gufo::models::qwen38_flash_next::rocm::PrefillCheckpoint*, std::span<int const, 18446744073709551615ul>) const",
+        "address": 93988464,
+        "file_offset": 93984368
+      },
+      {
+        "id": 4,
+        "tag": "end",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZN4gufo6server16TpMirroredRunner10EndRequestEmPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE",
+        "demangled": "gufo::server::TpMirroredRunner::EndRequest(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*)",
+        "address": 91899760,
+        "file_offset": 91895664
+      },
+      {
+        "id": 5,
+        "tag": "mtp_forward",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZNK4gufo6models17qwen38_flash_next4rocm8Executor10MtpForwardERNS2_7SessionESt4spanIKiLm18446744073709551615EEiNS3_9MtpOutputEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPKf",
+        "demangled": "gufo::models::qwen38_flash_next::rocm::Executor::MtpForward(gufo::models::qwen38_flash_next::rocm::Session&, std::span<int const, 18446744073709551615ul>, int, gufo::models::qwen38_flash_next::rocm::Executor::MtpOutput, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, float const*) const",
+        "address": 93996432,
+        "file_offset": 93992336
+      },
+      {
+        "id": 6,
+        "tag": "tp_prefill",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZNK4gufo6server16TpMirroredRunner7PrefillERNS_3ext15TextRunnerStateESt4spanIKjLm18446744073709551615EEmm",
+        "demangled": "gufo::server::TpMirroredRunner::Prefill(gufo::ext::TextRunnerState&, std::span<unsigned int const, 18446744073709551615ul>, unsigned long, unsigned long) const",
+        "address": 91880368,
+        "file_offset": 91876272
+      },
+      {
+        "id": 7,
+        "tag": "tp_capture",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZNK4gufo6server16TpMirroredRunner7CaptureERKNS_3ext15TextRunnerStateEb",
+        "demangled": "gufo::server::TpMirroredRunner::Capture(gufo::ext::TextRunnerState const&, bool) const",
+        "address": 91914416,
+        "file_offset": 91910320
+      },
+      {
+        "id": 8,
+        "tag": "start_read",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZN4gufo6models17qwen38_flash_next10NgramTable9StartReadESt4spanIKjLm18446744073709551615EES3_IfLm18446744073709551615EES3_IKNS1_16NgramGatherOwnerELm18446744073709551615EE",
+        "demangled": "gufo::models::qwen38_flash_next::NgramTable::StartRead(std::span<unsigned int const, 18446744073709551615ul>, std::span<float, 18446744073709551615ul>, std::span<gufo::models::qwen38_flash_next::NgramGatherOwner const, 18446744073709551615ul>)",
+        "address": 94059968,
+        "file_offset": 94055872
+      },
+      {
+        "id": 9,
+        "tag": "step_prefill",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZN4gufo6server23TextGenerationScheduler4Impl11StepPrefillERKSt10shared_ptrINS0_12_GLOBAL__N_116ScheduledRequestEEbb",
+        "demangled": "gufo::server::TextGenerationScheduler::Impl::StepPrefill(std::shared_ptr<gufo::server::(anonymous namespace)::ScheduledRequest> const&, bool, bool)",
+        "address": 91182304,
+        "file_offset": 91178208
+      },
+      {
+        "id": 10,
+        "tag": "prepare_first_snapshot",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZN4gufo6server23TextGenerationScheduler4Impl20PrepareFirstSnapshotERKSt10shared_ptrINS0_12_GLOBAL__N_116ScheduledRequestEE",
+        "demangled": "gufo::server::TextGenerationScheduler::Impl::PrepareFirstSnapshot(std::shared_ptr<gufo::server::(anonymous namespace)::ScheduledRequest> const&)",
+        "address": 91202544,
+        "file_offset": 91198448
+      },
+      {
+        "id": 11,
+        "tag": "publish",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZN4gufo6server23TextGenerationScheduler4Impl16PublishSelectionERKSt10shared_ptrINS0_12_GLOBAL__N_116ScheduledRequestEERKNS_3ext19TextDecodeSelectionE",
+        "demangled": "gufo::server::TextGenerationScheduler::Impl::PublishSelection(std::shared_ptr<gufo::server::(anonymous namespace)::ScheduledRequest> const&, gufo::ext::TextDecodeSelection const&)",
+        "address": 91205184,
+        "file_offset": 91201088
+      },
+      {
+        "id": 12,
+        "tag": "prepare_prompt_snapshot",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZN4gufo6server14TextRunnerPool7Request21PreparePromptSnapshotEv",
+        "demangled": "gufo::server::TextRunnerPool::Request::PreparePromptSnapshot()",
+        "address": 91292944,
+        "file_offset": 91288848
+      },
+      {
+        "id": 13,
+        "tag": "decode_step",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZN4gufo6models17qwen38_flash_next7Session10DecodeStepEmRNS_8sampling12SamplerStateEPNS2_12DecodeResultEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEbjSt8optionalIjE",
+        "demangled": "gufo::models::qwen38_flash_next::Session::DecodeStep(unsigned long, gufo::sampling::SamplerState&, gufo::models::qwen38_flash_next::Session::DecodeResult*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, bool, unsigned int, std::optional<unsigned int>)",
+        "address": 93852112,
+        "file_offset": 93848016
+      },
+      {
+        "id": 14,
+        "tag": "decode_batch",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZN4gufo6models17qwen38_flash_next7Session15DecodeBatchImplESt4spanIKNS2_13DecodeRequestELm18446744073709551615EEPKSt8optionalIjEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE",
+        "demangled": "gufo::models::qwen38_flash_next::Session::DecodeBatchImpl(std::span<gufo::models::qwen38_flash_next::Session::DecodeRequest const, 18446744073709551615ul>, std::optional<unsigned int> const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*)",
+        "address": 93853088,
+        "file_offset": 93848992
+      },
+      {
+        "id": 15,
+        "tag": "ple_collective_callback",
+        "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+        "symbol": "_ZNSt17_Function_handlerIFbSt4spanIKjLm18446744073709551615EEPfPKfmbP12ihipStream_tPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEZN4gufo6models17qwen38_flash_next4rocm8Executor16TwoRankPleGatherESt10shared_ptrINSJ_12CommunicatorEEjjjE3$_0E9_M_invokeERKSt9_Any_dataOS2_OS3_OS5_OmObOS7_OSE_",
+        "demangled": "std::_Function_handler<bool (std::span<unsigned int const, 18446744073709551615ul>, float*, float const*, unsigned long, bool, ihipStream_t*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*), gufo::models::qwen38_flash_next::rocm::Executor::TwoRankPleGather(std::shared_ptr<gufo::models::qwen38_flash_next::rocm::Communicator>, unsigned int, unsigned int, unsigned int)::$_0>::_M_invoke(std::_Any_data const&, std::span<unsigned int const, 18446744073709551615ul>&&, float*&&, float const*&&, unsigned long&&, bool&&, ihipStream_t*&&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*&&)",
+        "address": 94205120,
+        "file_offset": 94201024
+      }
+    ]
+  }
+}

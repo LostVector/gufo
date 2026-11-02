@@ -1,0 +1,14 @@
+{
+  "post_acquisition_analysis_sha256": {
+    "analyze.py": "57437cc16a7a35ecdc48e8028905982c616a9161c038b3ca9d0f353f6b2bbe26",
+    "validate.py": "99dae1ab0073910b583cc54708f8b7ef4f656509b7262e9aa986a5159e7e7e89",
+    "plot.py": "95606d84969c02ab18892595a3691c0c9f8affbc34df5ab343ff22ad3eaf3ecb"
+  },
+  "trace_production_sources": {
+    "baseline": "fbacf9cc",
+    "candidate": "85586a63"
+  },
+  "combined_runtime_source": "2669e07c",
+  "current_review": "99ab51b8",
+  "source_scope": "git diff2669e07c..99ab51b8 --src/include/CMakeLists.txt/cmake empty; subsequent refresh changes tests/docs only. This is source equality, not a remeasurement."
+}

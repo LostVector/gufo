@@ -1,0 +1,66 @@
+{
+  "canonical12outputs_prompt_cache_work_exact": true,
+  "C1_MTP_work_exact": true,
+  "C2_adaptive_work_changes": [
+    {
+      "case": "short-c2",
+      "actor": 0,
+      "changes": {
+        "draft_tokens": [
+          89,
+          85
+        ],
+        "draft_accepted_tokens": [
+          60,
+          59
+        ],
+        "draft_rounds": [
+          53,
+          54
+        ]
+      }
+    },
+    {
+      "case": "short-c2",
+      "actor": 1,
+      "changes": {
+        "draft_tokens": [
+          84,
+          86
+        ]
+      }
+    },
+    {
+      "case": "coding-c2",
+      "actor": 0,
+      "changes": {
+        "draft_tokens": [
+          197,
+          198
+        ],
+        "draft_rounds": [
+          77,
+          79
+        ]
+      }
+    },
+    {
+      "case": "coding-c2",
+      "actor": 1,
+      "changes": {
+        "draft_tokens": [
+          188,
+          187
+        ],
+        "draft_rounds": [
+          91,
+          90
+        ]
+      }
+    }
+  ],
+  "legacyVA_occupied_bothranks_and_two_dynamic_windows_perrank": true,
+  "frozen_source_harness_binary_PIDs_settings_driver_boot_topology_counters_kernel_idle_pass": true,
+  "scope": "Actual production wire16 dynamic hostwindows,12canonicalC1/C2history on exact6c4fparent math. Force legacyVA occupied on both ranks with process-local onepagePROT_NONE; no overwrites/globalASLRchange. Proves manylargeprefill anddecode native transfers plus newmapping model lifecycle. Greedy outputs/prompt/cache strict, C1MTPwork strict, C2adaptive differences retained. Candidate-only functional test, no matched speed/equivalence/default claim.",
+  "limits": "Candidate-only fullmodel functional history with144MiBwindows, including large prefills/queued decode; no speed/confidence/equivalence or physicalfailure/default claim. Cache/cancellation and allocator error paths are separate gates."
+}

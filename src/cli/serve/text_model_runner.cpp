@@ -21,7 +21,8 @@ namespace gufo::server {
 std::optional<ChatRequest> ConstrainChatRequest(
     const ChatRequest& request, const TextModelRunner& runner,
     sampling::SamplingConfig* sampling,
-    std::optional<sampling::JsonConstraint::ToolFormat>* tool_format) {
+    std::optional<sampling::JsonConstraint::ToolFormat>* tool_format,
+    std::optional<TextGenerationBackend::InitialOutputState> initial) {
   // Output parsing needs the model's dialect even without tool constraints
   // (for example Qwen's whitespace boundary after </think>).
   if (tool_format)
@@ -81,7 +82,8 @@ std::optional<ChatRequest> ConstrainChatRequest(
     constrained.messages.insert(constrained.messages.begin(),
                                 std::move(message));
   }
-  if (runner.InitialOutputState(request) == ext::InitialOutputState::kReasoning)
+  if (initial.value_or(runner.InitialOutputState(request)) ==
+      TextGenerationBackend::InitialOutputState::kReasoning)
     grammar = sampling::JsonConstraint::WithReasoning(grammar);
   sampling->constraint = runner.BindConstraint(grammar);
   return constrained;
@@ -399,6 +401,15 @@ ContinuationCache::SnapshotSupport MakeSnapshotSupport(
       !validated->descriptor.capabilities.fork) {
     return {};
   }
+  // The runner decides what may be reused, with or without snapshots.
+  auto state_reusable = [validated](const ContinuationState& state) {
+    return validated->runner->CanReuse(
+        dynamic_cast<const TextRunnerState&>(state));
+  };
+  if (!validated->descriptor.capabilities.snapshot ||
+      !validated->descriptor.capabilities.fork) {
+    return {.state_reusable = std::move(state_reusable)};
+  }
   return {
       .restore =
           [validated](ContinuationState& state,
@@ -430,6 +441,14 @@ ContinuationCache::SnapshotSupport MakeSnapshotSupport(
                             validated->snapshot_max_bytes);
           },
       .on_event = EmitSnapshotEvent,
+      .state_reusable = std::move(state_reusable),
+      .snapshot_reusable =
+          [validated](const ContinuationSnapshot& snapshot) {
+            const auto* text_snapshot =
+                dynamic_cast<const TextRunnerSnapshot*>(&snapshot);
+            return text_snapshot != nullptr &&
+                   validated->runner->CanReuse(*text_snapshot);
+          },
   };
 }
 
@@ -1479,7 +1498,11 @@ TextRunnerPool::Request::CommitMetrics TextRunnerPool::Request::Commit() {
         " generated=" + std::to_string(impl_->generated.size()));
   }
   checkpoint.resize(position);
-  if (capabilities.snapshot && capabilities.fork) {
+  // With the RAM cache off the entry names the live state, which can extend
+  // past the prompt snapshot tokens; committing those would let the next
+  // request reuse a prefix the state no longer sits at.
+  if (capabilities.snapshot && capabilities.fork &&
+      impl_->lease.retains_snapshots()) {
     CommitMetrics metrics = impl_->snapshot_metrics;
     metrics.snapshot_bytes += impl_->lease.Commit(
         std::move(impl_->snapshot_tokens), std::move(impl_->prompt_snapshot),
@@ -1541,7 +1564,8 @@ TextRunnerPool::Request::Cancel() noexcept {
       state.Invalidate();
     }
     CommitMetrics metrics = impl_->snapshot_metrics;
-    if (capabilities.snapshot && capabilities.fork) {
+    if (capabilities.snapshot && capabilities.fork &&
+        impl_->lease.retains_snapshots()) {
       metrics.snapshot_bytes += impl_->lease.Commit(
           std::move(impl_->snapshot_tokens), std::move(impl_->prompt_snapshot),
           std::move(checkpoint));
@@ -1583,6 +1607,12 @@ TextRunnerPool::~TextRunnerPool() = default;
 
 const TextModelRunner& TextRunnerPool::runner() const noexcept {
   return *impl_->validated.runner;
+}
+
+void TextRunnerPool::ClearCache() {
+  if (!impl_->cache)
+    throw std::logic_error("TP cache clearing requires the legacy cache");
+  impl_->cache->Clear();
 }
 
 std::size_t TextRunnerPool::capacity() const noexcept {

@@ -1,0 +1,17 @@
+{
+  "15canonical_outputs_exact_original_performance_prefix": true,
+  "frozen_harness_and_actual_shared_ptr_ABI_fixture_pins": true,
+  "both_rank_binary_settings_and_approved_final_idle": true,
+  "all_recorded_model_and_app_collector_PIDs_gone": true,
+  "application_loss_balance_recursion_remaining_maps_checks_pass": true,
+  "six_checked_transport_windows": {
+    "before-baseline/rank0": {},
+    "before-baseline/rank1": {},
+    "first-candidate/rank0": {},
+    "first-candidate/rank1": {},
+    "after-baseline/rank0": {},
+    "after-baseline/rank1": {}
+  },
+  "boot_topology_unchanged_checked_kernel_faults_absent": true,
+  "scope": "Acquisition/correctness/safety only. No independent kernel uprobe misscounter, GPUtimeline or lossfreeclaim. No speed/effect/cause orpreviousphaseflagwaiver."
+}

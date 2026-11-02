@@ -1,0 +1,113 @@
+{
+  "failures": {
+    "owner-readerror": {
+      "case": "owner-read-eio",
+      "owner": {
+        "pid": 792267,
+        "exe": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-ple-owner-review-2669e07c",
+        "sha256": "74b0ee77ce491d308c8c2d6514bba2062e1c879258d26d0bff4ed67d12413fc8",
+        "start_ticks": "16663879"
+      },
+      "injected_fault": {
+        "pid": 792267,
+        "tid": 792388,
+        "fd": 19,
+        "offset": 18973396992,
+        "bytes": 4096,
+        "errno": 5,
+        "result": -1,
+        "o_direct": true
+      },
+      "content_pieces_observed_at_least": 21,
+      "explicit_stream_error": {
+        "message": "Qwen3.8-Flash-Next MTP decode failed: cooperative PLE metadata/read failure",
+        "type": "server_error",
+        "code": "generation_failed"
+      },
+      "normal_completion_reported": false,
+      "signal_to_error_ms": 186.77420800668187,
+      "whole_test_seconds": 2.058996500010835,
+      "failed_pair_exited": true,
+      "pair_exit": {
+        "states": [
+          {
+            "rank": 0,
+            "pid": 983902,
+            "alive": false,
+            "original_start_ticks": "16643079",
+            "observed_start_ticks": null
+          },
+          {
+            "rank": 1,
+            "pid": 792267,
+            "alive": false,
+            "original_start_ticks": "16663879",
+            "observed_start_ticks": null
+          }
+        ],
+        "exit_observation_ms": 1356.6757540102117,
+        "new_connection_rejected": "ConnectionRefusedError(111, 'Connection refused')",
+        "scope": "Current serve.cpp fails closed by exiting the poisoned pair. No timeout or normal completion is accepted; no transparent in-process reconnect claim."
+      },
+      "scope": "Arm one aligned O_DIRECT table pread EIO in exact owner after8content pieces; both failed processes must exit; cooperative engine unchanged. Socket deadline not accepted as success. Poisoned pair must exit; a new connection must be refused; fresh process recovery is separate."
+    },
+    "owner-loss": {
+      "case": "live-owner-process-loss",
+      "owner": {
+        "pid": 793569,
+        "exe": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-ple-owner-review-2669e07c",
+        "sha256": "74b0ee77ce491d308c8c2d6514bba2062e1c879258d26d0bff4ed67d12413fc8",
+        "start_ticks": "16671576"
+      },
+      "content_pieces_observed_at_least": 19,
+      "explicit_stream_error": {
+        "message": "Qwen3.8-Flash-Next MTP decode failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+        "type": "server_error",
+        "code": "generation_failed"
+      },
+      "normal_completion_reported": false,
+      "signal_to_error_ms": 195.12204901548102,
+      "whole_test_seconds": 1.921138092991896,
+      "failed_pair_exited": true,
+      "pair_exit": {
+        "states": [
+          {
+            "rank": 0,
+            "pid": 984520,
+            "alive": false,
+            "original_start_ticks": "16650774",
+            "observed_start_ticks": null
+          },
+          {
+            "rank": 1,
+            "pid": 793569,
+            "alive": false,
+            "original_start_ticks": "16671576",
+            "observed_start_ticks": null
+          }
+        ],
+        "exit_observation_ms": 1372.2249509883113,
+        "new_connection_rejected": "ConnectionRefusedError(111, 'Connection refused')",
+        "scope": "Current serve.cpp fails closed by exiting the poisoned pair. No timeout or normal completion is accepted; no transparent in-process reconnect claim."
+      },
+      "scope": "SIGINT exact task-owned owner after8content pieces; cooperative engine unchanged. Socket deadline not accepted as success. Poisoned pair must exit; a new connection must be refused; fresh process recovery is separate."
+    }
+  },
+  "initial_fresh_control_requests": 4,
+  "independent_fresh_recoveries": 2,
+  "exact_recovery_outputs_actual_MTP": 8,
+  "checked_transport_error_deltas": {
+    "initial-control/rank0": {},
+    "initial-control/rank1": {},
+    "owner-readerror/rank0": {},
+    "owner-readerror/rank1": {},
+    "read-recovery/rank0": {},
+    "read-recovery/rank1": {},
+    "owner-loss/rank0": {},
+    "owner-loss/rank1": {},
+    "loss-recovery/rank0": {},
+    "loss-recovery/rank1": {}
+  },
+  "frozen_harness_binary_settings_boot_topology_PIDs_final_idle_audits": true,
+  "scope": "Actual current combined2669e07c production-OFF serving peerprocess loss and one userspace table EIO during live generation, explicit errors and automatic failed-pair exit under current serve.cpp policy and separate fresh recovery. No GPUfault/rank1extraDenseerror injection, exact failure-at-new-AllReduce coverage, transparent reconnect, physical cableloss or matched performance qualification. Previous timing flags remain."
+}

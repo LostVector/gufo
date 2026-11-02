@@ -1,0 +1,10 @@
+{
+  "diagnostic_variants": [
+    "candidate"
+  ],
+  "records_per_variant": 12,
+  "all_prompt_output_cachework_identities_exact": true,
+  "actual_MTP_and_live_binary_settings_verified": true,
+  "driver_error_kernel_idle_source_harness_checks_pass": true,
+  "scope": "Cooperative PLE85586a63/native wire22/canonical05f0a9a0 provider startup and standard twelve-request TP2 smoke; exact outputs/cache work. One fresh pair; no speed or equivalence claim."
+}

@@ -1,0 +1,15 @@
+{
+  "records_per_rank": 160,
+  "actual_two_row_gathers_per_rank": 80,
+  "actual_contexts": [
+    "short",
+    32768
+  ],
+  "full_logit_AR_teacher_and_greedy_choices_exact": true,
+  "sampled_seeded_tokens_frontier_RNG_exact": true,
+  "cross_mode_materialized_snapshot_and_cross_session_replay_exact": true,
+  "prefill_AR_fixture_gather_calls_zero": true,
+  "frozen_sources_harness_binary_PIDs_counters_kernel_boot_topology_idle_pass": true,
+  "scope": "Current integrated ordinary two-row MTP head. Same loaded TP2 model paired full/gather at short and actual32768 context, greedy and sampled. AR teacher logits and greedy choices; RNG, tokens, materialized state and cross-session continuation. 160records and80actualordinarygathers perrank. No performance claim.",
+  "limits": "Diagnostic host toggle/counting object only; same real GPU math/factory/protocol. Token-vector equality asserted in probe, JSON retains hashes/positions/RNG/kept counts. Not natural adaptive performance, serialized/borrowed/disk caches, live cancellation, peer failure or all possible prefill shapes. No default/PR claim."
+}

@@ -1,0 +1,1127 @@
+{
+  "exact_head_copy_API_error_and_peerprocess_exit_rejected": true,
+  "faults": [
+    {
+      "responses": [
+        {
+          "actor": 0,
+          "events": [
+            {
+              "id": "chatcmpl-j1ngvzkq6mkknyhy96v0",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-j1ngvzkq6mkknyhy96v0",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Debug"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-j1ngvzkq6mkknyhy96v0",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "ging"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-j1ngvzkq6mkknyhy96v0",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-j1ngvzkq6mkknyhy96v0",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " slow"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-j1ngvzkq6mkknyhy96v0",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " distributed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-j1ngvzkq6mkknyhy96v0",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " inference"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-j1ngvzkq6mkknyhy96v0",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " server"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: head gather local row placement: invalid argument",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: head gather local row placement: invalid argument",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "pieces": 7,
+          "elapsed": 0.576425985986134
+        },
+        {
+          "actor": 1,
+          "events": [
+            {
+              "id": "chatcmpl-fzrffommdt7h2wdwwwh2",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fzrffommdt7h2wdwwwh2",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Here"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fzrffommdt7h2wdwwwh2",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " is"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fzrffommdt7h2wdwwwh2",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fzrffommdt7h2wdwwwh2",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " detailed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fzrffommdt7h2wdwwwh2",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ","
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fzrffommdt7h2wdwwwh2",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " numbered"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fzrffommdt7h2wdwwwh2",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " list"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fzrffommdt7h2wdwwwh2",
+              "object": "chat.completion.chunk",
+              "created": 1793575579,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " of"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: head gather local row placement: invalid argument",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: head gather local row placement: invalid argument",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "pieces": 8,
+          "elapsed": 0.5761459239874966
+        }
+      ],
+      "phase": "rank0-copy-error",
+      "fault_rank": 0,
+      "owner": {
+        "pid": 832119,
+        "sha256": "8b7f125ab4ea55fd024bcba678f86b7c93c48f549aaa6b0712355f36716e2195",
+        "start_ticks": "15095704",
+        "launch_fault_present": true,
+        "safe_options": {
+          "--context": "65536",
+          "--sessions": "2",
+          "--prefill-chunk": "2048",
+          "--cache-ram-bytes": "1073741824",
+          "--speculative": "mtp",
+          "--tp-world-size": "2",
+          "--tp-rank": "0",
+          "--think": "off",
+          "--tp-rdma-device": "usb4_rdma0"
+        }
+      },
+      "faults": [
+        {
+          "event": "copy-error",
+          "pid": 832119,
+          "tid": 832288,
+          "caller_ip": 103635122311029,
+          "image_base": 103635028389888,
+          "bytes": 496640,
+          "api": "hipMemcpyAsync",
+          "placement": "batch-local-after-peer-wait",
+          "context_ip": 103635122435189,
+          "error": 1
+        }
+      ],
+      "valid_exact_head_copy_boundary": true,
+      "explicit_stream_error": {
+        "message": "TP collective scope release failed: verbs communicator is poisoned: head gather local row placement: invalid argument",
+        "type": "server_error",
+        "code": "generation_failed"
+      },
+      "normal_completion": false,
+      "exception": null,
+      "content_pieces": 15,
+      "owner_state_after_response": {
+        "exe_present": true,
+        "stat_state": "S"
+      },
+      "elapsed_seconds": 0.613064751989441,
+      "scope": "Armed before request; simulated HIP copy API return failure or abrupt task-owned peerprocess exit at exact batched head copy PC plus outerForwardBatch stack frame. No actual GPUhardware fault, physical cableloss, native completion latency, or same-engine reconnect claim."
+    },
+    {
+      "responses": [
+        {
+          "actor": 0,
+          "events": [
+            {
+              "id": "chatcmpl-2wco824f9ykjg0z7r16h",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-2wco824f9ykjg0z7r16h",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Debug"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-2wco824f9ykjg0z7r16h",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "ging"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-2wco824f9ykjg0z7r16h",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-2wco824f9ykjg0z7r16h",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " slow"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-2wco824f9ykjg0z7r16h",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " distributed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-2wco824f9ykjg0z7r16h",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " inference"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-2wco824f9ykjg0z7r16h",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " server"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "pieces": 7,
+          "elapsed": 0.5435279090015683
+        },
+        {
+          "actor": 1,
+          "events": [
+            {
+              "id": "chatcmpl-fnhle8wi2ocp0d9n8bgi",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fnhle8wi2ocp0d9n8bgi",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Here"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fnhle8wi2ocp0d9n8bgi",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " is"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fnhle8wi2ocp0d9n8bgi",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fnhle8wi2ocp0d9n8bgi",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " detailed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fnhle8wi2ocp0d9n8bgi",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ","
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fnhle8wi2ocp0d9n8bgi",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " numbered"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fnhle8wi2ocp0d9n8bgi",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " list"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-fnhle8wi2ocp0d9n8bgi",
+              "object": "chat.completion.chunk",
+              "created": 1793575656,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " of"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "pieces": 8,
+          "elapsed": 0.5447256029874552
+        }
+      ],
+      "phase": "rank1-copy-error",
+      "fault_rank": 1,
+      "owner": {
+        "pid": 697045,
+        "sha256": "8b7f125ab4ea55fd024bcba678f86b7c93c48f549aaa6b0712355f36716e2195",
+        "start_ticks": "15124140",
+        "launch_fault_present": true,
+        "safe_options": {
+          "--context": "65536",
+          "--sessions": "2",
+          "--prefill-chunk": "2048",
+          "--cache-ram-bytes": "1073741824",
+          "--speculative": "mtp",
+          "--tp-world-size": "2",
+          "--tp-rank": "1",
+          "--think": "off",
+          "--tp-rdma-device": "usb4_rdma0"
+        }
+      },
+      "faults": [
+        {
+          "event": "copy-error",
+          "pid": 697045,
+          "tid": 697045,
+          "caller_ip": 97890706247541,
+          "image_base": 97890612326400,
+          "bytes": 496640,
+          "api": "hipMemcpyAsync",
+          "placement": "batch-local-after-peer-wait",
+          "context_ip": 97890706371701,
+          "error": 1
+        }
+      ],
+      "valid_exact_head_copy_boundary": true,
+      "explicit_stream_error": {
+        "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+        "type": "server_error",
+        "code": "generation_failed"
+      },
+      "normal_completion": false,
+      "exception": null,
+      "content_pieces": 15,
+      "owner_state_after_response": {
+        "exe_present": false,
+        "stat_state": null
+      },
+      "elapsed_seconds": 0.8668473679863382,
+      "scope": "Armed before request; simulated HIP copy API return failure or abrupt task-owned peerprocess exit at exact batched head copy PC plus outerForwardBatch stack frame. No actual GPUhardware fault, physical cableloss, native completion latency, or same-engine reconnect claim."
+    },
+    {
+      "responses": [
+        {
+          "actor": 0,
+          "events": [
+            {
+              "id": "chatcmpl-q4he7vye477fxmwypn21",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-q4he7vye477fxmwypn21",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Debug"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-q4he7vye477fxmwypn21",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "ging"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-q4he7vye477fxmwypn21",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-q4he7vye477fxmwypn21",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " slow"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-q4he7vye477fxmwypn21",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " distributed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-q4he7vye477fxmwypn21",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " inference"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-q4he7vye477fxmwypn21",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " server"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "pieces": 7,
+          "elapsed": 0.601493077003397
+        },
+        {
+          "actor": 1,
+          "events": [
+            {
+              "id": "chatcmpl-c5ting1t1d433t7kleka",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-c5ting1t1d433t7kleka",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Here"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-c5ting1t1d433t7kleka",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " is"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-c5ting1t1d433t7kleka",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-c5ting1t1d433t7kleka",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " detailed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-c5ting1t1d433t7kleka",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ","
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-c5ting1t1d433t7kleka",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " numbered"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-c5ting1t1d433t7kleka",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " list"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-c5ting1t1d433t7kleka",
+              "object": "chat.completion.chunk",
+              "created": 1793575733,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " of"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "pieces": 8,
+          "elapsed": 0.6017058409925085
+        }
+      ],
+      "phase": "peer-exit",
+      "fault_rank": 1,
+      "owner": {
+        "pid": 698274,
+        "sha256": "8b7f125ab4ea55fd024bcba678f86b7c93c48f549aaa6b0712355f36716e2195",
+        "start_ticks": "15131811",
+        "launch_fault_present": true,
+        "safe_options": {
+          "--context": "65536",
+          "--sessions": "2",
+          "--prefill-chunk": "2048",
+          "--cache-ram-bytes": "1073741824",
+          "--speculative": "mtp",
+          "--tp-world-size": "2",
+          "--tp-rank": "1",
+          "--think": "off",
+          "--tp-rdma-device": "usb4_rdma0"
+        }
+      },
+      "faults": [
+        {
+          "event": "peer-exit",
+          "pid": 698274,
+          "tid": 698274,
+          "caller_ip": 104557520351093,
+          "image_base": 104557426429952,
+          "bytes": 496640,
+          "api": "hipMemcpyAsync",
+          "placement": "batch-local-after-peer-wait",
+          "context_ip": 104557520475253,
+          "error": 1
+        }
+      ],
+      "valid_exact_head_copy_boundary": true,
+      "explicit_stream_error": {
+        "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+        "type": "server_error",
+        "code": "generation_failed"
+      },
+      "normal_completion": false,
+      "exception": null,
+      "content_pieces": 15,
+      "owner_state_after_response": {
+        "exe_present": false,
+        "stat_state": null
+      },
+      "elapsed_seconds": 0.9427961879991926,
+      "scope": "Armed before request; simulated HIP copy API return failure or abrupt task-owned peerprocess exit at exact batched head copy PC plus outerForwardBatch stack frame. No actual GPUhardware fault, physical cableloss, native completion latency, or same-engine reconnect claim."
+    }
+  ],
+  "nine_fresh_recovery_outputs_and_work_exact": true,
+  "windows": [
+    {
+      "phase": "baseline",
+      "rank": 0,
+      "errors": {}
+    },
+    {
+      "phase": "baseline",
+      "rank": 1,
+      "errors": {}
+    },
+    {
+      "phase": "rank0-copy-error",
+      "rank": 0,
+      "errors": {}
+    },
+    {
+      "phase": "rank0-copy-error",
+      "rank": 1,
+      "errors": {}
+    },
+    {
+      "phase": "rank0-recovery",
+      "rank": 0,
+      "errors": {}
+    },
+    {
+      "phase": "rank0-recovery",
+      "rank": 1,
+      "errors": {}
+    },
+    {
+      "phase": "rank1-copy-error",
+      "rank": 0,
+      "errors": {}
+    },
+    {
+      "phase": "rank1-copy-error",
+      "rank": 1,
+      "errors": {}
+    },
+    {
+      "phase": "rank1-recovery",
+      "rank": 0,
+      "errors": {}
+    },
+    {
+      "phase": "rank1-recovery",
+      "rank": 1,
+      "errors": {}
+    },
+    {
+      "phase": "peer-exit",
+      "rank": 0,
+      "errors": {}
+    },
+    {
+      "phase": "peer-exit",
+      "rank": 1,
+      "errors": {}
+    },
+    {
+      "phase": "loss-recovery",
+      "rank": 0,
+      "errors": {}
+    },
+    {
+      "phase": "loss-recovery",
+      "rank": 1,
+      "errors": {}
+    }
+  ],
+  "frozen_source_harness_binary_options_PIDs_boot_topology_kernel_approved_idle_pass": true,
+  "scope": "Canonical eddcfea6 extension migration current release. Exact return PC and live ForwardBatch frame; process-local API failure/task-owned peer exit only. Fresh current-engine baseline and recovery after each fault; both streams must fail explicitly within 10s. No transparent reconnect, physical fault or performance claim."
+}

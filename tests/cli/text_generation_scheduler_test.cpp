@@ -1964,6 +1964,100 @@ void TestSessionStatesFollowAdmittedRequests() {
          "multi-token decoding is reported as speculative");
 }
 
+void TestBeforeTerminalSchedulingHook() {
+  {
+    auto control = std::make_shared<FakeControl>();
+    auto scheduler = MakeScheduler(control, 2);
+    std::binary_semaphore entered{0}, release{0};
+    std::atomic<unsigned> calls{0};
+    auto metadata = ClientMetadata("completed");
+    metadata.before_terminal = [&] {
+      ++calls;
+      entered.release();
+      Expect(release.try_acquire_for(kTestTimeout), "completion hook released");
+    };
+    auto request =
+        scheduler->Submit({1, 10}, 2, 0.0F, {}, false, std::move(metadata));
+    Expect(entered.try_acquire_for(kTestTimeout), "completion hook reached");
+    auto follower = scheduler->Submit({2, 20}, 1, 0.0F);
+    auto waiting =
+        std::async(std::launch::async, [&] { return request.Wait(); });
+    Expect(request.phase() != TextRequestPhase::kTerminal &&
+               waiting.wait_for(std::chrono::milliseconds{0}) ==
+                   std::future_status::timeout,
+           "terminal publication follows the completion hook");
+    const auto events = control->Events();
+    Expect(EventIndex(events, EventKind::kAdvance, 1, 1) < events.size(),
+           "request model work finishes before the completion hook");
+    Expect(EventIndex(events, EventKind::kPrefill, 2) == events.size(),
+           "the next request cannot overtake the completion hook");
+    release.release();
+    Expect(waiting.get().completion_tokens == 2 &&
+               follower.Wait().completion_tokens == 1 && calls == 1,
+           "hook runs once and preserves both request results");
+  }
+  {
+    auto control = std::make_shared<FakeControl>();
+    control->block_advance_label = 1;
+    auto scheduler = MakeScheduler(control, 1);
+    auto active = scheduler->Submit({1, 10}, 2, 0.0F);
+    control->WaitForAdvance(1);
+    std::atomic<unsigned> calls{0};
+    auto metadata = ClientMetadata("cancelled");
+    metadata.before_terminal = [&] { ++calls; };
+    auto queued =
+        scheduler->Submit({2, 20}, 1, 0.0F, {}, false, std::move(metadata));
+    queued.Cancel();
+    control->ReleaseAdvance();
+    Expect(queued.Wait().cancelled && !active.Wait().cancelled && calls == 1,
+           "queued cancellation invokes its hook once without model work");
+    const auto events = control->Events();
+    Expect(EventIndex(events, EventKind::kPrefill, 2) == events.size(),
+           "cancelled request never acquires a state");
+  }
+  {
+    auto control = std::make_shared<FakeControl>();
+    auto scheduler = MakeScheduler(control, 1);
+    std::atomic<unsigned> calls{0};
+    auto metadata = ClientMetadata("hook-failure");
+    metadata.before_terminal = [&] {
+      ++calls;
+      throw std::runtime_error("injected completion hook failure");
+    };
+    auto failed =
+        scheduler->Submit({1, 10}, 1, 0.0F, {}, false, std::move(metadata));
+    bool rejected = false;
+    try {
+      (void)failed.Wait();
+    } catch (const std::runtime_error& error) {
+      rejected =
+          std::string_view(error.what()) == "injected completion hook failure";
+    }
+    Expect(rejected && calls == 1,
+           "hook failure is explicit and does not invoke the hook again");
+    Expect(scheduler->Submit({3, 30}, 1, 0.0F).Wait().completion_tokens == 1,
+           "a hook failure does not strand the scheduler");
+  }
+  {
+    auto control = std::make_shared<FakeControl>();
+    control->throw_advance_label = 1;
+    auto scheduler = MakeScheduler(control, 1);
+    std::atomic<unsigned> calls{0};
+    auto metadata = ClientMetadata("model-failure");
+    metadata.before_terminal = [&] { ++calls; };
+    auto failed =
+        scheduler->Submit({1, 10}, 2, 0.0F, {}, false, std::move(metadata));
+    bool rejected = false;
+    try {
+      (void)failed.Wait();
+    } catch (const std::runtime_error&) {
+      rejected = true;
+    }
+    Expect(rejected && calls == 0,
+           "model failures preserve the caller finalization fallback");
+  }
+}
+
 void TestQueuedAndPrefillCancellation() {
   {
     auto control = std::make_shared<FakeControl>();
@@ -2519,6 +2613,85 @@ void TestSnapshotDoesNotBlockOtherRequests() {
     auto cached = scheduler->Submit(prompt, 7, 0.0F).Wait();
     Expect(cached.cache_hit && cached.tokens == ExpectedTokens(1, 7),
            "asynchronous capture retains the immutable prompt frontier");
+  }
+}
+
+// A runner with multi-token decoding and batched single-token advances, but
+// no batched multi-token decoding (TP2 serving), mixes both step kinds within
+// one request. A step of either kind can end waiting for the prompt snapshot;
+// the other kind must then continue the request exactly.
+void TestMixedStepsContinueAfterPromptCapture() {
+  const auto mixed = [] {
+    auto control = std::make_shared<FakeControl>();
+    control->multi_token_decode = true;
+    control->batched_multi_token_decode = false;
+    control->supports_batched_advance = true;
+    control->preview_first_token = true;
+    return control;
+  };
+  // A multi-token step previews the first token, then waits for the capture;
+  // the request resumes in a batched single-token step.
+  {
+    auto control = mixed();
+    std::binary_semaphore entered(0), release(0);
+    std::atomic<unsigned> captures{0};
+    control->snapshot_callback = [&] {
+      if (captures.fetch_add(1) == 0) {
+        entered.release();
+        release.acquire();
+      }
+    };
+    control->block_prefill_label = 2;
+    auto scheduler = MakeScheduler(control, 2);
+    auto first = scheduler->Submit({1, 10}, 7, 0.0F);
+    Expect(entered.try_acquire_for(kTestTimeout),
+           "the previewed request captures its prompt");
+    auto second = scheduler->Submit({2, 20}, 30, 0.0F);
+    control->WaitForPrefill(2);
+    Expect(PreviewPendingForTesting(first),
+           "the captured request has an unadvanced published preview");
+    release.release();
+    // Keep the scheduler paused in the peer's prefill until the actual future
+    // is ready. A persistent std::async worker need not exit after capture.
+    const auto deadline = std::chrono::steady_clock::now() + kTestTimeout;
+    while (SnapshotPendingForTesting(first) &&
+           std::chrono::steady_clock::now() < deadline)
+      std::this_thread::yield();
+    const bool ready = !SnapshotPendingForTesting(first);
+    control->ReleasePrefill();
+    Expect(ready, "the prompt snapshot future becomes ready before resuming");
+    Expect(first.Wait().tokens == ExpectedTokens(1, 7),
+           "a preview is advanced once by a batched step");
+    Expect(second.Wait().tokens == ExpectedTokens(2, 30),
+           "the batched peer keeps its output");
+    // Batch preparation can advance this request alone while the peer takes
+    // its own snapshot; exact preview consumption must hold in that fallback.
+  }
+  // A batched single-token step selects a token, then waits for the capture;
+  // the request resumes alone, where it takes multi-token steps.
+  {
+    auto control = mixed();
+    std::binary_semaphore entered(0), release(0);
+    std::atomic<unsigned> captures{0};
+    control->snapshot_callback = [&] {
+      if (captures.fetch_add(1) == 1) {
+        entered.release();
+        release.acquire();
+      }
+    };
+    control->block_advance_label = 2;
+    auto scheduler = MakeScheduler(control, 2);
+    auto second = scheduler->Submit({2, 20}, 12, 0.0F);
+    control->WaitForAdvance(2);
+    auto first = scheduler->Submit({1, 10}, 7, 0.0F);
+    control->ReleaseAdvance();
+    Expect(entered.try_acquire_for(kTestTimeout),
+           "the batched request captures its prompt");
+    Expect(second.Wait().tokens == ExpectedTokens(2, 12),
+           "the peer finishes while the capture waits");
+    release.release();
+    Expect(first.Wait().tokens == ExpectedTokens(1, 7),
+           "a selected token advances before multi-token steps");
   }
 }
 
@@ -3113,6 +3286,7 @@ void TestBackendPreservesModelSamplingPreset() {
 #endif
 
 int main() {
+  TestBeforeTerminalSchedulingHook();
 #if defined(ENGINE_ENABLE_HIP)
   TestBackendPreservesModelSamplingPreset();
 #endif
@@ -3177,6 +3351,7 @@ int main() {
   }
   TestCapturedDecoderResumesBeforeMorePrefill();
   TestCapturesAtCapacityAllowQueuedProgress();
+  TestMixedStepsContinueAfterPromptCapture();
   TestShutdownCancelsRunnerAcquisition();
   TestSnapshotDoesNotBlockOtherRequests();
   TestFirstTokenPrecedesSnapshotAndPreservesBudget();

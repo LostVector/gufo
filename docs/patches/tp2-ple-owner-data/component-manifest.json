@@ -1,0 +1,11 @@
+{
+  "source": "f683b34444dd84ae5d97cc57308a2a651537ece9",
+  "binary_sha256": "b995fa5db3221fe9167fcf24d3df97e52d8062a4c6d1ee9ced985a0bdf543aa5",
+  "peer_same_hash": true,
+  "scope": "Real native USB4 two-peer component correctness, no inference or performance claim",
+  "scenarios": [
+    "good",
+    "rows",
+    "read"
+  ]
+}

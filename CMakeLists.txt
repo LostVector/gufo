@@ -364,6 +364,12 @@ target_link_libraries(gufo_llm_cli PUBLIC gufo_core gufo_compare gufo_ext_runtim
 
 add_subdirectory(src/ext)
 
+add_library(gufo_tp_control STATIC src/cli/serve/tp_control.cpp)
+target_include_directories(gufo_tp_control PUBLIC ${PROJECT_SOURCE_DIR})
+target_compile_features(gufo_tp_control PUBLIC cxx_std_20)
+target_link_libraries(gufo_tp_control PUBLIC gufo_core Threads::Threads)
+target_link_libraries(gufo_tp_control PRIVATE OpenSSL::Crypto)
+
 # RFC step 6: the text-serving tier the gufo executable used to compile into
 # itself. Scheduler, runner pool, component text cache and InferenceBackend
 # live here; queueing, retention/admission and API policy stay on this core
@@ -374,9 +380,11 @@ add_library(gufo_serving STATIC
   src/cli/serve/component_text_cache.cpp
   src/cli/serve/text_model_runner.cpp
   src/cli/serve/text_generation_scheduler.cpp
+  src/cli/serve/tp_executor.cpp
+  src/cli/serve/tp_disk_store.cpp
   src/cli/serve/inference_backend.cpp)
 target_link_libraries(gufo_serving PUBLIC gufo_ext_runtime gufo_logging
-  gufo_core gufo_cache)
+  gufo_core gufo_cache gufo_tp_control)
 # The executable's own objects carried production NDEBUG, the test binaries that
 # re-compiled these sources forced assertions on. One library can only pick
 # one: test builds keep assertions, so a test-preset `gufo` now asserts where it
@@ -432,6 +440,7 @@ target_link_libraries(gufo PRIVATE gufo_cache gufo_diagnostics gufo_core gufo_ev
 # they are added.
 include(CTest)
 gufo_build_discovered_extensions()
+
 get_property(gufo_selected_extensions GLOBAL PROPERTY GUFO_SELECTED_EXTENSIONS)
 gufo_target_extensions(gufo EXTENSIONS ${gufo_selected_extensions})
 gufo_stage_hip_runtime(gufo)
@@ -737,6 +746,38 @@ endfunction()
   add_test(NAME transcribe_cli_test COMMAND transcribe_cli_test
     "${CMAKE_CURRENT_SOURCE_DIR}/tests/functional/fixtures/audio/clear-english-voice.wav")
   set_tests_properties(transcribe_cli_test PROPERTIES LABELS "cpu;cli;audio")
+
+  add_executable(tp_control_test tests/cli/tp_control_test.cpp)
+  target_link_libraries(tp_control_test PRIVATE gufo_tp_control)
+  add_test(NAME tp_control_test COMMAND tp_control_test)
+  set_tests_properties(tp_control_test PROPERTIES LABELS "cpu;tp2" TIMEOUT 10)
+
+  add_executable(tp_disk_store_test tests/cli/tp_disk_store_test.cpp)
+  target_link_libraries(tp_disk_store_test PRIVATE gufo_serving)
+  add_test(NAME tp_disk_store_test COMMAND tp_disk_store_test)
+  set_tests_properties(tp_disk_store_test PROPERTIES
+    LABELS "cpu;tp2;cache;disk" TIMEOUT 10)
+
+  # A measurement, not a gate: it asserts no threshold and never fails on a
+  # slow result, so it is labelled `perf` and kept out of the correctness run.
+  add_executable(tp_instruction_latency_test
+    tests/cli/tp_instruction_latency_test.cpp)
+  target_link_libraries(tp_instruction_latency_test PRIVATE gufo_tp_control)
+  add_test(NAME tp_instruction_latency_test
+    COMMAND tp_instruction_latency_test)
+  set_tests_properties(tp_instruction_latency_test PROPERTIES
+    LABELS "cpu;tp2;perf" TIMEOUT 300)
+
+  add_executable(tp_executor_test tests/cli/tp_executor_test.cpp)
+  target_link_libraries(tp_executor_test PRIVATE gufo_serving gufo_tp_control)
+  add_test(NAME tp_executor_test COMMAND tp_executor_test)
+  set_tests_properties(tp_executor_test PROPERTIES LABELS "cpu;tp2" TIMEOUT 60)
+
+  add_executable(tp_snapshot_gate_test tests/cli/tp_snapshot_gate_test.cpp)
+  target_link_libraries(tp_snapshot_gate_test PRIVATE Threads::Threads)
+  add_test(NAME tp_snapshot_gate_test COMMAND tp_snapshot_gate_test)
+  set_tests_properties(tp_snapshot_gate_test PROPERTIES
+    LABELS "cpu;tp2" TIMEOUT 20)
 
   add_executable(json_constraint_test tests/core/json_constraint_test.cpp)
   target_link_libraries(json_constraint_test PRIVATE gufo_core)

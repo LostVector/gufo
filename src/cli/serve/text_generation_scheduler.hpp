@@ -83,6 +83,10 @@ public:
     bool stop_at_eos{true};
     std::vector<std::string> stop_sequences;
     bool return_progress{false};
+    /// Success/cancellation hook after cache/model work, before terminal
+    /// publication and the next scheduler turn. Must not await a peer verdict.
+    /// Model failures retain the caller's existing finalization fallback.
+    std::function<void()> before_terminal;
   };
 
   class Request {
@@ -111,6 +115,11 @@ public:
 
   private:
     friend class TextGenerationScheduler;
+#ifdef GUFO_CACHE_TESTING
+    // The fixture must pause the scheduler before observing its future.
+    friend bool SnapshotPendingForTesting(const Request& request);
+    friend bool PreviewPendingForTesting(const Request& request);
+#endif
     struct Impl;
 
     explicit Request(std::unique_ptr<Impl> impl);

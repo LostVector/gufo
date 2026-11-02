@@ -3,6 +3,7 @@
 
 import importlib.util
 import json
+import subprocess
 import tempfile
 import sys
 import unittest
@@ -18,6 +19,35 @@ SPEC.loader.exec_module(GRAPH)
 
 
 class LinkGraphTest(unittest.TestCase):
+    def test_cmake_static_private_system_link_and_target_edges(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "stub.cpp").write_text("int graph_stub() { return 0; }\n")
+            script = f"""cmake_minimum_required(VERSION 3.21)
+project(link_guard LANGUAGES CXX)
+include("{(ROOT / 'cmake/TargetGraph.cmake').as_posix()}")
+add_library(dependency STATIC stub.cpp)
+add_library(subject STATIC stub.cpp)
+target_link_libraries(subject PRIVATE dependency dl)
+gufo_link_graph_entry(subject edges)
+if(NOT edges STREQUAL "dependency")
+  message(FATAL_ERROR "private project edge lost: ${{edges}}")
+endif()
+"""
+            (root / "CMakeLists.txt").write_text(script)
+            result = subprocess.run(["cmake", "-S", str(root), "-B", str(root / "build")],
+                                    text=True, capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            # An unknown wrapped name must still fail; classification cannot
+            # turn arbitrary PRIVATE links into invisible graph edges.
+            (root / "CMakeLists.txt").write_text(script +
+                'target_link_libraries(subject PRIVATE unclassified_link)\n'
+                'gufo_link_graph_entry(subject edges)\n')
+            result = subprocess.run(["cmake", "-S", str(root), "-B", str(root / "build")],
+                                    text=True, capture_output=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("unclassified interface item", result.stderr)
+
     def report(self, targets, forbidden=("gufo_serving", "gufo_http")):
         return {"hip": True, "absent": [],
                 "forbidden": list(forbidden), "targets": targets}

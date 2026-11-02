@@ -1,9 +1,9 @@
 # Review Findings — Cards 19–22: Shared Text Contract, Qwen 27B, Flash-Next, and DeepSeek Extensions
 
-**Reviewer Agent**: `reviewer` (independent read-only evaluation)  
-**Date**: 2026-11-01  
-**Target Cards**: Card 19, Card 20, Card 21, Card 22  
-**Worktree Parent**: `b05ccc4a` (`model-extensions-5 | feat(extensions): migrate speech, audio, image, and video models to extensions`)  
+**Reviewer Agent**: `reviewer` (independent read-only evaluation)\
+**Date**: 2026-11-01\
+**Target Cards**: Card 19, Card 20, Card 21, Card 22\
+**Worktree Parent**: `b05ccc4a` (`model-extensions-5 | feat(extensions): migrate speech, audio, image, and video models to extensions`)\
 **Working Copy Commit**: `2dba1098`
 
 ---
@@ -42,11 +42,11 @@ One **Major** finding (`M1`) was identified regarding provider metadata registra
   - `src/models/deepseek_v4_flash/provider.cpp`
 - **Problem**:
   In `cmake/GufoExtension.cmake`, when an extension target is enabled (e.g. HIP enabled), CMake generates code that calls the provider registration entry point (e.g. `qwen_provider_register(registry)`). Each provider entry point is expected to register its capability metadata via `registry.AddProvider(gufo::ext::generated::extension_<name>::kProvider_<identifier>);` and its capability runner factory via `registry.AddTextProvider({...});`.
-  
+
   All 5 previously migrated non-text extensions (`embedding_gemma2`, `minimax_h3`, `qwen3_asr`, `qwen3_tts`, and `qwen_image_21`) follow this pattern.
-  
+
   However, `src/models/qwen/provider.cpp`, `src/models/qwen38_flash_next/provider.cpp`, and `src/models/deepseek_v4_flash/provider.cpp` only call `registry.AddTextProvider(...)` and omit `registry.AddProvider(...)`.
-  
+
   Consequences:
   1. `gufo diagnose` queries `registry.Providers()` to list all built extensions and their available provider capabilities. As shown in the production diagnostics output (`docs/model-extensions/evidence/card19-22/build-and-tests.txt` lines 232–237), `provider embeddinggemma-2`, `minimax-h3`, `qwen3-asr`, `qwen3-tts`, and `qwen-image-21` are reported as available, while `qwen27-q4`, `flash-next-q4`, and `deepseek4` are entirely missing.
   2. Subsystems and tests that inspect `registry.Providers()` (e.g. option validation in `src/ext/options.cpp`, `ValidateSelectedOptions`, and speculative capability lookup via `std::ranges::any_of(registry.Providers(), ...)`) cannot discover the registered text providers or their declared options (`--dflash-model`, `--mtp-model`, `--dspark-model`).

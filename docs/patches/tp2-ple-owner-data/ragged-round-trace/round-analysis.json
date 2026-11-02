@@ -1,0 +1,2986 @@
+{
+  "phases": [
+    {
+      "phase": "before-baseline",
+      "actors": [
+        {
+          "actor": 0,
+          "session": 104244924319376,
+          "completion_tokens": 17,
+          "plain_completion_calls": 1,
+          "cycles": 7,
+          "drafted": 16,
+          "accepted": 9,
+          "publication_span_ms": 732.936409,
+          "first_publication_ms": 521.12877,
+          "last_publication_ms": 1254.065179,
+          "host_partition_ms": {
+            "prefill": 126.203484,
+            "batch_including_request": 559.6720099999999,
+            "scalar_other_requests": 46.188131,
+            "unclassified_host_interval": 0.8727840000001379
+          },
+          "engine_completion_calls": 8,
+          "batch_completion_calls": 8,
+          "scalar_completion_calls": 0
+        },
+        {
+          "actor": 1,
+          "session": 104244891755472,
+          "completion_tokens": 33,
+          "plain_completion_calls": 6,
+          "cycles": 12,
+          "drafted": 21,
+          "accepted": 15,
+          "publication_span_ms": 1219.785122,
+          "first_publication_ms": 521.220537,
+          "last_publication_ms": 1741.005659,
+          "host_partition_ms": {
+            "prefill": 126.203484,
+            "batch_including_request": 1045.821013,
+            "scalar_other_requests": 46.188131,
+            "unclassified_host_interval": 1.572494000000006
+          },
+          "engine_completion_calls": 18,
+          "batch_completion_calls": 18,
+          "scalar_completion_calls": 0
+        },
+        {
+          "actor": 2,
+          "session": 104244925514736,
+          "completion_tokens": 65,
+          "plain_completion_calls": 11,
+          "cycles": 24,
+          "drafted": 44,
+          "accepted": 30,
+          "publication_span_ms": 1909.206079,
+          "first_publication_ms": 585.287506,
+          "last_publication_ms": 2494.493585,
+          "host_partition_ms": {
+            "batch_other_requests": 52.145114,
+            "prefill": 62.211573,
+            "batch_including_request": 1746.582473,
+            "scalar_other_requests": 46.188131,
+            "unclassified_host_interval": 2.0787880000000314
+          },
+          "engine_completion_calls": 35,
+          "batch_completion_calls": 35,
+          "scalar_completion_calls": 0
+        },
+        {
+          "actor": 3,
+          "session": 104244926703344,
+          "completion_tokens": 128,
+          "plain_completion_calls": 13,
+          "cycles": 54,
+          "drafted": 86,
+          "accepted": 61,
+          "publication_span_ms": 2921.738216,
+          "first_publication_ms": 699.74027,
+          "last_publication_ms": 3621.478486,
+          "host_partition_ms": {
+            "batch_other_requests": 151.99586399999998,
+            "scalar_this_request": 1172.9524900000001,
+            "batch_including_request": 1594.5866090000002,
+            "unclassified_host_interval": 2.2032530000001316
+          },
+          "engine_completion_calls": 67,
+          "batch_completion_calls": 33,
+          "scalar_completion_calls": 34
+        }
+      ],
+      "batches": [
+        {
+          "begin_ms": 585.328724,
+          "end_ms": 637.473838,
+          "host_ms": 52.145114,
+          "actors": [
+            0,
+            1
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            2,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 699.786849,
+          "end_ms": 781.344075,
+          "host_ms": 81.557226,
+          "actors": [
+            0,
+            1,
+            2
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            5,
+            2,
+            4
+          ],
+          "accepted": [
+            3,
+            2,
+            4
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 5
+        },
+        {
+          "begin_ms": 781.448622,
+          "end_ms": 851.88726,
+          "host_ms": 70.438638,
+          "actors": [
+            0,
+            1,
+            2
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2,
+            4
+          ],
+          "accepted": [
+            1,
+            2,
+            4
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 5
+        },
+        {
+          "begin_ms": 898.173999,
+          "end_ms": 974.713285,
+          "host_ms": 76.539286,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            0,
+            3,
+            3
+          ],
+          "accepted": [
+            3,
+            0,
+            3,
+            3
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 974.815582,
+          "end_ms": 1060.425367,
+          "host_ms": 85.609785,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            3,
+            3,
+            2
+          ],
+          "accepted": [
+            0,
+            3,
+            3,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 1060.526634,
+          "end_ms": 1139.738941,
+          "host_ms": 79.212307,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            3,
+            3,
+            2
+          ],
+          "accepted": [
+            0,
+            3,
+            0,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1139.823968,
+          "end_ms": 1210.374823,
+          "host_ms": 70.550855,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            3,
+            1,
+            1
+          ],
+          "accepted": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1210.437961,
+          "end_ms": 1254.05676,
+          "host_ms": 43.618799,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1254.425019,
+          "end_ms": 1328.166698,
+          "host_ms": 73.741679,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2,
+            5
+          ],
+          "accepted": [
+            0,
+            0,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1328.222336,
+          "end_ms": 1384.208146,
+          "host_ms": 55.98581,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2,
+            1
+          ],
+          "accepted": [
+            0,
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1384.276934,
+          "end_ms": 1438.201115,
+          "host_ms": 53.924181,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1,
+            1
+          ],
+          "accepted": [
+            1,
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1438.263313,
+          "end_ms": 1485.531542,
+          "host_ms": 47.268229,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0,
+            1
+          ],
+          "drafted": [
+            1,
+            0,
+            1
+          ],
+          "accepted": [
+            1,
+            0,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1485.577321,
+          "end_ms": 1521.79178,
+          "host_ms": 36.214459,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1521.828239,
+          "end_ms": 1557.909053,
+          "host_ms": 36.080814,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1557.945892,
+          "end_ms": 1610.840433,
+          "host_ms": 52.894541,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            1,
+            1
+          ],
+          "drafted": [
+            0,
+            2,
+            1
+          ],
+          "accepted": [
+            0,
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1610.881412,
+          "end_ms": 1658.591658,
+          "host_ms": 47.710246,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            1,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1658.629247,
+          "end_ms": 1704.491349,
+          "host_ms": 45.862102,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            1,
+            0
+          ],
+          "accepted": [
+            1,
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1704.534297,
+          "end_ms": 1741.001239,
+          "host_ms": 36.466942,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1741.30447,
+          "end_ms": 1789.164312,
+          "host_ms": 47.859842,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            2,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1789.200491,
+          "end_ms": 1827.77767,
+          "host_ms": 38.577179,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            0
+          ],
+          "accepted": [
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1827.800769,
+          "end_ms": 1876.412738,
+          "host_ms": 48.611969,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            2,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1876.436918,
+          "end_ms": 1926.588921,
+          "host_ms": 50.152003,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1926.600971,
+          "end_ms": 1957.78797,
+          "host_ms": 31.186999,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1957.79839,
+          "end_ms": 2001.790267,
+          "host_ms": 43.991877,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1
+          ],
+          "accepted": [
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2001.803787,
+          "end_ms": 2040.25623,
+          "host_ms": 38.452443,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2040.263449,
+          "end_ms": 2084.067082,
+          "host_ms": 43.803633,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            1
+          ],
+          "drafted": [
+            0,
+            2
+          ],
+          "accepted": [
+            0,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2084.082062,
+          "end_ms": 2128.015791,
+          "host_ms": 43.933729,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1
+          ],
+          "accepted": [
+            0,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2128.02705,
+          "end_ms": 2173.465325,
+          "host_ms": 45.438275,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1
+          ],
+          "accepted": [
+            0,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2173.476204,
+          "end_ms": 2204.718082,
+          "host_ms": 31.241878,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 2204.727192,
+          "end_ms": 2236.715737,
+          "host_ms": 31.988545,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 2236.723417,
+          "end_ms": 2281.253218,
+          "host_ms": 44.529801,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1
+          ],
+          "accepted": [
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2281.269028,
+          "end_ms": 2321.75449,
+          "host_ms": 40.485462,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2321.764069,
+          "end_ms": 2376.205665,
+          "host_ms": 54.441596,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            3
+          ],
+          "accepted": [
+            3,
+            3
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 2376.245544,
+          "end_ms": 2415.057826,
+          "host_ms": 38.812282,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            1
+          ],
+          "drafted": [
+            0,
+            1
+          ],
+          "accepted": [
+            0,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 2415.071285,
+          "end_ms": 2462.696934,
+          "host_ms": 47.625649,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2
+          ],
+          "accepted": [
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2462.718453,
+          "end_ms": 2494.491865,
+          "host_ms": 31.773412,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        }
+      ],
+      "span_counts": {
+        "9": 8,
+        "8": 8,
+        "3": 42,
+        "1": 81,
+        "5": 77,
+        "7": 8,
+        "11": 243,
+        "12": 36,
+        "2": 70,
+        "6": 36,
+        "14": 128,
+        "10": 34,
+        "13": 34,
+        "4": 4
+      }
+    },
+    {
+      "phase": "first-candidate",
+      "actors": [
+        {
+          "actor": 0,
+          "session": 111080906328272,
+          "completion_tokens": 17,
+          "plain_completion_calls": 1,
+          "cycles": 7,
+          "drafted": 16,
+          "accepted": 9,
+          "publication_span_ms": 731.009746,
+          "first_publication_ms": 520.928726,
+          "last_publication_ms": 1251.938472,
+          "host_partition_ms": {
+            "prefill": 125.535054,
+            "batch_including_request": 558.7168980000001,
+            "scalar_other_requests": 46.136883,
+            "unclassified_host_interval": 0.6209109999998645
+          },
+          "engine_completion_calls": 8,
+          "batch_completion_calls": 8,
+          "scalar_completion_calls": 0
+        },
+        {
+          "actor": 1,
+          "session": 111080883931728,
+          "completion_tokens": 33,
+          "plain_completion_calls": 5,
+          "cycles": 13,
+          "drafted": 22,
+          "accepted": 15,
+          "publication_span_ms": 1221.83757,
+          "first_publication_ms": 520.993714,
+          "last_publication_ms": 1742.831284,
+          "host_partition_ms": {
+            "prefill": 125.535054,
+            "batch_including_request": 1049.1856830000002,
+            "scalar_other_requests": 46.136883,
+            "unclassified_host_interval": 0.9799499999996897
+          },
+          "engine_completion_calls": 18,
+          "batch_completion_calls": 18,
+          "scalar_completion_calls": 0
+        },
+        {
+          "actor": 2,
+          "session": 111080917681040,
+          "completion_tokens": 65,
+          "plain_completion_calls": 10,
+          "cycles": 24,
+          "drafted": 45,
+          "accepted": 31,
+          "publication_span_ms": 1858.515902,
+          "first_publication_ms": 584.252476,
+          "last_publication_ms": 2442.768378,
+          "host_partition_ms": {
+            "batch_other_requests": 51.739396,
+            "prefill": 62.32283,
+            "batch_including_request": 1696.9657620000003,
+            "scalar_other_requests": 46.136883,
+            "unclassified_host_interval": 1.3510309999999208
+          },
+          "engine_completion_calls": 34,
+          "batch_completion_calls": 34,
+          "scalar_completion_calls": 0
+        },
+        {
+          "actor": 3,
+          "session": 111080918860960,
+          "completion_tokens": 128,
+          "plain_completion_calls": 15,
+          "cycles": 50,
+          "drafted": 88,
+          "accepted": 63,
+          "publication_span_ms": 2895.622305,
+          "first_publication_ms": 698.39897,
+          "last_publication_ms": 3594.021275,
+          "host_partition_ms": {
+            "batch_other_requests": 152.003184,
+            "scalar_this_request": 1197.178426,
+            "batch_including_request": 1544.9625780000001,
+            "unclassified_host_interval": 1.4781169999996564
+          },
+          "engine_completion_calls": 65,
+          "batch_completion_calls": 32,
+          "scalar_completion_calls": 33
+        }
+      ],
+      "batches": [
+        {
+          "begin_ms": 584.282415,
+          "end_ms": 636.021811,
+          "host_ms": 51.739396,
+          "actors": [
+            0,
+            1
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            2,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 698.445408,
+          "end_ms": 780.019924,
+          "host_ms": 81.574516,
+          "actors": [
+            0,
+            1,
+            2
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            5,
+            2,
+            4
+          ],
+          "accepted": [
+            3,
+            2,
+            4
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 5
+        },
+        {
+          "begin_ms": 780.067223,
+          "end_ms": 850.495891,
+          "host_ms": 70.428668,
+          "actors": [
+            0,
+            1,
+            2
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2,
+            4
+          ],
+          "accepted": [
+            1,
+            2,
+            4
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 5
+        },
+        {
+          "begin_ms": 896.678043,
+          "end_ms": 972.54283,
+          "host_ms": 75.864787,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            0,
+            3,
+            3
+          ],
+          "accepted": [
+            3,
+            0,
+            3,
+            3
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 972.602778,
+          "end_ms": 1058.165225,
+          "host_ms": 85.562447,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            3,
+            3,
+            2
+          ],
+          "accepted": [
+            0,
+            3,
+            3,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 1058.239043,
+          "end_ms": 1137.360141,
+          "host_ms": 79.121098,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            3,
+            3,
+            2
+          ],
+          "accepted": [
+            0,
+            3,
+            0,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1137.433189,
+          "end_ms": 1208.172388,
+          "host_ms": 70.739199,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            3,
+            1,
+            1
+          ],
+          "accepted": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1208.245406,
+          "end_ms": 1251.932193,
+          "host_ms": 43.686787,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1252.140316,
+          "end_ms": 1325.640593,
+          "host_ms": 73.500277,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2,
+            5
+          ],
+          "accepted": [
+            0,
+            0,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1325.679822,
+          "end_ms": 1381.130617,
+          "host_ms": 55.450795,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2,
+            1
+          ],
+          "accepted": [
+            0,
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1381.161816,
+          "end_ms": 1435.162565,
+          "host_ms": 54.000749,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1,
+            1
+          ],
+          "accepted": [
+            1,
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1435.195884,
+          "end_ms": 1470.232649,
+          "host_ms": 35.036765,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1470.249598,
+          "end_ms": 1505.434698,
+          "host_ms": 35.1851,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1505.451758,
+          "end_ms": 1556.722908,
+          "host_ms": 51.27115,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1,
+            1
+          ],
+          "accepted": [
+            0,
+            0,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1556.739347,
+          "end_ms": 1609.818753,
+          "host_ms": 53.079406,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2,
+            1
+          ],
+          "accepted": [
+            1,
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1609.842613,
+          "end_ms": 1659.457852,
+          "host_ms": 49.615239,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            1,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1659.476401,
+          "end_ms": 1706.142609,
+          "host_ms": 46.666208,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            1,
+            0
+          ],
+          "accepted": [
+            1,
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1706.165518,
+          "end_ms": 1742.828614,
+          "host_ms": 36.663096,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1743.017149,
+          "end_ms": 1791.475773,
+          "host_ms": 48.458624,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            2,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1791.499262,
+          "end_ms": 1830.859938,
+          "host_ms": 39.360676,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            0
+          ],
+          "accepted": [
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1830.874687,
+          "end_ms": 1880.264363,
+          "host_ms": 49.389676,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            2,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1880.287113,
+          "end_ms": 1930.63531,
+          "host_ms": 50.348197,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1930.64997,
+          "end_ms": 1961.8183,
+          "host_ms": 31.16833,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1961.828719,
+          "end_ms": 2005.542065,
+          "host_ms": 43.713346,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1
+          ],
+          "accepted": [
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2005.556605,
+          "end_ms": 2043.983048,
+          "host_ms": 38.426443,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2043.995608,
+          "end_ms": 2088.387383,
+          "host_ms": 44.391775,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            1
+          ],
+          "drafted": [
+            0,
+            2
+          ],
+          "accepted": [
+            0,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2088.404532,
+          "end_ms": 2132.748039,
+          "host_ms": 44.343507,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1
+          ],
+          "accepted": [
+            0,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2132.759059,
+          "end_ms": 2177.869233,
+          "host_ms": 45.110174,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1
+          ],
+          "accepted": [
+            0,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2177.883332,
+          "end_ms": 2222.061954,
+          "host_ms": 44.178622,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            2,
+            0
+          ],
+          "accepted": [
+            2,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2222.076764,
+          "end_ms": 2252.746408,
+          "host_ms": 30.669644,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 2252.756228,
+          "end_ms": 2284.482772,
+          "host_ms": 31.726544,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 2284.490391,
+          "end_ms": 2331.637334,
+          "host_ms": 47.146943,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            3,
+            0
+          ],
+          "accepted": [
+            3,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 2331.653824,
+          "end_ms": 2364.818994,
+          "host_ms": 33.16517,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 2364.826874,
+          "end_ms": 2410.924098,
+          "host_ms": 46.097224,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2
+          ],
+          "accepted": [
+            1,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2410.941318,
+          "end_ms": 2442.765898,
+          "host_ms": 31.82458,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        }
+      ],
+      "span_counts": {
+        "9": 8,
+        "8": 8,
+        "3": 41,
+        "15": 76,
+        "5": 87,
+        "7": 8,
+        "11": 243,
+        "12": 35,
+        "2": 68,
+        "6": 35,
+        "14": 125,
+        "10": 33,
+        "13": 33,
+        "4": 4
+      }
+    },
+    {
+      "phase": "after-baseline",
+      "actors": [
+        {
+          "actor": 0,
+          "session": 94090483298000,
+          "completion_tokens": 17,
+          "plain_completion_calls": 1,
+          "cycles": 7,
+          "drafted": 17,
+          "accepted": 9,
+          "publication_span_ms": 757.355281,
+          "first_publication_ms": 522.063221,
+          "last_publication_ms": 1279.418502,
+          "host_partition_ms": {
+            "prefill": 126.050809,
+            "batch_including_request": 583.838708,
+            "scalar_other_requests": 46.863471,
+            "unclassified_host_interval": 0.6022930000000315
+          },
+          "engine_completion_calls": 8,
+          "batch_completion_calls": 8,
+          "scalar_completion_calls": 0
+        },
+        {
+          "actor": 1,
+          "session": 94090494650496,
+          "completion_tokens": 33,
+          "plain_completion_calls": 2,
+          "cycles": 10,
+          "drafted": 23,
+          "accepted": 21,
+          "publication_span_ms": 978.971317,
+          "first_publication_ms": 522.11324,
+          "last_publication_ms": 1501.084557,
+          "host_partition_ms": {
+            "prefill": 126.050809,
+            "batch_including_request": 805.0569569999999,
+            "scalar_other_requests": 46.863471,
+            "unclassified_host_interval": 1.000080000000139
+          },
+          "engine_completion_calls": 12,
+          "batch_completion_calls": 12,
+          "scalar_completion_calls": 0
+        },
+        {
+          "actor": 2,
+          "session": 94090460901216,
+          "completion_tokens": 65,
+          "plain_completion_calls": 9,
+          "cycles": 24,
+          "drafted": 47,
+          "accepted": 32,
+          "publication_span_ms": 1837.418722,
+          "first_publication_ms": 585.552937,
+          "last_publication_ms": 2422.971659,
+          "host_partition_ms": {
+            "batch_other_requests": 58.538033,
+            "prefill": 62.647611,
+            "batch_including_request": 1667.693223,
+            "scalar_other_requests": 46.863471,
+            "unclassified_host_interval": 1.6763839999998709
+          },
+          "engine_completion_calls": 33,
+          "batch_completion_calls": 33,
+          "scalar_completion_calls": 0
+        },
+        {
+          "actor": 3,
+          "session": 94090495841440,
+          "completion_tokens": 128,
+          "plain_completion_calls": 13,
+          "cycles": 57,
+          "drafted": 85,
+          "accepted": 58,
+          "publication_span_ms": 2981.191142,
+          "first_publication_ms": 706.815458,
+          "last_publication_ms": 3688.0066,
+          "host_partition_ms": {
+            "batch_other_requests": 176.967119,
+            "scalar_this_request": 1311.636324,
+            "batch_including_request": 1490.7261040000003,
+            "unclassified_host_interval": 1.861594999999852
+          },
+          "engine_completion_calls": 70,
+          "batch_completion_calls": 31,
+          "scalar_completion_calls": 39
+        }
+      ],
+      "batches": [
+        {
+          "begin_ms": 585.581166,
+          "end_ms": 644.119199,
+          "host_ms": 58.538033,
+          "actors": [
+            0,
+            1
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            3
+          ],
+          "accepted": [
+            2,
+            3
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 706.861297,
+          "end_ms": 801.519542,
+          "host_ms": 94.658245,
+          "actors": [
+            0,
+            1,
+            2
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            5,
+            5,
+            4
+          ],
+          "accepted": [
+            3,
+            5,
+            4
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 5
+        },
+        {
+          "begin_ms": 801.61538,
+          "end_ms": 883.924254,
+          "host_ms": 82.308874,
+          "actors": [
+            0,
+            1,
+            2
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            5,
+            4
+          ],
+          "accepted": [
+            1,
+            5,
+            4
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 5
+        },
+        {
+          "begin_ms": 930.865643,
+          "end_ms": 1017.125139,
+          "host_ms": 86.259496,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            3,
+            3,
+            3
+          ],
+          "accepted": [
+            3,
+            2,
+            3,
+            3
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 1017.200627,
+          "end_ms": 1101.288987,
+          "host_ms": 84.08836,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            2,
+            3,
+            2
+          ],
+          "accepted": [
+            0,
+            2,
+            3,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 1101.338796,
+          "end_ms": 1176.691108,
+          "host_ms": 75.352312,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1,
+            3,
+            2
+          ],
+          "accepted": [
+            0,
+            1,
+            0,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1176.741766,
+          "end_ms": 1236.435085,
+          "host_ms": 59.693319,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "accepted": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1236.475763,
+          "end_ms": 1279.415832,
+          "host_ms": 42.940069,
+          "actors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1279.756312,
+          "end_ms": 1352.945478,
+          "host_ms": 73.189166,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2,
+            5
+          ],
+          "accepted": [
+            1,
+            0,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1352.987017,
+          "end_ms": 1410.260578,
+          "host_ms": 57.273561,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2,
+            1
+          ],
+          "accepted": [
+            0,
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1410.290497,
+          "end_ms": 1464.285836,
+          "host_ms": 53.995339,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1,
+            1
+          ],
+          "accepted": [
+            1,
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1464.321164,
+          "end_ms": 1501.081347,
+          "host_ms": 36.760183,
+          "actors": [
+            1,
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1501.300301,
+          "end_ms": 1534.056614,
+          "host_ms": 32.756313,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1534.073053,
+          "end_ms": 1578.968634,
+          "host_ms": 44.895581,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1
+          ],
+          "accepted": [
+            0,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1578.992053,
+          "end_ms": 1628.437307,
+          "host_ms": 49.445254,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            1
+          ],
+          "accepted": [
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1628.457357,
+          "end_ms": 1668.871891,
+          "host_ms": 40.414534,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1668.91142,
+          "end_ms": 1713.334834,
+          "host_ms": 44.423414,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            2,
+            0
+          ],
+          "accepted": [
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1713.364313,
+          "end_ms": 1750.930092,
+          "host_ms": 37.565779,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            1
+          ],
+          "drafted": [
+            0,
+            1
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1750.950542,
+          "end_ms": 1798.871991,
+          "host_ms": 47.921449,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            2,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1798.900331,
+          "end_ms": 1837.542348,
+          "host_ms": 38.642017,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            0
+          ],
+          "accepted": [
+            1,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1837.561927,
+          "end_ms": 1887.102649,
+          "host_ms": 49.540722,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            2,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1887.134628,
+          "end_ms": 1936.445136,
+          "host_ms": 49.310508,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            2,
+            2
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 1936.466716,
+          "end_ms": 1967.518019,
+          "host_ms": 31.051303,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 1967.533959,
+          "end_ms": 2011.614583,
+          "host_ms": 44.080624,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            1
+          ],
+          "accepted": [
+            1,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2011.633033,
+          "end_ms": 2051.801174,
+          "host_ms": 40.168141,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2051.821744,
+          "end_ms": 2082.970824,
+          "host_ms": 31.14908,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 2082.984744,
+          "end_ms": 2114.27517,
+          "host_ms": 31.290426,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 2114.291489,
+          "end_ms": 2169.21937,
+          "host_ms": 54.927881,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            3
+          ],
+          "accepted": [
+            0,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 2169.24224,
+          "end_ms": 2221.637196,
+          "host_ms": 52.394956,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            1
+          ],
+          "accepted": [
+            3,
+            1
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 2221.672575,
+          "end_ms": 2262.325052,
+          "host_ms": 40.652477,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            0
+          ],
+          "drafted": [
+            1,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2262.339572,
+          "end_ms": 2312.398048,
+          "host_ms": 50.058476,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            3,
+            2
+          ],
+          "accepted": [
+            3,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 3
+        },
+        {
+          "begin_ms": 2312.435617,
+          "end_ms": 2346.219739,
+          "host_ms": 33.784122,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        },
+        {
+          "begin_ms": 2346.238568,
+          "end_ms": 2391.489728,
+          "host_ms": 45.25116,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            1,
+            1
+          ],
+          "drafted": [
+            1,
+            2
+          ],
+          "accepted": [
+            1,
+            2
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 2
+        },
+        {
+          "begin_ms": 2391.518217,
+          "end_ms": 2422.968299,
+          "host_ms": 31.450082,
+          "actors": [
+            2,
+            3
+          ],
+          "cycles": [
+            0,
+            0
+          ],
+          "drafted": [
+            0,
+            0
+          ],
+          "accepted": [
+            0,
+            0
+          ],
+          "forward_batch_calls": 1,
+          "mtp_forward_batch_calls": 1
+        }
+      ],
+      "span_counts": {
+        "9": 8,
+        "8": 8,
+        "3": 47,
+        "1": 84,
+        "5": 79,
+        "7": 8,
+        "11": 243,
+        "12": 34,
+        "2": 69,
+        "6": 34,
+        "14": 123,
+        "10": 39,
+        "13": 39,
+        "4": 4
+      }
+    }
+  ],
+  "per_request_counter_totals_equal_server": true,
+  "publication_counts_and_completion_accounting_exact": true,
+  "scope": "Direct read-only cumulative Session deltas at exact FinishDecode entry/return; Sync this pointers map to containing head StepPrefill shared_ptr identity. No order-only attribution or crosshost clocks. Host publication-span categories are disjoint clipped head-thread enclosures, not pure CPU/GPU/transport durations. Batch time is shared, never additive per member; unclassified intervals are not assumed idle. Tracing may alter scheduling; no previous flag waiver or untraced performance gain."
+}

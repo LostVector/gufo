@@ -1,0 +1,39 @@
+{
+  "records_per_rank": 576,
+  "paired_cases_per_rank": 72,
+  "actual_new_batch_gathers_per_rank": 115,
+  "complete_materialized_state_pairs_per_rank": 144,
+  "contexts": [
+    "short",
+    32768
+  ],
+  "context_capacity": 65536,
+  "full_logits_tokens_positions_RNG_proposal_work_exact": true,
+  "actual_rows_observed": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "actual_gather_rows": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "actual_fallback_rows": [
+    2,
+    3,
+    8
+  ],
+  "mixed_AR_pure_AR_fallbacks_verified": true,
+  "cross_rank_records_exact": true,
+  "frozen_sources_harness_binary_PIDs_counters_kernel_boot_topology_idle_pass": true,
+  "scope": "Canonical gufo-org eddcfea6 extension migration, native TP2/wire21, current production confidence/math. Test-only batch predicate and activation counters; same production confidence policy, math, GPU and wire21. Short/actual32768 prefixes;72 paired cases/576records perrank; capped proposals0..5 across greedy/sampled/mixedsamplers, AR/MTP actors. Record actual packed rows because confidence may shorten chains. Tokens/logits/position/RNG/work and144complete state pairs required. Wider row coverage reported from actual observations, never inferred from draft caps. No performance claim.",
+  "limits": "Diagnostic batch host toggle/counting object only; actual model/GPU/transport. Full state bytes compared within rank in C++; no cross-rank state byte claim. Production confidence gates retained; requested draft caps do not prove packed shape coverage. Not natural adaptive performance, serialized/borrowed/disk caches, HTTP cancellation or batch-context fault recovery. No default/PR claim."
+}

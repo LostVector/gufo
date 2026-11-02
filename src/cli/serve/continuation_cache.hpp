@@ -76,11 +76,19 @@ public:
       std::function<void(ContinuationState&, const ContinuationSnapshot&)>;
   using SnapshotCapacity = std::function<std::size_t()>;
   using SnapshotEventSink = std::function<void(const SnapshotEvent&)>;
+  using StateReusable = std::function<bool(const ContinuationState&)>;
+  using SnapshotReusable = std::function<bool(const ContinuationSnapshot&)>;
 
   struct SnapshotSupport {
     SnapshotRestore restore;
     SnapshotCapacity capacity_bytes;
     SnapshotEventSink on_event;
+    /// False while a retained live state or snapshot must not be reused yet;
+    /// an unset check allows every one. Consulted, under the cache lock,
+    /// whenever a request looks up a prefix. Only the state check applies
+    /// without snapshot support.
+    StateReusable state_reusable;
+    SnapshotReusable snapshot_reusable;
   };
 
   class Lease {
@@ -149,6 +157,10 @@ public:
         std::shared_ptr<const ContinuationSnapshot> snapshot = nullptr,
         std::vector<ContinuationToken> live_tokens = {});
 
+    /// True when the cache retains immutable snapshots. Without them an entry
+    /// describes its live state, so a commit must name that state's tokens.
+    [[nodiscard]] bool retains_snapshots() const noexcept;
+
     /// Explicitly discards partial state. The destructor does the same if a
     /// lease is not committed.
     void Invalidate() noexcept;
@@ -202,6 +214,9 @@ public:
       const std::function<void(ContinuationState&)>& prepare_state = {},
       bool reuse_prompt = true, std::size_t stable_prefix_tokens = 0,
       std::span<const ContinuationInputPrefix> input_prefixes = {});
+
+  /// Drop all reuse state. Requires no outstanding leases or reservations.
+  void Clear();
 
   /// Longest retained prefix of prompt with a matching input identity,
   /// ignoring stable-prefix fallback rules. Leases nothing.

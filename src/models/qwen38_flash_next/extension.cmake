@@ -1,4 +1,6 @@
 # Qwen3.8-Flash-Next model extension.
+option(GUFO_ENABLE_TP2_RDMA
+  "Build the Qwen3.8-Flash-Next TP=2 native RDMA adapter" OFF)
 
 gufo_extension_target(
   NAME gufo_qwen38_flash_next
@@ -8,6 +10,8 @@ gufo_extension_target(
     ngram.cpp
     rope_scaling.cpp
     weights.cpp
+    distributed/rdma_gid.cpp
+    distributed/tp_partition.cpp
     bench_yarn.cpp
     probe.cpp
     continuation_identity.cpp
@@ -15,6 +19,7 @@ gufo_extension_target(
   LINK_LIBRARIES
     gufo_ext_runtime
     gufo_core
+    gufo_qwen_text
     Threads::Threads
 )
 
@@ -75,12 +80,15 @@ gufo_extension_target(
     kernels/rocm/device_model.cpp
     kernels/rocm/executor.cpp
     kernels/rocm/batch.cpp
+    kernels/rocm/ple_owner.cpp
     engine.cpp
     runner.cpp
+    parallel.cpp
     drivers.cpp
     provider.cpp
   LINK_LIBRARIES
     gufo_qwen38_flash_next
+    gufo_qwen_vision
     gufo_cache_hip
     gufo_qwen_vision
     gufo_qwen38_flash_next_mmq
@@ -95,6 +103,7 @@ if(TARGET gufo_qwen38_flash_next_hip)
   gufo_extension_hip_sources(gufo_qwen38_flash_next_hip
     SOURCES
       kernels/rocm/kernels.hip.cpp
+      kernels/rocm/ple_owner.hip.cpp
       kernels/rocm/w8a8_wave64.hip
   )
   set_source_files_properties(${QFN_ROCM_DIR}/w8a8_wave64.hip
@@ -111,4 +120,20 @@ if(TARGET gufo_qwen38_flash_next_hip)
     ${PROJECT_SOURCE_DIR}
     ${GUFO_EXTENSION_BUILD_ROOT}
   )
+endif()
+
+if (GUFO_ENABLE_TP2_RDMA)
+  if (NOT ENGINE_ENABLE_HIP)
+    message(FATAL_ERROR "GUFO_ENABLE_TP2_RDMA requires ENGINE_ENABLE_HIP")
+  endif()
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(IBVERBS REQUIRED IMPORTED_TARGET GLOBAL libibverbs)
+  add_library(gufo_qwen38_flash_next_rdma STATIC
+    ${GUFO_EXTENSION_BUILD_ROOT}/kernels/rocm/verbs.cpp)
+  target_compile_features(gufo_qwen38_flash_next_rdma PRIVATE cxx_std_20)
+  target_include_directories(gufo_qwen38_flash_next_rdma PRIVATE ${PROJECT_SOURCE_DIR})
+  target_link_libraries(gufo_qwen38_flash_next_rdma PRIVATE
+    PkgConfig::IBVERBS Threads::Threads ${CMAKE_DL_LIBS} hip::host)
+  target_link_libraries(gufo_qwen38_flash_next_hip PRIVATE gufo_qwen38_flash_next_rdma)
+  target_compile_definitions(gufo_qwen38_flash_next_hip PUBLIC GUFO_ENABLE_TP2_RDMA=1)
 endif()

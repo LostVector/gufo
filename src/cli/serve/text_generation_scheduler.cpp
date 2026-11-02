@@ -159,6 +159,7 @@ struct ScheduledRequest {
   std::atomic<std::size_t> live_prefill_tokens{0};
   std::atomic<std::size_t> live_generated_tokens{0};
   std::exception_ptr failure;
+  std::function<void()> before_terminal;
   bool terminal{false};
 
   ~ScheduledRequest() {
@@ -804,6 +805,8 @@ struct TextGenerationScheduler::Impl {
         request->result.cache_disk_enqueue_ms = retained.disk_enqueue_ms;
       }
       request->result.cancelled = true;
+      if (auto finish = std::exchange(request->before_terminal, {}))
+        finish();
       FinalizeResult(request, TextGenerationBackend::FinishReason::kCancelled);
       LogDecodeProgress(request, true);
       RecordRequestMetrics(request->result);
@@ -984,6 +987,8 @@ struct TextGenerationScheduler::Impl {
     request->result.cache_shared_prefix_bytes =
         cache_commit.shared_prefix_bytes;
     request->result.cache_shared_prefix_ms = cache_commit.shared_prefix_ms;
+    if (auto finish = std::exchange(request->before_terminal, {}))
+      finish();
     FinalizeResult(request, finish_reason);
     LogDecodeProgress(request, true);
     // Recorded here rather than by the HTTP adapter, so a client that leaves
@@ -1385,6 +1390,19 @@ struct TextGenerationScheduler::Impl {
                          std::memory_order_release);
     const auto decode_start = Clock::now();
     const auto selection = request->runner_request.SelectNext();
+    if (request->preview_token) {
+      // A multi-token step published this first token as its preview, then
+      // waited for its prompt snapshot; a single-token step advances it now.
+      const auto preview = *std::exchange(request->preview_token, std::nullopt);
+      if (selection.stop || selection.token != preview) {
+        throw std::runtime_error("first-token preview disagrees with decoding");
+      }
+      request->result.decode_ms +=
+          std::chrono::duration<double, std::milli>(Clock::now() - decode_start)
+              .count();
+      request->advance_pending = true;
+      return PrepareDecode(request);
+    }
     if (selection.stop) {
       PublishTerminalLogprobs(request, selection.logprobs);
       request->result.decode_ms +=
@@ -1502,7 +1520,10 @@ struct TextGenerationScheduler::Impl {
 
   void StepDecode(const std::shared_ptr<ScheduledRequest>& request) {
     consecutive_active_prefill_chunks = 0;
-    if (multi_token_decode) {
+    // A token a batched single-token step selected, but could not advance
+    // while the prompt snapshot was captured, advances before the request
+    // takes multi-token steps again.
+    if (multi_token_decode && !request->advance_pending) {
       StepMultiTokenDecode(request);
       return;
     }
@@ -2197,6 +2218,16 @@ TextRequestPhase TextGenerationScheduler::Request::phase() const noexcept {
                : TextRequestPhase::kTerminal;
 }
 
+#ifdef GUFO_CACHE_TESTING
+bool SnapshotPendingForTesting(
+    const TextGenerationScheduler::Request& request) {
+  return request && request.impl_->request->runner_request.SnapshotPending();
+}
+bool PreviewPendingForTesting(const TextGenerationScheduler::Request& request) {
+  return request && request.impl_->request->preview_token.has_value();
+}
+#endif
+
 TextGenerationScheduler::Result TextGenerationScheduler::Request::Wait(
     const TokenCallback& on_token, const ProgressCallback& on_progress,
     const StartCallback& on_start) {
@@ -2397,6 +2428,7 @@ TextGenerationScheduler::Request TextGenerationScheduler::Submit(
       impl_->runner_pool->capacity() == 1 ? "serial-c1" : "serial-fallback";
   request->prompt = std::move(prompt);
   request->prompt_context = std::move(metadata.prompt_context);
+  request->before_terminal = std::move(metadata.before_terminal);
   request->cache_prompt = metadata.cache_prompt;
   request->cache_persist = metadata.cache_persist;
   request->cache_prefix_tokens = metadata.cache_prefix_tokens;

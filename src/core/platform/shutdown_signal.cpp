@@ -3,6 +3,7 @@
 #include <atomic>
 #include <cerrno>
 #include <csignal>
+#include <cstdlib>
 #include <stdexcept>
 #include <system_error>
 #include <utility>
@@ -159,6 +160,19 @@ extern "C" void ReportFatalSignal(int number) {
 
 }  // namespace
 #endif
+
+void InstallImmediateTerminationHandlers() noexcept {
+#if defined(_WIN32)
+  (void)std::signal(SIGTERM, [](int) { std::_Exit(0); });
+  (void)std::signal(SIGINT, [](int) { std::_Exit(0); });
+#else
+  struct sigaction stop{};
+  stop.sa_handler = [](int) { std::_Exit(0); };
+  ::sigemptyset(&stop.sa_mask);
+  (void)::sigaction(SIGTERM, &stop, nullptr);
+  (void)::sigaction(SIGINT, &stop, nullptr);
+#endif
+}
 
 void InstallFatalSignalReporter() noexcept {
 #if !defined(_WIN32)

@@ -410,7 +410,236 @@ void CheckRemapDraftIds() {
                "table passed\n";
 }
 
+// Each rank's half of a split vocabulary and the summed exchange rows must
+// select what the full argmax selects, including ties across the halves and
+// NaN or infinite logits.
+void CheckSplitArgmax(std::uint32_t vocab) {
+  constexpr std::uint32_t width = 2560;
+  const std::uint32_t half = vocab / 2;
+  const float inf = std::numeric_limits<float>::infinity();
+  const float nan = std::numeric_limits<float>::quiet_NaN();
+  auto device_logits = Allocate<float>(vocab);
+  auto scratch = Allocate<q::ArgmaxCandidate>(q::kArgmaxParts);
+  auto exchange = Allocate<float>(width);
+  auto output = Allocate<std::int32_t>(1);
+  for (std::uint32_t t = 0; t < 10; ++t) {
+    std::vector<float> row(vocab);
+    for (std::uint32_t i = 0; i < vocab; ++i)
+      row[i] = -static_cast<float>((i * 7919U + t * 31U) % 65521U);
+    switch (t) {
+      case 0:
+        row[half] = row[vocab - 1] = 10.0F;  // Tie inside the second half.
+        break;
+      case 1:
+        row[half - 1] = row[half] = 10.0F;  // Tie across the halves.
+        break;
+      case 2:
+        row[half] = inf;
+        break;
+      case 3:
+        std::fill(row.begin(), row.end(), -inf);
+        break;
+      case 4:
+        row[0] = nan;
+        row[half] = inf;
+        break;
+      case 5:
+        std::fill(row.begin(), row.begin() + half, nan);
+        row[vocab - 1] = 10.0F;
+        row[0] = 1.0F;
+        break;
+      case 6:
+        std::fill(row.begin(), row.end(), nan);
+        break;
+      case 7:
+        for (std::uint32_t i = 0; i < vocab; ++i)
+          row[i] = i % 2 ? 0.0F : -0.0F;
+        break;
+      case 8:
+        std::fill(row.begin() + half, row.end(), -inf);
+        break;
+      default:
+        break;
+    }
+    CheckHip(hipMemcpy(device_logits.get(), row.data(), vocab * sizeof(float),
+                       hipMemcpyHostToDevice),
+             "upload split logits");
+    std::vector<float> sum(width, 0.0F);
+    for (std::uint32_t part = 0; part < 2; ++part) {
+      std::vector<float> rank(width, 1234.0F);
+      CheckHip(hipMemcpy(exchange.get(), rank.data(), width * sizeof(float),
+                         hipMemcpyHostToDevice),
+               "poison exchange");
+      q::SplitArgmaxPart(device_logits.get() + part * half, scratch.get(),
+                         exchange.get(), width, half, part * half, part,
+                         nullptr);
+      CheckHip(hipMemcpy(rank.data(), exchange.get(), width * sizeof(float),
+                         hipMemcpyDeviceToHost),
+               "download exchange");
+      for (std::uint32_t i = 0; i < width; ++i) {
+        if (i / 2 != part && rank[i] != 0.0F)
+          throw std::runtime_error("split argmax left a foreign slot set");
+        sum[i] += rank[i];
+      }
+    }
+    CheckHip(hipMemcpy(exchange.get(), sum.data(), width * sizeof(float),
+                       hipMemcpyHostToDevice),
+             "upload exchange sum");
+    q::SplitArgmaxFinish(exchange.get(), output.get(), nullptr);
+    std::int32_t actual = -1;
+    CheckHip(
+        hipMemcpy(&actual, output.get(), sizeof(actual), hipMemcpyDeviceToHost),
+        "download split argmax");
+    const auto expected = static_cast<std::int32_t>(
+        std::max_element(row.begin(), row.end()) - row.begin());
+    if (actual != expected) {
+      throw std::runtime_error(
+          "split argmax mismatch: vocab=" + std::to_string(vocab) + " row=" +
+          std::to_string(t) + " expected=" + std::to_string(expected) +
+          " actual=" + std::to_string(actual));
+    }
+  }
+  std::cout << "split argmax vocab=" << vocab
+            << ": ties, infinities and NaN match the full argmax\n";
+}
+
 }  // namespace
+
+// A split head must return the same winner and a whole-vocabulary probability,
+// including cases in which either rank has no finite logits. Poison both the
+// probability and surrounding words so token-only writes cannot pass.
+void CheckSplitConfidence(std::uint32_t vocab) {
+  constexpr std::uint32_t width = 2560;
+  constexpr std::int32_t guard = 0x12345678;
+  constexpr std::int32_t poison = 0x7FC12345;
+  const std::uint32_t half = vocab / 2;
+  const float inf = std::numeric_limits<float>::infinity();
+  const float nan = std::numeric_limits<float>::quiet_NaN();
+  auto logits = Allocate<float>(vocab);
+  auto scratch = Allocate<q::ArgmaxCandidate>(q::kArgmaxParts);
+  auto exchange = Allocate<float>(width);
+  auto out = Allocate<std::int32_t>(4);
+  auto full = Allocate<std::int32_t>(4);
+  double worst = 0;
+  for (std::uint32_t test = 0; test < 12; ++test) {
+    std::vector<float> row(vocab);
+    for (std::uint32_t i = 0; i < vocab; ++i)
+      row[i] = static_cast<float>(
+                   static_cast<int>((i * 7919U + test * 31U) % 257U) - 128) /
+               8;
+    switch (test) {
+      case 0:
+        row[half - 1] = row[half] = 40;
+        break;
+      case 1:
+        std::fill(row.begin(), row.end(), 0);
+        break;
+      case 2:
+        std::fill(row.begin(), row.end(), -inf);
+        break;
+      case 3:
+        row[0] = nan;
+        row[half] = 100;
+        break;
+      case 4:
+        row[half] = inf;
+        break;
+      case 5:
+        std::fill(row.begin(), row.end(), nan);
+        break;
+      case 6:
+      case 7:
+        std::fill(row.begin(), row.end(), -inf);
+        row[test == 6 ? half - 1 : half] = 6;
+        break;
+      case 8:
+        for (float& x : row)
+          x += 10000;
+        break;
+      case 9:
+        for (float& x : row)
+          x -= 10000;
+        break;
+      default: {
+        const double p = test == 10 ? .9 - 1e-5 : .9 + 1e-5;
+        std::fill(row.begin(), row.end(), -inf);
+        row[0] = static_cast<float>(std::log((1 - p) / p));
+        row[half] = 0;
+        break;
+      }
+    }
+    const auto winner = static_cast<std::int32_t>(
+        std::max_element(row.begin(), row.end()) - row.begin());
+    double want = 0;
+    if (std::isfinite(row[winner])) {
+      double sum = 0;
+      for (float value : row)
+        if (std::isfinite(value))
+          sum += std::exp(static_cast<double>(value) - row[winner]);
+      if (sum > 0)
+        want = 1 / sum;
+    }
+    CheckHip(hipMemcpy(logits.get(), row.data(), vocab * sizeof(float),
+                       hipMemcpyHostToDevice),
+             "confidence logits");
+    std::vector<float> sum(width, 0);
+    for (std::uint32_t rank = 0; rank < 2; ++rank) {
+      std::vector<float> payload(width, 1234);
+      CheckHip(hipMemcpy(exchange.get(), payload.data(), width * sizeof(float),
+                         hipMemcpyHostToDevice),
+               "poison confidence exchange");
+      q::SplitArgmaxPart(logits.get() + rank * half, scratch.get(),
+                         exchange.get(), width, half, rank * half, rank,
+                         nullptr);
+      q::SplitArgmaxConfidencePart(logits.get() + rank * half, exchange.get(),
+                                   half, rank, nullptr);
+      CheckHip(hipMemcpy(payload.data(), exchange.get(), width * sizeof(float),
+                         hipMemcpyDeviceToHost),
+               "confidence exchange download");
+      for (std::uint32_t i = 0; i < width; ++i) {
+        if (i / 2 != rank && i != 4 + rank && payload[i] != 0)
+          throw std::runtime_error("confidence wrote a foreign exchange slot");
+        sum[i] += payload[i];
+      }
+    }
+    std::int32_t initial[4]{guard, -1, poison, guard};
+    CheckHip(
+        hipMemcpy(out.get(), initial, sizeof(initial), hipMemcpyHostToDevice),
+        "poison split confidence output");
+    CheckHip(
+        hipMemcpy(full.get(), initial, sizeof(initial), hipMemcpyHostToDevice),
+        "poison full confidence output");
+    CheckHip(hipMemcpy(exchange.get(), sum.data(), width * sizeof(float),
+                       hipMemcpyHostToDevice),
+             "summed confidence exchange");
+    q::SplitArgmaxConfidenceFinish(exchange.get(), out.get() + 1, nullptr);
+    q::Argmax(logits.get(), scratch.get(), full.get() + 1, 1, vocab, nullptr);
+    q::ArgmaxConfidence(logits.get(), full.get() + 1, vocab, nullptr);
+    std::int32_t actual[4], whole[4];
+    CheckHip(
+        hipMemcpy(actual, out.get(), sizeof(actual), hipMemcpyDeviceToHost),
+        "split confidence result");
+    CheckHip(hipMemcpy(whole, full.get(), sizeof(whole), hipMemcpyDeviceToHost),
+             "whole confidence result");
+    for (const auto* result : {actual, whole}) {
+      const float probability = std::bit_cast<float>(result[2]);
+      const double error = std::abs(static_cast<double>(probability) - want);
+      // Two ppm for ordinary probabilities; an absolute 2e-11 floor at
+      // very small probabilities accommodates independent F32 reductions.
+      const double tolerance = 2e-6 * std::max(want, 1e-5);
+      if (result[0] != guard || result[3] != guard || result[1] != winner ||
+          !std::isfinite(probability) || error > tolerance)
+        throw std::runtime_error("split/full confidence oracle failed: vocab=" +
+                                 std::to_string(vocab) +
+                                 " case=" + std::to_string(test) +
+                                 " expected=" + std::to_string(want) +
+                                 " actual=" + std::to_string(probability));
+      worst = std::max(worst, error);
+    }
+  }
+  std::cout << "split/full confidence vocab=" << vocab
+            << ": 12 cases, worst absolute error " << worst << '\n';
+}
 
 int main() {
   try {
@@ -420,6 +649,11 @@ int main() {
     CheckArgmax(1);
     CheckArgmax(257);
     CheckArgmax(248320);
+    CheckSplitArgmax(2);
+    CheckSplitArgmax(256);
+    CheckSplitArgmax(248320);
+    for (std::uint32_t vocab : {2U, 10U, 256U, 99328U, 248320U})
+      CheckSplitConfidence(vocab);
     CheckHip(gufo::hip::PrepareBatchedGPUArgmax(), "prepare MTP argmax");
     CheckArgmax(248320);
     for (const unsigned vocab :

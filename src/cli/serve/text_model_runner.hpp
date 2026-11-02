@@ -159,6 +159,7 @@ public:
   TextRunnerPool(TextRunnerPool&&) = delete;
   TextRunnerPool& operator=(TextRunnerPool&&) = delete;
 
+  void ClearCache();
   [[nodiscard]] const TextModelRunner& runner() const noexcept;
   [[nodiscard]] std::size_t capacity() const noexcept;
   [[nodiscard]] TextExecutionPlan SelectDecodePlan(
@@ -198,7 +199,8 @@ private:
 [[nodiscard]] std::optional<ChatRequest> ConstrainChatRequest(
     const ChatRequest& request, const TextModelRunner& runner,
     sampling::SamplingConfig* sampling,
-    std::optional<sampling::JsonConstraint::ToolFormat>* tool_format = nullptr);
+    std::optional<sampling::JsonConstraint::ToolFormat>* tool_format = nullptr,
+    std::optional<ext::InitialOutputState> initial = std::nullopt);
 
 }  // namespace gufo::server
 

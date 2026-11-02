@@ -216,6 +216,9 @@ struct TextRunnerDecode {
   std::reference_wrapper<TextRunnerState> state;
   std::size_t max_tokens{0};
   std::reference_wrapper<sampling::SamplerState> sampler;
+  /// This member's forced draft count (a TP2 peer's choice), overriding the
+  /// batch's shared plan; none lets the runner choose.
+  std::optional<std::uint32_t> drafts{};
 };
 
 enum class InitialOutputState : std::uint8_t {
@@ -318,6 +321,11 @@ struct ChatRequest {
   std::vector<std::string> stop_sequences;
   std::shared_ptr<const sampling::JsonConstraint> response_format;
   std::string response_format_description;
+  /// The response_format object as the request carried it (in the Responses
+  /// form when `response_format_responses`), so a TP2 worker can rebuild the
+  /// same constraint.
+  std::string response_format_json;
+  bool response_format_responses{false};
 };
 
 class TextModelRunner {
@@ -394,6 +402,17 @@ public:
       throw std::invalid_argument("model does not support this prompt context");
     }
   }
+  /// Serializes a context `PreparePrompt` made, for another process running
+  /// the same model to rebuild with `DecodePromptContext`: a TP2 peer, which
+  /// must configure its states exactly as this rank does.
+  [[nodiscard]] virtual std::vector<std::uint8_t> EncodePromptContext(
+      const TextPromptContext&) const {
+    throw std::invalid_argument("model cannot transfer this prompt context");
+  }
+  [[nodiscard]] virtual std::shared_ptr<const TextPromptContext>
+  DecodePromptContext(std::span<const std::uint8_t>) const {
+    throw std::invalid_argument("model cannot transfer this prompt context");
+  }
   [[nodiscard]] virtual ext::InitialOutputState InitialOutputState(
       const ChatRequest&) const {
     return ext::InitialOutputState::kAuto;
@@ -451,12 +470,50 @@ public:
   [[nodiscard]] virtual TextDecodeStep DecodeStep(
       TextRunnerState& state, std::size_t max_tokens,
       sampling::SamplerState& sampler) const;
+  /// The plan of one multi-token decode step: the draft count the step would
+  /// use, when the runner chooses one (it may depend on acceptance history),
+  /// else none. `occupancy` is the requests decoding with it: one alone, or
+  /// the members of a batch without a shared plan. A TP2 peer runs the step
+  /// with the same plan, so both ranks agree on its cycle width.
+  [[nodiscard]] virtual std::optional<std::uint32_t> PlanDecodeStep(
+      TextRunnerState&, std::size_t, const sampling::SamplerState&,
+      std::size_t /*occupancy*/ = 1) const {
+    return std::nullopt;
+  }
+  /// DecodeStep with a plan from PlanDecodeStep, possibly made by a peer.
+  [[nodiscard]] virtual TextDecodeStep DecodeStepPlanned(
+      TextRunnerState& state, std::size_t max_tokens,
+      sampling::SamplerState& sampler, std::optional<std::uint32_t>) const {
+    return DecodeStep(state, max_tokens, sampler);
+  }
   [[nodiscard]] virtual std::vector<TextDecodeStep> DecodeBatch(
       std::span<const TextRunnerDecode> decodes) const;
+  /// The plan of a batched multi-token step: the draft count the whole batch
+  /// would use, when the runner chooses one (it may depend on timing), else
+  /// none. A TP2 peer runs the same batch with the same plan.
+  [[nodiscard]] virtual std::optional<std::uint32_t> PlanDecodeBatch(
+      std::span<const TextRunnerDecode>) const {
+    return std::nullopt;
+  }
+  /// DecodeBatch with a plan from PlanDecodeBatch, possibly made by a peer.
+  [[nodiscard]] virtual std::vector<TextDecodeStep> DecodeBatchPlanned(
+      std::span<const TextRunnerDecode> decodes,
+      std::optional<std::uint32_t>) const {
+    return DecodeBatch(decodes);
+  }
   virtual void AdvanceBatch(std::span<const TextRunnerAdvance> advances) const;
   [[nodiscard]] virtual std::size_t CheckpointPosition(
       const TextRunnerState& state) const = 0;
   virtual void PrepareCancellation(TextRunnerState&) const {}
+  /// False when a retained continuation must not be reused. A TP2 rank-0
+  /// runner refuses the states and snapshots of a request its peer rejected.
+  /// Consulted whenever a request looks up a reusable prefix.
+  [[nodiscard]] virtual bool CanReuse(const TextRunnerState&) const {
+    return true;
+  }
+  [[nodiscard]] virtual bool CanReuse(const TextRunnerSnapshot&) const {
+    return true;
+  }
   using DeviceProbeStatus = ext::DeviceProbeStatus;
   [[nodiscard]] virtual DeviceProbeStatus PollDevice() const {
     return DeviceProbeStatus::kUsable;
@@ -576,6 +633,40 @@ struct TextRunnerOptions {
   bool enable_yarn{false};
 };
 
+/// Host-only configuration for an optional model-owned parallel transport.
+/// No GPU stream, kernel, device pointer or provider-specific header crosses
+/// the extension boundary. Bootstrap and device settings retain their CLI
+/// meaning.
+struct TextParallelTransportOptions {
+  std::uint32_t rank{0};
+  std::uint32_t world_size{2};
+  std::string bootstrap_host;
+  std::uint16_t bootstrap_port{18515};
+  std::uint32_t device_index{0};
+  std::string rdma_device;
+  std::uint32_t rdma_port{1};
+  std::optional<std::uint32_t> gid_index;
+};
+
+/// One transport and its model load. The provider owns GPU/collective details;
+/// the serving layer owns request scheduling, control messages and verdicts.
+/// CreateRunner runs during setup, before publishing the runtime to request
+/// threads; use one runtime per loaded model/rank pair.
+class TextParallelRuntime {
+public:
+  virtual ~TextParallelRuntime() = default;
+  [[nodiscard]] virtual std::shared_ptr<TextModelRunner> CreateRunner(
+      const TextRunnerOptions& options, std::string* error) = 0;
+  [[nodiscard]] virtual std::uint32_t Rank() const noexcept = 0;
+  [[nodiscard]] virtual std::uint32_t WorldSize() const noexcept = 0;
+  [[nodiscard]] virtual bool UsesYarn() const noexcept = 0;
+  [[nodiscard]] virtual std::string Describe() const = 0;
+  [[nodiscard]] virtual bool BeginOperation(std::uint64_t index,
+                                            std::string* error) = 0;
+  [[nodiscard]] virtual bool EndOperation(std::uint64_t index,
+                                          std::string* error) = 0;
+};
+
 struct TextBenchOptions {
   std::string model_path;
   std::vector<std::size_t> n_prompts{2048};
@@ -669,6 +760,9 @@ using TextChatDriver =
     int (*)(const TextPromptOptions& options, const core::GgufReader& reader,
             std::chrono::steady_clock::time_point load_start);
 
+using TextParallelFactory = std::shared_ptr<TextParallelRuntime> (*)(
+    const TextParallelTransportOptions& options, std::string* error);
+
 struct TextProvider {
   std::string id;
   TextProbe probe = nullptr;
@@ -677,6 +771,7 @@ struct TextProvider {
   TextBenchDriver bench_driver = nullptr;
   TextPromptDriver prompt_driver = nullptr;
   TextChatDriver chat_driver = nullptr;
+  TextParallelFactory create_parallel = nullptr;
 };
 
 void RegisterTextProvider(TextProvider provider);

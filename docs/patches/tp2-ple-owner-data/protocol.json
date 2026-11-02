@@ -1,0 +1,399 @@
+{
+  "initial": [
+    {
+      "host": "rk-evo-x2",
+      "kernel": "7.3.0-strix-test",
+      "boot_id": "5d9da4de-9a5f-4c7b-b47a-9cf2b51282ac",
+      "cmdline": "BOOT_IMAGE=/boot/vmlinuz-7.3.0-strix-test root=UUID=c43af9f2-66df-414f-9c5e-a58eaf768c01 ro quiet splash ttm.pages_limit=32505856 amd_iommu=off crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M",
+      "module": "81C6FF2FBAC473C7AB21844",
+      "refcnt": 0,
+      "mask": 4294967295,
+      "routers": [
+        {
+          "router": "0-0",
+          "domain": 0,
+          "uuid": "4d163804-10df-d683-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.5",
+          "remote": false,
+          "rx_speed": null,
+          "tx_speed": null,
+          "rx_lanes": null,
+          "tx_lanes": null
+        },
+        {
+          "router": "0-2",
+          "domain": 0,
+          "uuid": "792d3804-51be-3416-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.5",
+          "remote": true,
+          "rx_speed": "20.0 Gb/s",
+          "tx_speed": "20.0 Gb/s",
+          "rx_lanes": "2",
+          "tx_lanes": "2"
+        },
+        {
+          "router": "1-0",
+          "domain": 1,
+          "uuid": "4d163804-11df-d683-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.6",
+          "remote": false,
+          "rx_speed": null,
+          "tx_speed": null,
+          "rx_lanes": null,
+          "tx_lanes": null
+        },
+        {
+          "router": "1-2",
+          "domain": 1,
+          "uuid": "792d3804-50be-3416-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.6",
+          "remote": true,
+          "rx_speed": "10.0 Gb/s",
+          "tx_speed": "10.0 Gb/s",
+          "rx_lanes": "2",
+          "tx_lanes": "2"
+        }
+      ],
+      "devices": [
+        {
+          "device": "usb4_rdma0",
+          "guid": "0200:5442:5852:4253",
+          "controller": "0000:c7:00.5",
+          "domain": 0
+        },
+        {
+          "device": "usb4_rdma1",
+          "guid": "0200:5442:5852:4254",
+          "controller": "0000:c7:00.5",
+          "domain": 0
+        },
+        {
+          "device": "usb4_rdma5",
+          "guid": "0200:5442:5752:4253",
+          "controller": "0000:c7:00.6",
+          "domain": 1
+        },
+        {
+          "device": "usb4_rdma6",
+          "guid": "0200:5442:5752:4254",
+          "controller": "0000:c7:00.6",
+          "domain": 1
+        }
+      ],
+      "selected_device": "usb4_rdma5",
+      "management_ipv4": [
+        "192.168.64.125"
+      ],
+      "sample_monotonic_ns": 161458322432149
+    },
+    {
+      "host": "rk-corsair-ai",
+      "kernel": "7.3.0-strix-test",
+      "boot_id": "7ae4d78b-e6f2-4b63-b9bd-adbc14a25f1a",
+      "cmdline": "BOOT_IMAGE=/boot/vmlinuz-7.3.0-strix-test root=UUID=7f14140e-d1dd-4a7f-821b-1eda443a3a97 ro quiet splash ttm.pages_limit=32505856 amd_iommu=off crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M",
+      "module": "81C6FF2FBAC473C7AB21844",
+      "refcnt": 0,
+      "mask": 4294967295,
+      "routers": [
+        {
+          "router": "0-0",
+          "domain": 0,
+          "uuid": "792d3804-50be-3416-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.5",
+          "remote": false,
+          "rx_speed": null,
+          "tx_speed": null,
+          "rx_lanes": null,
+          "tx_lanes": null
+        },
+        {
+          "router": "0-2",
+          "domain": 0,
+          "uuid": "4d163804-11df-d683-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.5",
+          "remote": true,
+          "rx_speed": "10.0 Gb/s",
+          "tx_speed": "10.0 Gb/s",
+          "rx_lanes": "2",
+          "tx_lanes": "2"
+        },
+        {
+          "router": "1-0",
+          "domain": 1,
+          "uuid": "792d3804-51be-3416-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.6",
+          "remote": false,
+          "rx_speed": null,
+          "tx_speed": null,
+          "rx_lanes": null,
+          "tx_lanes": null
+        },
+        {
+          "router": "1-2",
+          "domain": 1,
+          "uuid": "4d163804-10df-d683-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.6",
+          "remote": true,
+          "rx_speed": "20.0 Gb/s",
+          "tx_speed": "20.0 Gb/s",
+          "rx_lanes": "2",
+          "tx_lanes": "2"
+        }
+      ],
+      "devices": [
+        {
+          "device": "usb4_rdma0",
+          "guid": "0200:5442:5852:4253",
+          "controller": "0000:c7:00.5",
+          "domain": 0
+        },
+        {
+          "device": "usb4_rdma1",
+          "guid": "0200:5442:5852:4254",
+          "controller": "0000:c7:00.5",
+          "domain": 0
+        },
+        {
+          "device": "usb4_rdma5",
+          "guid": "0200:5442:5752:4253",
+          "controller": "0000:c7:00.6",
+          "domain": 1
+        },
+        {
+          "device": "usb4_rdma6",
+          "guid": "0200:5442:5752:4254",
+          "controller": "0000:c7:00.6",
+          "domain": 1
+        }
+      ],
+      "selected_device": "usb4_rdma5",
+      "management_ipv4": [
+        "192.168.64.191"
+      ],
+      "sample_monotonic_ns": 161666507812807
+    }
+  ],
+  "binaries": {
+    "baseline": {
+      "name": "gufo-tp2-published-fbacf9cc",
+      "sha256": "5ce244cf22cbb5d9d3d39551139ec8804d89399da8704057ec9f21a1051a5d71"
+    },
+    "candidate": {
+      "name": "gufo-tp2-cooperative-ple-85586a63-release",
+      "sha256": "95bc4c433f547df7e143bcc69fb1fd973a922bb43dfb47f6203cd1332b042fd5"
+    }
+  },
+  "design": {
+    "sequence": [
+      [
+        "pair01-baseline",
+        "baseline"
+      ],
+      [
+        "pair01-candidate",
+        "candidate"
+      ],
+      [
+        "pair02-baseline",
+        "baseline"
+      ],
+      [
+        "pair02-candidate",
+        "candidate"
+      ],
+      [
+        "pair03-candidate",
+        "candidate"
+      ],
+      [
+        "pair03-baseline",
+        "baseline"
+      ],
+      [
+        "pair04-candidate",
+        "candidate"
+      ],
+      [
+        "pair04-baseline",
+        "baseline"
+      ],
+      [
+        "pair05-baseline",
+        "baseline"
+      ],
+      [
+        "pair05-candidate",
+        "candidate"
+      ],
+      [
+        "pair06-baseline",
+        "baseline"
+      ],
+      [
+        "pair06-candidate",
+        "candidate"
+      ],
+      [
+        "pair07-candidate",
+        "candidate"
+      ],
+      [
+        "pair07-baseline",
+        "baseline"
+      ],
+      [
+        "pair08-candidate",
+        "candidate"
+      ],
+      [
+        "pair08-baseline",
+        "baseline"
+      ],
+      [
+        "pair09-candidate",
+        "candidate"
+      ],
+      [
+        "pair09-baseline",
+        "baseline"
+      ],
+      [
+        "pair10-baseline",
+        "baseline"
+      ],
+      [
+        "pair10-candidate",
+        "candidate"
+      ]
+    ],
+    "requests_per_start": 12,
+    "randomization": {
+      "seed": 202611011817,
+      "uniform_choice_of_five_baseline_first_pairs": [
+        1,
+        2,
+        5,
+        6,
+        10
+      ]
+    },
+    "scope": "Fixed ten randomized balanced pairs /20fresh starts /240records: published TP2 fbacf9cc replicated disk-backed PLE against85586a63 owner reads/native wire22. Fresh production OFF study. Earlier v1 partial acquisition rejected for BUILD_TESTING mismatch and preserved separately; no pooling or throughput inference from it. No exclusions/replacements within this20start acquisition or interim significance testing. Context65536,2sessions,chunk2048,UD-Q4_K_XL+sharedQ8_0 actualMTP; exact output/prompt/cache work and C1 speculative work. Adaptive C2 work retained. All per-request flags at BOTH5% and3ms retained. Co-primaries: first pp2048 C1 server decode rate and first short C2 complete client-wave throughput.20k paired bootstrap, balanced-assignment sensitivity and Holm two-primary adjustment. Secondary repeated C1/codingC2/TTFT/prefill/decode/gaps/tail. No full-table warming, profiler, SMART/admin sampler, parallel build or other model workload. No bulk-prefill speedup assumed: large non-speculative passes retain local reads."
+  },
+  "sequence": [
+    [
+      "pair01-baseline",
+      "baseline"
+    ],
+    [
+      "pair01-candidate",
+      "candidate"
+    ],
+    [
+      "pair02-baseline",
+      "baseline"
+    ],
+    [
+      "pair02-candidate",
+      "candidate"
+    ],
+    [
+      "pair03-candidate",
+      "candidate"
+    ],
+    [
+      "pair03-baseline",
+      "baseline"
+    ],
+    [
+      "pair04-candidate",
+      "candidate"
+    ],
+    [
+      "pair04-baseline",
+      "baseline"
+    ],
+    [
+      "pair05-baseline",
+      "baseline"
+    ],
+    [
+      "pair05-candidate",
+      "candidate"
+    ],
+    [
+      "pair06-baseline",
+      "baseline"
+    ],
+    [
+      "pair06-candidate",
+      "candidate"
+    ],
+    [
+      "pair07-candidate",
+      "candidate"
+    ],
+    [
+      "pair07-baseline",
+      "baseline"
+    ],
+    [
+      "pair08-candidate",
+      "candidate"
+    ],
+    [
+      "pair08-baseline",
+      "baseline"
+    ],
+    [
+      "pair09-candidate",
+      "candidate"
+    ],
+    [
+      "pair09-baseline",
+      "baseline"
+    ],
+    [
+      "pair10-baseline",
+      "baseline"
+    ],
+    [
+      "pair10-candidate",
+      "candidate"
+    ]
+  ],
+  "settings": {
+    "quant": "UD-Q4_K_XL",
+    "MTP": "sharedQ8_0/enabled/current upstream confidence controller",
+    "context_capacity": 65536,
+    "sessions": 2,
+    "chunk": 2048,
+    "cache_RAM_bytes": 1073741824,
+    "driver": "81C6/TX32 unchanged in all arms",
+    "device": "existing lexical-first HTTPHCA0",
+    "thinking": "off",
+    "sampling": "greedy"
+  },
+  "harness_sha256": {
+    "run.py": "b410f64dbd09b374f2f077ed4bfe9e4d4587e47ac283927a0e656840f5b07eaa",
+    "requests.py": "7bc0249571a36c7ffbc36c138299becca9cee933db07e3a1698f4619ec3881b3",
+    "analyze.py": "70ae8584690593f9bbf3f7928fab0d40fe91cfa2ff5d36f5858080a0b8b2f146",
+    "engine.py": "56768cd27563e4e001698bac1f2420a438d7e435459d5c0f98cc4fda973499be",
+    "server-rank.sh": "109937a6303ac54c3e1a62d6664fa2caec9419c5cb7bf3b2a9ac95ab6e5a32db",
+    "binaries.json": "3be3970b5ae44b82f641a9b98273e590f1d9b593ce4b063b6a99ecebd973b2d2",
+    "source-preflight.json": "12236abd247364f8f3d09da648c537a96398afe1d8d74194ab57b80bfa0ed326",
+    "design.json": "b3798971fc78ea51a9cae35fb613169f2fbbbca656ae59e2b908dfd113624f0e",
+    "reference.json": "89d3b930b557ea0a57504e82744b35ed29f871b19e8ef86c747ce2d99b311cff",
+    "release-build-provenance.json": "c6e52f7399d06acda89de836fc97f5b92ae59d346e292df2a6185c54a0219862",
+    "paired_statistics.py": "38ca0b9df2e80262122632c74d1934ee6fe3feabce5deee27ee8c4f9cc389eea",
+    "statistical-summary.py": "ac3dcee9f838538567608acea395019c2dfcd2866325facc1d439c24affe183c",
+    "summarize.py": "a8473eabd1fc5eba7b7f0e97e302f4c0d13ef1eba652ca20c86b3a400872a701",
+    "functional-gates.json": "03a92bbf18da0d2eef9feb8fc0c082fd8d043f18b807ef4ed4d11401cf4857eb"
+  },
+  "external_harness_sha256": {
+    "reference/gufo-rdma/tools/gufo/serving_bench.py": "35d7c7a94229765eb69617bb16280272fdb8ca08445007688baf23c2ef8b0e38",
+    "prefill-scaling/results/prompts.json": "7e4affccd75638f5de86304177141437f9eafb90c921a756ab0207f646993985",
+    "native-rdma/env.sh": "fdcabf968ec9aae08bb1a9899c6c3f1df48fed774346f2d88e57bd5302eb9e3b",
+    "cable-prep/env.sh": "def5a85333747e6cbb1dd3e8d747d4a74149c71160b13c9757a272e5f1aa748a",
+    "tp-cache-retention/driver-parent-timing-v1/inventory.py": "03674fcc349b64dc41935a2973534cee6191e732e4b7e0e32ce7f32933cb3bee"
+  }
+}

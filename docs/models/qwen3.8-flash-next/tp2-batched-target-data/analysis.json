@@ -1,0 +1,161 @@
+{
+  "results": [
+    {
+      "paired_log_ratios": [
+        0.03851818303871112,
+        0.010673186192590417,
+        0.010864083517704494,
+        0.015427206969141141,
+        0.027242071456909166,
+        0.004773944659150454,
+        0.023377012304517424,
+        0.019603719964648665
+      ],
+      "mean_log_ratio": 0.01880992601292161,
+      "paired_geometric_throughput_increase_pct": 1.898794710729051,
+      "bootstrap95_throughput_increase_pct": [
+        1.221795851795859,
+        2.6451649828572705
+      ],
+      "predeclared_two_sided_signflip_p": 0.0078125,
+      "signflip_assumption": "Pairwise sign symmetry;256signpatterns, not the constrained assignment distribution.",
+      "balanced_assignment_sensitivity_p": 0.02857142857142857,
+      "balanced_assignments": 70,
+      "positive_pairs": 8,
+      "negative_pairs": 0,
+      "paired_duration_reduction_pct": 1.863412335856729,
+      "bootstrap95_duration_reduction_pct": [
+        1.2070481871164884,
+        2.576999104925237
+      ],
+      "metric": "C2_natural_wave",
+      "primary": true,
+      "baseline_tps": 72.79808607342514,
+      "candidate_tps": 74.18037228129931,
+      "pvalue_scope": "one predeclared primary",
+      "predeclared_primary_criterion_pass": true
+    },
+    {
+      "paired_log_ratios": [
+        0.016841018801250763,
+        0.013173720920383897,
+        0.009932730660502003,
+        0.01602280955167665,
+        0.013616752903884498,
+        0.013333063854940585,
+        0.0029830684111650566,
+        0.009880931914260321
+      ],
+      "mean_log_ratio": 0.011973012127257971,
+      "paired_geometric_throughput_increase_pct": 1.2044975556505821,
+      "bootstrap95_throughput_increase_pct": [
+        0.8993696160854174,
+        1.465522407691706
+      ],
+      "predeclared_two_sided_signflip_p": 0.0078125,
+      "signflip_assumption": "Pairwise sign symmetry;256signpatterns, not the constrained assignment distribution.",
+      "balanced_assignment_sensitivity_p": 0.02857142857142857,
+      "balanced_assignments": 70,
+      "positive_pairs": 8,
+      "negative_pairs": 0,
+      "paired_duration_reduction_pct": 1.1901620824590786,
+      "bootstrap95_duration_reduction_pct": [
+        0.8913530575140882,
+        1.4443550606315192
+      ],
+      "metric": "C2_coding_wave",
+      "primary": false,
+      "baseline_tps": 83.07501933558588,
+      "candidate_tps": 84.07565591283924,
+      "pvalue_scope": "secondary/unadjusted; not an independent confirmatory claim",
+      "predeclared_primary_criterion_pass": false
+    },
+    {
+      "paired_log_ratios": [
+        0.002468429114443416,
+        0.0037213388695769172,
+        0.0019586975478274576,
+        0.005292886176373466,
+        0.012432495720974164,
+        -0.000184320283798666,
+        -0.0008442070455515183,
+        0.00025021612124349093
+      ],
+      "mean_log_ratio": 0.003136942027636091,
+      "paired_geometric_throughput_increase_pct": 0.31418673791125484,
+      "bootstrap95_throughput_increase_pct": [
+        0.07664808105307408,
+        0.6257981467772933
+      ],
+      "predeclared_two_sided_signflip_p": 0.046875,
+      "signflip_assumption": "Pairwise sign symmetry;256signpatterns, not the constrained assignment distribution.",
+      "balanced_assignment_sensitivity_p": 0.02857142857142857,
+      "balanced_assignments": 70,
+      "positive_pairs": 6,
+      "negative_pairs": 2,
+      "paired_duration_reduction_pct": 0.31320269657583166,
+      "bootstrap95_duration_reduction_pct": [
+        0.07658937676549016,
+        0.6219062688719967
+      ],
+      "metric": "C1_first2K",
+      "primary": false,
+      "baseline_tps": 74.75487271135844,
+      "candidate_tps": 74.98974260735996,
+      "pvalue_scope": "secondary/unadjusted; not an independent confirmatory claim",
+      "predeclared_primary_criterion_pass": false
+    },
+    {
+      "paired_log_ratios": [
+        -0.0023451131387729365,
+        -0.0029255565286895957,
+        0.003548394016404019,
+        -0.00014256329859338915,
+        0.008886507202106762,
+        0.0035363532522092495,
+        -0.0014646823416989466,
+        -0.0007201777286426339
+      ],
+      "mean_log_ratio": 0.001046645179290316,
+      "paired_geometric_throughput_increase_pct": 0.10471931035000517,
+      "bootstrap95_throughput_increase_pct": [
+        -0.13123830455739302,
+        0.38243460588376227
+      ],
+      "predeclared_two_sided_signflip_p": 0.546875,
+      "signflip_assumption": "Pairwise sign symmetry;256signpatterns, not the constrained assignment distribution.",
+      "balanced_assignment_sensitivity_p": 0.5428571428571428,
+      "balanced_assignments": 70,
+      "positive_pairs": 3,
+      "negative_pairs": 5,
+      "paired_duration_reduction_pct": 0.10460976372687059,
+      "bootstrap95_duration_reduction_pct": [
+        -0.13141076581846267,
+        0.3809776156408762
+      ],
+      "metric": "C1_repeat2K",
+      "primary": false,
+      "baseline_tps": 74.7580857628603,
+      "candidate_tps": 74.83637191470203,
+      "pvalue_scope": "secondary/unadjusted; not an independent confirmatory claim",
+      "predeclared_primary_criterion_pass": false
+    }
+  ],
+  "total_request_records": 192,
+  "canonical_output_prompt_cache_work_exact": true,
+  "C1_MTP_work_exact": true,
+  "phase_flags": 28,
+  "flagged_candidate_cases": [
+    "pair01-candidate/short-c2/1/0",
+    "pair01-candidate/short-c2/1/1",
+    "pair06-candidate/coding-c2/1/0",
+    "pair07-candidate/coding-c2/1/0",
+    "pair07-candidate/coding-c2/1/1",
+    "pair08-candidate/short-c2/1/0",
+    "pair08-candidate/short-c2/1/1"
+  ],
+  "adaptive_work_differences": 72,
+  "frozen_harness_source_binaries_PIDs_runtime_driver_topology_counters_kernel_pass": true,
+  "scope": "Exacte815 wire16 dynamic-window parent versus fc08 wire17 batched full-target head, all prioroptimizations inboth. SameQ4XL/sharedQ8MTP,65536capacity/two slots/chunk2048/cachebypass/greedythinkoff,81C6TX32/fourrails/crossed40+20. Identical12requesthistory warmup8,first/repeat2K113EOS,naturalC2,fiveshort16controls,codingC2cap256. ExistingclientSSE recorderonly; noSDK/BPF/adminsampler/extraidle/prime/fulltablewarm/sourcebuildgitdocwritesduringtiming. Allold33pilot and23observedflags retained. Oldconfidence-v1stoppedonfixedVA EEXISTbefore6thstartup; no oldsamplesreused. BothnewvariantsusequalifiedOS-selectedaddresses,wire16versus17; matchingpeersonly. Initialprefill90msflagdidnotrecurinpairedtrace; zeroForwardBatch inC1excludesexecutednewbodybutnotsetup/layout/environment effects. No driver/system/default or newPRchange.",
+  "limits": "One predeclared primary naturalC2 endpoint; coding and C1 summaries secondary/unadjusted. A primary gain does not waive individual timing regressions, startup tails, C1harm or setup effects; no default/adoption/newPR claim from this report alone."
+}

@@ -16,6 +16,8 @@
   ffmpeg-headless,
   ccache,
   rocmPackages,
+  rdma-core ? null,
+  enableTp2Rdma ? false,
   releaseVersion ? null,
   extensionsFromLock ? false,
   extensions ? [ ],
@@ -112,7 +114,7 @@ stdenv.mkDerivation {
     rocmPackages.rocprim
     rocmPackages.rocwmma
     rocmPackages.rocblas
-  ];
+  ] ++ lib.optionals enableTp2Rdma [ rdma-core rdma-core.dev ];
 
   cmakeFlags = [
     "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
@@ -123,7 +125,8 @@ stdenv.mkDerivation {
     "-DGUFO_FFMPEG_EXECUTABLE=${ffmpeg-headless}/bin/ffmpeg"
     "-DGUFO_FFPROBE_EXECUTABLE=${ffmpeg-headless}/bin/ffprobe"
     "-DCMAKE_HIP_COMPILER=${rocmPackages.llvm.clang}/bin/clang"
-  ] ++ lib.optional (extensions != [ ]) "-DGUFO_EXTENSION_DIRS=${lib.concatMapStringsSep ";" (ext: "${ext}") extensions}";
+  ] ++ lib.optionals enableTp2Rdma [ "-DGUFO_ENABLE_TP2_RDMA=ON" ]
+    ++ lib.optional (extensions != [ ]) "-DGUFO_EXTENSION_DIRS=${lib.concatMapStringsSep ";" (ext: "${ext}") extensions}";
 
   # CI exposes a persistent /tmp/gufo-ccache through extra-sandbox-paths for
   # C/C++ sources. Keep HIP uncached: Clang emits a bundled preprocessor output
@@ -170,6 +173,10 @@ stdenv.mkDerivation {
     test ! -e $out/bin/gufo-kernel-bench
     test -f $out/share/licenses/gufo/LICENSE
     test -f $out/share/licenses/gufo/third-party/LICENSE.ds4
+    ${lib.optionalString enableTp2Rdma ''
+      test -e ${lib.getLib rdma-core}/lib/libibverbs.so
+      test -f $out/share/licenses/gufo/third-party/rdma-core/COPYING.GPL2
+    ''}
 
     runHook postInstallCheck
   '';

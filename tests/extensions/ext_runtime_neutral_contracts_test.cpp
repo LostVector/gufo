@@ -198,6 +198,8 @@ void CheckModalProviders() {
   gufo::ext::RegisterTextProvider({.id = "test-text"});
   Expect(gufo::ext::FindTextProvider("test-text") != nullptr,
          "registered text provider is discoverable by id");
+  Expect(gufo::ext::FindTextProvider("test-text")->create_parallel == nullptr,
+         "ordinary providers require no parallel transport");
   gufo::ext::RegisterAsrProvider({.id = "test-asr"});
   Expect(gufo::ext::FindAsrProvider("test-asr") != nullptr,
          "find asr provider");

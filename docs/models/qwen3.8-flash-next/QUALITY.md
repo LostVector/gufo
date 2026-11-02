@@ -987,6 +987,41 @@ upstream draft-sampler equivalence is not claimed.
 MTP cache projections now keep the same arithmetic across prompt splits.
 Older Flash-Next disk checkpoints are rejected and rebuilt once.
 
+## Full Q8
+
+**Lowest perplexity of all runs, but llama.cpp differs from Gufo more than Q4
+differs from Q8.** WikiText-2 test set, first eight 1024-token windows (4,088
+scored positions), against next-token log-probs saved by
+`llama-perplexity --kl-divergence-base` from a llama.cpp build (`-fa on`, F16
+KV, RPC over the same two hosts) on the same model files. Gufo ran two-host
+TP2.
+
+| Perplexity | Q4 | Q8 |
+| --- | --- | --- |
+| Gufo, TP2 | 2.1093 | 2.1053 |
+| Gufo, one host | 2.1168 | does not fit |
+| llama.cpp | 2.1311 | 2.1218 |
+
+| Pair (reference first) | Mean KL | Same top token |
+| --- | --- | --- |
+| Gufo Q4 one host, Gufo Q4 TP2 | 0.019 | 97.1% |
+| llama.cpp Q8, llama.cpp Q4 | 0.060 | 94.4% |
+| Gufo Q8, Gufo Q4 | 0.067 | 93.4% |
+| llama.cpp Q4, Gufo Q4 | 0.090 | 93.0% |
+| llama.cpp Q8, Gufo Q8 | 0.087 | 93.4% |
+
+Q8 rows were remeasured on October 9 after the routed Q8_0 experts moved to
+the F16 WMMA route (2.0957, 0.093/93.1% and 0.070/94.0% before). The Q8 run
+saved for the Q4 pair is that revision's; on it, Gufo Q4 TP2 scores 2.1182,
+unchanged by the expert route.
+
+Q4 to Q8 moves Gufo about as much as it
+moves llama.cpp, but the two implementations differ by more than that on both
+quantizations; which one is closer to the original model needs an official
+reference. Per-layer embeddings matter: Gufo without them scores
+6.13. `qwen38_flash_next.ngram` checks Q8 rows (cold, cached, batched and
+unaligned reads, truncation and invalid dimensions).
+
 ## Vision
 
 **One Gufo encoder comparison fails:** relative L2 **6.47%** versus official
@@ -1146,3 +1181,56 @@ Loading measures cold target/sidecar files to HTTP readiness, verified with
 runtime libraries may remain warm. Memory uses C1/AR/capacity 133121 and peak
 global HIP allocation, including idle memory. See the
 [benchmark workflow](../../../.agents/skills/benchmark-model/SKILL.md).
+
+
+RDMA tables refreshed October 9, 2026 (`c85349b5`): Q4 on one host against
+two hosts over USB4 RoCE v2 (`usb4_rdma0`), and the full Q8 model on two
+hosts. Both hosts use balanced power mode (85 W sustained). One CMake `gpu-tp2` binary (SHA-256 prefix `8ce3aabafa3cc807`,
+identical on both hosts) was built in the ROCm 7.2.3 container with RDMA
+enabled and served every table, the one-host runs included: the Nix build's
+rdma-core has no USB4 RDMA provider. HTTP, greedy seed 1, thinking off; the
+single-user depth sweep and the pp2048/tg128 users tables follow the one-host
+method. One warmed sample or cohort per point. Three single-user rows whose
+prefill was far below their neighbours' (Q4 MTP mixed at 65,536 and 258,048,
+Q8 MTP repetitive at 131,072) were measured again with both workloads; the
+tables show the repeat. Each users table starts a fresh server per point and
+prepares every session with one output token before the measured cohort; all
+51 measured completion sets match their fresh one-user AR controls. These
+checks do not establish unquantized-model accuracy. Commands, preparation
+records, hashes, samples and draft counts remain in the artifacts.
+
+## Draft TP recursive snapshot turns (October 31, 2026)
+
+This host scheduling change preserves model arithmetic and collective order.
+The integration-stack AR/MTP pilots match48canonical outputs; a supported
+fixed-depth1 diagnostic matches12more with identical recorded draft work.
+Candidate functional checks cover23HTTPrequests with six request-ID-matched
+server cancellations, exact two-row survivors/post-cancel replay and two seeded
+continuation histories reusing18,461tokens while retaining/discarding interrupted
+assistant output. Actual MTP proposals are checked. Per-request timing remains
+unqualified:22AR and25adaptive-MTP phase flags are retained, with changed
+batching/draft work. The standalone published base has five passing CPU suites, a separate production
+build and subsequently passing bounded AR/MTP hardware/functional checks; timing
+flags remain open.
+[Evidence and limits](../../patches/ar-snapshot-turn/README.md).
+
+The follow-up [eight-pair adaptive-MTP study](../../patches/ar-snapshot-turn/README.md)
+completes 16 starts/80 exact outputs: concurrent geometric change +1.302%,
+95% interval [−1.053,+3.511]%, balanced-order p=0.371429. No aggregate direction
+or equivalence established. All 14 new phase flags and 30 changed-work
+comparisons remain; earlier pilot flags are separate. The separate AR confidence study is complete (below); standalone timing follow-up remains open.
+
+The AR confidence comparison completes80exact outputs with16retainedphase flags;
+its primary C2endpoint supports+5.415%throughput (95%CI[0.886,12.644]%) with a
+first-request batching tradeoff. Standalone published AR/MTP each separately pass
+23HTTPrequests, six confirmed cancellations, exact width-two survivors/replay and
+two seeded18,461token continuations. Standalone timing retains24flags/six changed-
+work comparisons; no blanket performance or error-path qualification is claimed.
+
+The standalone published-base MTPfollow-up completes16starts/80exact outputs and
+32clean host windows. Point C2change+18.365%,bootstrap95%[0.670,49.116]%,but exact
+balanced p=.142857 (5/8positive): no established direction/equivalence. All55new
+phase flags/30work changes remain. Equal-work repeated C1ranges1.991–2.556s.
+A separate diagnostic finds198actualslowCorsairNVMecommands in three cohorts,
+with IRQ→CQ≤6.75µs and observed reader runnable delay≤33.179µs. It does not explain the old long
+plateau; collector failure/partialEVOcoverage limits remain. [Evidence](../../patches/ar-snapshot-turn/README.md).

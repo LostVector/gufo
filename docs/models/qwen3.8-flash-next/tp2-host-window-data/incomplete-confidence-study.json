@@ -1,0 +1,13 @@
+{
+  "study_completed": false,
+  "completed_starts": 5,
+  "complete_pairs": 2,
+  "canonical_completed_records": 60,
+  "failed_start": "pair03-baseline",
+  "failure": "EVO fixed RDMA buffer mmap EEXIST before model load; Corsair bootstrap receive EAGAIN",
+  "frozen_harness_unchanged": true,
+  "failed_start_transport_counter_errors_zero": true,
+  "final_native_four_rails_idle": true,
+  "confidence_result": null,
+  "stop": "Preserved incomplete study; no replacement/exclusion/continuation or partial confidence estimate. Fix and qualify allocator before any separately declared study."
+}

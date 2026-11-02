@@ -1,0 +1,11 @@
+{
+  "binary_sha256": "e8157ddba559f3f0c4f7b057e7ec6a022b00057ea6fbad48667751cc7a4f27bf",
+  "parent_binary_sha256": "6c4f1403d57549e712d70b3c18b36585388b8198712bec0a84c04083afd533ae",
+  "changed_archive_members": [
+    "verbs.cpp.o"
+  ],
+  "source_files_changed": [
+    "src/models/qwen38_flash_next/kernels/rocm/verbs.cpp"
+  ],
+  "headers_GPU_all_other_objects_unchanged": true
+}

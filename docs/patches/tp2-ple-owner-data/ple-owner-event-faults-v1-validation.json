@@ -1,0 +1,1112 @@
+{
+  "rank0_and_rank1_exact_new_PLE_event_record_failure_rejected": true,
+  "live_streams_failed_explicitly": 4,
+  "exact_independent_fresh_recovery_outputs": 8,
+  "initial_fresh_control_requests": 4,
+  "failed_pairs_exit_automatically": true,
+  "faults": [
+    {
+      "phase": "rank0-event-error",
+      "fault_rank": 0,
+      "owner": {
+        "pid": 985798,
+        "sha256": "74b0ee77ce491d308c8c2d6514bba2062e1c879258d26d0bff4ed67d12413fc8",
+        "start_ticks": "16665217",
+        "launch_fault_present": true,
+        "safe_options": {
+          "--context": "65536",
+          "--sessions": "2",
+          "--prefill-chunk": "2048",
+          "--cache-ram-bytes": "1073741824",
+          "--speculative": "mtp",
+          "--tp-world-size": "2",
+          "--tp-rank": "0",
+          "--think": "off",
+          "--tp-rdma-device": "usb4_rdma0"
+        }
+      },
+      "responses": [
+        {
+          "actor": 0,
+          "events": [
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Debug"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "ging"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " slow"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " distributed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " inference"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " server"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " requires"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-oxkj5eb64971y586j6tm",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " multi"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: cooperative PLE validation submission failed",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: cooperative PLE validation submission failed",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "elapsed": 0.610394635994453
+        },
+        {
+          "actor": 1,
+          "events": [
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Here"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " is"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " detailed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ","
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " numbered"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " list"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " of"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " thirty"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " practical"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-dtdyx2ub474bz4oa6att",
+              "object": "chat.completion.chunk",
+              "created": 1793591275,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " ways"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: cooperative PLE validation submission failed",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: cooperative PLE validation submission failed",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "elapsed": 0.6115986899822019
+        }
+      ],
+      "observed_content_pieces": [
+        10,
+        11
+      ],
+      "faults": [
+        {
+          "pid": 985798,
+          "tid": 985972,
+          "api": "hipEventRecord",
+          "return_pc": 94201771,
+          "error": 1,
+          "real_api_called": false
+        }
+      ],
+      "valid_exact_event_failure": true,
+      "elapsed_seconds": 0.6288070169975981,
+      "scope": "Arm after8content pieces from EACH live SSEclient. Exact current-binary PLE callback return PC; one simulated EventRecord API failure, no actual event submitted for that call. No realGPUfault, precise token/collective-inflight or latency claim.",
+      "pair_exit": {
+        "states": [
+          {
+            "rank": 0,
+            "pid": 985798,
+            "alive": false,
+            "original_start_ticks": "16665217",
+            "observed_start_ticks": null
+          },
+          {
+            "rank": 1,
+            "pid": 795815,
+            "alive": false,
+            "original_start_ticks": "16686017",
+            "observed_start_ticks": null
+          }
+        ],
+        "exit_observation_ms": 1342.9522580117919,
+        "new_connection_rejected": "ConnectionRefusedError(111, 'Connection refused')",
+        "scope": "Current serve.cpp fails closed by exiting the poisoned pair. No timeout or normal completion is accepted; no transparent in-process reconnect claim."
+      },
+      "failed_pair_exited": true
+    },
+    {
+      "phase": "rank1-event-error",
+      "fault_rank": 1,
+      "owner": {
+        "pid": 796952,
+        "sha256": "74b0ee77ce491d308c8c2d6514bba2062e1c879258d26d0bff4ed67d12413fc8",
+        "start_ticks": "16693765",
+        "launch_fault_present": true,
+        "safe_options": {
+          "--context": "65536",
+          "--sessions": "2",
+          "--prefill-chunk": "2048",
+          "--cache-ram-bytes": "1073741824",
+          "--speculative": "mtp",
+          "--tp-world-size": "2",
+          "--tp-rank": "1",
+          "--think": "off",
+          "--tp-rdma-device": "usb4_rdma0"
+        }
+      },
+      "responses": [
+        {
+          "actor": 0,
+          "events": [
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Debug"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "ging"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " slow"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " distributed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " inference"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " server"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " requires"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " multi"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "-layer"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "ed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " approach"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ","
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-bj7d48rzgyo4xet5chpm",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " moving"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "elapsed": 0.8277274840220343
+        },
+        {
+          "actor": 1,
+          "events": [
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Here"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " is"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " detailed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ","
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " numbered"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " list"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " of"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " thirty"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " practical"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " ways"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " to"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " debug"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " a"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " slow"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " distributed"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " inference"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " server"
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "chatcmpl-calgfbi6r9rujofe9ri4",
+              "object": "chat.completion.chunk",
+              "created": 1793591353,
+              "model": "flash-next-tp-test",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "."
+                  },
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "error": {
+                "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+                "type": "server_error",
+                "code": "generation_failed"
+              }
+            }
+          ],
+          "explicit": {
+            "message": "TP collective scope release failed: verbs communicator is poisoned: verbs peer closed the bootstrap connection",
+            "type": "server_error",
+            "code": "generation_failed"
+          },
+          "normal": false,
+          "exception": null,
+          "elapsed": 0.8282876469893381
+        }
+      ],
+      "observed_content_pieces": [
+        15,
+        19
+      ],
+      "faults": [
+        {
+          "pid": 796952,
+          "tid": 796952,
+          "api": "hipEventRecord",
+          "return_pc": 94201771,
+          "error": 1,
+          "real_api_called": false
+        }
+      ],
+      "valid_exact_event_failure": true,
+      "elapsed_seconds": 0.9903848329850007,
+      "scope": "Arm after8content pieces from EACH live SSEclient. Exact current-binary PLE callback return PC; one simulated EventRecord API failure, no actual event submitted for that call. No realGPUfault, precise token/collective-inflight or latency claim.",
+      "pair_exit": {
+        "states": [
+          {
+            "rank": 0,
+            "pid": 986423,
+            "alive": false,
+            "original_start_ticks": "16672964",
+            "observed_start_ticks": "16672964"
+          },
+          {
+            "rank": 1,
+            "pid": 796952,
+            "alive": false,
+            "original_start_ticks": "16693765",
+            "observed_start_ticks": null
+          }
+        ],
+        "exit_observation_ms": 1089.2825229966547,
+        "new_connection_rejected": "ConnectionRefusedError(111, 'Connection refused')",
+        "scope": "Current serve.cpp fails closed by exiting the poisoned pair. No timeout or normal completion is accepted; no transparent in-process reconnect claim."
+      },
+      "failed_pair_exited": true
+    }
+  ],
+  "checked_transport_error_deltas": {
+    "initial-control/rank0": {},
+    "initial-control/rank1": {},
+    "rank0-event-error/rank0": {},
+    "rank0-event-error/rank1": {},
+    "rank0-recovery/rank0": {},
+    "rank0-recovery/rank1": {},
+    "rank1-event-error/rank0": {},
+    "rank1-event-error/rank1": {},
+    "rank1-recovery/rank0": {},
+    "rank1-recovery/rank1": {}
+  },
+  "source_harness_binary_boot_topology_PID_kernel_approved_idle_checks": true,
+  "scope": "Current combined2669e07c production release, exactnewPLE callback hipEventRecord return failure only. Five CPU shim controls. Both SSEclients live before arm; both fail explicitly, pair exits, fresh processes recover. Not actual GPUhardware fault, native completion latency, precise collective-inflight loss, performance, or same-engine reconnect."
+}

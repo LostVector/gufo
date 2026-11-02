@@ -1,0 +1,302 @@
+{
+  "raw_sha256": {
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/ple-owner-wider-concurrency-v1-before-baseline.jsonl": "cc4dc220497b09252f33f51244408ac885902a26535dbefbddf19e59e6519f78",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/ple-owner-wider-concurrency-v1-first-candidate.jsonl": "b47e5a4190151b65d11e81d86282a83d40e6496360f438f45304c661dde72d72",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/ple-owner-wider-concurrency-v1-after-baseline.jsonl": "e4215c23871137c0a001da6c9eebe929ae3331faa170f6f487308e3970dfc12e"
+  },
+  "same_final_output": true,
+  "matched_byte_frontiers": [
+    {
+      "bytes": 4,
+      "before-baseline": 521.252062,
+      "first-candidate": 523.109906,
+      "after-baseline": 537.773199,
+      "candidate_minus_before_ms": 1.857844,
+      "candidate_minus_after_ms": -14.663292999999953
+    },
+    {
+      "bytes": 7,
+      "before-baseline": 643.422487,
+      "first-candidate": 638.30513,
+      "after-baseline": 653.560115,
+      "candidate_minus_before_ms": -5.117357000000084,
+      "candidate_minus_after_ms": -15.254985000000033
+    },
+    {
+      "bytes": 9,
+      "before-baseline": 643.461216,
+      "first-candidate": 638.360788,
+      "after-baseline": 653.599694,
+      "candidate_minus_before_ms": -5.100428000000079,
+      "candidate_minus_after_ms": -15.238906000000043
+    },
+    {
+      "bytes": 18,
+      "before-baseline": 643.481856,
+      "first-candidate": 783.178439,
+      "after-baseline": 800.057005,
+      "candidate_minus_before_ms": 139.69658300000003,
+      "candidate_minus_after_ms": -16.878565999999978
+    },
+    {
+      "bytes": 19,
+      "before-baseline": 804.804714,
+      "first-candidate": 783.215798,
+      "after-baseline": 800.094414,
+      "candidate_minus_before_ms": -21.58891600000004,
+      "candidate_minus_after_ms": -16.87861600000008
+    },
+    {
+      "bytes": 28,
+      "before-baseline": 804.846392,
+      "first-candidate": 783.239847,
+      "after-baseline": 800.119914,
+      "candidate_minus_before_ms": -21.606544999999983,
+      "candidate_minus_after_ms": -16.88006699999994
+    },
+    {
+      "bytes": 33,
+      "before-baseline": 804.890231,
+      "first-candidate": 854.806902,
+      "after-baseline": 874.537714,
+      "candidate_minus_before_ms": 49.916671000000065,
+      "candidate_minus_after_ms": -19.730812000000014
+    },
+    {
+      "bytes": 36,
+      "before-baseline": 804.909681,
+      "first-candidate": 854.845051,
+      "after-baseline": 874.584932,
+      "candidate_minus_before_ms": 49.935370000000034,
+      "candidate_minus_after_ms": -19.73988099999997
+    },
+    {
+      "bytes": 43,
+      "before-baseline": 804.92566,
+      "first-candidate": 854.86517,
+      "after-baseline": 874.607632,
+      "candidate_minus_before_ms": 49.93951000000004,
+      "candidate_minus_after_ms": -19.742461999999932
+    },
+    {
+      "bytes": 53,
+      "before-baseline": 804.944249,
+      "first-candidate": 979.26123,
+      "after-baseline": 1000.004501,
+      "candidate_minus_before_ms": 174.31698099999994,
+      "candidate_minus_after_ms": -20.74327100000005
+    },
+    {
+      "bytes": 58,
+      "before-baseline": 886.143407,
+      "first-candidate": 1065.276394,
+      "after-baseline": 1086.449783,
+      "candidate_minus_before_ms": 179.13298699999996,
+      "candidate_minus_after_ms": -21.173389000000043
+    },
+    {
+      "bytes": 61,
+      "before-baseline": 886.169307,
+      "first-candidate": 1065.304003,
+      "after-baseline": 1086.480962,
+      "candidate_minus_before_ms": 179.13469599999996,
+      "candidate_minus_after_ms": -21.176959000000124
+    },
+    {
+      "bytes": 67,
+      "before-baseline": 886.186496,
+      "first-candidate": 1065.322413,
+      "after-baseline": 1086.505861,
+      "candidate_minus_before_ms": 179.13591700000006,
+      "candidate_minus_after_ms": -21.183448
+    },
+    {
+      "bytes": 69,
+      "before-baseline": 886.202216,
+      "first-candidate": 1065.339192,
+      "after-baseline": 1086.590578,
+      "candidate_minus_before_ms": 179.1369759999999,
+      "candidate_minus_after_ms": -21.25138600000014
+    },
+    {
+      "bytes": 74,
+      "before-baseline": 886.217765,
+      "first-candidate": 1145.591938,
+      "after-baseline": 1166.792436,
+      "candidate_minus_before_ms": 259.37417300000004,
+      "candidate_minus_after_ms": -21.200497999999925
+    },
+    {
+      "bytes": 86,
+      "before-baseline": 886.232985,
+      "first-candidate": 1145.637577,
+      "after-baseline": 1166.812856,
+      "candidate_minus_before_ms": 259.404592,
+      "candidate_minus_after_ms": -21.175279000000046
+    },
+    {
+      "bytes": 96,
+      "before-baseline": 1021.915787,
+      "first-candidate": 1145.659636,
+      "after-baseline": 1166.830065,
+      "candidate_minus_before_ms": 123.74384900000007,
+      "candidate_minus_after_ms": -21.170429000000013
+    },
+    {
+      "bytes": 103,
+      "before-baseline": 1021.957876,
+      "first-candidate": 1145.678346,
+      "after-baseline": 1166.854614,
+      "candidate_minus_before_ms": 123.72046999999986,
+      "candidate_minus_after_ms": -21.176268000000164
+    },
+    {
+      "bytes": 104,
+      "before-baseline": 1021.979986,
+      "first-candidate": 1216.736156,
+      "after-baseline": 1237.792918,
+      "candidate_minus_before_ms": 194.75616999999988,
+      "candidate_minus_after_ms": -21.056762000000163
+    },
+    {
+      "bytes": 110,
+      "before-baseline": 1107.038248,
+      "first-candidate": 1260.53911,
+      "after-baseline": 1281.793786,
+      "candidate_minus_before_ms": 153.50086199999987,
+      "candidate_minus_after_ms": -21.254676000000018
+    },
+    {
+      "bytes": 116,
+      "before-baseline": 1107.079017,
+      "first-candidate": 1334.913031,
+      "after-baseline": 1356.822638,
+      "candidate_minus_before_ms": 227.83401400000002,
+      "candidate_minus_after_ms": -21.90960700000005
+    },
+    {
+      "bytes": 122,
+      "before-baseline": 1107.099997,
+      "first-candidate": 1392.069016,
+      "after-baseline": 1413.489567,
+      "candidate_minus_before_ms": 284.9690189999999,
+      "candidate_minus_after_ms": -21.42055100000016
+    },
+    {
+      "bytes": 137,
+      "before-baseline": 1182.777889,
+      "first-candidate": 1446.085895,
+      "after-baseline": 1467.688101,
+      "candidate_minus_before_ms": 263.308006,
+      "candidate_minus_after_ms": -21.602206000000024
+    },
+    {
+      "bytes": 138,
+      "before-baseline": 1182.816918,
+      "first-candidate": 1446.127104,
+      "after-baseline": 1467.72397,
+      "candidate_minus_before_ms": 263.31018599999993,
+      "candidate_minus_after_ms": -21.59686600000009
+    },
+    {
+      "bytes": 149,
+      "before-baseline": 1241.990113,
+      "first-candidate": 1482.030413,
+      "after-baseline": 1503.763335,
+      "candidate_minus_before_ms": 240.0402999999999,
+      "candidate_minus_after_ms": -21.732922000000144
+    },
+    {
+      "bytes": 150,
+      "before-baseline": 1242.016762,
+      "first-candidate": 1517.65886,
+      "after-baseline": 1539.297465,
+      "candidate_minus_before_ms": 275.64209800000003,
+      "candidate_minus_after_ms": -21.638605000000098
+    },
+    {
+      "bytes": 159,
+      "before-baseline": 1285.944302,
+      "first-candidate": 1569.97016,
+      "after-baseline": 1591.208806,
+      "candidate_minus_before_ms": 284.02585799999997,
+      "candidate_minus_after_ms": -21.238646000000017
+    },
+    {
+      "bytes": 165,
+      "before-baseline": 1359.456699,
+      "first-candidate": 1624.458175,
+      "after-baseline": 1646.147478,
+      "candidate_minus_before_ms": 265.0014759999999,
+      "candidate_minus_after_ms": -21.68930300000011
+    },
+    {
+      "bytes": 166,
+      "before-baseline": 1359.485718,
+      "first-candidate": 1624.500963,
+      "after-baseline": 1646.169217,
+      "candidate_minus_before_ms": 265.01524500000005,
+      "candidate_minus_after_ms": -21.668253999999934
+    },
+    {
+      "bytes": 172,
+      "before-baseline": 1416.40618,
+      "first-candidate": 1673.137002,
+      "after-baseline": 1694.798736,
+      "candidate_minus_before_ms": 256.730822,
+      "candidate_minus_after_ms": -21.661734000000024
+    },
+    {
+      "bytes": 185,
+      "before-baseline": 1470.266274,
+      "first-candidate": 1719.065522,
+      "after-baseline": 1740.812364,
+      "candidate_minus_before_ms": 248.79924800000003,
+      "candidate_minus_after_ms": -21.746841999999788
+    },
+    {
+      "bytes": 186,
+      "before-baseline": 1470.313112,
+      "first-candidate": 1719.092742,
+      "after-baseline": 1740.850833,
+      "candidate_minus_before_ms": 248.77963,
+      "candidate_minus_after_ms": -21.758090999999922
+    },
+    {
+      "bytes": 190,
+      "before-baseline": 1507.007038,
+      "first-candidate": 1757.631062,
+      "after-baseline": 1777.863619,
+      "candidate_minus_before_ms": 250.62402399999996,
+      "candidate_minus_after_ms": -20.232557000000043
+    }
+  ],
+  "request_values": {
+    "before-baseline": {
+      "wall_ms": 1540.6205450126436,
+      "client_ttft_ms": 521.2622710096184,
+      "decode_ms": 810.045158,
+      "draft_tokens": 23,
+      "draft_accepted_tokens": 21,
+      "draft_rounds": 10
+    },
+    "first-candidate": {
+      "wall_ms": 1758.7038799829315,
+      "client_ttft_ms": 523.117585980799,
+      "decode_ms": 1061.449961,
+      "draft_tokens": 22,
+      "draft_accepted_tokens": 15,
+      "draft_rounds": 13
+    },
+    "after-baseline": {
+      "wall_ms": 1779.146059998311,
+      "client_ttft_ms": 537.7918189915363,
+      "decode_ms": 1065.546415,
+      "draft_tokens": 22,
+      "draft_accepted_tokens": 15,
+      "draft_rounds": 13
+    }
+  },
+  "observation": "Flagged actor1 candidate and later baseline both have13rounds/22drafts/15accepted versus firstbaseline10rounds/23drafts/21accepted. Candidate whole reply1758.7ms versus1540.6/1779.1ms controls. Shared later-baseline work/latency mode is observed, not proof that all218ms is caused by3extra rounds. No fixed-work replay, per-round trace or causal attribution. All6strict entries remain; do not waive them based on whole-wave throughput or similar control.",
+  "scope": "Same-output cumulative emitted byte frontiers only, matched exact offsets without interpolation/token-identity assumptions. No GPU/transport measurement, significance/equivalence or new performance gain."
+}

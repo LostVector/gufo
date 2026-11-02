@@ -1,0 +1,8 @@
+{
+  "distinct_affected_checks": 15,
+  "original_passes": 14,
+  "original_failure": "serving_bench_test missing Matplotlib in system interpreter, retained",
+  "same_test_source_recovered_in_project_environment": true,
+  "no_skips": true,
+  "scope": "14 original CTest passes + 1 corrected-environment CTest pass. Not a rewritten green original suite."
+}

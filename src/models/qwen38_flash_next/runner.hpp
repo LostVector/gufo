@@ -10,6 +10,9 @@
 
 namespace gufo::models::qwen38_flash_next {
 class Model;
+namespace rocm {
+class Communicator;
+}
 
 inline constexpr std::uint32_t DecodeConcurrencyForSessions(
     std::size_t session_count) {
@@ -18,6 +21,14 @@ inline constexpr std::uint32_t DecodeConcurrencyForSessions(
 }
 
 #if defined(ENGINE_ENABLE_HIP)
+std::shared_ptr<ext::TextParallelRuntime> CreateQwenFlashNextParallelRuntime(
+    const ext::TextParallelTransportOptions& options, std::string* error);
+
+std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
+    const ext::TextRunnerOptions& options,
+    std::shared_ptr<rocm::Communicator> communicator, std::string* error,
+    bool* uses_yarn);
+
 std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
     const ext::TextRunnerOptions& options, std::string* error);
 

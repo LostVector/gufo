@@ -1,0 +1,62 @@
+[
+  {
+    "case": "new-new",
+    "rank": 0,
+    "stdout": "PASS negotiated_target_head_gather=true real_10KiB_sum=3 rows=2560\n",
+    "stderr": ""
+  },
+  {
+    "case": "new-new",
+    "rank": 1,
+    "stdout": "PASS negotiated_target_head_gather=true real_10KiB_sum=3 rows=2560\n",
+    "stderr": ""
+  },
+  {
+    "case": "new-old",
+    "rank": 0,
+    "stdout": "REJECT verbs protocol version mismatch (local 16, peer 14)\n",
+    "stderr": ""
+  },
+  {
+    "case": "new-old",
+    "rank": 1,
+    "stdout": "REJECT verbs protocol version mismatch (local 14, peer 16)\n",
+    "stderr": ""
+  },
+  {
+    "case": "old-new",
+    "rank": 0,
+    "stdout": "REJECT verbs protocol version mismatch (local 14, peer 16)\n",
+    "stderr": ""
+  },
+  {
+    "case": "old-new",
+    "rank": 1,
+    "stdout": "REJECT verbs protocol version mismatch (local 16, peer 14)\n",
+    "stderr": ""
+  },
+  {
+    "case": "occupied-old",
+    "rank": 0,
+    "stdout": "REJECT fixed RDMA buffer mmap failed: File exists\n",
+    "stderr": "OCCUPIED legacy_base=0x700000000000 created=1 errno=0\nWINDOW_MMAP hint=0x7f9beac00000 result=0x7f9beac00000 bytes=150994944 flags=17 errno=0\nWINDOW_MMAP hint=0x700000000000 result=0xffffffffffffffff bytes=150994944 flags=1048610 errno=17\n"
+  },
+  {
+    "case": "occupied-old",
+    "rank": 1,
+    "stdout": "REJECT fixed RDMA buffer mmap failed: File exists\n",
+    "stderr": "OCCUPIED legacy_base=0x700000000000 created=1 errno=0\nWINDOW_MMAP hint=0x71478a000000 result=0x71478a000000 bytes=150994944 flags=17 errno=0\nWINDOW_MMAP hint=0x700000000000 result=0xffffffffffffffff bytes=150994944 flags=1048610 errno=17\n"
+  },
+  {
+    "case": "occupied-new",
+    "rank": 0,
+    "stdout": "PASS negotiated_target_head_gather=true real_10KiB_sum=3 rows=2560\n",
+    "stderr": "OCCUPIED legacy_base=0x700000000000 created=1 errno=0\nWINDOW_MMAP hint=0x7836d6c00000 result=0x7836d6c00000 bytes=150994944 flags=17 errno=0\nWINDOW_MMAP hint=(nil) result=0x7836d6e00000 bytes=150994944 flags=34 errno=0\nWINDOW_MMAP hint=(nil) result=0x7836cde00000 bytes=150994944 flags=34 errno=0\n"
+  },
+  {
+    "case": "occupied-new",
+    "rank": 1,
+    "stdout": "PASS negotiated_target_head_gather=true real_10KiB_sum=3 rows=2560\n",
+    "stderr": "OCCUPIED legacy_base=0x700000000000 created=1 errno=0\nWINDOW_MMAP hint=0x7eb88ec00000 result=0x7eb88ec00000 bytes=150994944 flags=17 errno=0\nWINDOW_MMAP hint=(nil) result=0x7eb88ee00000 bytes=150994944 flags=34 errno=0\nWINDOW_MMAP hint=(nil) result=0x7eb885e00000 bytes=150994944 flags=34 errno=0\n"
+  }
+]

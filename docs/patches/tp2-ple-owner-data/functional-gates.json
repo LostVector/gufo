@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "checks": {
+    "smoke": {
+      "path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/cooperative-ple-http-smoke-v2/validation.json",
+      "sha256": "96b2db265591f97478dcce12cde9f620ded4ff569c0876c580204111f1a5c349"
+    },
+    "lifecycle": {
+      "path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/cooperative-ple-http-lifecycle-v2/validation.json",
+      "sha256": "d53f20f4adc5bd08086652f52bdf5f68ae0e2aa1a07750ee339c3c85c8316b3f"
+    },
+    "snapshot": {
+      "path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/fork-integration-v1/cooperative-ple-production-snapshot-comparison.json",
+      "sha256": "7903fe133d5e4b55bfc9f923161cbaf34bed89cd79025ac47d8060d7ec892a55"
+    }
+  }
+}

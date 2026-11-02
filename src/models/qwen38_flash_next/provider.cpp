@@ -37,6 +37,8 @@ void qwen38_flash_next_provider_register(gufo::ext::Registry& registry) {
           &gufo::models::qwen38_flash_next::RunQwen38FlashNextBenchmark,
       .prompt_driver = &gufo::models::qwen38_flash_next::RunFlashNextPrompt,
       .chat_driver = &gufo::models::qwen38_flash_next::RunFlashNextChat,
+      .create_parallel =
+          &gufo::models::qwen38_flash_next::CreateQwenFlashNextParallelRuntime,
   });
 #endif
 }

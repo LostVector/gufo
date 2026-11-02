@@ -15,6 +15,16 @@
 #include "src/cli/serve/text_generation_scheduler.hpp"
 
 namespace gufo::server {
+class TpControlChannel;
+struct TextTpConfig {
+  std::uint32_t rank{0};
+  std::uint32_t world_size{1};
+  int hip_device{0};
+  std::shared_ptr<ext::TextParallelRuntime> runtime;
+  std::shared_ptr<TpControlChannel> control;
+  std::string auth_token;
+  std::uint32_t max_draft_tokens{7};
+};
 
 using TextSpeculativeBackend = ext::TextSpeculativeBackend;
 using TextDFlashDraftPolicy = ext::TextDFlashDraftPolicy;
@@ -61,7 +71,7 @@ public:
             const TextDiskCacheConfig& disk_cache_config = {},
             const std::string& vision_model_path = {},
             TextRunnerRamCacheOptions ram_cache_config = {},
-            bool enable_yarn = false);
+            const TextTpConfig& tp_config = {}, bool enable_yarn = false);
 
   /// Installs a previously prepared runner with request-owned sessions.
   bool load(std::shared_ptr<ext::TextModelRunner> runner, std::string* error,
@@ -69,7 +79,18 @@ public:
             TextPrefillPolicy prefill_policy = {},
             TextSchedulerPolicy scheduler_policy = {},
             const TextDiskCacheConfig& disk_cache_config = {},
-            TextRunnerRamCacheOptions ram_cache_config = {});
+            TextRunnerRamCacheOptions ram_cache_config = {},
+            const TextTpConfig& tp_config = {});
+
+#if defined(ENGINE_ENABLE_HIP)
+  /// Runs the rank-1 TP2 worker loop until the control channel closes.
+  [[nodiscard]] bool run_worker(std::string* error);
+#endif
+
+  /// Rank 0 of a TP2 pair: why the pair broke (rank 1 or the link was lost),
+  /// or empty. Once it did, every later request fails and the server is not
+  /// ready.
+  [[nodiscard]] std::string tp_failure() const;
 
   /// Stable model identifier used in API responses.
   [[nodiscard]] std::string model_id() const override;

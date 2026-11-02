@@ -2,7 +2,7 @@
   "schema": 1,
   "name": "qwen38_flash_next",
   "version": "0.1.0",
-  "api_version": ">= 0.1.0",
+  "api_version": ">= 0.1.12",
   "entry": "qwen38_flash_next_register",
   "registration_target": "gufo_qwen38_flash_next",
   "depends": [],
@@ -114,6 +114,18 @@
     {
       "target": "qwen38_flash_next_continuation_layout_test",
       "ctest": "qwen38_flash_next\\.continuation_layout",
+      "check_pr": true,
+      "windows_build": true
+    },
+    {
+      "target": "qwen38_flash_next_tp_partition_test",
+      "ctest": "qwen38_flash_next\\.tp_partition",
+      "check_pr": true,
+      "windows_build": true
+    },
+    {
+      "target": "qwen38_flash_next_rdma_gid_test",
+      "ctest": "qwen38_flash_next\\.rdma_gid",
       "check_pr": true,
       "windows_build": true
     }

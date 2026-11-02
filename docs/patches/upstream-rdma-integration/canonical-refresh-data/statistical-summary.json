@@ -1,0 +1,585 @@
+{
+  "pairs": 10,
+  "all_240_request_identities_exact": true,
+  "c1_speculative_work_exact": true,
+  "c2_work_changes": [
+    {
+      "pair": "pair02",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair02",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair02",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair02",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair03",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair03",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair03",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair04",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair04",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair04",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair05",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair05",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair05",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair06",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair06",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair06",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair06",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens"
+      ]
+    },
+    {
+      "pair": "pair07",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens"
+      ]
+    },
+    {
+      "pair": "pair07",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair07",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair07",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair08",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens"
+      ]
+    },
+    {
+      "pair": "pair08",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair08",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair09",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair09",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair09",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair09",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair10",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens"
+      ]
+    },
+    {
+      "pair": "pair10",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair10",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair10",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    }
+  ],
+  "observed_order": [
+    -1,
+    1,
+    1,
+    -1,
+    1,
+    1,
+    -1,
+    1,
+    -1,
+    -1
+  ],
+  "metrics": [
+    {
+      "pairs": 10,
+      "paired_log_ratios": [
+        0.0018536325798568054,
+        0.004213379614361367,
+        -0.005715087921996784,
+        -0.0013813208013498445,
+        -0.0004301947145881411,
+        -0.004799659634389846,
+        0.0049946752968903696,
+        0.0011673701874857568,
+        -0.001544819424078014,
+        0.001756174561408823
+      ],
+      "mean_log_ratio": 1.1414974360049219e-05,
+      "paired_geometric_throughput_increase_pct": 0.0011415039511116938,
+      "duration_reduction_pct": 0.0011414909209528368,
+      "marginal_bootstrap95_throughput_increase_pct": [
+        -0.20946082173924035,
+        0.2002680953658425
+      ],
+      "signflip_p": 0.9921875,
+      "signflip_assumption": "Pairwise sign symmetry;1024patterns, not constrained assignment distribution",
+      "balanced_assignment_sensitivity_p": 1.0,
+      "balanced_assignments": 252,
+      "positive_pairs": 5,
+      "negative_pairs": 5,
+      "metric": "C1-first-server-decode",
+      "baseline_values": [
+        66.67837204504461,
+        66.68440999153027,
+        67.05029355650976,
+        66.57595270873233,
+        66.77093395112338,
+        66.85356189266938,
+        66.55596991365299,
+        66.66450862443173,
+        66.85240224224542,
+        66.54750724984004
+      ],
+      "candidate_values": [
+        66.80208387055191,
+        66.96596946712815,
+        66.66818815665042,
+        66.48405344617991,
+        66.74221562592825,
+        66.5334563635466,
+        66.88922693493994,
+        66.74237622567856,
+        66.74920708218184,
+        66.66447897051432
+      ],
+      "baseline_geometric_mean": 66.72321873324047,
+      "candidate_geometric_mean": 66.72398038141858,
+      "primary": true,
+      "holm_adjusted_p": 1.0,
+      "confirmatory_gain": false,
+      "interpretation": "inconclusive; not equivalence"
+    },
+    {
+      "pairs": 10,
+      "paired_log_ratios": [
+        -0.01341494846926574,
+        -0.016562959762438094,
+        0.0026594744841604945,
+        0.006856629372367289,
+        0.004391088926181453,
+        0.033736466903934954,
+        0.018156082620058276,
+        -0.00015724698344299242,
+        -0.001190251912331353,
+        0.010314977325613912
+      ],
+      "mean_log_ratio": 0.00447893125048382,
+      "paired_geometric_throughput_increase_pct": 0.44889766550164384,
+      "duration_reduction_pct": 0.44689157963334614,
+      "marginal_bootstrap95_throughput_increase_pct": [
+        -0.3701247958380909,
+        1.3246427126685585
+      ],
+      "signflip_p": 0.369140625,
+      "signflip_assumption": "Pairwise sign symmetry;1024patterns, not constrained assignment distribution",
+      "balanced_assignment_sensitivity_p": 0.3888888888888889,
+      "balanced_assignments": 252,
+      "positive_pairs": 6,
+      "negative_pairs": 4,
+      "metric": "C2-short-client-wave",
+      "baseline_values": [
+        71.78952652353537,
+        71.9007863025368,
+        71.8355331331857,
+        71.46275598872747,
+        71.43821359419577,
+        69.07578090835513,
+        70.67512539149479,
+        71.37456207440407,
+        71.55242800314487,
+        71.3395301404797
+      ],
+      "candidate_values": [
+        70.83290458774022,
+        70.71970457721659,
+        72.02683216530515,
+        71.95443331879927,
+        71.75259487574814,
+        71.44590878279935,
+        71.97002841931403,
+        71.36333952220266,
+        71.46731325292778,
+        72.07920407789106
+      ],
+      "baseline_geometric_mean": 71.2399303613934,
+      "candidate_geometric_mean": 71.55972474569067,
+      "primary": true,
+      "holm_adjusted_p": 0.7777777777777778,
+      "confirmatory_gain": false,
+      "interpretation": "inconclusive; not equivalence"
+    },
+    {
+      "pairs": 10,
+      "paired_log_ratios": [
+        0.0024118935155736892,
+        0.0014388969089320655,
+        -0.001135163503889589,
+        -0.00029505221629644567,
+        -0.0022878829300138725,
+        0.003306623238198356,
+        0.0019774957496165855,
+        -8.921166052036756e-05,
+        -0.0033503181689015856,
+        -0.0027358257442072383
+      ],
+      "mean_log_ratio": -7.585448115084024e-05,
+      "paired_geometric_throughput_increase_pct": -0.007585160427242674,
+      "duration_reduction_pct": -0.007585735817472461,
+      "marginal_bootstrap95_throughput_increase_pct": [
+        -0.14261229894031058,
+        0.12814672099772012
+      ],
+      "signflip_p": 0.908203125,
+      "signflip_assumption": "Pairwise sign symmetry;1024patterns, not constrained assignment distribution",
+      "balanced_assignment_sensitivity_p": 0.9126984126984127,
+      "balanced_assignments": 252,
+      "positive_pairs": 4,
+      "negative_pairs": 6,
+      "metric": "C1-repeat-server-decode",
+      "baseline_values": [
+        67.20626721351371,
+        66.99240754532569,
+        67.00323732841478,
+        67.06249475310162,
+        67.13641936115806,
+        66.90394028701834,
+        67.14838697636331,
+        67.02769384116183,
+        67.27777266509703,
+        67.11909354887244
+      ],
+      "candidate_values": [
+        67.36855720803142,
+        67.08887209809443,
+        66.92722085248458,
+        67.04271073419719,
+        66.98299466911035,
+        67.12553256989143,
+        67.28130400431738,
+        67.02171445601282,
+        67.05274788376559,
+        66.93571836047055
+      ],
+      "baseline_geometric_mean": 67.0876882991487,
+      "candidate_geometric_mean": 67.0825995903643,
+      "primary": false,
+      "interpretation": "secondary exploratory estimate; no multiplicity-adjusted conclusion"
+    },
+    {
+      "pairs": 10,
+      "paired_log_ratios": [
+        0.00493233520549001,
+        -0.03898739554246649,
+        0.0013408219683547233,
+        0.01051207119339433,
+        0.0005027898436825753,
+        0.006252393149822896,
+        0.04560844947490604,
+        -0.018049498514845976,
+        -0.051222814369196214,
+        0.02015860592801619
+      ],
+      "mean_log_ratio": -0.0018952241662841913,
+      "paired_geometric_throughput_increase_pct": -0.18934293629945328,
+      "duration_reduction_pct": -0.18970212387101615,
+      "marginal_bootstrap95_throughput_increase_pct": [
+        -1.8594181868292259,
+        1.4459102072927181
+      ],
+      "signflip_p": 0.845703125,
+      "signflip_assumption": "Pairwise sign symmetry;1024patterns, not constrained assignment distribution",
+      "balanced_assignment_sensitivity_p": 0.873015873015873,
+      "balanced_assignments": 252,
+      "positive_pairs": 7,
+      "negative_pairs": 3,
+      "metric": "C2-coding-client-wave",
+      "baseline_values": [
+        81.17164526369977,
+        81.38194224739046,
+        81.28687440541819,
+        80.5191298027561,
+        81.18533968964336,
+        80.03691752849467,
+        77.63696646624157,
+        81.8983040385674,
+        81.93307811863569,
+        79.6748569550801
+      ],
+      "candidate_values": [
+        81.57300002174574,
+        78.27012721441359,
+        81.395938733944,
+        81.370017086025,
+        81.22616911734589,
+        80.5389074873403,
+        81.25985736144332,
+        80.43334141343267,
+        77.84191031863921,
+        81.29728904148968
+      ],
+      "baseline_geometric_mean": 80.6630035474555,
+      "candidate_geometric_mean": 80.51027384803145,
+      "primary": false,
+      "interpretation": "secondary exploratory estimate; no multiplicity-adjusted conclusion"
+    }
+  ],
+  "raw_inputs_sha256": {
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair01-candidate.jsonl": "7b60491617a30706a920091879722e95fc8c39da5feb8c54041636b0bb6eda9a",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair01-baseline.jsonl": "00beba06fc814700e5e630d57a66a2e59c74172ed2c794415cbeecd234975847",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair02-baseline.jsonl": "b5eb1aacdd27a9be01f9be43a04f721ed8a761991aa681dd7030566b7f06150c",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair02-candidate.jsonl": "47688e2ee18e1e53d5258875a0dbb04ae354c0154d3577d3128a831549208f70",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair03-baseline.jsonl": "2bb98329a1910f44da2692dd85f98a3e8f4eacdfeeb92b6923c83b957b6af504",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair03-candidate.jsonl": "2d5b5566b2686e002ba6bb83a0365d7bfc8d0dc35c95d446f950d3db5fd17861",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair04-candidate.jsonl": "7a62c492685b42a612ad33bd572269778efdf0869392194c90ec31251bdf4f09",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair04-baseline.jsonl": "3f71b1cfc938b21e821e3a8212047a7296ac262f56792c6d28d2fa61b1ee3792",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair05-baseline.jsonl": "a33f0985a374e12e72f7b1075e60c25f62f88ba2ce28e99eaa49312f4ca8755c",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair05-candidate.jsonl": "4a2e3d59ec174934d2c1f27cb5ba644623304b9b21a29c390029d80d21146a77",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair06-baseline.jsonl": "e25fd53dc0f1957c74a1a3f041bce7581c22eb3f76550bfc65ebb3f8890348d2",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair06-candidate.jsonl": "c0ba70162dddbc8df6ab88b3cf803b9d132938d94fbd07c1f0a5b016483b9c81",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair07-candidate.jsonl": "6be85cf0fe27d50bb141bf0c2e2c1ced4dae7c7b0f3dee0364e4731a4c0422aa",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair07-baseline.jsonl": "a6a297b523b8ecfdf4d154c2929e52a7827ae9554b08c0238fb6126b4cff161c",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair08-baseline.jsonl": "f2322fe2449bb3423d94a17563397514c39af14623bda4e64f9aad6bc38397e7",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair08-candidate.jsonl": "5ea8a2e23b2f1f51e7cbfa37691cf73b66b6e39ac7de5a31879339fd6d2bca13",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair09-candidate.jsonl": "a5667b9bd09f89f007c4a0fd759a6e998b1e94e7c46ae4e016da90f09ef8b5b2",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair09-baseline.jsonl": "5a8ee58e217c3feadd0bab554eb51900c31062356ba496369ab605e1d984a5e4",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair10-candidate.jsonl": "52864dc37f2d18385f9118639237285fa3d903546b6c38247674f46be23a3a61",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair10-baseline.jsonl": "4465bed76fa893c0f1ff1641bc800e4cc8659fdf9c93d48147b5c371b21c316f"
+  },
+  "scope": "Predeclared two-primary migration comparison. All pairs retained. C1 rate is server-accounted; C2 wave includes prefill/admission/terminal wait. Balanced-assignment p and sign-flip p retain their stated assumptions; bootstrap confidence intervals are marginal. Not an equivalence claim. Per-request flags are separate and cannot be waived by aggregates."
+}

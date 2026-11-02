@@ -1,0 +1,248 @@
+{
+  "initial": [
+    {
+      "host": "rk-evo-x2",
+      "kernel": "7.3.0-strix-test",
+      "boot_id": "5d9da4de-9a5f-4c7b-b47a-9cf2b51282ac",
+      "cmdline": "BOOT_IMAGE=/boot/vmlinuz-7.3.0-strix-test root=UUID=c43af9f2-66df-414f-9c5e-a58eaf768c01 ro quiet splash ttm.pages_limit=32505856 amd_iommu=off crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M",
+      "module": "81C6FF2FBAC473C7AB21844",
+      "refcnt": 0,
+      "mask": 4294967295,
+      "routers": [
+        {
+          "router": "0-0",
+          "domain": 0,
+          "uuid": "4d163804-10df-d683-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.5",
+          "remote": false,
+          "rx_speed": null,
+          "tx_speed": null,
+          "rx_lanes": null,
+          "tx_lanes": null
+        },
+        {
+          "router": "0-2",
+          "domain": 0,
+          "uuid": "792d3804-51be-3416-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.5",
+          "remote": true,
+          "rx_speed": "20.0 Gb/s",
+          "tx_speed": "20.0 Gb/s",
+          "rx_lanes": "2",
+          "tx_lanes": "2"
+        },
+        {
+          "router": "1-0",
+          "domain": 1,
+          "uuid": "4d163804-11df-d683-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.6",
+          "remote": false,
+          "rx_speed": null,
+          "tx_speed": null,
+          "rx_lanes": null,
+          "tx_lanes": null
+        },
+        {
+          "router": "1-2",
+          "domain": 1,
+          "uuid": "792d3804-50be-3416-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.6",
+          "remote": true,
+          "rx_speed": "10.0 Gb/s",
+          "tx_speed": "10.0 Gb/s",
+          "rx_lanes": "2",
+          "tx_lanes": "2"
+        }
+      ],
+      "devices": [
+        {
+          "device": "usb4_rdma0",
+          "guid": "0200:5442:5852:4253",
+          "controller": "0000:c7:00.5",
+          "domain": 0
+        },
+        {
+          "device": "usb4_rdma1",
+          "guid": "0200:5442:5852:4254",
+          "controller": "0000:c7:00.5",
+          "domain": 0
+        },
+        {
+          "device": "usb4_rdma5",
+          "guid": "0200:5442:5752:4253",
+          "controller": "0000:c7:00.6",
+          "domain": 1
+        },
+        {
+          "device": "usb4_rdma6",
+          "guid": "0200:5442:5752:4254",
+          "controller": "0000:c7:00.6",
+          "domain": 1
+        }
+      ],
+      "selected_device": "usb4_rdma5",
+      "management_ipv4": [
+        "192.168.64.125"
+      ],
+      "sample_monotonic_ns": 168499424143247
+    },
+    {
+      "host": "rk-corsair-ai",
+      "kernel": "7.3.0-strix-test",
+      "boot_id": "7ae4d78b-e6f2-4b63-b9bd-adbc14a25f1a",
+      "cmdline": "BOOT_IMAGE=/boot/vmlinuz-7.3.0-strix-test root=UUID=7f14140e-d1dd-4a7f-821b-1eda443a3a97 ro quiet splash ttm.pages_limit=32505856 amd_iommu=off crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M",
+      "module": "81C6FF2FBAC473C7AB21844",
+      "refcnt": 0,
+      "mask": 4294967295,
+      "routers": [
+        {
+          "router": "0-0",
+          "domain": 0,
+          "uuid": "792d3804-50be-3416-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.5",
+          "remote": false,
+          "rx_speed": null,
+          "tx_speed": null,
+          "rx_lanes": null,
+          "tx_lanes": null
+        },
+        {
+          "router": "0-2",
+          "domain": 0,
+          "uuid": "4d163804-11df-d683-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.5",
+          "remote": true,
+          "rx_speed": "10.0 Gb/s",
+          "tx_speed": "10.0 Gb/s",
+          "rx_lanes": "2",
+          "tx_lanes": "2"
+        },
+        {
+          "router": "1-0",
+          "domain": 1,
+          "uuid": "792d3804-51be-3416-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.6",
+          "remote": false,
+          "rx_speed": null,
+          "tx_speed": null,
+          "rx_lanes": null,
+          "tx_lanes": null
+        },
+        {
+          "router": "1-2",
+          "domain": 1,
+          "uuid": "4d163804-10df-d683-ffff-ffffffffffff",
+          "NHI": "0000:c7:00.6",
+          "remote": true,
+          "rx_speed": "20.0 Gb/s",
+          "tx_speed": "20.0 Gb/s",
+          "rx_lanes": "2",
+          "tx_lanes": "2"
+        }
+      ],
+      "devices": [
+        {
+          "device": "usb4_rdma0",
+          "guid": "0200:5442:5852:4253",
+          "controller": "0000:c7:00.5",
+          "domain": 0
+        },
+        {
+          "device": "usb4_rdma1",
+          "guid": "0200:5442:5852:4254",
+          "controller": "0000:c7:00.5",
+          "domain": 0
+        },
+        {
+          "device": "usb4_rdma5",
+          "guid": "0200:5442:5752:4253",
+          "controller": "0000:c7:00.6",
+          "domain": 1
+        },
+        {
+          "device": "usb4_rdma6",
+          "guid": "0200:5442:5752:4254",
+          "controller": "0000:c7:00.6",
+          "domain": 1
+        }
+      ],
+      "selected_device": "usb4_rdma5",
+      "management_ipv4": [
+        "192.168.64.191"
+      ],
+      "sample_monotonic_ns": 168707608329532
+    }
+  ],
+  "binaries": {
+    "baseline": {
+      "name": "gufo-tp2-published-fbacf9cc",
+      "sha256": "5ce244cf22cbb5d9d3d39551139ec8804d89399da8704057ec9f21a1051a5d71"
+    },
+    "candidate": {
+      "name": "gufo-ple-owner-review-2669e07c",
+      "sha256": "74b0ee77ce491d308c8c2d6514bba2062e1c879258d26d0bff4ed67d12413fc8"
+    }
+  },
+  "design": {
+    "sequence": [
+      [
+        "before-baseline",
+        "baseline"
+      ],
+      [
+        "first-candidate",
+        "candidate"
+      ],
+      [
+        "after-baseline",
+        "baseline"
+      ]
+    ],
+    "requests_per_start": 20,
+    "scope": "Fixed B/C/B four-session functional/phase-latency qualification. Warmup8; four solo128 controls; three solo17/33/65 controls; C3x128; C4x128; raggedC4 limits17/33/65/128; postwave solo128 replay. Require exact outputs within each arm vs matching solo and across arms, actualMTP/no prompt cache, admitted resident widths and observed maximum physical execution widths. Per-request phase flags5%AND3ms, retain all adaptive work. Do not infer every transient batch shape from maximum-width metrics. Not a significance/equivalence study or new isolated-PLE speed claim. No trace/adminsampler/driver/system change/fulltablewarm."
+  },
+  "sequence": [
+    [
+      "before-baseline",
+      "baseline"
+    ],
+    [
+      "first-candidate",
+      "candidate"
+    ],
+    [
+      "after-baseline",
+      "baseline"
+    ]
+  ],
+  "settings": {
+    "quant": "UD-Q4_K_XL",
+    "MTP": "sharedQ8_0/enabled/current upstream confidence controller",
+    "context_capacity": 65536,
+    "sessions": 4,
+    "chunk": 2048,
+    "cache_RAM_bytes": 1073741824,
+    "driver": "81C6/TX32 unchanged in all arms",
+    "device": "existing lexical-first HTTPHCA0",
+    "thinking": "off",
+    "sampling": "greedy"
+  },
+  "harness_sha256": {
+    "run.py": "ccb5b59b5d6507e478a8b2a34dad1d5cdca3c14f02f5e476c09573c3ba871c0a",
+    "requests.py": "5e58b67ca127394f5a60d09f4b8e3c22eb62a15a09f25957eed9177d2051e026",
+    "analyze.py": "627de3669f4a7011950f5414632dede1041cdfa3372f7fa596bd534bdf4f9280",
+    "engine.py": "db163040562814ad43e0de50423a87f564d945885b8915c762cea722f8ffce80",
+    "server-rank.sh": "109937a6303ac54c3e1a62d6664fa2caec9419c5cb7bf3b2a9ac95ab6e5a32db",
+    "binaries.json": "893f862b7792e56ca0f93248c98e3cb9a97718df21b2cce946dfa829bd672807",
+    "source-preflight.json": "a36f301c07dbb8ef3e42d2cf8a2ac74df2610a35c2192f38b9af78fedecab9b8",
+    "design.json": "581214bc8de3564d7228c62755326b1f2128934ab7e8805b4d20f1e4f8e15444",
+    "release-build-provenance.json": "c27a888ae24d062d8e0347287cd1fdbf0d79ee887b5308c630c43234da71bf01"
+  },
+  "external_harness_sha256": {
+    "reference/gufo-rdma/tools/gufo/serving_bench.py": "35d7c7a94229765eb69617bb16280272fdb8ca08445007688baf23c2ef8b0e38",
+    "prefill-scaling/results/prompts.json": "7e4affccd75638f5de86304177141437f9eafb90c921a756ab0207f646993985",
+    "native-rdma/env.sh": "fdcabf968ec9aae08bb1a9899c6c3f1df48fed774346f2d88e57bd5302eb9e3b",
+    "cable-prep/env.sh": "def5a85333747e6cbb1dd3e8d747d4a74149c71160b13c9757a272e5f1aa748a",
+    "tp-cache-retention/driver-parent-timing-v1/inventory.py": "03674fcc349b64dc41935a2973534cee6191e732e4b7e0e32ce7f32933cb3bee"
+  }
+}

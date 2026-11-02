@@ -1,0 +1,106 @@
+[
+  {
+    "study": "extensions-head-quality-v1",
+    "reference_study": "integrated-head-quality-v3",
+    "comparisons": [
+      {
+        "rank": 0,
+        "records": 576,
+        "reference_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/integrated-head-quality-v3/candidate-r0.jsonl",
+        "reference_sha256": "6085d6be4ddfdf31554ca16ea875d0fd44c8274a3732272b845d997b924a3944",
+        "candidate_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/extensions-head-quality-v1/candidate-r0.jsonl",
+        "candidate_sha256": "6085d6be4ddfdf31554ca16ea875d0fd44c8274a3732272b845d997b924a3944",
+        "differences": []
+      },
+      {
+        "rank": 1,
+        "records": 576,
+        "reference_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/integrated-head-quality-v3/candidate-r1.jsonl",
+        "reference_sha256": "6085d6be4ddfdf31554ca16ea875d0fd44c8274a3732272b845d997b924a3944",
+        "candidate_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/extensions-head-quality-v1/candidate-r1.jsonl",
+        "candidate_sha256": "6085d6be4ddfdf31554ca16ea875d0fd44c8274a3732272b845d997b924a3944",
+        "differences": []
+      }
+    ],
+    "all_records_exact": true,
+    "scope": "Same retained controlled-input probe across engine revisions; strict full JSON value equality. Numerical/state diagnostic trajectories, not natural performance."
+  },
+  {
+    "study": "extensions-ordinary-head-quality-v1",
+    "reference_study": "integrated-ordinary-head-quality-v1",
+    "comparisons": [
+      {
+        "rank": 0,
+        "records": 160,
+        "reference_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/integrated-ordinary-head-quality-v1/candidate-r0.jsonl",
+        "reference_sha256": "eaac41daa505d52c6b463bfdea84f28f0d5527ad52d3e3138e520c44235e8200",
+        "candidate_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/extensions-ordinary-head-quality-v1/candidate-r0.jsonl",
+        "candidate_sha256": "eaac41daa505d52c6b463bfdea84f28f0d5527ad52d3e3138e520c44235e8200",
+        "differences": []
+      },
+      {
+        "rank": 1,
+        "records": 160,
+        "reference_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/integrated-ordinary-head-quality-v1/candidate-r1.jsonl",
+        "reference_sha256": "eaac41daa505d52c6b463bfdea84f28f0d5527ad52d3e3138e520c44235e8200",
+        "candidate_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/extensions-ordinary-head-quality-v1/candidate-r1.jsonl",
+        "candidate_sha256": "eaac41daa505d52c6b463bfdea84f28f0d5527ad52d3e3138e520c44235e8200",
+        "differences": []
+      }
+    ],
+    "all_records_exact": true,
+    "scope": "Same retained controlled-input probe across engine revisions; strict full JSON value equality. Numerical/state diagnostic trajectories, not natural performance."
+  },
+  {
+    "study": "extensions-wide-fallback-quality-v1",
+    "reference_study": "integrated-wide-fallback-quality-v2",
+    "comparisons": [
+      {
+        "rank": 0,
+        "records": 48,
+        "reference_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/integrated-wide-fallback-quality-v2/candidate-r0.jsonl",
+        "reference_sha256": "63c43c9a861bf04375ceb7e049c7a0b350c29bac016c19c3122a084efe366c25",
+        "candidate_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/extensions-wide-fallback-quality-v1/candidate-r0.jsonl",
+        "candidate_sha256": "63c43c9a861bf04375ceb7e049c7a0b350c29bac016c19c3122a084efe366c25",
+        "differences": []
+      },
+      {
+        "rank": 1,
+        "records": 48,
+        "reference_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/integrated-wide-fallback-quality-v2/candidate-r1.jsonl",
+        "reference_sha256": "63c43c9a861bf04375ceb7e049c7a0b350c29bac016c19c3122a084efe366c25",
+        "candidate_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/extensions-wide-fallback-quality-v1/candidate-r1.jsonl",
+        "candidate_sha256": "63c43c9a861bf04375ceb7e049c7a0b350c29bac016c19c3122a084efe366c25",
+        "differences": []
+      }
+    ],
+    "all_records_exact": true,
+    "scope": "Same retained controlled-input probe across engine revisions; strict full JSON value equality. Numerical/state diagnostic trajectories, not natural performance."
+  },
+  {
+    "study": "extensions-snapshot-quality-v1",
+    "reference_study": "integrated-snapshot-quality-v1",
+    "comparisons": [
+      {
+        "rank": 0,
+        "records": 104,
+        "reference_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/integrated-snapshot-quality-v1/candidate-r0.jsonl",
+        "reference_sha256": "1b87b35e6c9a61314000c58acfcd13836c9a54cae598e5df1c5ed985512ca2dd",
+        "candidate_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/extensions-snapshot-quality-v1/candidate-r0.jsonl",
+        "candidate_sha256": "1b87b35e6c9a61314000c58acfcd13836c9a54cae598e5df1c5ed985512ca2dd",
+        "differences": []
+      },
+      {
+        "rank": 1,
+        "records": 104,
+        "reference_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/integrated-snapshot-quality-v1/candidate-r1.jsonl",
+        "reference_sha256": "1b87b35e6c9a61314000c58acfcd13836c9a54cae598e5df1c5ed985512ca2dd",
+        "candidate_path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/extensions-snapshot-quality-v1/candidate-r1.jsonl",
+        "candidate_sha256": "1b87b35e6c9a61314000c58acfcd13836c9a54cae598e5df1c5ed985512ca2dd",
+        "differences": []
+      }
+    ],
+    "all_records_exact": true,
+    "scope": "Same retained controlled-input probe across engine revisions; strict full JSON value equality. Numerical/state diagnostic trajectories, not natural performance."
+  }
+]

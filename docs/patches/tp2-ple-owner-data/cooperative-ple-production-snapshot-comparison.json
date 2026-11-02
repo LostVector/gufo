@@ -1,0 +1,20 @@
+{
+  "fresh_baseline_candidate": true,
+  "records_per_rank_per_arm": 104,
+  "exact_cross_arm_full_logits_external_RNG_tokens_positions_proposal_work": true,
+  "materialized_state_hashes_per_rank_per_arm": 32,
+  "exact_cross_arm_materialized_state": true,
+  "PLE_owner_activation": [
+    {
+      "rank": 0,
+      "owner_rows": 0,
+      "remote_rows": 3840
+    },
+    {
+      "rank": 1,
+      "owner_rows": 3840,
+      "remote_rows": 0
+    }
+  ],
+  "scope": "Frozen production OFF baseline versus fresh production OFF wire22 owner-read candidate on two real native USB4 peers; short and actual32K, greedy/sampled, borrowed/serialized/file snapshot replay. Both retain identical diagnostic target-head counters and toggle. No performance claim."
+}
