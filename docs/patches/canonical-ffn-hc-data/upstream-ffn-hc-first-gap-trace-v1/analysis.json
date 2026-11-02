@@ -1,0 +1,87 @@
+{
+  "status": "diagnostic-functional-pass",
+  "records": 27,
+  "solo_concurrent_exact_checks": [
+    {
+      "arm": "before-baseline",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "before-baseline",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "candidate",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "candidate",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "after-baseline",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "after-baseline",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    }
+  ],
+  "phase_flags": [
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "first_followup_content_gap_ms",
+      "baseline_ms": 45.196682,
+      "candidate_ms": 134.529067,
+      "increase_ms": 89.33238499999999
+    }
+  ],
+  "adaptive_work_changes": [
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_tokens",
+      "baseline": 94,
+      "candidate": 83
+    },
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_accepted_tokens",
+      "baseline": 77,
+      "candidate": 71
+    },
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_tokens",
+      "baseline": 89,
+      "candidate": 82
+    },
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_accepted_tokens",
+      "baseline": 64,
+      "candidate": 60
+    }
+  ],
+  "scope": "Source-instrumented normal-controller diagnostic B/C/B. Exact completions/cache work, actual MTP, pp2048/EOS96 and coding128. Logging may change adaptive timings; not release performance or exoneration of original flags. Timing flags retained; no confidence, equivalence, no-regression or wider-concurrency conclusion. Fixed-history full-state/operator qualification is separate."
+}

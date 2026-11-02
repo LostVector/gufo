@@ -1,0 +1,41 @@
+{
+  "sequence": [
+    [
+      "before-baseline",
+      "baseline"
+    ],
+    [
+      "candidate",
+      "candidate"
+    ],
+    [
+      "after-baseline",
+      "baseline"
+    ]
+  ],
+  "binaries": {
+    "baseline": {
+      "path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/upstream-ffn-hc-baseline-release-build/gufo",
+      "sha256": "5be8619f87197da00dadd4a3efc7a6ea3d5a597a2750cac9328c727a6ea7d46a",
+      "source": "8ab834a5902bf19341750daecf27516a57840dd1",
+      "build_testing": false,
+      "RDMA": false
+    },
+    "candidate": {
+      "path": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/upstream-ffn-hc-release-build/gufo",
+      "sha256": "1e061796e5df0c89f7c951833f18b7ed85ea2dcc033204a86a0f00b0f2e690c5",
+      "source": "6ec3f75f338d9f2154ef60e1c14e2dd2c70ff53b",
+      "build_testing": false,
+      "RDMA": false
+    }
+  },
+  "boot": "5d9da4de-9a5f-4c7b-b47a-9cf2b51282ac",
+  "cmdline": "BOOT_IMAGE=/boot/vmlinuz-7.3.0-strix-test root=UUID=c43af9f2-66df-414f-9c5e-a58eaf768c01 ro quiet splash ttm.pages_limit=32505856 amd_iommu=off crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M",
+  "harness_sha256": {
+    "run.py": "4ad94649aa9df15c9e8b0bf8c000390c612e174ef386f79fdf101324f43b7a5e",
+    "requests.py": "834bbd72a4755e4484409260490f532481d85081becfe5e154dfc8722025269a",
+    "analyze.py": "9e59a1c6d91f1f3634869c6d6c5a34609a812cc4530c0dd77b286e1a26001038"
+  },
+  "scope": "Predeclared single B/C/B functional and per-request timing screen, C1 and C2 only. Normal production greedy MTP planning, no forced plans. No significance/equivalence/adoption or wider-concurrency qualification. All failures/phase flags retained, no repeated confidence search.",
+  "minimum_available_kib": 8388608
+}

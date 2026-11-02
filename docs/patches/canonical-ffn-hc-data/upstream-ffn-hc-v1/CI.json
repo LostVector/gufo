@@ -1,0 +1,15 @@
+{
+  "head": "6ec3f75f338d9f2154ef60e1c14e2dd2c70ff53b",
+  "branch": "perf/upstream-batched-ffn-hc-fusion",
+  "repository": {
+    "id": 41495760924,
+    "url": "https://github.com/LostVector/gufo/actions/runs/41495760924",
+    "state": "dispatched; inspect actual run"
+  },
+  "windows": {
+    "id": 41495760751,
+    "url": "https://github.com/LostVector/gufo/actions/runs/41495760751",
+    "state": "dispatched; inspect actual run"
+  },
+  "scope": "Exact canonical common-code source head; no claim of completion from dispatch. Fork Windows GPU model job is skipped."
+}

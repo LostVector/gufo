@@ -1,0 +1,540 @@
+2026-11-02 10:07:44 [INFO] [gpu] event=queue_budget kind=llm observed=0 budget=8 expected_max=3 cap=2
+2026-11-02 10:07:44 [INFO] [loader] event=load_started kind=text artifact=/home/rkuo/models/Qwen3.8-Flash-Next-GGUF/UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf rss_mib=184 host_available_mib=120175
+2026-11-02 10:08:09 [INFO] [loader] event=load_phase phase=sessions rss_mib=668 host_available_mib=35970
+2026-11-02 10:08:10 [INFO] [cache] schema=component-cache-v1 event=configured sessions=2 snapshot_entries=128 capacity_bytes=1073741824 staging_capacity_bytes=0 automatic_bytes=13692610560 max_bytes=23090253824 disk_capacity_bytes=0 slot_pinned_bytes=0 ram_cache=on disk_backing_bytes=0
+2026-11-02 10:08:10 [INFO] [loader] event=structured_output_prepared vocabulary_tokens=248320 prepare_ms=31.7 rss_delta_kib=29944 rss_mib=2121 host_available_mib=30418
+2026-11-02 10:08:10 [INFO] [sampling] event=defaults thinking=off temperature=0 top_k=20 top_p=0.8 min_p=0 min_keep=0 seed=1 repeat_penalty=1 repeat_last_n=64 frequency_penalty=0 presence_penalty=1.5
+2026-11-02 10:08:10 [INFO] [loader] event=load_completed kind=text elapsed_ms=26249 monotonic_us=218290171659 model=flash-next-hc-tp1 sessions=2 context_tokens=65536 speculative=mtp draft_limit=7 disk_cache=off rss_mib=2092 host_available_mib=30419 gpu_device_used_mib=95306 gpu_device_total_mib=126976
+2026-11-02 10:08:10 [INFO] [server] event=listening monotonic_us=218290171869 address=http://127.0.0.1:28630 auth=off max_connections=16 max_body_bytes=8388608
+2026-11-02 10:08:10 [INFO] [http] request=r1 event=received method=GET path=/v1/models body_bytes=0
+2026-11-02 10:08:10 [INFO] [http] request=r1 event=completed method=GET path=/v1/models status=200 duration_ms=0.3 outcome=completed rss_mib=2092 host_available_mib=30419
+2026-11-02 10:08:10 [INFO] [http] request=r2 event=received method=POST path=/v1/messages/count_tokens body_bytes=11827
+2026-11-02 10:08:10 [INFO] [http] request=r2 event=completed method=POST path=/v1/messages/count_tokens status=200 duration_ms=0.5 outcome=completed rss_mib=2092 host_available_mib=30393
+2026-11-02 10:08:10 [INFO] [http] request=r3 event=received method=POST path=/v1/chat/completions body_bytes=402
+2026-11-02 10:08:10 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+2026-11-02 10:08:10 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=12 rank=3 unique_bytes_freed=0 ledger_bytes=962599510
+2026-11-02 10:08:11 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=19 rank=0 unique_bytes_freed=0 ledger_bytes=962631652
+2026-11-02 10:08:11 [INFO] [http] request=r3 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=238.8 outcome=completed prompt_tokens=19 prefill_tokens=19 generated_tokens=8 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.3 shared_prefix_wait_ms=0.0 ttft_ms=121.6 prefill_tps=158.0 decode_tps=70.5 batch_width=1 plan=serial-fallback draft_accepted=6 draft_proposed=6 draft_rounds=2 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962634502 acceptance_pct=100.0 ngram_rows=432 ngram_dedup_rows=0 ngram_cache_hits=0 ngram_disk_reads=432 cache_snapshot_bytes=266885564 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2107 host_available_mib=30109
+2026-11-02 10:08:11 [INFO] [http] request=r4 event=received method=POST path=/v1/chat/completions body_bytes=12112
+2026-11-02 10:08:11 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+2026-11-02 10:08:12 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=2041 rank=3 unique_bytes_freed=0 ledger_bytes=962812482
+2026-11-02 10:08:14 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=2048 rank=0 unique_bytes_freed=0 ledger_bytes=962870764
+2026-11-02 10:08:14 [INFO] [http] request=r4 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=3354.1 outcome=completed prompt_tokens=2048 prefill_tokens=2048 generated_tokens=96 finish=stop cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.1 shared_prefix_wait_ms=0.0 ttft_ms=1222.3 prefill_tps=1677.1 decode_tps=45.1 batch_width=1 plan=serial-fallback draft_accepted=50 draft_proposed=72 draft_rounds=30 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=328925184 cache_global_ledger_bytes=962890198 acceptance_pct=69.4 ngram_rows=34656 ngram_dedup_rows=31728 ngram_cache_hits=320 ngram_disk_reads=2608 cache_snapshot_bytes=327224612 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2115 host_available_mib=29972
+2026-11-02 10:08:14 [INFO] [http] request=r5 event=received method=POST path=/v1/chat/completions body_bytes=12112
+2026-11-02 10:08:14 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+2026-11-02 10:08:15 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=2041 rank=3 unique_bytes_freed=43030 ledger_bytes=963006060
+2026-11-02 10:08:15 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=2041 rank=3 unique_bytes_freed=0 ledger_bytes=963006060
+2026-11-02 10:08:17 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=2048 rank=0 unique_bytes_freed=43458 ledger_bytes=963020688
+2026-11-02 10:08:17 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=2048 rank=0 unique_bytes_freed=0 ledger_bytes=963020688
+2026-11-02 10:08:17 [INFO] [http] request=r5 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=3350.9 outcome=completed prompt_tokens=2048 prefill_tokens=2048 generated_tokens=96 finish=stop cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.2 shared_prefix_wait_ms=0.0 ttft_ms=1221.8 prefill_tps=1677.9 decode_tps=45.2 batch_width=1 plan=serial-fallback draft_accepted=50 draft_proposed=72 draft_rounds=30 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=328925184 cache_global_ledger_bytes=963039570 acceptance_pct=69.4 ngram_rows=34656 ngram_dedup_rows=31728 ngram_cache_hits=2918 ngram_disk_reads=10 cache_snapshot_bytes=327224612 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2123 host_available_mib=29963
+2026-11-02 10:08:17 [INFO] [http] request=r6 event=received method=POST path=/v1/chat/completions body_bytes=505
+2026-11-02 10:08:17 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+2026-11-02 10:08:17 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=28 rank=3 unique_bytes_freed=0 ledger_bytes=962920030
+2026-11-02 10:08:20 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=35 rank=0 unique_bytes_freed=0 ledger_bytes=962952236
+2026-11-02 10:08:20 [INFO] [http] request=r6 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2363.6 outcome=completed prompt_tokens=35 prefill_tokens=35 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.2 shared_prefix_wait_ms=0.0 ttft_ms=142.2 prefill_tps=248.4 decode_tps=57.7 batch_width=1 plan=serial-fallback draft_accepted=88 draft_proposed=122 draft_rounds=39 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962956066 acceptance_pct=72.1 ngram_rows=3152 ngram_dedup_rows=0 ngram_cache_hits=542 ngram_disk_reads=2610 cache_snapshot_bytes=267737660 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2133 host_available_mib=29970
+2026-11-02 10:08:20 [INFO] [http] request=r7 event=received method=POST path=/v1/chat/completions body_bytes=465
+2026-11-02 10:08:20 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+2026-11-02 10:08:20 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=19 rank=0 unique_bytes_freed=32114 ledger_bytes=962972736
+2026-11-02 10:08:20 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=23 rank=3 unique_bytes_freed=0 ledger_bytes=962952040
+2026-11-02 10:08:20 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=2048 rank=0 unique_bytes_freed=43626 ledger_bytes=962963680
+2026-11-02 10:08:22 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=30 rank=0 unique_bytes_freed=0 ledger_bytes=962940600
+2026-11-02 10:08:22 [INFO] [http] request=r7 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2705.4 outcome=completed prompt_tokens=30 prefill_tokens=30 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.0 shared_prefix_wait_ms=0.0 ttft_ms=132.7 prefill_tps=227.9 decode_tps=49.8 batch_width=1 plan=serial-fallback draft_accepted=75 draft_proposed=106 draft_rounds=52 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962944410 acceptance_pct=70.8 ngram_rows=3024 ngram_dedup_rows=0 ngram_cache_hits=351 ngram_disk_reads=2673 cache_snapshot_bytes=267471380 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2134 host_available_mib=30006
+2026-11-02 10:08:22 [INFO] [http] request=r8 event=received method=POST path=/v1/chat/completions body_bytes=505
+2026-11-02 10:08:22 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+2026-11-02 10:08:22 [INFO] [http] request=r9 event=received method=POST path=/v1/chat/completions body_bytes=465
+2026-11-02 10:08:22 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=35 rank=0 unique_bytes_freed=32178 ledger_bytes=962961496
+2026-11-02 10:08:22 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=28 rank=3 unique_bytes_freed=31978 ledger_bytes=962908414
+2026-11-02 10:08:22 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=28 rank=3 unique_bytes_freed=0 ledger_bytes=962908414
+2026-11-02 10:08:22 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+2026-11-02 10:08:23 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=23 rank=3 unique_bytes_freed=31934 ledger_bytes=962858228
+2026-11-02 10:08:23 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=23 rank=3 unique_bytes_freed=0 ledger_bytes=962858228
+2026-11-02 10:08:23 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=30 rank=0 unique_bytes_freed=32182 ledger_bytes=962936618
+HC_STAGE unit=engine call=0 stage=entry t_ns=218302729510389 elapsed_us=0.780
+HC_VALUE unit=engine call=0 key=requests value=2
+HC_VALUE unit=engine call=0 key=position0 value=35
+HC_VALUE unit=engine call=0 key=planned_drafts value=2
+HC_STAGE unit=engine call=0 stage=policy_done t_ns=218302729540318 elapsed_us=30.709
+HC_STAGE unit=engine call=0 stage=prepare_decode_done t_ns=218302729657694 elapsed_us=148.085
+HC_STAGE unit=engine call=0 stage=draft_catchup_done t_ns=218302736128751 elapsed_us=6619.142
+HC_STAGE unit=engine call=0 stage=drafting_done t_ns=218302740174801 elapsed_us=10665.192
+HC_VALUE unit=engine call=0 key=verification_rows value=3
+HC_VALUE unit=engine call=0 key=verification_rows value=1
+HC_STAGE unit=engine call=0 stage=before_target_forward t_ns=218302740192040 elapsed_us=10682.431
+HC_STAGE unit=batch call=0 stage=entry t_ns=218302740196160 elapsed_us=0.800
+HC_VALUE unit=batch call=0 key=rows value=4
+HC_VALUE unit=batch call=0 key=requests value=2
+HC_STAGE unit=batch call=0 stage=rollback_start t_ns=218302740206350 elapsed_us=10.990
+HC_STAGE unit=batch call=0 stage=rollback_done t_ns=218302740225489 elapsed_us=30.129
+HC_STAGE unit=batch call=0 stage=allocate_batch_done t_ns=218302740227819 elapsed_us=32.459
+HC_STAGE unit=batch call=0 stage=controls_done t_ns=218302740798342 elapsed_us=602.982
+HC_STAGE unit=batch call=0 stage=prior_ple_prefetch_done t_ns=218302740801822 elapsed_us=606.462
+HC_STAGE unit=batch call=0 stage=ngram_submitted t_ns=218302740862340 elapsed_us=666.980
+HC_STAGE unit=batch call=0 stage=before_layers t_ns=218302740905629 elapsed_us=710.269
+HC_STAGE unit=batch call=0 stage=before_ple_wait t_ns=218302741049435 elapsed_us=854.075
+HC_STAGE unit=batch call=0 stage=after_ple_wait t_ns=218302741054054 elapsed_us=858.694
+HC_STAGE unit=batch call=0 stage=body_submitted t_ns=218302744735775 elapsed_us=4540.415
+HC_STAGE unit=batch call=0 stage=stream_complete t_ns=218302790821150 elapsed_us=50625.790
+HC_STAGE unit=batch call=0 stage=leave t_ns=218302790840419 elapsed_us=50645.059
+HC_STAGE unit=engine call=0 stage=target_forward_done t_ns=218302790844099 elapsed_us=61334.490
+HC_STAGE unit=engine call=0 stage=finish_decode_done t_ns=218302791137461 elapsed_us=61627.852
+HC_STAGE unit=engine call=0 stage=leave t_ns=218302791144930 elapsed_us=61635.321
+HC_STAGE unit=engine call=1 stage=entry t_ns=218302791188389 elapsed_us=0.290
+HC_VALUE unit=engine call=1 key=requests value=2
+HC_VALUE unit=engine call=1 key=position0 value=38
+HC_VALUE unit=engine call=1 key=planned_drafts value=2
+HC_STAGE unit=engine call=1 stage=policy_done t_ns=218302791196849 elapsed_us=8.750
+HC_STAGE unit=engine call=1 stage=prepare_decode_done t_ns=218302791273617 elapsed_us=85.518
+HC_STAGE unit=engine call=1 stage=draft_catchup_done t_ns=218302792854869 elapsed_us=1666.770
+HC_STAGE unit=engine call=1 stage=drafting_done t_ns=218302796639647 elapsed_us=5451.548
+HC_VALUE unit=engine call=1 key=verification_rows value=3
+HC_VALUE unit=engine call=1 key=verification_rows value=3
+HC_STAGE unit=engine call=1 stage=before_target_forward t_ns=218302796645656 elapsed_us=5457.557
+HC_STAGE unit=batch call=1 stage=entry t_ns=218302796647786 elapsed_us=0.090
+HC_VALUE unit=batch call=1 key=rows value=6
+HC_VALUE unit=batch call=1 key=requests value=2
+HC_STAGE unit=batch call=1 stage=rollback_start t_ns=218302796653906 elapsed_us=6.210
+HC_STAGE unit=batch call=1 stage=rollback_done t_ns=218302796656006 elapsed_us=8.310
+HC_STAGE unit=batch call=1 stage=allocate_batch_done t_ns=218302796657556 elapsed_us=9.860
+HC_STAGE unit=batch call=1 stage=controls_done t_ns=218302796659156 elapsed_us=11.460
+HC_STAGE unit=batch call=1 stage=prior_ple_prefetch_done t_ns=218302796661356 elapsed_us=13.660
+HC_STAGE unit=batch call=1 stage=ngram_submitted t_ns=218302796741503 elapsed_us=93.807
+HC_STAGE unit=batch call=1 stage=before_layers t_ns=218302796765823 elapsed_us=118.127
+HC_STAGE unit=batch call=1 stage=before_ple_wait t_ns=218302796858630 elapsed_us=210.934
+HC_STAGE unit=batch call=1 stage=after_ple_wait t_ns=218302796860710 elapsed_us=213.014
+HC_STAGE unit=batch call=1 stage=body_submitted t_ns=218302799870180 elapsed_us=3222.484
+HC_STAGE unit=batch call=1 stage=stream_complete t_ns=218302855012695 elapsed_us=58364.999
+HC_STAGE unit=batch call=1 stage=leave t_ns=218302855016645 elapsed_us=58368.949
+HC_STAGE unit=engine call=1 stage=target_forward_done t_ns=218302855018265 elapsed_us=63830.166
+HC_STAGE unit=engine call=1 stage=finish_decode_done t_ns=218302856552179 elapsed_us=65364.080
+HC_STAGE unit=engine call=1 stage=leave t_ns=218302856558579 elapsed_us=65370.480
+HC_STAGE unit=engine call=2 stage=entry t_ns=218302856582238 elapsed_us=0.120
+HC_VALUE unit=engine call=2 key=requests value=2
+HC_VALUE unit=engine call=2 key=position0 value=40
+HC_VALUE unit=engine call=2 key=planned_drafts value=0
+HC_STAGE unit=engine call=2 stage=policy_done t_ns=218302856587718 elapsed_us=5.600
+HC_STAGE unit=engine call=2 stage=prepare_decode_done t_ns=218302856656996 elapsed_us=74.878
+HC_STAGE unit=engine call=2 stage=draft_catchup_done t_ns=218302856985386 elapsed_us=403.268
+HC_STAGE unit=engine call=2 stage=drafting_done t_ns=218302856987626 elapsed_us=405.508
+HC_VALUE unit=engine call=2 key=verification_rows value=1
+HC_VALUE unit=engine call=2 key=verification_rows value=1
+HC_STAGE unit=engine call=2 stage=before_target_forward t_ns=218302857027965 elapsed_us=445.847
+HC_STAGE unit=batch call=2 stage=entry t_ns=218302857030195 elapsed_us=0.120
+HC_VALUE unit=batch call=2 key=rows value=2
+HC_VALUE unit=batch call=2 key=requests value=2
+HC_STAGE unit=batch call=2 stage=rollback_start t_ns=218302857039315 elapsed_us=9.240
+HC_STAGE unit=batch call=2 stage=rollback_done t_ns=218302857041385 elapsed_us=11.310
+HC_STAGE unit=batch call=2 stage=allocate_batch_done t_ns=218302857043645 elapsed_us=13.570
+HC_STAGE unit=batch call=2 stage=controls_done t_ns=218302857045105 elapsed_us=15.030
+HC_STAGE unit=batch call=2 stage=prior_ple_prefetch_done t_ns=218302857046545 elapsed_us=16.470
+HC_STAGE unit=batch call=2 stage=ngram_submitted t_ns=218302857072864 elapsed_us=42.789
+HC_STAGE unit=batch call=2 stage=before_layers t_ns=218302857083493 elapsed_us=53.418
+HC_STAGE unit=batch call=2 stage=before_ple_wait t_ns=218302857160731 elapsed_us=130.656
+HC_STAGE unit=batch call=2 stage=after_ple_wait t_ns=218302857162481 elapsed_us=132.406
+HC_STAGE unit=batch call=2 stage=body_submitted t_ns=218302860034266 elapsed_us=3004.191
+HC_STAGE unit=batch call=2 stage=stream_complete t_ns=218302898632084 elapsed_us=41602.009
+HC_STAGE unit=batch call=2 stage=leave t_ns=218302898635524 elapsed_us=41605.449
+HC_STAGE unit=engine call=2 stage=target_forward_done t_ns=218302898637274 elapsed_us=42055.156
+HC_STAGE unit=engine call=2 stage=finish_decode_done t_ns=218302898817579 elapsed_us=42235.461
+HC_STAGE unit=engine call=2 stage=leave t_ns=218302898821069 elapsed_us=42238.951
+HC_STAGE unit=engine call=3 stage=entry t_ns=218302898836688 elapsed_us=0.060
+HC_VALUE unit=engine call=3 key=requests value=2
+HC_VALUE unit=engine call=3 key=position0 value=41
+HC_VALUE unit=engine call=3 key=planned_drafts value=0
+HC_STAGE unit=engine call=3 stage=policy_done t_ns=218302898841178 elapsed_us=4.550
+HC_STAGE unit=engine call=3 stage=prepare_decode_done t_ns=218302898906326 elapsed_us=69.698
+HC_STAGE unit=engine call=3 stage=draft_catchup_done t_ns=218302899151799 elapsed_us=315.171
+HC_STAGE unit=engine call=3 stage=drafting_done t_ns=218302899154989 elapsed_us=318.361
+HC_VALUE unit=engine call=3 key=verification_rows value=1
+HC_VALUE unit=engine call=3 key=verification_rows value=1
+HC_STAGE unit=engine call=3 stage=before_target_forward t_ns=218302899158059 elapsed_us=321.431
+HC_STAGE unit=batch call=3 stage=entry t_ns=218302899159439 elapsed_us=0.060
+HC_VALUE unit=batch call=3 key=rows value=2
+HC_VALUE unit=batch call=3 key=requests value=2
+HC_STAGE unit=batch call=3 stage=rollback_start t_ns=218302899164208 elapsed_us=4.829
+HC_STAGE unit=batch call=3 stage=rollback_done t_ns=218302899165468 elapsed_us=6.089
+HC_STAGE unit=batch call=3 stage=allocate_batch_done t_ns=218302899166638 elapsed_us=7.259
+HC_STAGE unit=batch call=3 stage=controls_done t_ns=218302899167748 elapsed_us=8.369
+HC_STAGE unit=batch call=3 stage=prior_ple_prefetch_done t_ns=218302899168898 elapsed_us=9.519
+HC_STAGE unit=batch call=3 stage=ngram_submitted t_ns=218302899197407 elapsed_us=38.028
+HC_STAGE unit=batch call=3 stage=before_layers t_ns=218302899206817 elapsed_us=47.438
+HC_STAGE unit=batch call=3 stage=before_ple_wait t_ns=218302899275325 elapsed_us=115.946
+HC_STAGE unit=batch call=3 stage=after_ple_wait t_ns=218302899764520 elapsed_us=605.141
+HC_STAGE unit=batch call=3 stage=body_submitted t_ns=218302902643965 elapsed_us=3484.586
+HC_STAGE unit=batch call=3 stage=stream_complete t_ns=218302941223464 elapsed_us=42064.085
+HC_STAGE unit=batch call=3 stage=leave t_ns=218302941226634 elapsed_us=42067.255
+HC_STAGE unit=engine call=3 stage=target_forward_done t_ns=218302941228344 elapsed_us=42391.716
+HC_STAGE unit=engine call=3 stage=finish_decode_done t_ns=218302941380079 elapsed_us=42543.451
+HC_STAGE unit=engine call=3 stage=leave t_ns=218302941383149 elapsed_us=42546.521
+HC_STAGE unit=engine call=4 stage=entry t_ns=218302941401149 elapsed_us=0.090
+HC_VALUE unit=engine call=4 key=requests value=2
+HC_VALUE unit=engine call=4 key=position0 value=42
+HC_VALUE unit=engine call=4 key=planned_drafts value=1
+HC_STAGE unit=engine call=4 stage=policy_done t_ns=218302941409908 elapsed_us=8.849
+HC_STAGE unit=engine call=4 stage=prepare_decode_done t_ns=218302941478126 elapsed_us=77.067
+HC_STAGE unit=engine call=4 stage=draft_catchup_done t_ns=218302942487476 elapsed_us=1086.417
+HC_STAGE unit=engine call=4 stage=drafting_done t_ns=218302943840636 elapsed_us=2439.577
+HC_VALUE unit=engine call=4 key=verification_rows value=2
+HC_VALUE unit=engine call=4 key=verification_rows value=2
+HC_STAGE unit=engine call=4 stage=before_target_forward t_ns=218302943844806 elapsed_us=2443.747
+HC_STAGE unit=batch call=4 stage=entry t_ns=218302943846256 elapsed_us=0.060
+HC_VALUE unit=batch call=4 key=rows value=4
+HC_VALUE unit=batch call=4 key=requests value=2
+HC_STAGE unit=batch call=4 stage=rollback_start t_ns=218302943850716 elapsed_us=4.520
+HC_STAGE unit=batch call=4 stage=rollback_done t_ns=218302943852125 elapsed_us=5.929
+HC_STAGE unit=batch call=4 stage=allocate_batch_done t_ns=218302943853215 elapsed_us=7.019
+HC_STAGE unit=batch call=4 stage=controls_done t_ns=218302943854335 elapsed_us=8.139
+HC_STAGE unit=batch call=4 stage=prior_ple_prefetch_done t_ns=218302943855455 elapsed_us=9.259
+HC_STAGE unit=batch call=4 stage=ngram_submitted t_ns=218302943905654 elapsed_us=59.458
+HC_STAGE unit=batch call=4 stage=before_layers t_ns=218302943919713 elapsed_us=73.517
+HC_STAGE unit=batch call=4 stage=before_ple_wait t_ns=218302943991061 elapsed_us=144.865
+HC_STAGE unit=batch call=4 stage=after_ple_wait t_ns=218302943992761 elapsed_us=146.565
+HC_STAGE unit=batch call=4 stage=body_submitted t_ns=218302946932374 elapsed_us=3086.178
+HC_STAGE unit=batch call=4 stage=stream_complete t_ns=218302994809386 elapsed_us=50963.190
+HC_STAGE unit=batch call=4 stage=leave t_ns=218302994814605 elapsed_us=50968.409
+HC_STAGE unit=engine call=4 stage=target_forward_done t_ns=218302994816435 elapsed_us=53415.376
+HC_STAGE unit=engine call=4 stage=finish_decode_done t_ns=218302995168475 elapsed_us=53767.416
+HC_STAGE unit=engine call=4 stage=leave t_ns=218302995173685 elapsed_us=53772.626
+HC_STAGE unit=engine call=5 stage=entry t_ns=218302995193414 elapsed_us=0.120
+HC_VALUE unit=engine call=5 key=requests value=2
+HC_VALUE unit=engine call=5 key=position0 value=44
+HC_VALUE unit=engine call=5 key=planned_drafts value=1
+HC_STAGE unit=engine call=5 stage=policy_done t_ns=218302995198034 elapsed_us=4.740
+HC_STAGE unit=engine call=5 stage=prepare_decode_done t_ns=218302995265672 elapsed_us=72.378
+HC_STAGE unit=engine call=5 stage=draft_catchup_done t_ns=218302996890993 elapsed_us=1697.699
+HC_STAGE unit=engine call=5 stage=drafting_done t_ns=218302998237363 elapsed_us=3044.069
+HC_VALUE unit=engine call=5 key=verification_rows value=2
+HC_VALUE unit=engine call=5 key=verification_rows value=2
+HC_STAGE unit=engine call=5 stage=before_target_forward t_ns=218302998241683 elapsed_us=3048.389
+HC_STAGE unit=batch call=5 stage=entry t_ns=218302998243233 elapsed_us=0.110
+HC_VALUE unit=batch call=5 key=rows value=4
+HC_VALUE unit=batch call=5 key=requests value=2
+HC_STAGE unit=batch call=5 stage=rollback_start t_ns=218302998248023 elapsed_us=4.900
+HC_STAGE unit=batch call=5 stage=rollback_done t_ns=218302998249413 elapsed_us=6.290
+HC_STAGE unit=batch call=5 stage=allocate_batch_done t_ns=218302998250493 elapsed_us=7.370
+HC_STAGE unit=batch call=5 stage=controls_done t_ns=218302998251533 elapsed_us=8.410
+HC_STAGE unit=batch call=5 stage=prior_ple_prefetch_done t_ns=218302998252713 elapsed_us=9.590
+HC_STAGE unit=batch call=5 stage=ngram_submitted t_ns=218302998302141 elapsed_us=59.018
+HC_STAGE unit=batch call=5 stage=before_layers t_ns=218302998312601 elapsed_us=69.478
+HC_STAGE unit=batch call=5 stage=before_ple_wait t_ns=218302998382619 elapsed_us=139.496
+HC_STAGE unit=batch call=5 stage=after_ple_wait t_ns=218302998384259 elapsed_us=141.136
+HC_STAGE unit=batch call=5 stage=body_submitted t_ns=218303001354290 elapsed_us=3111.167
+HC_STAGE unit=batch call=5 stage=stream_complete t_ns=218303052624181 elapsed_us=54381.058
+HC_STAGE unit=batch call=5 stage=leave t_ns=218303052668530 elapsed_us=54425.407
+HC_STAGE unit=engine call=5 stage=target_forward_done t_ns=218303052672470 elapsed_us=57479.176
+HC_STAGE unit=engine call=5 stage=finish_decode_done t_ns=218303053320580 elapsed_us=58127.286
+HC_STAGE unit=engine call=5 stage=leave t_ns=218303053331170 elapsed_us=58137.876
+HC_STAGE unit=engine call=6 stage=entry t_ns=218303053391998 elapsed_us=0.490
+HC_VALUE unit=engine call=6 key=requests value=2
+HC_VALUE unit=engine call=6 key=position0 value=46
+HC_VALUE unit=engine call=6 key=planned_drafts value=1
+HC_STAGE unit=engine call=6 stage=policy_done t_ns=218303053403138 elapsed_us=11.630
+HC_STAGE unit=engine call=6 stage=prepare_decode_done t_ns=218303053528124 elapsed_us=136.616
+HC_STAGE unit=engine call=6 stage=draft_catchup_done t_ns=218303055112497 elapsed_us=1720.989
+HC_STAGE unit=engine call=6 stage=drafting_done t_ns=218303056460277 elapsed_us=3068.769
+HC_VALUE unit=engine call=6 key=verification_rows value=2
+HC_VALUE unit=engine call=6 key=verification_rows value=1
+HC_STAGE unit=engine call=6 stage=before_target_forward t_ns=218303056466567 elapsed_us=3075.059
+HC_STAGE unit=batch call=6 stage=entry t_ns=218303056469416 elapsed_us=0.310
+HC_VALUE unit=batch call=6 key=rows value=3
+HC_VALUE unit=batch call=6 key=requests value=2
+HC_STAGE unit=batch call=6 stage=rollback_start t_ns=218303056476726 elapsed_us=7.620
+HC_STAGE unit=batch call=6 stage=rollback_done t_ns=218303056479486 elapsed_us=10.380
+HC_STAGE unit=batch call=6 stage=allocate_batch_done t_ns=218303056481626 elapsed_us=12.520
+HC_STAGE unit=batch call=6 stage=controls_done t_ns=218303056483726 elapsed_us=14.620
+HC_STAGE unit=batch call=6 stage=prior_ple_prefetch_done t_ns=218303056485816 elapsed_us=16.710
+HC_STAGE unit=batch call=6 stage=ngram_submitted t_ns=218303056533895 elapsed_us=64.789
+HC_STAGE unit=batch call=6 stage=before_layers t_ns=218303056569233 elapsed_us=100.127
+HC_STAGE unit=batch call=6 stage=before_ple_wait t_ns=218303056703499 elapsed_us=234.393
+HC_STAGE unit=batch call=6 stage=after_ple_wait t_ns=218303056706079 elapsed_us=236.973
+HC_STAGE unit=batch call=6 stage=body_submitted t_ns=218303060904444 elapsed_us=4435.338
+HC_STAGE unit=batch call=6 stage=stream_complete t_ns=218303106022928 elapsed_us=49553.822
+HC_STAGE unit=batch call=6 stage=leave t_ns=218303106027858 elapsed_us=49558.752
+HC_STAGE unit=engine call=6 stage=target_forward_done t_ns=218303106029838 elapsed_us=52638.330
+HC_STAGE unit=engine call=6 stage=finish_decode_done t_ns=218303106305090 elapsed_us=52913.582
+HC_STAGE unit=engine call=6 stage=leave t_ns=218303106312890 elapsed_us=52921.382
+HC_STAGE unit=engine call=7 stage=entry t_ns=218303106381608 elapsed_us=0.110
+HC_VALUE unit=engine call=7 key=requests value=2
+HC_VALUE unit=engine call=7 key=position0 value=48
+HC_VALUE unit=engine call=7 key=planned_drafts value=2
+HC_STAGE unit=engine call=7 stage=policy_done t_ns=218303106391557 elapsed_us=10.059
+HC_STAGE unit=engine call=7 stage=prepare_decode_done t_ns=218303106501864 elapsed_us=120.366
+HC_STAGE unit=engine call=7 stage=draft_catchup_done t_ns=218303107868873 elapsed_us=1487.375
+HC_STAGE unit=engine call=7 stage=drafting_done t_ns=218303111653180 elapsed_us=5271.682
+HC_VALUE unit=engine call=7 key=verification_rows value=3
+HC_VALUE unit=engine call=7 key=verification_rows value=3
+HC_STAGE unit=engine call=7 stage=before_target_forward t_ns=218303111659560 elapsed_us=5278.062
+HC_STAGE unit=batch call=7 stage=entry t_ns=218303111661440 elapsed_us=0.100
+HC_VALUE unit=batch call=7 key=rows value=6
+HC_VALUE unit=batch call=7 key=requests value=2
+HC_STAGE unit=batch call=7 stage=rollback_start t_ns=218303111667980 elapsed_us=6.640
+HC_STAGE unit=batch call=7 stage=rollback_done t_ns=218303111669940 elapsed_us=8.600
+HC_STAGE unit=batch call=7 stage=allocate_batch_done t_ns=218303111671560 elapsed_us=10.220
+HC_STAGE unit=batch call=7 stage=controls_done t_ns=218303111673420 elapsed_us=12.080
+HC_STAGE unit=batch call=7 stage=prior_ple_prefetch_done t_ns=218303111693639 elapsed_us=32.299
+HC_STAGE unit=batch call=7 stage=ngram_submitted t_ns=218303111798066 elapsed_us=136.726
+HC_STAGE unit=batch call=7 stage=before_layers t_ns=218303111816466 elapsed_us=155.126
+HC_STAGE unit=batch call=7 stage=before_ple_wait t_ns=218303111937372 elapsed_us=276.032
+HC_STAGE unit=batch call=7 stage=after_ple_wait t_ns=218303111939322 elapsed_us=277.982
+HC_STAGE unit=batch call=7 stage=body_submitted t_ns=218303116021270 elapsed_us=4359.930
+HC_STAGE unit=batch call=7 stage=stream_complete t_ns=218303174790937 elapsed_us=63129.597
+HC_STAGE unit=batch call=7 stage=leave t_ns=218303174796807 elapsed_us=63135.467
+HC_STAGE unit=engine call=7 stage=target_forward_done t_ns=218303174798987 elapsed_us=68417.489
+HC_STAGE unit=engine call=7 stage=finish_decode_done t_ns=218303175093718 elapsed_us=68712.220
+HC_STAGE unit=engine call=7 stage=leave t_ns=218303175099948 elapsed_us=68718.450
+HC_STAGE unit=engine call=8 stage=entry t_ns=218303175141327 elapsed_us=0.180
+HC_VALUE unit=engine call=8 key=requests value=2
+HC_VALUE unit=engine call=8 key=position0 value=51
+HC_VALUE unit=engine call=8 key=planned_drafts value=2
+HC_STAGE unit=engine call=8 stage=policy_done t_ns=218303175147516 elapsed_us=6.369
+HC_STAGE unit=engine call=8 stage=prepare_decode_done t_ns=218303175232244 elapsed_us=91.097
+HC_STAGE unit=engine call=8 stage=draft_catchup_done t_ns=218303177034810 elapsed_us=1893.663
+HC_STAGE unit=engine call=8 stage=drafting_done t_ns=218303181395930 elapsed_us=6254.783
+HC_VALUE unit=engine call=8 key=verification_rows value=3
+HC_VALUE unit=engine call=8 key=verification_rows value=1
+HC_STAGE unit=engine call=8 stage=before_target_forward t_ns=218303181409980 elapsed_us=6268.833
+HC_STAGE unit=batch call=8 stage=entry t_ns=218303181412020 elapsed_us=0.190
+HC_VALUE unit=batch call=8 key=rows value=4
+HC_VALUE unit=batch call=8 key=requests value=2
+HC_STAGE unit=batch call=8 stage=rollback_start t_ns=218303181420140 elapsed_us=8.310
+HC_STAGE unit=batch call=8 stage=rollback_done t_ns=218303181422219 elapsed_us=10.389
+HC_STAGE unit=batch call=8 stage=allocate_batch_done t_ns=218303181424109 elapsed_us=12.279
+HC_STAGE unit=batch call=8 stage=controls_done t_ns=218303181425909 elapsed_us=14.079
+HC_STAGE unit=batch call=8 stage=prior_ple_prefetch_done t_ns=218303181427769 elapsed_us=15.939
+HC_STAGE unit=batch call=8 stage=ngram_submitted t_ns=218303181483048 elapsed_us=71.218
+HC_STAGE unit=batch call=8 stage=before_layers t_ns=218303181497087 elapsed_us=85.257
+HC_STAGE unit=batch call=8 stage=before_ple_wait t_ns=218303181592824 elapsed_us=180.994
+HC_STAGE unit=batch call=8 stage=after_ple_wait t_ns=218303181595024 elapsed_us=183.194
+HC_STAGE unit=batch call=8 stage=body_submitted t_ns=218303185157738 elapsed_us=3745.908
+HC_STAGE unit=batch call=8 stage=stream_complete t_ns=218303235556075 elapsed_us=54144.245
+HC_STAGE unit=batch call=8 stage=leave t_ns=218303235560615 elapsed_us=54148.785
+HC_STAGE unit=engine call=8 stage=target_forward_done t_ns=218303235562634 elapsed_us=60421.487
+HC_STAGE unit=engine call=8 stage=finish_decode_done t_ns=218303235831986 elapsed_us=60690.839
+HC_STAGE unit=engine call=8 stage=leave t_ns=218303235837556 elapsed_us=60696.409
+HC_STAGE unit=engine call=9 stage=entry t_ns=218303235874265 elapsed_us=0.180
+HC_VALUE unit=engine call=9 key=requests value=2
+HC_VALUE unit=engine call=9 key=position0 value=54
+HC_VALUE unit=engine call=9 key=planned_drafts value=2
+HC_STAGE unit=engine call=9 stage=policy_done t_ns=218303235880865 elapsed_us=6.780
+HC_STAGE unit=engine call=9 stage=prepare_decode_done t_ns=218303235966642 elapsed_us=92.557
+HC_STAGE unit=engine call=9 stage=draft_catchup_done t_ns=218303237524046 elapsed_us=1649.961
+HC_STAGE unit=engine call=9 stage=drafting_done t_ns=218303241016972 elapsed_us=5142.887
+HC_VALUE unit=engine call=9 key=verification_rows value=1
+HC_VALUE unit=engine call=9 key=verification_rows value=2
+HC_STAGE unit=engine call=9 stage=before_target_forward t_ns=218303241024542 elapsed_us=5150.457
+HC_STAGE unit=batch call=9 stage=entry t_ns=218303241038331 elapsed_us=0.110
+HC_VALUE unit=batch call=9 key=rows value=3
+HC_VALUE unit=batch call=9 key=requests value=2
+HC_STAGE unit=batch call=9 stage=rollback_start t_ns=218303241045741 elapsed_us=7.520
+HC_STAGE unit=batch call=9 stage=rollback_done t_ns=218303241047351 elapsed_us=9.130
+HC_STAGE unit=batch call=9 stage=allocate_batch_done t_ns=218303241048741 elapsed_us=10.520
+HC_STAGE unit=batch call=9 stage=controls_done t_ns=218303241050501 elapsed_us=12.280
+HC_STAGE unit=batch call=9 stage=prior_ple_prefetch_done t_ns=218303241052231 elapsed_us=14.010
+HC_STAGE unit=batch call=9 stage=ngram_submitted t_ns=218303241096490 elapsed_us=58.269
+HC_STAGE unit=batch call=9 stage=before_layers t_ns=218303241110589 elapsed_us=72.368
+HC_STAGE unit=batch call=9 stage=before_ple_wait t_ns=218303241209016 elapsed_us=170.795
+HC_STAGE unit=batch call=9 stage=after_ple_wait t_ns=218303241210906 elapsed_us=172.685
+HC_STAGE unit=batch call=9 stage=body_submitted t_ns=218303245248526 elapsed_us=4210.305
+HC_STAGE unit=batch call=9 stage=stream_complete t_ns=218303288740249 elapsed_us=47702.028
+HC_STAGE unit=batch call=9 stage=leave t_ns=218303288746028 elapsed_us=47707.807
+HC_STAGE unit=engine call=9 stage=target_forward_done t_ns=218303288748158 elapsed_us=52874.073
+HC_STAGE unit=engine call=9 stage=finish_decode_done t_ns=218303289028370 elapsed_us=53154.285
+HC_STAGE unit=engine call=9 stage=leave t_ns=218303289036780 elapsed_us=53162.695
+HC_STAGE unit=engine call=10 stage=entry t_ns=218303289070989 elapsed_us=0.180
+HC_VALUE unit=engine call=10 key=requests value=2
+HC_VALUE unit=engine call=10 key=position0 value=55
+HC_VALUE unit=engine call=10 key=planned_drafts value=2
+HC_STAGE unit=engine call=10 stage=policy_done t_ns=218303289077308 elapsed_us=6.499
+HC_STAGE unit=engine call=10 stage=prepare_decode_done t_ns=218303289171836 elapsed_us=101.027
+HC_STAGE unit=engine call=10 stage=draft_catchup_done t_ns=218303290609733 elapsed_us=1538.924
+HC_STAGE unit=engine call=10 stage=drafting_done t_ns=218303294609253 elapsed_us=5538.444
+HC_VALUE unit=engine call=10 key=verification_rows value=1
+HC_VALUE unit=engine call=10 key=verification_rows value=2
+HC_STAGE unit=engine call=10 stage=before_target_forward t_ns=218303294622173 elapsed_us=5551.364
+HC_STAGE unit=batch call=10 stage=entry t_ns=218303294624353 elapsed_us=0.210
+HC_VALUE unit=batch call=10 key=rows value=3
+HC_VALUE unit=batch call=10 key=requests value=2
+HC_STAGE unit=batch call=10 stage=rollback_start t_ns=218303294631743 elapsed_us=7.600
+HC_STAGE unit=batch call=10 stage=rollback_done t_ns=218303294633843 elapsed_us=9.700
+HC_STAGE unit=batch call=10 stage=allocate_batch_done t_ns=218303294635323 elapsed_us=11.180
+HC_STAGE unit=batch call=10 stage=controls_done t_ns=218303294637292 elapsed_us=13.149
+HC_STAGE unit=batch call=10 stage=prior_ple_prefetch_done t_ns=218303294639072 elapsed_us=14.929
+HC_STAGE unit=batch call=10 stage=ngram_submitted t_ns=218303294684941 elapsed_us=60.798
+HC_STAGE unit=batch call=10 stage=before_layers t_ns=218303294712030 elapsed_us=87.887
+HC_STAGE unit=batch call=10 stage=before_ple_wait t_ns=218303294801298 elapsed_us=177.155
+HC_STAGE unit=batch call=10 stage=after_ple_wait t_ns=218303296451848 elapsed_us=1827.705
+HC_STAGE unit=batch call=10 stage=body_submitted t_ns=218303300017302 elapsed_us=5393.159
+HC_STAGE unit=batch call=10 stage=stream_complete t_ns=218303343015710 elapsed_us=48391.567
+HC_STAGE unit=batch call=10 stage=leave t_ns=218303343019629 elapsed_us=48395.486
+HC_STAGE unit=engine call=10 stage=target_forward_done t_ns=218303343021689 elapsed_us=53950.880
+HC_STAGE unit=engine call=10 stage=finish_decode_done t_ns=218303343259452 elapsed_us=54188.643
+HC_STAGE unit=engine call=10 stage=leave t_ns=218303343266742 elapsed_us=54195.933
+HC_STAGE unit=engine call=11 stage=entry t_ns=218303343291731 elapsed_us=0.190
+HC_VALUE unit=engine call=11 key=requests value=2
+HC_VALUE unit=engine call=11 key=position0 value=56
+HC_VALUE unit=engine call=11 key=planned_drafts value=2
+HC_STAGE unit=engine call=11 stage=policy_done t_ns=218303343307971 elapsed_us=16.430
+HC_STAGE unit=engine call=11 stage=prepare_decode_done t_ns=218303343406318 elapsed_us=114.777
+HC_STAGE unit=engine call=11 stage=draft_catchup_done t_ns=218303344891334 elapsed_us=1599.793
+HC_STAGE unit=engine call=11 stage=drafting_done t_ns=218303348328651 elapsed_us=5037.110
+HC_VALUE unit=engine call=11 key=verification_rows value=3
+HC_VALUE unit=engine call=11 key=verification_rows value=2
+HC_STAGE unit=engine call=11 stage=before_target_forward t_ns=218303348335581 elapsed_us=5044.040
+HC_STAGE unit=batch call=11 stage=entry t_ns=218303348337631 elapsed_us=0.100
+HC_VALUE unit=batch call=11 key=rows value=5
+HC_VALUE unit=batch call=11 key=requests value=2
+HC_STAGE unit=batch call=11 stage=rollback_start t_ns=218303348344631 elapsed_us=7.100
+HC_STAGE unit=batch call=11 stage=rollback_done t_ns=218303348346371 elapsed_us=8.840
+HC_STAGE unit=batch call=11 stage=allocate_batch_done t_ns=218303348347800 elapsed_us=10.269
+HC_STAGE unit=batch call=11 stage=controls_done t_ns=218303348349570 elapsed_us=12.039
+HC_STAGE unit=batch call=11 stage=prior_ple_prefetch_done t_ns=218303348351240 elapsed_us=13.709
+HC_STAGE unit=batch call=11 stage=ngram_submitted t_ns=218303348424018 elapsed_us=86.487
+HC_STAGE unit=batch call=11 stage=before_layers t_ns=218303348444878 elapsed_us=107.347
+HC_STAGE unit=batch call=11 stage=before_ple_wait t_ns=218303348544965 elapsed_us=207.434
+HC_STAGE unit=batch call=11 stage=after_ple_wait t_ns=218303348546925 elapsed_us=209.394
+HC_STAGE unit=batch call=11 stage=body_submitted t_ns=218303352620463 elapsed_us=4282.932
+HC_STAGE unit=batch call=11 stage=stream_complete t_ns=218303408410019 elapsed_us=60072.488
+HC_STAGE unit=batch call=11 stage=leave t_ns=218303408414479 elapsed_us=60076.948
+HC_STAGE unit=engine call=11 stage=target_forward_done t_ns=218303408416489 elapsed_us=65124.948
+HC_STAGE unit=engine call=11 stage=finish_decode_done t_ns=218303408706880 elapsed_us=65415.339
+HC_STAGE unit=engine call=11 stage=leave t_ns=218303408711980 elapsed_us=65420.439
+HC_STAGE unit=engine call=12 stage=entry t_ns=218303408733139 elapsed_us=0.110
+HC_VALUE unit=engine call=12 key=requests value=2
+HC_VALUE unit=engine call=12 key=position0 value=59
+HC_VALUE unit=engine call=12 key=planned_drafts value=2
+HC_STAGE unit=engine call=12 stage=policy_done t_ns=218303408739379 elapsed_us=6.350
+HC_STAGE unit=engine call=12 stage=prepare_decode_done t_ns=218303408827527 elapsed_us=94.498
+HC_STAGE unit=engine call=12 stage=draft_catchup_done t_ns=218303410627193 elapsed_us=1894.164
+HC_STAGE unit=engine call=12 stage=drafting_done t_ns=218303414430079 elapsed_us=5697.050
+HC_VALUE unit=engine call=12 key=verification_rows value=3
+HC_VALUE unit=engine call=12 key=verification_rows value=3
+HC_STAGE unit=engine call=12 stage=before_target_forward t_ns=218303414436429 elapsed_us=5703.400
+HC_STAGE unit=batch call=12 stage=entry t_ns=218303414438349 elapsed_us=0.170
+HC_VALUE unit=batch call=12 key=rows value=6
+HC_VALUE unit=batch call=12 key=requests value=2
+HC_STAGE unit=batch call=12 stage=rollback_start t_ns=218303414443909 elapsed_us=5.730
+HC_STAGE unit=batch call=12 stage=rollback_done t_ns=218303414445479 elapsed_us=7.300
+HC_STAGE unit=batch call=12 stage=allocate_batch_done t_ns=218303414446729 elapsed_us=8.550
+HC_STAGE unit=batch call=12 stage=controls_done t_ns=218303414448279 elapsed_us=10.100
+HC_STAGE unit=batch call=12 stage=prior_ple_prefetch_done t_ns=218303414450059 elapsed_us=11.880
+HC_STAGE unit=batch call=12 stage=ngram_submitted t_ns=218303414531406 elapsed_us=93.227
+HC_STAGE unit=batch call=12 stage=before_layers t_ns=218303414562985 elapsed_us=124.806
+HC_STAGE unit=batch call=12 stage=before_ple_wait t_ns=218303414656903 elapsed_us=218.724
+HC_STAGE unit=batch call=12 stage=after_ple_wait t_ns=218303414658693 elapsed_us=220.514
+HC_STAGE unit=batch call=12 stage=body_submitted t_ns=218303418729661 elapsed_us=4291.482
+HC_STAGE unit=batch call=12 stage=stream_complete t_ns=218303473724561 elapsed_us=59286.382
+HC_STAGE unit=batch call=12 stage=leave t_ns=218303473729811 elapsed_us=59291.632
+HC_STAGE unit=engine call=12 stage=target_forward_done t_ns=218303473739080 elapsed_us=65006.051
+HC_STAGE unit=engine call=12 stage=finish_decode_done t_ns=218303474055901 elapsed_us=65322.872
+HC_STAGE unit=engine call=12 stage=leave t_ns=218303474065151 elapsed_us=65332.122
+HC_STAGE unit=engine call=13 stage=entry t_ns=218303474087040 elapsed_us=0.110
+HC_VALUE unit=engine call=13 key=requests value=2
+HC_VALUE unit=engine call=13 key=position0 value=62
+HC_VALUE unit=engine call=13 key=planned_drafts value=2
+HC_STAGE unit=engine call=13 stage=policy_done t_ns=218303474092790 elapsed_us=5.860
+HC_STAGE unit=engine call=13 stage=prepare_decode_done t_ns=218303474181847 elapsed_us=94.917
+HC_STAGE unit=engine call=13 stage=draft_catchup_done t_ns=218303476115680 elapsed_us=2028.750
+HC_STAGE unit=engine call=13 stage=drafting_done t_ns=218303479907596 elapsed_us=5820.666
+HC_VALUE unit=engine call=13 key=verification_rows value=2
+HC_VALUE unit=engine call=13 key=verification_rows value=3
+HC_STAGE unit=engine call=13 stage=before_target_forward t_ns=218303479914576 elapsed_us=5827.646
+HC_STAGE unit=batch call=13 stage=entry t_ns=218303479916796 elapsed_us=0.100
+HC_VALUE unit=batch call=13 key=rows value=5
+HC_VALUE unit=batch call=13 key=requests value=2
+HC_STAGE unit=batch call=13 stage=rollback_start t_ns=218303479922856 elapsed_us=6.160
+HC_STAGE unit=batch call=13 stage=rollback_done t_ns=218303479924326 elapsed_us=7.630
+HC_STAGE unit=batch call=13 stage=allocate_batch_done t_ns=218303479925686 elapsed_us=8.990
+HC_STAGE unit=batch call=13 stage=controls_done t_ns=218303479927146 elapsed_us=10.450
+HC_STAGE unit=batch call=13 stage=prior_ple_prefetch_done t_ns=218303479928806 elapsed_us=12.110
+HC_STAGE unit=batch call=13 stage=ngram_submitted t_ns=218303479995734 elapsed_us=79.038
+HC_STAGE unit=batch call=13 stage=before_layers t_ns=218303480024423 elapsed_us=107.727
+HC_STAGE unit=batch call=13 stage=before_ple_wait t_ns=218303480122930 elapsed_us=206.234
+HC_STAGE unit=batch call=13 stage=after_ple_wait t_ns=218303480124930 elapsed_us=208.234
+HC_STAGE unit=batch call=13 stage=body_submitted t_ns=218303484194419 elapsed_us=4277.723
+HC_STAGE unit=batch call=13 stage=stream_complete t_ns=218303536123390 elapsed_us=56206.694
+HC_STAGE unit=batch call=13 stage=leave t_ns=218303536128210 elapsed_us=56211.514
+HC_STAGE unit=engine call=13 stage=target_forward_done t_ns=218303536130439 elapsed_us=62043.509
+HC_STAGE unit=engine call=13 stage=finish_decode_done t_ns=218303537532627 elapsed_us=63445.697
+HC_STAGE unit=engine call=13 stage=leave t_ns=218303537538137 elapsed_us=63451.207
+HC_STAGE unit=engine call=14 stage=entry t_ns=218303537556647 elapsed_us=0.110
+HC_VALUE unit=engine call=14 key=requests value=2
+HC_VALUE unit=engine call=14 key=position0 value=64
+HC_VALUE unit=engine call=14 key=planned_drafts value=2
+HC_STAGE unit=engine call=14 stage=policy_done t_ns=218303537562237 elapsed_us=5.700
+HC_STAGE unit=engine call=14 stage=prepare_decode_done t_ns=218303537650674 elapsed_us=94.137
+HC_STAGE unit=engine call=14 stage=draft_catchup_done t_ns=218303539074382 elapsed_us=1517.845
+HC_STAGE unit=engine call=14 stage=drafting_done t_ns=218303542872068 elapsed_us=5315.531
+HC_VALUE unit=engine call=14 key=verification_rows value=3
+HC_VALUE unit=engine call=14 key=verification_rows value=2
+HC_STAGE unit=engine call=14 stage=before_target_forward t_ns=218303542877848 elapsed_us=5321.311
+HC_STAGE unit=batch call=14 stage=entry t_ns=218303542879718 elapsed_us=0.110
+HC_VALUE unit=batch call=14 key=rows value=5
+HC_VALUE unit=batch call=14 key=requests value=2
+HC_STAGE unit=batch call=14 stage=rollback_start t_ns=218303542885008 elapsed_us=5.400
+HC_STAGE unit=batch call=14 stage=rollback_done t_ns=218303542886528 elapsed_us=6.920
+HC_STAGE unit=batch call=14 stage=allocate_batch_done t_ns=218303542887838 elapsed_us=8.230
+HC_STAGE unit=batch call=14 stage=controls_done t_ns=218303542889158 elapsed_us=9.550
+HC_STAGE unit=batch call=14 stage=prior_ple_prefetch_done t_ns=218303542890488 elapsed_us=10.880
+HC_STAGE unit=batch call=14 stage=ngram_submitted t_ns=218303542994375 elapsed_us=114.767
+HC_STAGE unit=batch call=14 stage=before_layers t_ns=218303543008954 elapsed_us=129.346
+HC_STAGE unit=batch call=14 stage=before_ple_wait t_ns=218303543116461 elapsed_us=236.853
+HC_STAGE unit=batch call=14 stage=after_ple_wait t_ns=218303543955246 elapsed_us=1075.638
+HC_STAGE unit=batch call=14 stage=body_submitted t_ns=218303547970376 elapsed_us=5090.768
+HC_STAGE unit=batch call=14 stage=stream_complete t_ns=218303598473160 elapsed_us=55593.552
+HC_STAGE unit=batch call=14 stage=leave t_ns=218303598478540 elapsed_us=55598.932
+HC_STAGE unit=engine call=14 stage=target_forward_done t_ns=218303598480520 elapsed_us=60923.983
+HC_STAGE unit=engine call=14 stage=finish_decode_done t_ns=218303600039683 elapsed_us=62483.146
+HC_STAGE unit=engine call=14 stage=leave t_ns=218303600045553 elapsed_us=62489.016
+HC_STAGE unit=engine call=15 stage=entry t_ns=218303600065432 elapsed_us=0.100
+HC_VALUE unit=engine call=15 key=requests value=2
+HC_VALUE unit=engine call=15 key=position0 value=66
+HC_VALUE unit=engine call=15 key=planned_drafts value=2
+HC_STAGE unit=engine call=15 stage=policy_done t_ns=218303600071232 elapsed_us=5.900
+HC_STAGE unit=engine call=15 stage=prepare_decode_done t_ns=218303600164739 elapsed_us=99.407
+HC_STAGE unit=engine call=15 stage=draft_catchup_done t_ns=218303601796741 elapsed_us=1731.409
+HC_STAGE unit=engine call=15 stage=drafting_done t_ns=218303605243258 elapsed_us=5177.926
+HC_VALUE unit=engine call=15 key=verification_rows value=3
+HC_VALUE unit=engine call=15 key=verification_rows value=1
+HC_STAGE unit=engine call=15 stage=before_target_forward t_ns=218303605249178 elapsed_us=5183.846
+HC_STAGE unit=batch call=15 stage=entry t_ns=218303605251038 elapsed_us=0.170
+HC_VALUE unit=batch call=15 key=rows value=4
+HC_VALUE unit=batch call=15 key=requests value=2
+HC_STAGE unit=batch call=15 stage=rollback_start t_ns=218303605256998 elapsed_us=6.130
+HC_STAGE unit=batch call=15 stage=rollback_done t_ns=218303605258578 elapsed_us=7.710
+HC_STAGE unit=batch call=15 stage=allocate_batch_done t_ns=218303605259898 elapsed_us=9.030
+HC_STAGE unit=batch call=15 stage=controls_done t_ns=218303605261347 elapsed_us=10.479
+HC_STAGE unit=batch call=15 stage=prior_ple_prefetch_done t_ns=218303605262997 elapsed_us=12.129
+HC_STAGE unit=batch call=15 stage=ngram_submitted t_ns=218303605317056 elapsed_us=66.188
+HC_STAGE unit=batch call=15 stage=before_layers t_ns=218303605334995 elapsed_us=84.127
+HC_STAGE unit=batch call=15 stage=before_ple_wait t_ns=218303605430092 elapsed_us=179.224
+HC_STAGE unit=batch call=15 stage=after_ple_wait t_ns=218303605432012 elapsed_us=181.144
+HC_STAGE unit=batch call=15 stage=body_submitted t_ns=218303609508381 elapsed_us=4257.513
+HC_STAGE unit=batch call=15 stage=stream_complete t_ns=218303656782891 elapsed_us=51532.023
+HC_STAGE unit=batch call=15 stage=leave t_ns=218303656788601 elapsed_us=51537.733
+HC_STAGE unit=engine call=15 stage=target_forward_done t_ns=218303656790620 elapsed_us=56725.288
+HC_STAGE unit=engine call=15 stage=finish_decode_done t_ns=218303658333284 elapsed_us=58267.952
+HC_STAGE unit=engine call=15 stage=leave t_ns=218303658340294 elapsed_us=58274.962
+2026-11-02 10:08:26 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=35 rank=0 unique_bytes_freed=0 ledger_bytes=962887842
+2026-11-02 10:08:26 [INFO] [http] request=r8 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=3724.9 outcome=completed prompt_tokens=35 prefill_tokens=35 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.5 shared_prefix_wait_ms=0.0 ttft_ms=269.9 prefill_tps=256.1 decode_tps=37.1 batch_width=2 plan=batched-w2 draft_accepted=71 draft_proposed=83 draft_rounds=46 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962891672 acceptance_pct=85.5 ngram_rows=2800 ngram_dedup_rows=0 ngram_cache_hits=2763 ngram_disk_reads=37 cache_snapshot_bytes=267737660 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2136 host_available_mib=29986
+2026-11-02 10:08:27 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=30 rank=0 unique_bytes_freed=0 ledger_bytes=962893244
+2026-11-02 10:08:27 [INFO] [http] request=r9 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=4199.3 outcome=completed prompt_tokens=30 prefill_tokens=30 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=2 queue_ms=129.6 shared_prefix_wait_ms=0.0 ttft_ms=259.6 prefill_tps=231.1 decode_tps=32.5 batch_width=2 plan=batched-w2 draft_accepted=60 draft_proposed=82 draft_rounds=53 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962897054 acceptance_pct=73.2 ngram_rows=2880 ngram_dedup_rows=0 ngram_cache_hits=2802 ngram_disk_reads=78 cache_snapshot_bytes=267471380 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2138 host_available_mib=29984
+2026-11-02 10:08:27 [INFO] [http] request=r10 event=received method=POST path=/v1/chat/completions body_bytes=505
+2026-11-02 10:08:27 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+2026-11-02 10:08:27 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=35 rank=0 unique_bytes_freed=32178 ledger_bytes=962914100
+2026-11-02 10:08:27 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=28 rank=3 unique_bytes_freed=31978 ledger_bytes=962861018
+2026-11-02 10:08:27 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=28 rank=3 unique_bytes_freed=0 ledger_bytes=962861018
+2026-11-02 10:08:29 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=35 rank=0 unique_bytes_freed=0 ledger_bytes=962893224
+2026-11-02 10:08:29 [INFO] [http] request=r10 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2340.2 outcome=completed prompt_tokens=35 prefill_tokens=35 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.3 shared_prefix_wait_ms=0.0 ttft_ms=139.1 prefill_tps=254.1 decode_tps=58.3 batch_width=1 plan=serial-fallback draft_accepted=88 draft_proposed=122 draft_rounds=39 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962897054 acceptance_pct=72.1 ngram_rows=3152 ngram_dedup_rows=0 ngram_cache_hits=3142 ngram_disk_reads=10 cache_snapshot_bytes=267737660 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2139 host_available_mib=29994
+2026-11-02 10:08:29 [INFO] [http] request=r11 event=received method=POST path=/v1/chat/completions body_bytes=465
+2026-11-02 10:08:29 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+2026-11-02 10:08:29 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=30 rank=0 unique_bytes_freed=32158 ledger_bytes=962914120
+2026-11-02 10:08:29 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=23 rank=3 unique_bytes_freed=31958 ledger_bytes=962861058
+2026-11-02 10:08:29 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=23 rank=3 unique_bytes_freed=0 ledger_bytes=962861058
+2026-11-02 10:08:32 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=30 rank=0 unique_bytes_freed=0 ledger_bytes=962893244
+2026-11-02 10:08:32 [INFO] [http] request=r11 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2697.4 outcome=completed prompt_tokens=30 prefill_tokens=30 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.0 shared_prefix_wait_ms=0.0 ttft_ms=131.1 prefill_tps=230.8 decode_tps=50.0 batch_width=1 plan=serial-fallback draft_accepted=75 draft_proposed=106 draft_rounds=52 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962897054 acceptance_pct=70.8 ngram_rows=3024 ngram_dedup_rows=0 ngram_cache_hits=3007 ngram_disk_reads=17 cache_snapshot_bytes=267471380 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2140 host_available_mib=30005
+2026-11-02 10:08:32 [INFO] [server] event=shutdown_requested signal=2
+2026-11-02 10:08:32 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=12 rank=3 unique_bytes_freed=32118 ledger_bytes=962835072
+2026-11-02 10:08:32 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=23 rank=3 unique_bytes_freed=32102 ledger_bytes=962802970
+2026-11-02 10:08:32 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=2041 rank=3 unique_bytes_freed=153070 ledger_bytes=962649900
+2026-11-02 10:08:32 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=28 rank=3 unique_bytes_freed=32122 ledger_bytes=962617778
+2026-11-02 10:08:32 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=35 rank=3 unique_bytes_freed=32174 ledger_bytes=962585604
+2026-11-02 10:08:32 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=30 rank=3 unique_bytes_freed=32154 ledger_bytes=962553450

@@ -1,0 +1,8 @@
+{
+  "canonical_base": "8ab834a5902bf19341750daecf27516a57840dd1",
+  "scope": "Freshcanonicalonly ABI/headers/GPUtest objects. CurrentHCFusiontargetFFNroute disabledmatchesoriginalstock8ab; enablednewport. Existinghelperpreserves104records/32complete-statepairs/full248320finite logits/RNG/tokens/positions/work. Greedyenginehook overridesafterChoose withpredeclared1/0plans forbotharms; sampledpolicyunchanged. Not productiongreedycontroller replay, timing or teacherquality. Branchcounter isnot independentGPUkerneltrace. Fourallocatedsessions/twoactive/context65536/actualshort32768; noRDMA/profiler/adminsampler/tablewarm/systemchange.",
+  "expected_records": 104,
+  "expected_enabled_cycles": 44,
+  "expected_full_state_pairs": 32,
+  "activation_assertion": "Exclusive FFNbranch counters at actualtargetrows; fallbackrequiresallcounterzero. Stronger shape-local control than inheritedglobalQ8counter; no numeric/state/output assertions relaxed."
+}

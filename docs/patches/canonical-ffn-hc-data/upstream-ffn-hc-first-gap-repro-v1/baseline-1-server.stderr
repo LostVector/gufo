@@ -1,0 +1,1130 @@
+2026-11-02 10:15:27 [INFO] [gpu] event=queue_budget kind=llm observed=0 budget=8 expected_max=3 cap=2
+2026-11-02 10:15:27 [INFO] [loader] event=load_started kind=text artifact=/home/rkuo/models/Qwen3.8-Flash-Next-GGUF/UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf rss_mib=184 host_available_mib=119943
+2026-11-02 10:15:52 [INFO] [loader] event=load_phase phase=sessions rss_mib=668 host_available_mib=35954
+2026-11-02 10:15:52 [INFO] [cache] schema=component-cache-v1 event=configured sessions=2 snapshot_entries=128 capacity_bytes=1073741824 staging_capacity_bytes=0 automatic_bytes=13844539392 max_bytes=23394111488 disk_capacity_bytes=0 slot_pinned_bytes=0 ram_cache=on disk_backing_bytes=0
+2026-11-02 10:15:52 [INFO] [loader] event=structured_output_prepared vocabulary_tokens=248320 prepare_ms=30.7 rss_delta_kib=29936 rss_mib=2121 host_available_mib=30461
+2026-11-02 10:15:53 [INFO] [sampling] event=defaults thinking=off temperature=0 top_k=20 top_p=0.8 min_p=0 min_keep=0 seed=1 repeat_penalty=1 repeat_last_n=64 frequency_penalty=0 presence_penalty=1.5
+2026-11-02 10:15:53 [INFO] [loader] event=load_completed kind=text elapsed_ms=25993 monotonic_us=218752647770 model=flash-next-hc-tp1 sessions=2 context_tokens=65536 speculative=mtp draft_limit=7 disk_cache=off rss_mib=2092 host_available_mib=30461 gpu_device_used_mib=95306 gpu_device_total_mib=126976
+2026-11-02 10:15:53 [INFO] [server] event=listening monotonic_us=218752648052 address=http://127.0.0.1:28630 auth=off max_connections=16 max_body_bytes=8388608
+2026-11-02 10:15:53 [INFO] [http] request=r1 event=received method=GET path=/v1/models body_bytes=0
+2026-11-02 10:15:53 [INFO] [http] request=r1 event=completed method=GET path=/v1/models status=200 duration_ms=0.2 outcome=completed rss_mib=2092 host_available_mib=30461
+2026-11-02 10:15:53 [INFO] [http] request=r2 event=received method=POST path=/v1/messages/count_tokens body_bytes=11827
+2026-11-02 10:15:53 [INFO] [http] request=r2 event=completed method=POST path=/v1/messages/count_tokens status=200 duration_ms=0.7 outcome=completed rss_mib=2093 host_available_mib=30347
+2026-11-02 10:15:53 [INFO] [http] request=r3 event=received method=POST path=/v1/chat/completions body_bytes=402
+2026-11-02 10:15:53 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+HC_SOLO unit=prefill call=0 stage=entry t_ns=218752839117074 elapsed_us=0.480 session=6452f90b17c0 position=0 tokens=19
+HC_SOLO unit=prefill call=0 stage=leave t_ns=218752959740309 elapsed_us=120623.715 session=6452f90b17c0 position=0 tokens=19
+2026-11-02 10:15:53 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=12 rank=3 unique_bytes_freed=0 ledger_bytes=962599510
+HC_SOLO unit=decode call=1 stage=entry t_ns=218752962009821 elapsed_us=0.300 session=6452f90b17c0 position=19 tokens=8
+HC_SOLO unit=decode call=1 stage=leave t_ns=218753020171372 elapsed_us=58161.851 session=6452f90b17c0 position=19 tokens=8
+HC_SOLO unit=decode call=2 stage=entry t_ns=218753020206781 elapsed_us=0.300 session=6452f90b17c0 position=23 tokens=4
+HC_SOLO unit=decode call=2 stage=leave t_ns=218753074840758 elapsed_us=54634.277 session=6452f90b17c0 position=23 tokens=4
+2026-11-02 10:15:53 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=19 rank=0 unique_bytes_freed=0 ledger_bytes=962631652
+2026-11-02 10:15:53 [INFO] [http] request=r3 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=237.9 outcome=completed prompt_tokens=19 prefill_tokens=19 generated_tokens=8 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.3 shared_prefix_wait_ms=0.0 ttft_ms=122.1 prefill_tps=157.4 decode_tps=70.9 batch_width=1 plan=serial-fallback draft_accepted=6 draft_proposed=6 draft_rounds=2 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962634502 acceptance_pct=100.0 ngram_rows=432 ngram_dedup_rows=0 ngram_cache_hits=0 ngram_disk_reads=432 cache_snapshot_bytes=266885564 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2107 host_available_mib=30066
+2026-11-02 10:15:53 [INFO] [http] request=r4 event=received method=POST path=/v1/chat/completions body_bytes=12112
+2026-11-02 10:15:53 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+HC_SOLO unit=prefill call=3 stage=entry t_ns=218753078223887 elapsed_us=0.210 session=6452faf13190 position=0 tokens=2048
+HC_SOLO unit=prefill call=3 stage=leave t_ns=218754294060628 elapsed_us=1215836.951 session=6452faf13190 position=0 tokens=2048
+2026-11-02 10:15:54 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=2041 rank=3 unique_bytes_freed=0 ledger_bytes=962812482
+HC_SOLO unit=decode call=4 stage=entry t_ns=218754297435187 elapsed_us=0.310 session=6452faf13190 position=2048 tokens=128
+HC_SOLO unit=decode call=4 stage=leave t_ns=218754344830140 elapsed_us=47395.263 session=6452faf13190 position=2048 tokens=128
+HC_SOLO unit=decode call=5 stage=entry t_ns=218754344865649 elapsed_us=0.340 session=6452faf13190 position=2050 tokens=126
+HC_SOLO unit=decode call=5 stage=leave t_ns=218754387125326 elapsed_us=42260.017 session=6452faf13190 position=2050 tokens=126
+HC_SOLO unit=decode call=6 stage=entry t_ns=218754387139255 elapsed_us=0.110 session=6452faf13190 position=2052 tokens=124
+HC_SOLO unit=decode call=6 stage=leave t_ns=218754430469121 elapsed_us=43329.976 session=6452faf13190 position=2052 tokens=124
+HC_SOLO unit=decode call=7 stage=entry t_ns=218754430483040 elapsed_us=0.070 session=6452faf13190 position=2053 tokens=123
+HC_SOLO unit=decode call=7 stage=leave t_ns=218754473595462 elapsed_us=43112.492 session=6452faf13190 position=2053 tokens=123
+HC_SOLO unit=decode call=8 stage=entry t_ns=218754473603771 elapsed_us=0.050 session=6452faf13190 position=2054 tokens=122
+HC_SOLO unit=decode call=8 stage=leave t_ns=218754517841049 elapsed_us=44237.328 session=6452faf13190 position=2054 tokens=122
+HC_SOLO unit=decode call=9 stage=entry t_ns=218754517862668 elapsed_us=0.270 session=6452faf13190 position=2055 tokens=121
+HC_SOLO unit=decode call=9 stage=leave t_ns=218754575688990 elapsed_us=57826.592 session=6452faf13190 position=2055 tokens=121
+HC_SOLO unit=decode call=10 stage=entry t_ns=218754575704580 elapsed_us=0.040 session=6452faf13190 position=2056 tokens=120
+HC_SOLO unit=decode call=10 stage=leave t_ns=218754610321275 elapsed_us=34616.735 session=6452faf13190 position=2056 tokens=120
+HC_SOLO unit=decode call=11 stage=entry t_ns=218754610329645 elapsed_us=0.050 session=6452faf13190 position=2057 tokens=119
+HC_SOLO unit=decode call=11 stage=leave t_ns=218754645338008 elapsed_us=35008.413 session=6452faf13190 position=2057 tokens=119
+HC_SOLO unit=decode call=12 stage=entry t_ns=218754645351448 elapsed_us=0.060 session=6452faf13190 position=2058 tokens=118
+HC_SOLO unit=decode call=12 stage=leave t_ns=218754679508877 elapsed_us=34157.489 session=6452faf13190 position=2058 tokens=118
+HC_SOLO unit=decode call=13 stage=entry t_ns=218754679514337 elapsed_us=0.040 session=6452faf13190 position=2059 tokens=117
+HC_SOLO unit=decode call=13 stage=leave t_ns=218754713798112 elapsed_us=34283.815 session=6452faf13190 position=2059 tokens=117
+HC_SOLO unit=decode call=14 stage=entry t_ns=218754713804082 elapsed_us=0.040 session=6452faf13190 position=2060 tokens=116
+HC_SOLO unit=decode call=14 stage=leave t_ns=218754748006440 elapsed_us=34202.398 session=6452faf13190 position=2060 tokens=116
+HC_SOLO unit=decode call=15 stage=entry t_ns=218754748016299 elapsed_us=0.040 session=6452faf13190 position=2061 tokens=115
+HC_SOLO unit=decode call=15 stage=leave t_ns=218754782507179 elapsed_us=34490.920 session=6452faf13190 position=2061 tokens=115
+HC_SOLO unit=decode call=16 stage=entry t_ns=218754782513538 elapsed_us=0.040 session=6452faf13190 position=2062 tokens=114
+HC_SOLO unit=decode call=16 stage=leave t_ns=218754816692807 elapsed_us=34179.309 session=6452faf13190 position=2062 tokens=114
+HC_SOLO unit=decode call=17 stage=entry t_ns=218754816704976 elapsed_us=0.060 session=6452faf13190 position=2063 tokens=113
+HC_SOLO unit=decode call=17 stage=leave t_ns=218754850559625 elapsed_us=33854.709 session=6452faf13190 position=2063 tokens=113
+HC_SOLO unit=decode call=18 stage=entry t_ns=218754850574304 elapsed_us=0.210 session=6452faf13190 position=2064 tokens=112
+HC_SOLO unit=decode call=18 stage=leave t_ns=218754884714404 elapsed_us=34140.310 session=6452faf13190 position=2064 tokens=112
+HC_SOLO unit=decode call=19 stage=entry t_ns=218754884721294 elapsed_us=0.040 session=6452faf13190 position=2065 tokens=111
+HC_SOLO unit=decode call=19 stage=leave t_ns=218754918846664 elapsed_us=34125.410 session=6452faf13190 position=2065 tokens=111
+HC_SOLO unit=decode call=20 stage=entry t_ns=218754918851763 elapsed_us=0.050 session=6452faf13190 position=2066 tokens=110
+HC_SOLO unit=decode call=20 stage=leave t_ns=218754952840228 elapsed_us=33988.515 session=6452faf13190 position=2066 tokens=110
+HC_SOLO unit=decode call=21 stage=entry t_ns=218754952847357 elapsed_us=0.040 session=6452faf13190 position=2067 tokens=109
+HC_SOLO unit=decode call=21 stage=leave t_ns=218754987173451 elapsed_us=34326.134 session=6452faf13190 position=2067 tokens=109
+HC_SOLO unit=decode call=22 stage=entry t_ns=218754987218110 elapsed_us=0.260 session=6452faf13190 position=2068 tokens=108
+HC_SOLO unit=decode call=22 stage=leave t_ns=218755022473286 elapsed_us=35255.436 session=6452faf13190 position=2068 tokens=108
+HC_SOLO unit=decode call=23 stage=entry t_ns=218755022502685 elapsed_us=0.130 session=6452faf13190 position=2069 tokens=107
+HC_SOLO unit=decode call=23 stage=leave t_ns=218755056569037 elapsed_us=34066.482 session=6452faf13190 position=2069 tokens=107
+HC_SOLO unit=decode call=24 stage=entry t_ns=218755056575797 elapsed_us=0.040 session=6452faf13190 position=2070 tokens=106
+HC_SOLO unit=decode call=24 stage=leave t_ns=218755090785575 elapsed_us=34209.818 session=6452faf13190 position=2070 tokens=106
+HC_SOLO unit=decode call=25 stage=entry t_ns=218755090799534 elapsed_us=0.060 session=6452faf13190 position=2071 tokens=105
+HC_SOLO unit=decode call=25 stage=leave t_ns=218755124930634 elapsed_us=34131.160 session=6452faf13190 position=2071 tokens=105
+HC_SOLO unit=decode call=26 stage=entry t_ns=218755124944234 elapsed_us=0.060 session=6452faf13190 position=2072 tokens=104
+HC_SOLO unit=decode call=26 stage=leave t_ns=218755206912694 elapsed_us=81968.520 session=6452faf13190 position=2072 tokens=104
+HC_SOLO unit=decode call=27 stage=entry t_ns=218755206930713 elapsed_us=0.060 session=6452faf13190 position=2080 tokens=96
+HC_SOLO unit=decode call=27 stage=leave t_ns=218755256787843 elapsed_us=49857.190 session=6452faf13190 position=2080 tokens=96
+HC_SOLO unit=decode call=28 stage=entry t_ns=218755256796293 elapsed_us=0.040 session=6452faf13190 position=2081 tokens=95
+HC_SOLO unit=decode call=28 stage=leave t_ns=218755311529017 elapsed_us=54732.764 session=6452faf13190 position=2081 tokens=95
+HC_SOLO unit=decode call=29 stage=entry t_ns=218755311541427 elapsed_us=0.180 session=6452faf13190 position=2082 tokens=94
+HC_SOLO unit=decode call=29 stage=leave t_ns=218755352000377 elapsed_us=40459.130 session=6452faf13190 position=2082 tokens=94
+HC_SOLO unit=decode call=30 stage=entry t_ns=218755352006867 elapsed_us=0.050 session=6452faf13190 position=2084 tokens=92
+HC_SOLO unit=decode call=30 stage=leave t_ns=218755394987532 elapsed_us=42980.715 session=6452faf13190 position=2084 tokens=92
+HC_SOLO unit=decode call=31 stage=entry t_ns=218755394993722 elapsed_us=0.050 session=6452faf13190 position=2085 tokens=91
+HC_SOLO unit=decode call=31 stage=leave t_ns=218755437225570 elapsed_us=42231.898 session=6452faf13190 position=2085 tokens=91
+HC_SOLO unit=decode call=32 stage=entry t_ns=218755437230860 elapsed_us=0.050 session=6452faf13190 position=2087 tokens=89
+HC_SOLO unit=decode call=32 stage=leave t_ns=218755495321134 elapsed_us=58090.324 session=6452faf13190 position=2087 tokens=89
+HC_SOLO unit=decode call=33 stage=entry t_ns=218755495332693 elapsed_us=0.040 session=6452faf13190 position=2090 tokens=86
+HC_SOLO unit=decode call=33 stage=leave t_ns=218755545652809 elapsed_us=50320.156 session=6452faf13190 position=2090 tokens=86
+HC_SOLO unit=decode call=34 stage=entry t_ns=218755545661249 elapsed_us=0.030 session=6452faf13190 position=2093 tokens=83
+HC_SOLO unit=decode call=34 stage=leave t_ns=218755624855772 elapsed_us=79194.553 session=6452faf13190 position=2093 tokens=83
+HC_SOLO unit=decode call=35 stage=entry t_ns=218755624872002 elapsed_us=0.060 session=6452faf13190 position=2101 tokens=75
+HC_SOLO unit=decode call=35 stage=leave t_ns=218755668858457 elapsed_us=43986.515 session=6452faf13190 position=2101 tokens=75
+HC_SOLO unit=decode call=36 stage=entry t_ns=218755668868126 elapsed_us=0.060 session=6452faf13190 position=2102 tokens=74
+HC_SOLO unit=decode call=36 stage=leave t_ns=218755746741949 elapsed_us=77873.883 session=6452faf13190 position=2102 tokens=74
+HC_SOLO unit=decode call=37 stage=entry t_ns=218755746760078 elapsed_us=0.060 session=6452faf13190 position=2108 tokens=68
+HC_SOLO unit=decode call=37 stage=leave t_ns=218755802464834 elapsed_us=55704.816 session=6452faf13190 position=2108 tokens=68
+HC_SOLO unit=decode call=38 stage=entry t_ns=218755802476463 elapsed_us=0.050 session=6452faf13190 position=2111 tokens=65
+HC_SOLO unit=decode call=38 stage=leave t_ns=218755851180597 elapsed_us=48704.184 session=6452faf13190 position=2111 tokens=65
+HC_SOLO unit=decode call=39 stage=entry t_ns=218755851190027 elapsed_us=0.050 session=6452faf13190 position=2114 tokens=62
+HC_SOLO unit=decode call=39 stage=leave t_ns=218755893697737 elapsed_us=42507.760 session=6452faf13190 position=2114 tokens=62
+HC_SOLO unit=decode call=40 stage=entry t_ns=218755893704437 elapsed_us=0.040 session=6452faf13190 position=2116 tokens=60
+HC_SOLO unit=decode call=40 stage=leave t_ns=218755973975787 elapsed_us=80271.390 session=6452faf13190 position=2116 tokens=60
+HC_SOLO unit=decode call=41 stage=entry t_ns=218755973992617 elapsed_us=0.060 session=6452faf13190 position=2124 tokens=52
+HC_SOLO unit=decode call=41 stage=leave t_ns=218756017768378 elapsed_us=43775.821 session=6452faf13190 position=2124 tokens=52
+HC_SOLO unit=decode call=42 stage=entry t_ns=218756017776218 elapsed_us=0.060 session=6452faf13190 position=2125 tokens=51
+HC_SOLO unit=decode call=42 stage=leave t_ns=218756067084984 elapsed_us=49308.826 session=6452faf13190 position=2125 tokens=51
+HC_SOLO unit=decode call=43 stage=entry t_ns=218756067091624 elapsed_us=0.050 session=6452faf13190 position=2128 tokens=48
+HC_SOLO unit=decode call=43 stage=leave t_ns=218756149208980 elapsed_us=82117.406 session=6452faf13190 position=2128 tokens=48
+HC_SOLO unit=decode call=44 stage=entry t_ns=218756149217470 elapsed_us=0.060 session=6452faf13190 position=2134 tokens=42
+HC_SOLO unit=decode call=44 stage=leave t_ns=218756202771879 elapsed_us=53554.469 session=6452faf13190 position=2134 tokens=42
+HC_SOLO unit=decode call=45 stage=entry t_ns=218756202783399 elapsed_us=0.050 session=6452faf13190 position=2136 tokens=40
+HC_SOLO unit=decode call=45 stage=leave t_ns=218756246588949 elapsed_us=43805.600 session=6452faf13190 position=2136 tokens=40
+HC_SOLO unit=decode call=46 stage=entry t_ns=218756246595119 elapsed_us=0.040 session=6452faf13190 position=2138 tokens=38
+HC_SOLO unit=decode call=46 stage=leave t_ns=218756296800968 elapsed_us=50205.889 session=6452faf13190 position=2138 tokens=38
+HC_SOLO unit=decode call=47 stage=entry t_ns=218756296806638 elapsed_us=0.040 session=6452faf13190 position=2140 tokens=36
+HC_SOLO unit=decode call=47 stage=leave t_ns=218756338191291 elapsed_us=41384.693 session=6452faf13190 position=2140 tokens=36
+HC_SOLO unit=decode call=48 stage=entry t_ns=218756338197871 elapsed_us=0.040 session=6452faf13190 position=2142 tokens=34
+HC_SOLO unit=decode call=48 stage=leave t_ns=218756382043891 elapsed_us=43846.060 session=6452faf13190 position=2142 tokens=34
+HC_SOLO unit=decode call=49 stage=entry t_ns=218756382049281 elapsed_us=0.030 session=6452faf13190 position=2143 tokens=33
+HC_SOLO unit=decode call=49 stage=leave t_ns=218756426037766 elapsed_us=43988.515 session=6452faf13190 position=2143 tokens=33
+2026-11-02 10:15:56 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=2048 rank=0 unique_bytes_freed=0 ledger_bytes=962870764
+2026-11-02 10:15:56 [INFO] [http] request=r4 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=3349.8 outcome=completed prompt_tokens=2048 prefill_tokens=2048 generated_tokens=96 finish=stop cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.3 shared_prefix_wait_ms=0.0 ttft_ms=1217.3 prefill_tps=1684.3 decode_tps=45.1 batch_width=1 plan=serial-fallback draft_accepted=50 draft_proposed=72 draft_rounds=30 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=328925184 cache_global_ledger_bytes=962890198 acceptance_pct=69.4 ngram_rows=34656 ngram_dedup_rows=31728 ngram_cache_hits=320 ngram_disk_reads=2608 cache_snapshot_bytes=327224612 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2115 host_available_mib=29920
+2026-11-02 10:15:56 [INFO] [http] request=r5 event=received method=POST path=/v1/chat/completions body_bytes=12112
+2026-11-02 10:15:56 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+HC_SOLO unit=prefill call=50 stage=entry t_ns=218756428901670 elapsed_us=0.260 session=6452f90b17c0 position=0 tokens=2048
+HC_SOLO unit=prefill call=50 stage=leave t_ns=218757648008123 elapsed_us=1219106.713 session=6452f90b17c0 position=0 tokens=2048
+2026-11-02 10:15:58 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=2041 rank=3 unique_bytes_freed=43030 ledger_bytes=963006060
+2026-11-02 10:15:58 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=2041 rank=3 unique_bytes_freed=0 ledger_bytes=963006060
+HC_SOLO unit=decode call=51 stage=entry t_ns=218757651424281 elapsed_us=0.040 session=6452f90b17c0 position=2048 tokens=128
+HC_SOLO unit=decode call=51 stage=leave t_ns=218757695286100 elapsed_us=43861.859 session=6452f90b17c0 position=2048 tokens=128
+HC_SOLO unit=decode call=52 stage=entry t_ns=218757695295870 elapsed_us=0.030 session=6452f90b17c0 position=2050 tokens=126
+HC_SOLO unit=decode call=52 stage=leave t_ns=218757737271635 elapsed_us=41975.795 session=6452f90b17c0 position=2050 tokens=126
+HC_SOLO unit=decode call=53 stage=entry t_ns=218757737281765 elapsed_us=0.060 session=6452f90b17c0 position=2052 tokens=124
+HC_SOLO unit=decode call=53 stage=leave t_ns=218757779961319 elapsed_us=42679.614 session=6452f90b17c0 position=2052 tokens=124
+HC_SOLO unit=decode call=54 stage=entry t_ns=218757779968549 elapsed_us=0.040 session=6452f90b17c0 position=2053 tokens=123
+HC_SOLO unit=decode call=54 stage=leave t_ns=218757823032512 elapsed_us=43064.003 session=6452f90b17c0 position=2053 tokens=123
+HC_SOLO unit=decode call=55 stage=entry t_ns=218757823038691 elapsed_us=0.040 session=6452f90b17c0 position=2054 tokens=122
+HC_SOLO unit=decode call=55 stage=leave t_ns=218757866999158 elapsed_us=43960.507 session=6452f90b17c0 position=2054 tokens=122
+HC_SOLO unit=decode call=56 stage=entry t_ns=218757867006387 elapsed_us=0.040 session=6452f90b17c0 position=2055 tokens=121
+HC_SOLO unit=decode call=56 stage=leave t_ns=218757924659074 elapsed_us=57652.727 session=6452f90b17c0 position=2055 tokens=121
+HC_SOLO unit=decode call=57 stage=entry t_ns=218757924668464 elapsed_us=0.030 session=6452f90b17c0 position=2056 tokens=120
+HC_SOLO unit=decode call=57 stage=leave t_ns=218757958865292 elapsed_us=34196.858 session=6452f90b17c0 position=2056 tokens=120
+HC_SOLO unit=decode call=58 stage=entry t_ns=218757958871922 elapsed_us=0.020 session=6452f90b17c0 position=2057 tokens=119
+HC_SOLO unit=decode call=58 stage=leave t_ns=218757993585714 elapsed_us=34713.812 session=6452f90b17c0 position=2057 tokens=119
+HC_SOLO unit=decode call=59 stage=entry t_ns=218757993594124 elapsed_us=0.050 session=6452f90b17c0 position=2058 tokens=118
+HC_SOLO unit=decode call=59 stage=leave t_ns=218758027973926 elapsed_us=34379.852 session=6452f90b17c0 position=2058 tokens=118
+HC_SOLO unit=decode call=60 stage=entry t_ns=218758027985586 elapsed_us=0.030 session=6452f90b17c0 position=2059 tokens=117
+HC_SOLO unit=decode call=60 stage=leave t_ns=218758062184364 elapsed_us=34198.808 session=6452f90b17c0 position=2059 tokens=117
+HC_SOLO unit=decode call=61 stage=entry t_ns=218758062188804 elapsed_us=0.030 session=6452f90b17c0 position=2060 tokens=116
+HC_SOLO unit=decode call=61 stage=leave t_ns=218758096400741 elapsed_us=34211.967 session=6452f90b17c0 position=2060 tokens=116
+HC_SOLO unit=decode call=62 stage=entry t_ns=218758096405111 elapsed_us=0.030 session=6452f90b17c0 position=2061 tokens=115
+HC_SOLO unit=decode call=62 stage=leave t_ns=218758130652767 elapsed_us=34247.686 session=6452f90b17c0 position=2061 tokens=115
+HC_SOLO unit=decode call=63 stage=entry t_ns=218758130657607 elapsed_us=0.030 session=6452f90b17c0 position=2062 tokens=114
+HC_SOLO unit=decode call=63 stage=leave t_ns=218758164851295 elapsed_us=34193.718 session=6452f90b17c0 position=2062 tokens=114
+HC_SOLO unit=decode call=64 stage=entry t_ns=218758164855625 elapsed_us=0.020 session=6452f90b17c0 position=2063 tokens=113
+HC_SOLO unit=decode call=64 stage=leave t_ns=218758199060803 elapsed_us=34205.198 session=6452f90b17c0 position=2063 tokens=113
+HC_SOLO unit=decode call=65 stage=entry t_ns=218758199066933 elapsed_us=0.030 session=6452f90b17c0 position=2064 tokens=112
+HC_SOLO unit=decode call=65 stage=leave t_ns=218758233400416 elapsed_us=34333.513 session=6452f90b17c0 position=2064 tokens=112
+HC_SOLO unit=decode call=66 stage=entry t_ns=218758233405006 elapsed_us=0.040 session=6452f90b17c0 position=2065 tokens=111
+HC_SOLO unit=decode call=66 stage=leave t_ns=218758267645493 elapsed_us=34240.527 session=6452f90b17c0 position=2065 tokens=111
+HC_SOLO unit=decode call=67 stage=entry t_ns=218758267649783 elapsed_us=0.040 session=6452f90b17c0 position=2066 tokens=110
+HC_SOLO unit=decode call=67 stage=leave t_ns=218758301912229 elapsed_us=34262.486 session=6452f90b17c0 position=2066 tokens=110
+HC_SOLO unit=decode call=68 stage=entry t_ns=218758301916349 elapsed_us=0.040 session=6452f90b17c0 position=2067 tokens=109
+HC_SOLO unit=decode call=68 stage=leave t_ns=218758336128196 elapsed_us=34211.887 session=6452f90b17c0 position=2067 tokens=109
+HC_SOLO unit=decode call=69 stage=entry t_ns=218758336132706 elapsed_us=0.040 session=6452f90b17c0 position=2068 tokens=108
+HC_SOLO unit=decode call=69 stage=leave t_ns=218758370822639 elapsed_us=34689.973 session=6452f90b17c0 position=2068 tokens=108
+HC_SOLO unit=decode call=70 stage=entry t_ns=218758370827539 elapsed_us=0.040 session=6452f90b17c0 position=2069 tokens=107
+HC_SOLO unit=decode call=70 stage=leave t_ns=218758405088075 elapsed_us=34260.576 session=6452f90b17c0 position=2069 tokens=107
+HC_SOLO unit=decode call=71 stage=entry t_ns=218758405092975 elapsed_us=0.030 session=6452f90b17c0 position=2070 tokens=106
+HC_SOLO unit=decode call=71 stage=leave t_ns=218758439330801 elapsed_us=34237.856 session=6452f90b17c0 position=2070 tokens=106
+HC_SOLO unit=decode call=72 stage=entry t_ns=218758439335721 elapsed_us=0.030 session=6452f90b17c0 position=2071 tokens=105
+HC_SOLO unit=decode call=72 stage=leave t_ns=218758473763772 elapsed_us=34428.081 session=6452f90b17c0 position=2071 tokens=105
+HC_SOLO unit=decode call=73 stage=entry t_ns=218758473768092 elapsed_us=0.030 session=6452f90b17c0 position=2072 tokens=104
+HC_SOLO unit=decode call=73 stage=leave t_ns=218758555225487 elapsed_us=81457.425 session=6452f90b17c0 position=2072 tokens=104
+HC_SOLO unit=decode call=74 stage=entry t_ns=218758555245117 elapsed_us=0.090 session=6452f90b17c0 position=2080 tokens=96
+HC_SOLO unit=decode call=74 stage=leave t_ns=218758604977641 elapsed_us=49732.614 session=6452f90b17c0 position=2080 tokens=96
+HC_SOLO unit=decode call=75 stage=entry t_ns=218758604986090 elapsed_us=0.060 session=6452f90b17c0 position=2081 tokens=95
+HC_SOLO unit=decode call=75 stage=leave t_ns=218758659683145 elapsed_us=54697.115 session=6452f90b17c0 position=2081 tokens=95
+HC_SOLO unit=decode call=76 stage=entry t_ns=218758659696385 elapsed_us=0.050 session=6452f90b17c0 position=2082 tokens=94
+HC_SOLO unit=decode call=76 stage=leave t_ns=218758700497656 elapsed_us=40801.321 session=6452f90b17c0 position=2082 tokens=94
+HC_SOLO unit=decode call=77 stage=entry t_ns=218758700504095 elapsed_us=0.040 session=6452f90b17c0 position=2084 tokens=92
+HC_SOLO unit=decode call=77 stage=leave t_ns=218758744477591 elapsed_us=43973.536 session=6452f90b17c0 position=2084 tokens=92
+HC_SOLO unit=decode call=78 stage=entry t_ns=218758744482081 elapsed_us=0.020 session=6452f90b17c0 position=2085 tokens=91
+HC_SOLO unit=decode call=78 stage=leave t_ns=218758786769267 elapsed_us=42287.206 session=6452f90b17c0 position=2085 tokens=91
+HC_SOLO unit=decode call=79 stage=entry t_ns=218758786774867 elapsed_us=0.030 session=6452f90b17c0 position=2087 tokens=89
+HC_SOLO unit=decode call=79 stage=leave t_ns=218758845064215 elapsed_us=58289.378 session=6452f90b17c0 position=2087 tokens=89
+HC_SOLO unit=decode call=80 stage=entry t_ns=218758845076514 elapsed_us=0.060 session=6452f90b17c0 position=2090 tokens=86
+HC_SOLO unit=decode call=80 stage=leave t_ns=218758895143248 elapsed_us=50066.794 session=6452f90b17c0 position=2090 tokens=86
+HC_SOLO unit=decode call=81 stage=entry t_ns=218758895150848 elapsed_us=0.030 session=6452f90b17c0 position=2093 tokens=83
+HC_SOLO unit=decode call=81 stage=leave t_ns=218758973767698 elapsed_us=78616.880 session=6452f90b17c0 position=2093 tokens=83
+HC_SOLO unit=decode call=82 stage=entry t_ns=218758973798237 elapsed_us=0.100 session=6452f90b17c0 position=2101 tokens=75
+HC_SOLO unit=decode call=82 stage=leave t_ns=218759017892909 elapsed_us=44094.772 session=6452f90b17c0 position=2101 tokens=75
+HC_SOLO unit=decode call=83 stage=entry t_ns=218759017908899 elapsed_us=0.070 session=6452f90b17c0 position=2102 tokens=74
+HC_SOLO unit=decode call=83 stage=leave t_ns=218759095693584 elapsed_us=77784.755 session=6452f90b17c0 position=2102 tokens=74
+HC_SOLO unit=decode call=84 stage=entry t_ns=218759095709833 elapsed_us=0.100 session=6452f90b17c0 position=2108 tokens=68
+HC_SOLO unit=decode call=84 stage=leave t_ns=218759151430058 elapsed_us=55720.325 session=6452f90b17c0 position=2108 tokens=68
+HC_SOLO unit=decode call=85 stage=entry t_ns=218759151442217 elapsed_us=0.060 session=6452f90b17c0 position=2111 tokens=65
+HC_SOLO unit=decode call=85 stage=leave t_ns=218759200245549 elapsed_us=48803.392 session=6452f90b17c0 position=2111 tokens=65
+HC_SOLO unit=decode call=86 stage=entry t_ns=218759200256648 elapsed_us=0.070 session=6452f90b17c0 position=2114 tokens=62
+HC_SOLO unit=decode call=86 stage=leave t_ns=218759242810187 elapsed_us=42553.609 session=6452f90b17c0 position=2114 tokens=62
+HC_SOLO unit=decode call=87 stage=entry t_ns=218759242821796 elapsed_us=0.100 session=6452f90b17c0 position=2116 tokens=60
+HC_SOLO unit=decode call=87 stage=leave t_ns=218759322238953 elapsed_us=79417.257 session=6452f90b17c0 position=2116 tokens=60
+HC_SOLO unit=decode call=88 stage=entry t_ns=218759322254222 elapsed_us=0.100 session=6452f90b17c0 position=2124 tokens=52
+HC_SOLO unit=decode call=88 stage=leave t_ns=218759365687784 elapsed_us=43433.662 session=6452f90b17c0 position=2124 tokens=52
+HC_SOLO unit=decode call=89 stage=entry t_ns=218759365700384 elapsed_us=0.100 session=6452f90b17c0 position=2125 tokens=51
+HC_SOLO unit=decode call=89 stage=leave t_ns=218759415473946 elapsed_us=49773.662 session=6452f90b17c0 position=2125 tokens=51
+HC_SOLO unit=decode call=90 stage=entry t_ns=218759415486116 elapsed_us=0.060 session=6452f90b17c0 position=2128 tokens=48
+HC_SOLO unit=decode call=90 stage=leave t_ns=218759497156675 elapsed_us=81670.619 session=6452f90b17c0 position=2128 tokens=48
+HC_SOLO unit=decode call=91 stage=entry t_ns=218759497173924 elapsed_us=0.130 session=6452f90b17c0 position=2134 tokens=42
+HC_SOLO unit=decode call=91 stage=leave t_ns=218759550602047 elapsed_us=53428.253 session=6452f90b17c0 position=2134 tokens=42
+HC_SOLO unit=decode call=92 stage=entry t_ns=218759550617967 elapsed_us=0.070 session=6452f90b17c0 position=2136 tokens=40
+HC_SOLO unit=decode call=92 stage=leave t_ns=218759594367409 elapsed_us=43749.512 session=6452f90b17c0 position=2136 tokens=40
+HC_SOLO unit=decode call=93 stage=entry t_ns=218759594378209 elapsed_us=0.060 session=6452f90b17c0 position=2138 tokens=38
+HC_SOLO unit=decode call=93 stage=leave t_ns=218759644599118 elapsed_us=50220.969 session=6452f90b17c0 position=2138 tokens=38
+HC_SOLO unit=decode call=94 stage=entry t_ns=218759644608937 elapsed_us=0.060 session=6452f90b17c0 position=2140 tokens=36
+HC_SOLO unit=decode call=94 stage=leave t_ns=218759685891384 elapsed_us=41282.507 session=6452f90b17c0 position=2140 tokens=36
+HC_SOLO unit=decode call=95 stage=entry t_ns=218759685901903 elapsed_us=0.070 session=6452f90b17c0 position=2142 tokens=34
+HC_SOLO unit=decode call=95 stage=leave t_ns=218759730644006 elapsed_us=44742.173 session=6452f90b17c0 position=2142 tokens=34
+HC_SOLO unit=decode call=96 stage=entry t_ns=218759730727213 elapsed_us=0.440 session=6452f90b17c0 position=2143 tokens=33
+HC_SOLO unit=decode call=96 stage=leave t_ns=218759774736808 elapsed_us=44010.035 session=6452f90b17c0 position=2143 tokens=33
+2026-11-02 10:16:00 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=2048 rank=0 unique_bytes_freed=43458 ledger_bytes=963020688
+2026-11-02 10:16:00 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=2048 rank=0 unique_bytes_freed=0 ledger_bytes=963020688
+2026-11-02 10:16:00 [INFO] [http] request=r5 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=3348.3 outcome=completed prompt_tokens=2048 prefill_tokens=2048 generated_tokens=96 finish=stop cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.1 shared_prefix_wait_ms=0.0 ttft_ms=1220.5 prefill_tps=1679.7 decode_tps=45.2 batch_width=1 plan=serial-fallback draft_accepted=50 draft_proposed=72 draft_rounds=30 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=328925184 cache_global_ledger_bytes=963039570 acceptance_pct=69.4 ngram_rows=34656 ngram_dedup_rows=31728 ngram_cache_hits=2918 ngram_disk_reads=10 cache_snapshot_bytes=327224612 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2123 host_available_mib=29911
+2026-11-02 10:16:00 [INFO] [http] request=r6 event=received method=POST path=/v1/chat/completions body_bytes=505
+2026-11-02 10:16:00 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+HC_SOLO unit=prefill call=97 stage=entry t_ns=218759778288722 elapsed_us=0.480 session=6452faf13190 position=0 tokens=35
+HC_SOLO unit=prefill call=97 stage=leave t_ns=218759919166981 elapsed_us=140878.739 session=6452faf13190 position=0 tokens=35
+2026-11-02 10:16:00 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=28 rank=3 unique_bytes_freed=0 ledger_bytes=962920030
+HC_SOLO unit=decode call=98 stage=entry t_ns=218759922635468 elapsed_us=0.250 session=6452faf13190 position=35 tokens=128
+HC_SOLO unit=decode call=98 stage=leave t_ns=218759990230507 elapsed_us=67595.289 session=6452faf13190 position=35 tokens=128
+HC_SOLO unit=decode call=99 stage=entry t_ns=218759990257176 elapsed_us=0.140 session=6452faf13190 position=40 tokens=123
+HC_SOLO unit=decode call=99 stage=leave t_ns=218760039340659 elapsed_us=49083.623 session=6452faf13190 position=40 tokens=123
+HC_SOLO unit=decode call=100 stage=entry t_ns=218760039354899 elapsed_us=0.100 session=6452faf13190 position=42 tokens=121
+HC_SOLO unit=decode call=100 stage=leave t_ns=218760115596780 elapsed_us=76241.981 session=6452faf13190 position=42 tokens=121
+HC_SOLO unit=decode call=101 stage=entry t_ns=218760115614930 elapsed_us=0.100 session=6452faf13190 position=50 tokens=113
+HC_SOLO unit=decode call=101 stage=leave t_ns=218760197926060 elapsed_us=82311.230 session=6452faf13190 position=50 tokens=113
+HC_SOLO unit=decode call=102 stage=entry t_ns=218760197955969 elapsed_us=0.140 session=6452faf13190 position=55 tokens=108
+HC_SOLO unit=decode call=102 stage=leave t_ns=218760239737810 elapsed_us=41781.981 session=6452faf13190 position=55 tokens=108
+HC_SOLO unit=decode call=103 stage=entry t_ns=218760239772029 elapsed_us=0.100 session=6452faf13190 position=57 tokens=106
+HC_SOLO unit=decode call=103 stage=leave t_ns=218760290409445 elapsed_us=50637.516 session=6452faf13190 position=57 tokens=106
+HC_SOLO unit=decode call=104 stage=entry t_ns=218760290433925 elapsed_us=0.100 session=6452faf13190 position=60 tokens=103
+HC_SOLO unit=decode call=104 stage=leave t_ns=218760337245336 elapsed_us=46811.511 session=6452faf13190 position=60 tokens=103
+HC_SOLO unit=decode call=105 stage=entry t_ns=218760337259855 elapsed_us=0.100 session=6452faf13190 position=63 tokens=100
+HC_SOLO unit=decode call=105 stage=leave t_ns=218760380039686 elapsed_us=42779.931 session=6452faf13190 position=63 tokens=100
+HC_SOLO unit=decode call=106 stage=entry t_ns=218760380063996 elapsed_us=0.130 session=6452faf13190 position=65 tokens=98
+HC_SOLO unit=decode call=106 stage=leave t_ns=218760421899595 elapsed_us=41835.729 session=6452faf13190 position=65 tokens=98
+HC_SOLO unit=decode call=107 stage=entry t_ns=218760421911885 elapsed_us=0.100 session=6452faf13190 position=67 tokens=96
+HC_SOLO unit=decode call=107 stage=leave t_ns=218760463811393 elapsed_us=41899.608 session=6452faf13190 position=67 tokens=96
+HC_SOLO unit=decode call=108 stage=entry t_ns=218760463822622 elapsed_us=0.100 session=6452faf13190 position=68 tokens=95
+HC_SOLO unit=decode call=108 stage=leave t_ns=218760505329752 elapsed_us=41507.230 session=6452faf13190 position=68 tokens=95
+HC_SOLO unit=decode call=109 stage=entry t_ns=218760505340821 elapsed_us=0.100 session=6452faf13190 position=70 tokens=93
+HC_SOLO unit=decode call=109 stage=leave t_ns=218760554864991 elapsed_us=49524.270 session=6452faf13190 position=70 tokens=93
+HC_SOLO unit=decode call=110 stage=entry t_ns=218760554876001 elapsed_us=0.100 session=6452faf13190 position=72 tokens=91
+HC_SOLO unit=decode call=110 stage=leave t_ns=218760597189846 elapsed_us=42313.945 session=6452faf13190 position=72 tokens=91
+HC_SOLO unit=decode call=111 stage=entry t_ns=218760597199536 elapsed_us=0.100 session=6452faf13190 position=73 tokens=90
+HC_SOLO unit=decode call=111 stage=leave t_ns=218760679159936 elapsed_us=81960.500 session=6452faf13190 position=73 tokens=90
+HC_SOLO unit=decode call=112 stage=entry t_ns=218760679175306 elapsed_us=0.100 session=6452faf13190 position=81 tokens=82
+HC_SOLO unit=decode call=112 stage=leave t_ns=218760722598798 elapsed_us=43423.592 session=6452faf13190 position=81 tokens=82
+HC_SOLO unit=decode call=113 stage=entry t_ns=218760722617317 elapsed_us=0.130 session=6452faf13190 position=82 tokens=81
+HC_SOLO unit=decode call=113 stage=leave t_ns=218760770019911 elapsed_us=47402.724 session=6452faf13190 position=82 tokens=81
+HC_SOLO unit=decode call=114 stage=entry t_ns=218760770031600 elapsed_us=0.100 session=6452faf13190 position=85 tokens=78
+HC_SOLO unit=decode call=114 stage=leave t_ns=218760812326126 elapsed_us=42294.626 session=6452faf13190 position=85 tokens=78
+HC_SOLO unit=decode call=115 stage=entry t_ns=218760812338006 elapsed_us=0.130 session=6452faf13190 position=87 tokens=76
+HC_SOLO unit=decode call=115 stage=leave t_ns=218760896133431 elapsed_us=83795.555 session=6452faf13190 position=87 tokens=76
+HC_SOLO unit=decode call=116 stage=entry t_ns=218760896144271 elapsed_us=0.100 session=6452faf13190 position=88 tokens=75
+HC_SOLO unit=decode call=116 stage=leave t_ns=218760939771717 elapsed_us=43627.546 session=6452faf13190 position=88 tokens=75
+HC_SOLO unit=decode call=117 stage=entry t_ns=218760939782837 elapsed_us=0.100 session=6452faf13190 position=90 tokens=73
+HC_SOLO unit=decode call=117 stage=leave t_ns=218761022778746 elapsed_us=82996.009 session=6452faf13190 position=90 tokens=73
+HC_SOLO unit=decode call=118 stage=entry t_ns=218761022793696 elapsed_us=0.100 session=6452faf13190 position=98 tokens=65
+HC_SOLO unit=decode call=118 stage=leave t_ns=218761088802173 elapsed_us=66008.577 session=6452faf13190 position=98 tokens=65
+HC_SOLO unit=decode call=119 stage=entry t_ns=218761088829372 elapsed_us=0.140 session=6452faf13190 position=104 tokens=59
+HC_SOLO unit=decode call=119 stage=leave t_ns=218761130036500 elapsed_us=41207.268 session=6452faf13190 position=104 tokens=59
+HC_SOLO unit=decode call=120 stage=entry t_ns=218761130049410 elapsed_us=0.100 session=6452faf13190 position=106 tokens=57
+HC_SOLO unit=decode call=120 stage=leave t_ns=218761193691978 elapsed_us=63642.668 session=6452faf13190 position=106 tokens=57
+HC_SOLO unit=decode call=121 stage=entry t_ns=218761193706767 elapsed_us=0.100 session=6452faf13190 position=110 tokens=53
+HC_SOLO unit=decode call=121 stage=leave t_ns=218761242026743 elapsed_us=48320.076 session=6452faf13190 position=110 tokens=53
+HC_SOLO unit=decode call=122 stage=entry t_ns=218761242038673 elapsed_us=0.100 session=6452faf13190 position=113 tokens=50
+HC_SOLO unit=decode call=122 stage=leave t_ns=218761292037088 elapsed_us=49998.515 session=6452faf13190 position=113 tokens=50
+HC_SOLO unit=decode call=123 stage=entry t_ns=218761292050958 elapsed_us=0.100 session=6452faf13190 position=115 tokens=48
+HC_SOLO unit=decode call=123 stage=leave t_ns=218761339201669 elapsed_us=47150.811 session=6452faf13190 position=115 tokens=48
+HC_SOLO unit=decode call=124 stage=entry t_ns=218761339214188 elapsed_us=0.100 session=6452faf13190 position=117 tokens=46
+HC_SOLO unit=decode call=124 stage=leave t_ns=218761388585002 elapsed_us=49370.914 session=6452faf13190 position=117 tokens=46
+HC_SOLO unit=decode call=125 stage=entry t_ns=218761388597302 elapsed_us=0.100 session=6452faf13190 position=119 tokens=44
+HC_SOLO unit=decode call=125 stage=leave t_ns=218761436360365 elapsed_us=47763.163 session=6452faf13190 position=119 tokens=44
+HC_SOLO unit=decode call=126 stage=entry t_ns=218761436372224 elapsed_us=0.100 session=6452faf13190 position=121 tokens=42
+HC_SOLO unit=decode call=126 stage=leave t_ns=218761489248424 elapsed_us=52876.300 session=6452faf13190 position=121 tokens=42
+HC_SOLO unit=decode call=127 stage=entry t_ns=218761489282173 elapsed_us=0.140 session=6452faf13190 position=125 tokens=38
+HC_SOLO unit=decode call=127 stage=leave t_ns=218761530978497 elapsed_us=41696.464 session=6452faf13190 position=125 tokens=38
+HC_SOLO unit=decode call=128 stage=entry t_ns=218761531009306 elapsed_us=0.100 session=6452faf13190 position=127 tokens=36
+HC_SOLO unit=decode call=128 stage=leave t_ns=218761580589004 elapsed_us=49579.798 session=6452faf13190 position=127 tokens=36
+HC_SOLO unit=decode call=129 stage=entry t_ns=218761580601853 elapsed_us=0.100 session=6452faf13190 position=130 tokens=33
+HC_SOLO unit=decode call=129 stage=leave t_ns=218761654689749 elapsed_us=74087.996 session=6452faf13190 position=130 tokens=33
+HC_SOLO unit=decode call=130 stage=entry t_ns=218761654716718 elapsed_us=0.140 session=6452faf13190 position=136 tokens=27
+HC_SOLO unit=decode call=130 stage=leave t_ns=218761736148444 elapsed_us=81431.866 session=6452faf13190 position=136 tokens=27
+HC_SOLO unit=decode call=131 stage=entry t_ns=218761736173794 elapsed_us=0.150 session=6452faf13190 position=137 tokens=26
+HC_SOLO unit=decode call=131 stage=leave t_ns=218761782985664 elapsed_us=46812.020 session=6452faf13190 position=137 tokens=26
+HC_SOLO unit=decode call=132 stage=entry t_ns=218761783000714 elapsed_us=0.140 session=6452faf13190 position=140 tokens=23
+HC_SOLO unit=decode call=132 stage=leave t_ns=218761837071628 elapsed_us=54071.054 session=6452faf13190 position=140 tokens=23
+HC_SOLO unit=decode call=133 stage=entry t_ns=218761837100457 elapsed_us=0.140 session=6452faf13190 position=143 tokens=20
+HC_SOLO unit=decode call=133 stage=leave t_ns=218761898970678 elapsed_us=61870.361 session=6452faf13190 position=143 tokens=20
+HC_SOLO unit=decode call=134 stage=entry t_ns=218761899005297 elapsed_us=0.140 session=6452faf13190 position=146 tokens=17
+HC_SOLO unit=decode call=134 stage=leave t_ns=218761982811262 elapsed_us=83806.105 session=6452faf13190 position=146 tokens=17
+HC_SOLO unit=decode call=135 stage=entry t_ns=218761982839071 elapsed_us=0.130 session=6452faf13190 position=154 tokens=9
+HC_SOLO unit=decode call=135 stage=leave t_ns=218762032570705 elapsed_us=49731.764 session=6452faf13190 position=154 tokens=9
+HC_SOLO unit=decode call=136 stage=entry t_ns=218762032587774 elapsed_us=0.100 session=6452faf13190 position=156 tokens=7
+HC_SOLO unit=decode call=136 stage=leave t_ns=218762106488305 elapsed_us=73900.631 session=6452faf13190 position=156 tokens=7
+2026-11-02 10:16:02 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=35 rank=0 unique_bytes_freed=0 ledger_bytes=962952236
+2026-11-02 10:16:02 [INFO] [http] request=r6 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2363.9 outcome=completed prompt_tokens=35 prefill_tokens=35 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.1 shared_prefix_wait_ms=0.0 ttft_ms=142.1 prefill_tps=248.2 decode_tps=57.7 batch_width=1 plan=serial-fallback draft_accepted=88 draft_proposed=122 draft_rounds=39 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962956066 acceptance_pct=72.1 ngram_rows=3152 ngram_dedup_rows=0 ngram_cache_hits=542 ngram_disk_reads=2610 cache_snapshot_bytes=267737660 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2133 host_available_mib=29929
+2026-11-02 10:16:02 [INFO] [http] request=r7 event=received method=POST path=/v1/chat/completions body_bytes=465
+2026-11-02 10:16:02 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+HC_SOLO unit=prefill call=137 stage=entry t_ns=218762143396712 elapsed_us=0.170 session=6452faf13190 position=0 tokens=30
+2026-11-02 10:16:02 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=19 rank=0 unique_bytes_freed=32114 ledger_bytes=962972736
+HC_SOLO unit=prefill call=137 stage=leave t_ns=218762275299670 elapsed_us=131903.128 session=6452faf13190 position=0 tokens=30
+2026-11-02 10:16:02 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=23 rank=3 unique_bytes_freed=0 ledger_bytes=962952040
+2026-11-02 10:16:02 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=2048 rank=0 unique_bytes_freed=43626 ledger_bytes=962963680
+HC_SOLO unit=decode call=138 stage=entry t_ns=218762278686379 elapsed_us=0.130 session=6452faf13190 position=30 tokens=128
+HC_SOLO unit=decode call=138 stage=leave t_ns=218762320461360 elapsed_us=41775.111 session=6452faf13190 position=30 tokens=128
+HC_SOLO unit=decode call=139 stage=entry t_ns=218762320478380 elapsed_us=0.100 session=6452faf13190 position=32 tokens=126
+HC_SOLO unit=decode call=139 stage=leave t_ns=218762373975501 elapsed_us=53497.221 session=6452faf13190 position=32 tokens=126
+HC_SOLO unit=decode call=140 stage=entry t_ns=218762373992270 elapsed_us=0.100 session=6452faf13190 position=36 tokens=122
+HC_SOLO unit=decode call=140 stage=leave t_ns=218762434720865 elapsed_us=60728.695 session=6452faf13190 position=36 tokens=122
+HC_SOLO unit=decode call=141 stage=entry t_ns=218762434735905 elapsed_us=0.100 session=6452faf13190 position=41 tokens=117
+HC_SOLO unit=decode call=141 stage=leave t_ns=218762502301235 elapsed_us=67565.430 session=6452faf13190 position=41 tokens=117
+HC_SOLO unit=decode call=142 stage=entry t_ns=218762502339454 elapsed_us=0.140 session=6452faf13190 position=47 tokens=111
+HC_SOLO unit=decode call=142 stage=leave t_ns=218762551331810 elapsed_us=48992.496 session=6452faf13190 position=47 tokens=111
+HC_SOLO unit=decode call=143 stage=entry t_ns=218762551365109 elapsed_us=0.140 session=6452faf13190 position=50 tokens=108
+HC_SOLO unit=decode call=143 stage=leave t_ns=218762606974997 elapsed_us=55610.028 session=6452faf13190 position=50 tokens=108
+HC_SOLO unit=decode call=144 stage=entry t_ns=218762606993186 elapsed_us=0.150 session=6452faf13190 position=53 tokens=105
+HC_SOLO unit=decode call=144 stage=leave t_ns=218762649272132 elapsed_us=42279.096 session=6452faf13190 position=53 tokens=105
+HC_SOLO unit=decode call=145 stage=entry t_ns=218762649299462 elapsed_us=0.100 session=6452faf13190 position=54 tokens=104
+HC_SOLO unit=decode call=145 stage=leave t_ns=218762697701815 elapsed_us=48402.453 session=6452faf13190 position=54 tokens=104
+HC_SOLO unit=decode call=146 stage=entry t_ns=218762697728264 elapsed_us=0.130 session=6452faf13190 position=55 tokens=103
+HC_SOLO unit=decode call=146 stage=leave t_ns=218762745699640 elapsed_us=47971.506 session=6452faf13190 position=55 tokens=103
+HC_SOLO unit=decode call=147 stage=entry t_ns=218762745718270 elapsed_us=0.100 session=6452faf13190 position=58 tokens=100
+HC_SOLO unit=decode call=147 stage=leave t_ns=218762786208620 elapsed_us=40490.450 session=6452faf13190 position=58 tokens=100
+HC_SOLO unit=decode call=148 stage=entry t_ns=218762786223599 elapsed_us=0.090 session=6452faf13190 position=60 tokens=98
+HC_SOLO unit=decode call=148 stage=leave t_ns=218762836583784 elapsed_us=50360.275 session=6452faf13190 position=60 tokens=98
+HC_SOLO unit=decode call=149 stage=entry t_ns=218762836599123 elapsed_us=0.100 session=6452faf13190 position=63 tokens=95
+HC_SOLO unit=decode call=149 stage=leave t_ns=218762884525391 elapsed_us=47926.368 session=6452faf13190 position=63 tokens=95
+HC_SOLO unit=decode call=150 stage=entry t_ns=218762884550200 elapsed_us=0.100 session=6452faf13190 position=64 tokens=94
+HC_SOLO unit=decode call=150 stage=leave t_ns=218762959302056 elapsed_us=74751.956 session=6452faf13190 position=64 tokens=94
+HC_SOLO unit=decode call=151 stage=entry t_ns=218762959319836 elapsed_us=0.100 session=6452faf13190 position=70 tokens=88
+HC_SOLO unit=decode call=151 stage=leave t_ns=218763008741348 elapsed_us=49421.612 session=6452faf13190 position=70 tokens=88
+HC_SOLO unit=decode call=152 stage=entry t_ns=218763008764068 elapsed_us=0.130 session=6452faf13190 position=73 tokens=85
+HC_SOLO unit=decode call=152 stage=leave t_ns=218763049460551 elapsed_us=40696.613 session=6452faf13190 position=73 tokens=85
+HC_SOLO unit=decode call=153 stage=entry t_ns=218763049475391 elapsed_us=0.090 session=6452faf13190 position=75 tokens=83
+HC_SOLO unit=decode call=153 stage=leave t_ns=218763097739588 elapsed_us=48264.287 session=6452faf13190 position=75 tokens=83
+HC_SOLO unit=decode call=154 stage=entry t_ns=218763097760518 elapsed_us=0.120 session=6452faf13190 position=78 tokens=80
+HC_SOLO unit=decode call=154 stage=leave t_ns=218763141472921 elapsed_us=43712.523 session=6452faf13190 position=78 tokens=80
+HC_SOLO unit=decode call=155 stage=entry t_ns=218763141485411 elapsed_us=0.090 session=6452faf13190 position=80 tokens=78
+HC_SOLO unit=decode call=155 stage=leave t_ns=218763198291283 elapsed_us=56805.962 session=6452faf13190 position=80 tokens=78
+HC_SOLO unit=decode call=156 stage=entry t_ns=218763198304973 elapsed_us=0.100 session=6452faf13190 position=83 tokens=75
+HC_SOLO unit=decode call=156 stage=leave t_ns=218763239334726 elapsed_us=41029.853 session=6452faf13190 position=83 tokens=75
+HC_SOLO unit=decode call=157 stage=entry t_ns=218763239346586 elapsed_us=0.100 session=6452faf13190 position=85 tokens=73
+HC_SOLO unit=decode call=157 stage=leave t_ns=218763281583454 elapsed_us=42236.968 session=6452faf13190 position=85 tokens=73
+HC_SOLO unit=decode call=158 stage=entry t_ns=218763281595313 elapsed_us=0.090 session=6452faf13190 position=87 tokens=71
+HC_SOLO unit=decode call=158 stage=leave t_ns=218763344039897 elapsed_us=62444.674 session=6452faf13190 position=87 tokens=71
+HC_SOLO unit=decode call=159 stage=entry t_ns=218763344098095 elapsed_us=0.140 session=6452faf13190 position=92 tokens=66
+HC_SOLO unit=decode call=159 stage=leave t_ns=218763425435164 elapsed_us=81337.209 session=6452faf13190 position=92 tokens=66
+HC_SOLO unit=decode call=160 stage=entry t_ns=218763425455773 elapsed_us=0.100 session=6452faf13190 position=100 tokens=58
+HC_SOLO unit=decode call=160 stage=leave t_ns=218763487911487 elapsed_us=62455.814 session=6452faf13190 position=100 tokens=58
+HC_SOLO unit=decode call=161 stage=entry t_ns=218763487927576 elapsed_us=0.100 session=6452faf13190 position=104 tokens=54
+HC_SOLO unit=decode call=161 stage=leave t_ns=218763531337799 elapsed_us=43410.323 session=6452faf13190 position=104 tokens=54
+HC_SOLO unit=decode call=162 stage=entry t_ns=218763531381697 elapsed_us=0.130 session=6452faf13190 position=105 tokens=53
+HC_SOLO unit=decode call=162 stage=leave t_ns=218763579578517 elapsed_us=48196.950 session=6452faf13190 position=105 tokens=53
+HC_SOLO unit=decode call=163 stage=entry t_ns=218763579610976 elapsed_us=0.140 session=6452faf13190 position=106 tokens=52
+HC_SOLO unit=decode call=163 stage=leave t_ns=218763622008149 elapsed_us=42397.313 session=6452faf13190 position=106 tokens=52
+HC_SOLO unit=decode call=164 stage=entry t_ns=218763622025118 elapsed_us=0.100 session=6452faf13190 position=107 tokens=51
+HC_SOLO unit=decode call=164 stage=leave t_ns=218763676029614 elapsed_us=54004.596 session=6452faf13190 position=107 tokens=51
+HC_SOLO unit=decode call=165 stage=entry t_ns=218763676046564 elapsed_us=0.100 session=6452faf13190 position=111 tokens=47
+HC_SOLO unit=decode call=165 stage=leave t_ns=218763718132856 elapsed_us=42086.392 session=6452faf13190 position=111 tokens=47
+HC_SOLO unit=decode call=166 stage=entry t_ns=218763718162655 elapsed_us=0.140 session=6452faf13190 position=112 tokens=46
+HC_SOLO unit=decode call=166 stage=leave t_ns=218763765078523 elapsed_us=46916.008 session=6452faf13190 position=112 tokens=46
+HC_SOLO unit=decode call=167 stage=entry t_ns=218763765091662 elapsed_us=0.100 session=6452faf13190 position=113 tokens=45
+HC_SOLO unit=decode call=167 stage=leave t_ns=218763806220513 elapsed_us=41128.951 session=6452faf13190 position=113 tokens=45
+HC_SOLO unit=decode call=168 stage=entry t_ns=218763806233382 elapsed_us=0.100 session=6452faf13190 position=114 tokens=44
+HC_SOLO unit=decode call=168 stage=leave t_ns=218763857475471 elapsed_us=51242.189 session=6452faf13190 position=114 tokens=44
+HC_SOLO unit=decode call=169 stage=entry t_ns=218763857490851 elapsed_us=0.360 session=6452faf13190 position=116 tokens=42
+HC_SOLO unit=decode call=169 stage=leave t_ns=218763909442338 elapsed_us=51951.847 session=6452faf13190 position=116 tokens=42
+HC_SOLO unit=decode call=170 stage=entry t_ns=218763909460257 elapsed_us=0.100 session=6452faf13190 position=120 tokens=38
+HC_SOLO unit=decode call=170 stage=leave t_ns=218763951667326 elapsed_us=42207.169 session=6452faf13190 position=120 tokens=38
+HC_SOLO unit=decode call=171 stage=entry t_ns=218763951679965 elapsed_us=0.100 session=6452faf13190 position=122 tokens=36
+HC_SOLO unit=decode call=171 stage=leave t_ns=218763994517665 elapsed_us=42837.800 session=6452faf13190 position=122 tokens=36
+HC_SOLO unit=decode call=172 stage=entry t_ns=218763994529895 elapsed_us=0.100 session=6452faf13190 position=124 tokens=34
+HC_SOLO unit=decode call=172 stage=leave t_ns=218764051104824 elapsed_us=56575.029 session=6452faf13190 position=124 tokens=34
+HC_SOLO unit=decode call=173 stage=entry t_ns=218764051118483 elapsed_us=0.100 session=6452faf13190 position=127 tokens=31
+HC_SOLO unit=decode call=173 stage=leave t_ns=218764099606444 elapsed_us=48488.061 session=6452faf13190 position=127 tokens=31
+HC_SOLO unit=decode call=174 stage=entry t_ns=218764099618984 elapsed_us=0.100 session=6452faf13190 position=130 tokens=28
+HC_SOLO unit=decode call=174 stage=leave t_ns=218764148904801 elapsed_us=49285.917 session=6452faf13190 position=130 tokens=28
+HC_SOLO unit=decode call=175 stage=entry t_ns=218764148918500 elapsed_us=0.100 session=6452faf13190 position=132 tokens=26
+HC_SOLO unit=decode call=175 stage=leave t_ns=218764191149158 elapsed_us=42230.758 session=6452faf13190 position=132 tokens=26
+HC_SOLO unit=decode call=176 stage=entry t_ns=218764191160138 elapsed_us=0.100 session=6452faf13190 position=133 tokens=25
+HC_SOLO unit=decode call=176 stage=leave t_ns=218764232266109 elapsed_us=41106.071 session=6452faf13190 position=133 tokens=25
+HC_SOLO unit=decode call=177 stage=entry t_ns=218764232284139 elapsed_us=0.130 session=6452faf13190 position=135 tokens=23
+HC_SOLO unit=decode call=177 stage=leave t_ns=218764274601784 elapsed_us=42317.775 session=6452faf13190 position=135 tokens=23
+HC_SOLO unit=decode call=178 stage=entry t_ns=218764274639433 elapsed_us=0.140 session=6452faf13190 position=136 tokens=22
+HC_SOLO unit=decode call=178 stage=leave t_ns=218764322964548 elapsed_us=48325.255 session=6452faf13190 position=136 tokens=22
+HC_SOLO unit=decode call=179 stage=entry t_ns=218764322978428 elapsed_us=0.100 session=6452faf13190 position=138 tokens=20
+HC_SOLO unit=decode call=179 stage=leave t_ns=218764368280164 elapsed_us=45301.836 session=6452faf13190 position=138 tokens=20
+HC_SOLO unit=decode call=180 stage=entry t_ns=218764368293413 elapsed_us=0.100 session=6452faf13190 position=139 tokens=19
+HC_SOLO unit=decode call=180 stage=leave t_ns=218764415825923 elapsed_us=47532.610 session=6452faf13190 position=139 tokens=19
+HC_SOLO unit=decode call=181 stage=entry t_ns=218764415839672 elapsed_us=0.100 session=6452faf13190 position=142 tokens=16
+HC_SOLO unit=decode call=181 stage=leave t_ns=218764458130928 elapsed_us=42291.356 session=6452faf13190 position=142 tokens=16
+HC_SOLO unit=decode call=182 stage=entry t_ns=218764458142218 elapsed_us=0.100 session=6452faf13190 position=143 tokens=15
+HC_SOLO unit=decode call=182 stage=leave t_ns=218764513722887 elapsed_us=55580.769 session=6452faf13190 position=143 tokens=15
+HC_SOLO unit=decode call=183 stage=entry t_ns=218764513740466 elapsed_us=0.100 session=6452faf13190 position=146 tokens=12
+HC_SOLO unit=decode call=183 stage=leave t_ns=218764555584695 elapsed_us=41844.329 session=6452faf13190 position=146 tokens=12
+HC_SOLO unit=decode call=184 stage=entry t_ns=218764555597825 elapsed_us=0.100 session=6452faf13190 position=147 tokens=11
+HC_SOLO unit=decode call=184 stage=leave t_ns=218764595939869 elapsed_us=40342.144 session=6452faf13190 position=147 tokens=11
+HC_SOLO unit=decode call=185 stage=entry t_ns=218764595951709 elapsed_us=0.100 session=6452faf13190 position=149 tokens=9
+HC_SOLO unit=decode call=185 stage=leave t_ns=218764636682622 elapsed_us=40731.013 session=6452faf13190 position=149 tokens=9
+HC_SOLO unit=decode call=186 stage=entry t_ns=218764636694171 elapsed_us=0.090 session=6452faf13190 position=151 tokens=7
+HC_SOLO unit=decode call=186 stage=leave t_ns=218764686039636 elapsed_us=49345.555 session=6452faf13190 position=151 tokens=7
+HC_SOLO unit=decode call=187 stage=entry t_ns=218764686051956 elapsed_us=0.100 session=6452faf13190 position=152 tokens=6
+HC_SOLO unit=decode call=187 stage=leave t_ns=218764729471428 elapsed_us=43419.572 session=6452faf13190 position=152 tokens=6
+HC_SOLO unit=decode call=188 stage=entry t_ns=218764729487518 elapsed_us=0.120 session=6452faf13190 position=153 tokens=5
+HC_SOLO unit=decode call=188 stage=leave t_ns=218764777723526 elapsed_us=48236.128 session=6452faf13190 position=153 tokens=5
+HC_SOLO unit=decode call=189 stage=entry t_ns=218764777736576 elapsed_us=0.100 session=6452faf13190 position=156 tokens=2
+HC_SOLO unit=decode call=189 stage=leave t_ns=218764819734850 elapsed_us=41998.374 session=6452faf13190 position=156 tokens=2
+2026-11-02 10:16:05 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=30 rank=0 unique_bytes_freed=0 ledger_bytes=962940600
+2026-11-02 10:16:05 [INFO] [http] request=r7 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2712.4 outcome=completed prompt_tokens=30 prefill_tokens=30 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.1 shared_prefix_wait_ms=0.0 ttft_ms=133.1 prefill_tps=227.2 decode_tps=49.7 batch_width=1 plan=serial-fallback draft_accepted=75 draft_proposed=106 draft_rounds=52 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962944410 acceptance_pct=70.8 ngram_rows=3024 ngram_dedup_rows=0 ngram_cache_hits=351 ngram_disk_reads=2673 cache_snapshot_bytes=267471380 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2134 host_available_mib=29930
+2026-11-02 10:16:05 [INFO] [http] request=r8 event=received method=POST path=/v1/chat/completions body_bytes=505
+2026-11-02 10:16:05 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+HC_SOLO unit=prefill call=190 stage=entry t_ns=218764860037066 elapsed_us=0.180 session=6452faf13190 position=0 tokens=35
+2026-11-02 10:16:05 [INFO] [http] request=r9 event=received method=POST path=/v1/chat/completions body_bytes=465
+2026-11-02 10:16:05 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=35 rank=0 unique_bytes_freed=32178 ledger_bytes=962961496
+HC_SOLO unit=prefill call=190 stage=leave t_ns=218764998265024 elapsed_us=138228.138 session=6452faf13190 position=0 tokens=35
+2026-11-02 10:16:05 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=28 rank=3 unique_bytes_freed=31978 ledger_bytes=962908414
+2026-11-02 10:16:05 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=28 rank=3 unique_bytes_freed=0 ledger_bytes=962908414
+2026-11-02 10:16:05 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+HC_SOLO unit=prefill call=191 stage=entry t_ns=218765000450349 elapsed_us=0.120 session=6452f90b17c0 position=0 tokens=30
+HC_SOLO unit=prefill call=191 stage=leave t_ns=218765131223230 elapsed_us=130773.001 session=6452f90b17c0 position=0 tokens=30
+2026-11-02 10:16:05 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=23 rank=3 unique_bytes_freed=31934 ledger_bytes=962858228
+2026-11-02 10:16:05 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=23 rank=3 unique_bytes_freed=0 ledger_bytes=962858228
+2026-11-02 10:16:05 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=30 rank=0 unique_bytes_freed=32182 ledger_bytes=962936618
+HC_STAGE unit=engine call=0 stage=entry t_ns=218765137119434 elapsed_us=0.470
+HC_VALUE unit=engine call=0 key=requests value=2
+HC_VALUE unit=engine call=0 key=position0 value=35
+HC_VALUE unit=engine call=0 key=planned_drafts value=2
+HC_STAGE unit=engine call=0 stage=policy_done t_ns=218765137133684 elapsed_us=14.720
+HC_STAGE unit=engine call=0 stage=prepare_decode_done t_ns=218765137228491 elapsed_us=109.527
+HC_STAGE unit=engine call=0 stage=draft_catchup_done t_ns=218765142692848 elapsed_us=5573.884
+HC_STAGE unit=engine call=0 stage=drafting_done t_ns=218765146546482 elapsed_us=9427.518
+HC_VALUE unit=engine call=0 key=verification_rows value=3
+HC_VALUE unit=engine call=0 key=verification_rows value=1
+HC_STAGE unit=engine call=0 stage=before_target_forward t_ns=218765146562892 elapsed_us=9443.928
+HC_STAGE unit=batch call=0 stage=entry t_ns=218765146565842 elapsed_us=0.760
+HC_VALUE unit=batch call=0 key=rows value=4
+HC_VALUE unit=batch call=0 key=requests value=2
+HC_STAGE unit=batch call=0 stage=rollback_start t_ns=218765146574582 elapsed_us=9.500
+HC_STAGE unit=batch call=0 stage=rollback_done t_ns=218765146576992 elapsed_us=11.910
+HC_STAGE unit=batch call=0 stage=allocate_batch_done t_ns=218765146578942 elapsed_us=13.860
+HC_STAGE unit=batch call=0 stage=controls_done t_ns=218765147107036 elapsed_us=541.954
+HC_STAGE unit=batch call=0 stage=prior_ple_prefetch_done t_ns=218765147111926 elapsed_us=546.844
+HC_STAGE unit=batch call=0 stage=ngram_submitted t_ns=218765147169494 elapsed_us=604.412
+HC_STAGE unit=batch call=0 stage=before_layers t_ns=218765147192463 elapsed_us=627.381
+HC_STAGE unit=batch call=0 stage=before_ple_wait t_ns=218765147309390 elapsed_us=744.308
+HC_STAGE unit=batch call=0 stage=after_ple_wait t_ns=218765147311550 elapsed_us=746.468
+HC_STAGE unit=batch call=0 stage=body_submitted t_ns=218765150996270 elapsed_us=4431.188
+HC_STAGE unit=batch call=0 stage=stream_complete t_ns=218765197477460 elapsed_us=50912.378
+HC_STAGE unit=batch call=0 stage=leave t_ns=218765197480840 elapsed_us=50915.758
+HC_STAGE unit=engine call=0 stage=target_forward_done t_ns=218765197482740 elapsed_us=60363.776
+HC_STAGE unit=engine call=0 stage=finish_decode_done t_ns=218765197828140 elapsed_us=60709.176
+HC_STAGE unit=engine call=0 stage=leave t_ns=218765197847019 elapsed_us=60728.055
+HC_STAGE unit=engine call=1 stage=entry t_ns=218765197883928 elapsed_us=0.180
+HC_VALUE unit=engine call=1 key=requests value=2
+HC_VALUE unit=engine call=1 key=position0 value=38
+HC_VALUE unit=engine call=1 key=planned_drafts value=2
+HC_STAGE unit=engine call=1 stage=policy_done t_ns=218765197890278 elapsed_us=6.530
+HC_STAGE unit=engine call=1 stage=prepare_decode_done t_ns=218765197974165 elapsed_us=90.417
+HC_STAGE unit=engine call=1 stage=draft_catchup_done t_ns=218765199553728 elapsed_us=1669.980
+HC_STAGE unit=engine call=1 stage=drafting_done t_ns=218765203314326 elapsed_us=5430.578
+HC_VALUE unit=engine call=1 key=verification_rows value=3
+HC_VALUE unit=engine call=1 key=verification_rows value=3
+HC_STAGE unit=engine call=1 stage=before_target_forward t_ns=218765203319276 elapsed_us=5435.528
+HC_STAGE unit=batch call=1 stage=entry t_ns=218765203320826 elapsed_us=0.100
+HC_VALUE unit=batch call=1 key=rows value=6
+HC_VALUE unit=batch call=1 key=requests value=2
+HC_STAGE unit=batch call=1 stage=rollback_start t_ns=218765203326465 elapsed_us=5.739
+HC_STAGE unit=batch call=1 stage=rollback_done t_ns=218765203328075 elapsed_us=7.349
+HC_STAGE unit=batch call=1 stage=allocate_batch_done t_ns=218765203329215 elapsed_us=8.489
+HC_STAGE unit=batch call=1 stage=controls_done t_ns=218765203330505 elapsed_us=9.779
+HC_STAGE unit=batch call=1 stage=prior_ple_prefetch_done t_ns=218765203331615 elapsed_us=10.889
+HC_STAGE unit=batch call=1 stage=ngram_submitted t_ns=218765203406883 elapsed_us=86.157
+HC_STAGE unit=batch call=1 stage=before_layers t_ns=218765203439552 elapsed_us=118.826
+HC_STAGE unit=batch call=1 stage=before_ple_wait t_ns=218765203523380 elapsed_us=202.654
+HC_STAGE unit=batch call=1 stage=after_ple_wait t_ns=218765203525010 elapsed_us=204.284
+HC_STAGE unit=batch call=1 stage=body_submitted t_ns=218765206461962 elapsed_us=3141.236
+HC_STAGE unit=batch call=1 stage=stream_complete t_ns=218765261763239 elapsed_us=58442.513
+HC_STAGE unit=batch call=1 stage=leave t_ns=218765261765989 elapsed_us=58445.263
+HC_STAGE unit=engine call=1 stage=target_forward_done t_ns=218765261767569 elapsed_us=63883.821
+HC_STAGE unit=engine call=1 stage=finish_decode_done t_ns=218765263399640 elapsed_us=65515.892
+HC_STAGE unit=engine call=1 stage=leave t_ns=218765263405000 elapsed_us=65521.252
+HC_STAGE unit=engine call=2 stage=entry t_ns=218765263423179 elapsed_us=0.100
+HC_VALUE unit=engine call=2 key=requests value=2
+HC_VALUE unit=engine call=2 key=position0 value=40
+HC_VALUE unit=engine call=2 key=planned_drafts value=0
+HC_STAGE unit=engine call=2 stage=policy_done t_ns=218765263427659 elapsed_us=4.580
+HC_STAGE unit=engine call=2 stage=prepare_decode_done t_ns=218765263501157 elapsed_us=78.078
+HC_STAGE unit=engine call=2 stage=draft_catchup_done t_ns=218765263834877 elapsed_us=411.798
+HC_STAGE unit=engine call=2 stage=drafting_done t_ns=218765263836817 elapsed_us=413.738
+HC_VALUE unit=engine call=2 key=verification_rows value=1
+HC_VALUE unit=engine call=2 key=verification_rows value=1
+HC_STAGE unit=engine call=2 stage=before_target_forward t_ns=218765263840067 elapsed_us=416.988
+HC_STAGE unit=batch call=2 stage=entry t_ns=218765263841457 elapsed_us=0.100
+HC_VALUE unit=batch call=2 key=rows value=2
+HC_VALUE unit=batch call=2 key=requests value=2
+HC_STAGE unit=batch call=2 stage=rollback_start t_ns=218765263846547 elapsed_us=5.190
+HC_STAGE unit=batch call=2 stage=rollback_done t_ns=218765263847836 elapsed_us=6.479
+HC_STAGE unit=batch call=2 stage=allocate_batch_done t_ns=218765263848926 elapsed_us=7.569
+HC_STAGE unit=batch call=2 stage=controls_done t_ns=218765263850046 elapsed_us=8.689
+HC_STAGE unit=batch call=2 stage=prior_ple_prefetch_done t_ns=218765263851236 elapsed_us=9.879
+HC_STAGE unit=batch call=2 stage=ngram_submitted t_ns=218765263876476 elapsed_us=35.119
+HC_STAGE unit=batch call=2 stage=before_layers t_ns=218765263887145 elapsed_us=45.788
+HC_STAGE unit=batch call=2 stage=before_ple_wait t_ns=218765263959013 elapsed_us=117.656
+HC_STAGE unit=batch call=2 stage=after_ple_wait t_ns=218765263960543 elapsed_us=119.186
+HC_STAGE unit=batch call=2 stage=body_submitted t_ns=218765266815888 elapsed_us=2974.531
+HC_STAGE unit=batch call=2 stage=stream_complete t_ns=218765305840061 elapsed_us=41998.704
+HC_STAGE unit=batch call=2 stage=leave t_ns=218765305842931 elapsed_us=42001.574
+HC_STAGE unit=engine call=2 stage=target_forward_done t_ns=218765305844601 elapsed_us=42421.522
+HC_STAGE unit=engine call=2 stage=finish_decode_done t_ns=218765306025146 elapsed_us=42602.067
+HC_STAGE unit=engine call=2 stage=leave t_ns=218765306029686 elapsed_us=42606.607
+HC_STAGE unit=engine call=3 stage=entry t_ns=218765306043705 elapsed_us=0.100
+HC_VALUE unit=engine call=3 key=requests value=2
+HC_VALUE unit=engine call=3 key=position0 value=41
+HC_VALUE unit=engine call=3 key=planned_drafts value=0
+HC_STAGE unit=engine call=3 stage=policy_done t_ns=218765306047805 elapsed_us=4.200
+HC_STAGE unit=engine call=3 stage=prepare_decode_done t_ns=218765306115933 elapsed_us=72.328
+HC_STAGE unit=engine call=3 stage=draft_catchup_done t_ns=218765306331817 elapsed_us=288.212
+HC_STAGE unit=engine call=3 stage=drafting_done t_ns=218765306333617 elapsed_us=290.012
+HC_VALUE unit=engine call=3 key=verification_rows value=1
+HC_VALUE unit=engine call=3 key=verification_rows value=1
+HC_STAGE unit=engine call=3 stage=before_target_forward t_ns=218765306336837 elapsed_us=293.232
+HC_STAGE unit=batch call=3 stage=entry t_ns=218765306338257 elapsed_us=0.100
+HC_VALUE unit=batch call=3 key=rows value=2
+HC_VALUE unit=batch call=3 key=requests value=2
+HC_STAGE unit=batch call=3 stage=rollback_start t_ns=218765306342486 elapsed_us=4.329
+HC_STAGE unit=batch call=3 stage=rollback_done t_ns=218765306343706 elapsed_us=5.549
+HC_STAGE unit=batch call=3 stage=allocate_batch_done t_ns=218765306344806 elapsed_us=6.649
+HC_STAGE unit=batch call=3 stage=controls_done t_ns=218765306345856 elapsed_us=7.699
+HC_STAGE unit=batch call=3 stage=prior_ple_prefetch_done t_ns=218765306346916 elapsed_us=8.759
+HC_STAGE unit=batch call=3 stage=ngram_submitted t_ns=218765306375805 elapsed_us=37.648
+HC_STAGE unit=batch call=3 stage=before_layers t_ns=218765306386005 elapsed_us=47.848
+HC_STAGE unit=batch call=3 stage=before_ple_wait t_ns=218765306453723 elapsed_us=115.566
+HC_STAGE unit=batch call=3 stage=after_ple_wait t_ns=218765307135133 elapsed_us=796.976
+HC_STAGE unit=batch call=3 stage=body_submitted t_ns=218765310004727 elapsed_us=3666.570
+HC_STAGE unit=batch call=3 stage=stream_complete t_ns=218765348446848 elapsed_us=42108.691
+HC_STAGE unit=batch call=3 stage=leave t_ns=218765348449688 elapsed_us=42111.531
+HC_STAGE unit=engine call=3 stage=target_forward_done t_ns=218765348451458 elapsed_us=42407.853
+HC_STAGE unit=engine call=3 stage=finish_decode_done t_ns=218765348624773 elapsed_us=42581.168
+HC_STAGE unit=engine call=3 stage=leave t_ns=218765348628203 elapsed_us=42584.598
+HC_STAGE unit=engine call=4 stage=entry t_ns=218765348642172 elapsed_us=0.100
+HC_VALUE unit=engine call=4 key=requests value=2
+HC_VALUE unit=engine call=4 key=position0 value=42
+HC_VALUE unit=engine call=4 key=planned_drafts value=1
+HC_STAGE unit=engine call=4 stage=policy_done t_ns=218765348646412 elapsed_us=4.340
+HC_STAGE unit=engine call=4 stage=prepare_decode_done t_ns=218765348718410 elapsed_us=76.338
+HC_STAGE unit=engine call=4 stage=draft_catchup_done t_ns=218765349753399 elapsed_us=1111.327
+HC_STAGE unit=engine call=4 stage=drafting_done t_ns=218765351096939 elapsed_us=2454.867
+HC_VALUE unit=engine call=4 key=verification_rows value=2
+HC_VALUE unit=engine call=4 key=verification_rows value=2
+HC_STAGE unit=engine call=4 stage=before_target_forward t_ns=218765351101319 elapsed_us=2459.247
+HC_STAGE unit=batch call=4 stage=entry t_ns=218765351102809 elapsed_us=0.100
+HC_VALUE unit=batch call=4 key=rows value=4
+HC_VALUE unit=batch call=4 key=requests value=2
+HC_STAGE unit=batch call=4 stage=rollback_start t_ns=218765351107239 elapsed_us=4.530
+HC_STAGE unit=batch call=4 stage=rollback_done t_ns=218765351108558 elapsed_us=5.849
+HC_STAGE unit=batch call=4 stage=allocate_batch_done t_ns=218765351109648 elapsed_us=6.939
+HC_STAGE unit=batch call=4 stage=controls_done t_ns=218765351114598 elapsed_us=11.889
+HC_STAGE unit=batch call=4 stage=prior_ple_prefetch_done t_ns=218765351116078 elapsed_us=13.369
+HC_STAGE unit=batch call=4 stage=ngram_submitted t_ns=218765351168537 elapsed_us=65.828
+HC_STAGE unit=batch call=4 stage=before_layers t_ns=218765351178586 elapsed_us=75.877
+HC_STAGE unit=batch call=4 stage=before_ple_wait t_ns=218765351249654 elapsed_us=146.945
+HC_STAGE unit=batch call=4 stage=after_ple_wait t_ns=218765351251214 elapsed_us=148.505
+HC_STAGE unit=batch call=4 stage=body_submitted t_ns=218765354129508 elapsed_us=3026.799
+HC_STAGE unit=batch call=4 stage=stream_complete t_ns=218765402140693 elapsed_us=51037.984
+HC_STAGE unit=batch call=4 stage=leave t_ns=218765402143323 elapsed_us=51040.614
+HC_STAGE unit=engine call=4 stage=target_forward_done t_ns=218765402144993 elapsed_us=53502.921
+HC_STAGE unit=engine call=4 stage=finish_decode_done t_ns=218765402398745 elapsed_us=53756.673
+HC_STAGE unit=engine call=4 stage=leave t_ns=218765402402205 elapsed_us=53760.133
+HC_STAGE unit=engine call=5 stage=entry t_ns=218765402417055 elapsed_us=0.100
+HC_VALUE unit=engine call=5 key=requests value=2
+HC_VALUE unit=engine call=5 key=position0 value=44
+HC_VALUE unit=engine call=5 key=planned_drafts value=1
+HC_STAGE unit=engine call=5 stage=policy_done t_ns=218765402421055 elapsed_us=4.100
+HC_STAGE unit=engine call=5 stage=prepare_decode_done t_ns=218765402491813 elapsed_us=74.858
+HC_STAGE unit=engine call=5 stage=draft_catchup_done t_ns=218765404102245 elapsed_us=1685.290
+HC_STAGE unit=engine call=5 stage=drafting_done t_ns=218765405438945 elapsed_us=3021.990
+HC_VALUE unit=engine call=5 key=verification_rows value=2
+HC_VALUE unit=engine call=5 key=verification_rows value=2
+HC_STAGE unit=engine call=5 stage=before_target_forward t_ns=218765405443254 elapsed_us=3026.299
+HC_STAGE unit=batch call=5 stage=entry t_ns=218765405444744 elapsed_us=0.100
+HC_VALUE unit=batch call=5 key=rows value=4
+HC_VALUE unit=batch call=5 key=requests value=2
+HC_STAGE unit=batch call=5 stage=rollback_start t_ns=218765405449024 elapsed_us=4.380
+HC_STAGE unit=batch call=5 stage=rollback_done t_ns=218765405450274 elapsed_us=5.630
+HC_STAGE unit=batch call=5 stage=allocate_batch_done t_ns=218765405451334 elapsed_us=6.690
+HC_STAGE unit=batch call=5 stage=controls_done t_ns=218765405452374 elapsed_us=7.730
+HC_STAGE unit=batch call=5 stage=prior_ple_prefetch_done t_ns=218765405453444 elapsed_us=8.800
+HC_STAGE unit=batch call=5 stage=ngram_submitted t_ns=218765405502593 elapsed_us=57.949
+HC_STAGE unit=batch call=5 stage=before_layers t_ns=218765405521212 elapsed_us=76.568
+HC_STAGE unit=batch call=5 stage=before_ple_wait t_ns=218765405589860 elapsed_us=145.216
+HC_STAGE unit=batch call=5 stage=after_ple_wait t_ns=218765405591440 elapsed_us=146.796
+HC_STAGE unit=batch call=5 stage=body_submitted t_ns=218765408504963 elapsed_us=3060.319
+HC_STAGE unit=batch call=5 stage=stream_complete t_ns=218765459621935 elapsed_us=54177.291
+HC_STAGE unit=batch call=5 stage=leave t_ns=218765459624985 elapsed_us=54180.341
+HC_STAGE unit=engine call=5 stage=target_forward_done t_ns=218765459626595 elapsed_us=57209.640
+HC_STAGE unit=engine call=5 stage=finish_decode_done t_ns=218765459868318 elapsed_us=57451.363
+HC_STAGE unit=engine call=5 stage=leave t_ns=218765459871598 elapsed_us=57454.643
+HC_STAGE unit=engine call=6 stage=entry t_ns=218765459886187 elapsed_us=0.100
+HC_VALUE unit=engine call=6 key=requests value=2
+HC_VALUE unit=engine call=6 key=position0 value=46
+HC_VALUE unit=engine call=6 key=planned_drafts value=1
+HC_STAGE unit=engine call=6 stage=policy_done t_ns=218765459890167 elapsed_us=4.080
+HC_STAGE unit=engine call=6 stage=prepare_decode_done t_ns=218765459964715 elapsed_us=78.628
+HC_STAGE unit=engine call=6 stage=draft_catchup_done t_ns=218765461518649 elapsed_us=1632.562
+HC_STAGE unit=engine call=6 stage=drafting_done t_ns=218765462868488 elapsed_us=2982.401
+HC_VALUE unit=engine call=6 key=verification_rows value=2
+HC_VALUE unit=engine call=6 key=verification_rows value=1
+HC_STAGE unit=engine call=6 stage=before_target_forward t_ns=218765462876138 elapsed_us=2990.051
+HC_STAGE unit=batch call=6 stage=entry t_ns=218765462877718 elapsed_us=0.110
+HC_VALUE unit=batch call=6 key=rows value=3
+HC_VALUE unit=batch call=6 key=requests value=2
+HC_STAGE unit=batch call=6 stage=rollback_start t_ns=218765462882108 elapsed_us=4.500
+HC_STAGE unit=batch call=6 stage=rollback_done t_ns=218765462883438 elapsed_us=5.830
+HC_STAGE unit=batch call=6 stage=allocate_batch_done t_ns=218765462884538 elapsed_us=6.930
+HC_STAGE unit=batch call=6 stage=controls_done t_ns=218765462885578 elapsed_us=7.970
+HC_STAGE unit=batch call=6 stage=prior_ple_prefetch_done t_ns=218765462886678 elapsed_us=9.070
+HC_STAGE unit=batch call=6 stage=ngram_submitted t_ns=218765462924286 elapsed_us=46.678
+HC_STAGE unit=batch call=6 stage=before_layers t_ns=218765462934766 elapsed_us=57.158
+HC_STAGE unit=batch call=6 stage=before_ple_wait t_ns=218765463018744 elapsed_us=141.136
+HC_STAGE unit=batch call=6 stage=after_ple_wait t_ns=218765463021144 elapsed_us=143.536
+HC_STAGE unit=batch call=6 stage=body_submitted t_ns=218765465931366 elapsed_us=3053.758
+HC_STAGE unit=batch call=6 stage=stream_complete t_ns=218765512590652 elapsed_us=49713.044
+HC_STAGE unit=batch call=6 stage=leave t_ns=218765512593682 elapsed_us=49716.074
+HC_STAGE unit=engine call=6 stage=target_forward_done t_ns=218765512595282 elapsed_us=52709.195
+HC_STAGE unit=engine call=6 stage=finish_decode_done t_ns=218765512817695 elapsed_us=52931.608
+HC_STAGE unit=engine call=6 stage=leave t_ns=218765512821075 elapsed_us=52934.988
+HC_STAGE unit=engine call=7 stage=entry t_ns=218765512835665 elapsed_us=0.100
+HC_VALUE unit=engine call=7 key=requests value=2
+HC_VALUE unit=engine call=7 key=position0 value=48
+HC_VALUE unit=engine call=7 key=planned_drafts value=2
+HC_STAGE unit=engine call=7 stage=policy_done t_ns=218765512840874 elapsed_us=5.309
+HC_STAGE unit=engine call=7 stage=prepare_decode_done t_ns=218765512915242 elapsed_us=79.677
+HC_STAGE unit=engine call=7 stage=draft_catchup_done t_ns=218765514225323 elapsed_us=1389.758
+HC_STAGE unit=engine call=7 stage=drafting_done t_ns=218765517990301 elapsed_us=5154.736
+HC_VALUE unit=engine call=7 key=verification_rows value=3
+HC_VALUE unit=engine call=7 key=verification_rows value=3
+HC_STAGE unit=engine call=7 stage=before_target_forward t_ns=218765517994590 elapsed_us=5159.025
+HC_STAGE unit=batch call=7 stage=entry t_ns=218765517996230 elapsed_us=0.100
+HC_VALUE unit=batch call=7 key=rows value=6
+HC_VALUE unit=batch call=7 key=requests value=2
+HC_STAGE unit=batch call=7 stage=rollback_start t_ns=218765518001800 elapsed_us=5.670
+HC_STAGE unit=batch call=7 stage=rollback_done t_ns=218765518003100 elapsed_us=6.970
+HC_STAGE unit=batch call=7 stage=allocate_batch_done t_ns=218765518005410 elapsed_us=9.280
+HC_STAGE unit=batch call=7 stage=controls_done t_ns=218765518006700 elapsed_us=10.570
+HC_STAGE unit=batch call=7 stage=prior_ple_prefetch_done t_ns=218765518008170 elapsed_us=12.040
+HC_STAGE unit=batch call=7 stage=ngram_submitted t_ns=218765518087488 elapsed_us=91.358
+HC_STAGE unit=batch call=7 stage=before_layers t_ns=218765518102167 elapsed_us=106.037
+HC_STAGE unit=batch call=7 stage=before_ple_wait t_ns=218765518173925 elapsed_us=177.795
+HC_STAGE unit=batch call=7 stage=after_ple_wait t_ns=218765518175595 elapsed_us=179.465
+HC_STAGE unit=batch call=7 stage=body_submitted t_ns=218765521086518 elapsed_us=3090.388
+HC_STAGE unit=batch call=7 stage=stream_complete t_ns=218765580900190 elapsed_us=62904.060
+HC_STAGE unit=batch call=7 stage=leave t_ns=218765580902880 elapsed_us=62906.750
+HC_STAGE unit=engine call=7 stage=target_forward_done t_ns=218765580904930 elapsed_us=68069.365
+HC_STAGE unit=engine call=7 stage=finish_decode_done t_ns=218765581164802 elapsed_us=68329.237
+HC_STAGE unit=engine call=7 stage=leave t_ns=218765581169292 elapsed_us=68333.727
+HC_STAGE unit=engine call=8 stage=entry t_ns=218765581185382 elapsed_us=0.100
+HC_VALUE unit=engine call=8 key=requests value=2
+HC_VALUE unit=engine call=8 key=position0 value=51
+HC_VALUE unit=engine call=8 key=planned_drafts value=2
+HC_STAGE unit=engine call=8 stage=policy_done t_ns=218765581193211 elapsed_us=7.929
+HC_STAGE unit=engine call=8 stage=prepare_decode_done t_ns=218765581268839 elapsed_us=83.557
+HC_STAGE unit=engine call=8 stage=draft_catchup_done t_ns=218765583060516 elapsed_us=1875.234
+HC_STAGE unit=engine call=8 stage=drafting_done t_ns=218765587136484 elapsed_us=5951.202
+HC_VALUE unit=engine call=8 key=verification_rows value=3
+HC_VALUE unit=engine call=8 key=verification_rows value=1
+HC_STAGE unit=engine call=8 stage=before_target_forward t_ns=218765587147044 elapsed_us=5961.762
+HC_STAGE unit=batch call=8 stage=entry t_ns=218765587148863 elapsed_us=0.180
+HC_VALUE unit=batch call=8 key=rows value=4
+HC_VALUE unit=batch call=8 key=requests value=2
+HC_STAGE unit=batch call=8 stage=rollback_start t_ns=218765587154603 elapsed_us=5.920
+HC_STAGE unit=batch call=8 stage=rollback_done t_ns=218765587156193 elapsed_us=7.510
+HC_STAGE unit=batch call=8 stage=allocate_batch_done t_ns=218765587157413 elapsed_us=8.730
+HC_STAGE unit=batch call=8 stage=controls_done t_ns=218765587158873 elapsed_us=10.190
+HC_STAGE unit=batch call=8 stage=prior_ple_prefetch_done t_ns=218765587160523 elapsed_us=11.840
+HC_STAGE unit=batch call=8 stage=ngram_submitted t_ns=218765587209512 elapsed_us=60.829
+HC_STAGE unit=batch call=8 stage=before_layers t_ns=218765587233631 elapsed_us=84.948
+HC_STAGE unit=batch call=8 stage=before_ple_wait t_ns=218765587303979 elapsed_us=155.296
+HC_STAGE unit=batch call=8 stage=after_ple_wait t_ns=218765587305739 elapsed_us=157.056
+HC_STAGE unit=batch call=8 stage=body_submitted t_ns=218765590211362 elapsed_us=3062.679
+HC_STAGE unit=batch call=8 stage=stream_complete t_ns=218765641791330 elapsed_us=54642.647
+HC_STAGE unit=batch call=8 stage=leave t_ns=218765641794250 elapsed_us=54645.567
+HC_STAGE unit=engine call=8 stage=target_forward_done t_ns=218765641795850 elapsed_us=60610.568
+HC_STAGE unit=engine call=8 stage=finish_decode_done t_ns=218765642067662 elapsed_us=60882.380
+HC_STAGE unit=engine call=8 stage=leave t_ns=218765642072502 elapsed_us=60887.220
+HC_STAGE unit=engine call=9 stage=entry t_ns=218765642093061 elapsed_us=0.070
+HC_VALUE unit=engine call=9 key=requests value=2
+HC_VALUE unit=engine call=9 key=position0 value=54
+HC_VALUE unit=engine call=9 key=planned_drafts value=2
+HC_STAGE unit=engine call=9 stage=policy_done t_ns=218765642098551 elapsed_us=5.560
+HC_STAGE unit=engine call=9 stage=prepare_decode_done t_ns=218765642171299 elapsed_us=78.308
+HC_STAGE unit=engine call=9 stage=draft_catchup_done t_ns=218765643758052 elapsed_us=1665.061
+HC_STAGE unit=engine call=9 stage=drafting_done t_ns=218765647181969 elapsed_us=5088.978
+HC_VALUE unit=engine call=9 key=verification_rows value=1
+HC_VALUE unit=engine call=9 key=verification_rows value=2
+HC_STAGE unit=engine call=9 stage=before_target_forward t_ns=218765647186509 elapsed_us=5093.518
+HC_STAGE unit=batch call=9 stage=entry t_ns=218765647187989 elapsed_us=0.070
+HC_VALUE unit=batch call=9 key=rows value=3
+HC_VALUE unit=batch call=9 key=requests value=2
+HC_STAGE unit=batch call=9 stage=rollback_start t_ns=218765647192619 elapsed_us=4.700
+HC_STAGE unit=batch call=9 stage=rollback_done t_ns=218765647193899 elapsed_us=5.980
+HC_STAGE unit=batch call=9 stage=allocate_batch_done t_ns=218765647194969 elapsed_us=7.050
+HC_STAGE unit=batch call=9 stage=controls_done t_ns=218765647196139 elapsed_us=8.220
+HC_STAGE unit=batch call=9 stage=prior_ple_prefetch_done t_ns=218765647197309 elapsed_us=9.390
+HC_STAGE unit=batch call=9 stage=ngram_submitted t_ns=218765647234638 elapsed_us=46.719
+HC_STAGE unit=batch call=9 stage=before_layers t_ns=218765647244047 elapsed_us=56.128
+HC_STAGE unit=batch call=9 stage=before_ple_wait t_ns=218765647314245 elapsed_us=126.326
+HC_STAGE unit=batch call=9 stage=after_ple_wait t_ns=218765647315905 elapsed_us=127.986
+HC_STAGE unit=batch call=9 stage=body_submitted t_ns=218765650241268 elapsed_us=3053.349
+HC_STAGE unit=batch call=9 stage=stream_complete t_ns=218765694703289 elapsed_us=47515.370
+HC_STAGE unit=batch call=9 stage=leave t_ns=218765694706369 elapsed_us=47518.450
+HC_STAGE unit=engine call=9 stage=target_forward_done t_ns=218765694714899 elapsed_us=52621.908
+HC_STAGE unit=engine call=9 stage=finish_decode_done t_ns=218765694967391 elapsed_us=52874.400
+HC_STAGE unit=engine call=9 stage=leave t_ns=218765694971041 elapsed_us=52878.050
+HC_STAGE unit=engine call=10 stage=entry t_ns=218765694986350 elapsed_us=0.070
+HC_VALUE unit=engine call=10 key=requests value=2
+HC_VALUE unit=engine call=10 key=position0 value=55
+HC_VALUE unit=engine call=10 key=planned_drafts value=2
+HC_STAGE unit=engine call=10 stage=policy_done t_ns=218765694990860 elapsed_us=4.580
+HC_STAGE unit=engine call=10 stage=prepare_decode_done t_ns=218765695068698 elapsed_us=82.418
+HC_STAGE unit=engine call=10 stage=draft_catchup_done t_ns=218765696527834 elapsed_us=1541.554
+HC_STAGE unit=engine call=10 stage=drafting_done t_ns=218765700372859 elapsed_us=5386.579
+HC_VALUE unit=engine call=10 key=verification_rows value=1
+HC_VALUE unit=engine call=10 key=verification_rows value=2
+HC_STAGE unit=engine call=10 stage=before_target_forward t_ns=218765700380499 elapsed_us=5394.219
+HC_STAGE unit=batch call=10 stage=entry t_ns=218765700382169 elapsed_us=0.100
+HC_VALUE unit=batch call=10 key=rows value=3
+HC_VALUE unit=batch call=10 key=requests value=2
+HC_STAGE unit=batch call=10 stage=rollback_start t_ns=218765700387879 elapsed_us=5.810
+HC_STAGE unit=batch call=10 stage=rollback_done t_ns=218765700389379 elapsed_us=7.310
+HC_STAGE unit=batch call=10 stage=allocate_batch_done t_ns=218765700390629 elapsed_us=8.560
+HC_STAGE unit=batch call=10 stage=controls_done t_ns=218765700391919 elapsed_us=9.850
+HC_STAGE unit=batch call=10 stage=prior_ple_prefetch_done t_ns=218765700393219 elapsed_us=11.150
+HC_STAGE unit=batch call=10 stage=ngram_submitted t_ns=218765700433358 elapsed_us=51.289
+HC_STAGE unit=batch call=10 stage=before_layers t_ns=218765700460937 elapsed_us=78.868
+HC_STAGE unit=batch call=10 stage=before_ple_wait t_ns=218765700527605 elapsed_us=145.536
+HC_STAGE unit=batch call=10 stage=after_ple_wait t_ns=218765701036430 elapsed_us=654.361
+HC_STAGE unit=batch call=10 stage=body_submitted t_ns=218765703943853 elapsed_us=3561.784
+HC_STAGE unit=batch call=10 stage=stream_complete t_ns=218765747953277 elapsed_us=47571.208
+HC_STAGE unit=batch call=10 stage=leave t_ns=218765747956377 elapsed_us=47574.308
+HC_STAGE unit=engine call=10 stage=target_forward_done t_ns=218765747958077 elapsed_us=52971.797
+HC_STAGE unit=engine call=10 stage=finish_decode_done t_ns=218765748175991 elapsed_us=53189.711
+HC_STAGE unit=engine call=10 stage=leave t_ns=218765748181281 elapsed_us=53195.001
+HC_STAGE unit=engine call=11 stage=entry t_ns=218765748199970 elapsed_us=0.100
+HC_VALUE unit=engine call=11 key=requests value=2
+HC_VALUE unit=engine call=11 key=position0 value=56
+HC_VALUE unit=engine call=11 key=planned_drafts value=2
+HC_STAGE unit=engine call=11 stage=policy_done t_ns=218765748204950 elapsed_us=5.080
+HC_STAGE unit=engine call=11 stage=prepare_decode_done t_ns=218765748280018 elapsed_us=80.148
+HC_STAGE unit=engine call=11 stage=draft_catchup_done t_ns=218765749624137 elapsed_us=1424.267
+HC_STAGE unit=engine call=11 stage=drafting_done t_ns=218765753070384 elapsed_us=4870.514
+HC_VALUE unit=engine call=11 key=verification_rows value=3
+HC_VALUE unit=engine call=11 key=verification_rows value=2
+HC_STAGE unit=engine call=11 stage=before_target_forward t_ns=218765753075464 elapsed_us=4875.594
+HC_STAGE unit=batch call=11 stage=entry t_ns=218765753076834 elapsed_us=0.060
+HC_VALUE unit=batch call=11 key=rows value=5
+HC_VALUE unit=batch call=11 key=requests value=2
+HC_STAGE unit=batch call=11 stage=rollback_start t_ns=218765753081694 elapsed_us=4.920
+HC_STAGE unit=batch call=11 stage=rollback_done t_ns=218765753082954 elapsed_us=6.180
+HC_STAGE unit=batch call=11 stage=allocate_batch_done t_ns=218765753084044 elapsed_us=7.270
+HC_STAGE unit=batch call=11 stage=controls_done t_ns=218765753085194 elapsed_us=8.420
+HC_STAGE unit=batch call=11 stage=prior_ple_prefetch_done t_ns=218765753086434 elapsed_us=9.660
+HC_STAGE unit=batch call=11 stage=ngram_submitted t_ns=218765753153622 elapsed_us=76.848
+HC_STAGE unit=batch call=11 stage=before_layers t_ns=218765753162952 elapsed_us=86.178
+HC_STAGE unit=batch call=11 stage=before_ple_wait t_ns=218765753234439 elapsed_us=157.665
+HC_STAGE unit=batch call=11 stage=after_ple_wait t_ns=218765753236049 elapsed_us=159.275
+HC_STAGE unit=batch call=11 stage=body_submitted t_ns=218765756104214 elapsed_us=3027.440
+HC_STAGE unit=batch call=11 stage=stream_complete t_ns=218765813134249 elapsed_us=60057.475
+HC_STAGE unit=batch call=11 stage=leave t_ns=218765813137159 elapsed_us=60060.385
+HC_STAGE unit=engine call=11 stage=target_forward_done t_ns=218765813138749 elapsed_us=64938.879
+HC_STAGE unit=engine call=11 stage=finish_decode_done t_ns=218765813390061 elapsed_us=65190.191
+HC_STAGE unit=engine call=11 stage=leave t_ns=218765813393711 elapsed_us=65193.841
+HC_STAGE unit=engine call=12 stage=entry t_ns=218765813409641 elapsed_us=0.100
+HC_VALUE unit=engine call=12 key=requests value=2
+HC_VALUE unit=engine call=12 key=position0 value=59
+HC_VALUE unit=engine call=12 key=planned_drafts value=2
+HC_STAGE unit=engine call=12 stage=policy_done t_ns=218765813413951 elapsed_us=4.410
+HC_STAGE unit=engine call=12 stage=prepare_decode_done t_ns=218765813487919 elapsed_us=78.378
+HC_STAGE unit=engine call=12 stage=draft_catchup_done t_ns=218765815259606 elapsed_us=1850.065
+HC_STAGE unit=engine call=12 stage=drafting_done t_ns=218765819038633 elapsed_us=5629.092
+HC_VALUE unit=engine call=12 key=verification_rows value=3
+HC_VALUE unit=engine call=12 key=verification_rows value=3
+HC_STAGE unit=engine call=12 stage=before_target_forward t_ns=218765819043292 elapsed_us=5633.751
+HC_STAGE unit=batch call=12 stage=entry t_ns=218765819044842 elapsed_us=0.100
+HC_VALUE unit=batch call=12 key=rows value=6
+HC_VALUE unit=batch call=12 key=requests value=2
+HC_STAGE unit=batch call=12 stage=rollback_start t_ns=218765819049172 elapsed_us=4.430
+HC_STAGE unit=batch call=12 stage=rollback_done t_ns=218765819050442 elapsed_us=5.700
+HC_STAGE unit=batch call=12 stage=allocate_batch_done t_ns=218765819051552 elapsed_us=6.810
+HC_STAGE unit=batch call=12 stage=controls_done t_ns=218765819052702 elapsed_us=7.960
+HC_STAGE unit=batch call=12 stage=prior_ple_prefetch_done t_ns=218765819053742 elapsed_us=9.000
+HC_STAGE unit=batch call=12 stage=ngram_submitted t_ns=218765819123180 elapsed_us=78.438
+HC_STAGE unit=batch call=12 stage=before_layers t_ns=218765819146639 elapsed_us=101.897
+HC_STAGE unit=batch call=12 stage=before_ple_wait t_ns=218765819214727 elapsed_us=169.985
+HC_STAGE unit=batch call=12 stage=after_ple_wait t_ns=218765819216377 elapsed_us=171.635
+HC_STAGE unit=batch call=12 stage=body_submitted t_ns=218765822128870 elapsed_us=3084.128
+HC_STAGE unit=batch call=12 stage=stream_complete t_ns=218765878352650 elapsed_us=59307.908
+HC_STAGE unit=batch call=12 stage=leave t_ns=218765878355470 elapsed_us=59310.728
+HC_STAGE unit=engine call=12 stage=target_forward_done t_ns=218765878357090 elapsed_us=64947.549
+HC_STAGE unit=engine call=12 stage=finish_decode_done t_ns=218765878587213 elapsed_us=65177.672
+HC_STAGE unit=engine call=12 stage=leave t_ns=218765878590523 elapsed_us=65180.982
+HC_STAGE unit=engine call=13 stage=entry t_ns=218765878607032 elapsed_us=0.100
+HC_VALUE unit=engine call=13 key=requests value=2
+HC_VALUE unit=engine call=13 key=position0 value=62
+HC_VALUE unit=engine call=13 key=planned_drafts value=2
+HC_STAGE unit=engine call=13 stage=policy_done t_ns=218765878611602 elapsed_us=4.670
+HC_STAGE unit=engine call=13 stage=prepare_decode_done t_ns=218765878689270 elapsed_us=82.338
+HC_STAGE unit=engine call=13 stage=draft_catchup_done t_ns=218765880592343 elapsed_us=1985.411
+HC_STAGE unit=engine call=13 stage=drafting_done t_ns=218765884345571 elapsed_us=5738.639
+HC_VALUE unit=engine call=13 key=verification_rows value=2
+HC_VALUE unit=engine call=13 key=verification_rows value=3
+HC_STAGE unit=engine call=13 stage=before_target_forward t_ns=218765884349741 elapsed_us=5742.809
+HC_STAGE unit=batch call=13 stage=entry t_ns=218765884351171 elapsed_us=0.070
+HC_VALUE unit=batch call=13 key=rows value=5
+HC_VALUE unit=batch call=13 key=requests value=2
+HC_STAGE unit=batch call=13 stage=rollback_start t_ns=218765884359660 elapsed_us=8.559
+HC_STAGE unit=batch call=13 stage=rollback_done t_ns=218765884360980 elapsed_us=9.879
+HC_STAGE unit=batch call=13 stage=allocate_batch_done t_ns=218765884362070 elapsed_us=10.969
+HC_STAGE unit=batch call=13 stage=controls_done t_ns=218765884363450 elapsed_us=12.349
+HC_STAGE unit=batch call=13 stage=prior_ple_prefetch_done t_ns=218765884364710 elapsed_us=13.609
+HC_STAGE unit=batch call=13 stage=ngram_submitted t_ns=218765884424968 elapsed_us=73.867
+HC_STAGE unit=batch call=13 stage=before_layers t_ns=218765884448568 elapsed_us=97.467
+HC_STAGE unit=batch call=13 stage=before_ple_wait t_ns=218765884517026 elapsed_us=165.925
+HC_STAGE unit=batch call=13 stage=after_ple_wait t_ns=218765884518626 elapsed_us=167.525
+HC_STAGE unit=batch call=13 stage=body_submitted t_ns=218765887428739 elapsed_us=3077.638
+HC_STAGE unit=batch call=13 stage=stream_complete t_ns=218765941065605 elapsed_us=56714.504
+HC_STAGE unit=batch call=13 stage=leave t_ns=218765941068655 elapsed_us=56717.554
+HC_STAGE unit=engine call=13 stage=target_forward_done t_ns=218765941070095 elapsed_us=62463.163
+HC_STAGE unit=engine call=13 stage=finish_decode_done t_ns=218765942446034 elapsed_us=63839.102
+HC_STAGE unit=engine call=13 stage=leave t_ns=218765942450474 elapsed_us=63843.542
+HC_STAGE unit=engine call=14 stage=entry t_ns=218765942464734 elapsed_us=0.100
+HC_VALUE unit=engine call=14 key=requests value=2
+HC_VALUE unit=engine call=14 key=position0 value=64
+HC_VALUE unit=engine call=14 key=planned_drafts value=2
+HC_STAGE unit=engine call=14 stage=policy_done t_ns=218765942469454 elapsed_us=4.820
+HC_STAGE unit=engine call=14 stage=prepare_decode_done t_ns=218765942544731 elapsed_us=80.097
+HC_STAGE unit=engine call=14 stage=draft_catchup_done t_ns=218765943966189 elapsed_us=1501.555
+HC_STAGE unit=engine call=14 stage=drafting_done t_ns=218765947993318 elapsed_us=5528.684
+HC_VALUE unit=engine call=14 key=verification_rows value=3
+HC_VALUE unit=engine call=14 key=verification_rows value=2
+HC_STAGE unit=engine call=14 stage=before_target_forward t_ns=218765947997578 elapsed_us=5532.944
+HC_STAGE unit=batch call=14 stage=entry t_ns=218765947998918 elapsed_us=0.070
+HC_VALUE unit=batch call=14 key=rows value=5
+HC_VALUE unit=batch call=14 key=requests value=2
+HC_STAGE unit=batch call=14 stage=rollback_start t_ns=218765948004208 elapsed_us=5.360
+HC_STAGE unit=batch call=14 stage=rollback_done t_ns=218765948006128 elapsed_us=7.280
+HC_STAGE unit=batch call=14 stage=allocate_batch_done t_ns=218765948007298 elapsed_us=8.450
+HC_STAGE unit=batch call=14 stage=controls_done t_ns=218765948008488 elapsed_us=9.640
+HC_STAGE unit=batch call=14 stage=prior_ple_prefetch_done t_ns=218765948009638 elapsed_us=10.790
+HC_STAGE unit=batch call=14 stage=ngram_submitted t_ns=218765948102675 elapsed_us=103.827
+HC_STAGE unit=batch call=14 stage=before_layers t_ns=218765948121935 elapsed_us=123.087
+HC_STAGE unit=batch call=14 stage=before_ple_wait t_ns=218765948214492 elapsed_us=215.644
+HC_STAGE unit=batch call=14 stage=after_ple_wait t_ns=218765949022088 elapsed_us=1023.240
+HC_STAGE unit=batch call=14 stage=body_submitted t_ns=218765951938051 elapsed_us=3939.203
+HC_STAGE unit=batch call=14 stage=stream_complete t_ns=218766003724743 elapsed_us=55725.895
+HC_STAGE unit=batch call=14 stage=leave t_ns=218766003727723 elapsed_us=55728.875
+HC_STAGE unit=engine call=14 stage=target_forward_done t_ns=218766003729512 elapsed_us=61264.878
+HC_STAGE unit=engine call=14 stage=finish_decode_done t_ns=218766005419252 elapsed_us=62954.618
+HC_STAGE unit=engine call=14 stage=leave t_ns=218766005423772 elapsed_us=62959.138
+HC_STAGE unit=engine call=15 stage=entry t_ns=218766005439971 elapsed_us=0.180
+HC_VALUE unit=engine call=15 key=requests value=2
+HC_VALUE unit=engine call=15 key=position0 value=66
+HC_VALUE unit=engine call=15 key=planned_drafts value=2
+HC_STAGE unit=engine call=15 stage=policy_done t_ns=218766005444821 elapsed_us=5.030
+HC_STAGE unit=engine call=15 stage=prepare_decode_done t_ns=218766005524729 elapsed_us=84.938
+HC_STAGE unit=engine call=15 stage=draft_catchup_done t_ns=218766007149990 elapsed_us=1710.199
+HC_STAGE unit=engine call=15 stage=drafting_done t_ns=218766010653246 elapsed_us=5213.455
+HC_VALUE unit=engine call=15 key=verification_rows value=3
+HC_VALUE unit=engine call=15 key=verification_rows value=1
+HC_STAGE unit=engine call=15 stage=before_target_forward t_ns=218766010657655 elapsed_us=5217.864
+HC_STAGE unit=batch call=15 stage=entry t_ns=218766010659225 elapsed_us=0.100
+HC_VALUE unit=batch call=15 key=rows value=4
+HC_VALUE unit=batch call=15 key=requests value=2
+HC_STAGE unit=batch call=15 stage=rollback_start t_ns=218766010663975 elapsed_us=4.850
+HC_STAGE unit=batch call=15 stage=rollback_done t_ns=218766010665285 elapsed_us=6.160
+HC_STAGE unit=batch call=15 stage=allocate_batch_done t_ns=218766010666385 elapsed_us=7.260
+HC_STAGE unit=batch call=15 stage=controls_done t_ns=218766010667505 elapsed_us=8.380
+HC_STAGE unit=batch call=15 stage=prior_ple_prefetch_done t_ns=218766010668795 elapsed_us=9.670
+HC_STAGE unit=batch call=15 stage=ngram_submitted t_ns=218766010715414 elapsed_us=56.289
+HC_STAGE unit=batch call=15 stage=before_layers t_ns=218766010742963 elapsed_us=83.838
+HC_STAGE unit=batch call=15 stage=before_ple_wait t_ns=218766010810731 elapsed_us=151.606
+HC_STAGE unit=batch call=15 stage=after_ple_wait t_ns=218766010812531 elapsed_us=153.406
+HC_STAGE unit=batch call=15 stage=body_submitted t_ns=218766013707264 elapsed_us=3048.139
+HC_STAGE unit=batch call=15 stage=stream_complete t_ns=218766062053249 elapsed_us=51394.124
+HC_STAGE unit=batch call=15 stage=leave t_ns=218766062056329 elapsed_us=51397.204
+HC_STAGE unit=engine call=15 stage=target_forward_done t_ns=218766062057899 elapsed_us=56618.108
+HC_STAGE unit=engine call=15 stage=finish_decode_done t_ns=218766063531135 elapsed_us=58091.344
+HC_STAGE unit=engine call=15 stage=leave t_ns=218766063535525 elapsed_us=58095.734
+2026-11-02 10:16:08 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=35 rank=0 unique_bytes_freed=0 ledger_bytes=962887842
+HC_SOLO unit=decode call=192 stage=entry t_ns=218768589608904 elapsed_us=0.130 session=6452f90b17c0 position=139 tokens=19
+2026-11-02 10:16:08 [INFO] [http] request=r8 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=3731.5 outcome=completed prompt_tokens=35 prefill_tokens=35 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.4 shared_prefix_wait_ms=0.0 ttft_ms=272.8 prefill_tps=252.8 decode_tps=37.1 batch_width=2 plan=batched-w2 draft_accepted=71 draft_proposed=83 draft_rounds=46 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962891672 acceptance_pct=85.5 ngram_rows=2800 ngram_dedup_rows=0 ngram_cache_hits=2763 ngram_disk_reads=37 cache_snapshot_bytes=267737660 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2136 host_available_mib=29904
+HC_SOLO unit=decode call=192 stage=leave t_ns=218768637288859 elapsed_us=47680.085 session=6452f90b17c0 position=139 tokens=19
+HC_SOLO unit=decode call=193 stage=entry t_ns=218768637303779 elapsed_us=0.100 session=6452f90b17c0 position=142 tokens=16
+HC_SOLO unit=decode call=193 stage=leave t_ns=218768679625484 elapsed_us=42321.805 session=6452f90b17c0 position=142 tokens=16
+HC_SOLO unit=decode call=194 stage=entry t_ns=218768679634674 elapsed_us=0.100 session=6452f90b17c0 position=143 tokens=15
+HC_SOLO unit=decode call=194 stage=leave t_ns=218768734958060 elapsed_us=55323.486 session=6452f90b17c0 position=143 tokens=15
+HC_SOLO unit=decode call=195 stage=entry t_ns=218768734969300 elapsed_us=0.100 session=6452f90b17c0 position=146 tokens=12
+HC_SOLO unit=decode call=195 stage=leave t_ns=218768777688043 elapsed_us=42718.843 session=6452f90b17c0 position=146 tokens=12
+HC_SOLO unit=decode call=196 stage=entry t_ns=218768777708232 elapsed_us=0.130 session=6452f90b17c0 position=147 tokens=11
+HC_SOLO unit=decode call=196 stage=leave t_ns=218768817678728 elapsed_us=39970.626 session=6452f90b17c0 position=147 tokens=11
+HC_SOLO unit=decode call=197 stage=entry t_ns=218768817689107 elapsed_us=0.100 session=6452f90b17c0 position=149 tokens=9
+HC_SOLO unit=decode call=197 stage=leave t_ns=218768858183177 elapsed_us=40494.170 session=6452f90b17c0 position=149 tokens=9
+HC_SOLO unit=decode call=198 stage=entry t_ns=218768858193317 elapsed_us=0.100 session=6452f90b17c0 position=151 tokens=7
+HC_SOLO unit=decode call=198 stage=leave t_ns=218768908543402 elapsed_us=50350.185 session=6452f90b17c0 position=151 tokens=7
+HC_SOLO unit=decode call=199 stage=entry t_ns=218768908565381 elapsed_us=0.130 session=6452f90b17c0 position=152 tokens=6
+HC_SOLO unit=decode call=199 stage=leave t_ns=218768951735511 elapsed_us=43170.260 session=6452f90b17c0 position=152 tokens=6
+HC_SOLO unit=decode call=200 stage=entry t_ns=218768951749621 elapsed_us=0.100 session=6452f90b17c0 position=153 tokens=5
+HC_SOLO unit=decode call=200 stage=leave t_ns=218769000472854 elapsed_us=48723.333 session=6452f90b17c0 position=153 tokens=5
+HC_SOLO unit=decode call=201 stage=entry t_ns=218769000483444 elapsed_us=0.100 session=6452f90b17c0 position=156 tokens=2
+HC_SOLO unit=decode call=201 stage=leave t_ns=218769042256525 elapsed_us=41773.181 session=6452f90b17c0 position=156 tokens=2
+2026-11-02 10:16:09 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=30 rank=0 unique_bytes_freed=0 ledger_bytes=962893244
+2026-11-02 10:16:09 [INFO] [http] request=r9 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=4207.7 outcome=completed prompt_tokens=30 prefill_tokens=30 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=2 queue_ms=131.6 shared_prefix_wait_ms=0.0 ttft_ms=262.8 prefill_tps=229.0 decode_tps=32.5 batch_width=2 plan=batched-w2 draft_accepted=60 draft_proposed=82 draft_rounds=53 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962897054 acceptance_pct=73.2 ngram_rows=2880 ngram_dedup_rows=0 ngram_cache_hits=2802 ngram_disk_reads=78 cache_snapshot_bytes=267471380 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2138 host_available_mib=29913
+2026-11-02 10:16:09 [INFO] [http] request=r10 event=received method=POST path=/v1/chat/completions body_bytes=505
+2026-11-02 10:16:09 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+HC_SOLO unit=prefill call=202 stage=entry t_ns=218769079652418 elapsed_us=0.190 session=6452faf13190 position=0 tokens=35
+2026-11-02 10:16:09 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=35 rank=0 unique_bytes_freed=32178 ledger_bytes=962914100
+HC_SOLO unit=prefill call=202 stage=leave t_ns=218769217489128 elapsed_us=137836.900 session=6452faf13190 position=0 tokens=35
+2026-11-02 10:16:09 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=28 rank=3 unique_bytes_freed=31978 ledger_bytes=962861018
+2026-11-02 10:16:09 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=28 rank=3 unique_bytes_freed=0 ledger_bytes=962861018
+HC_SOLO unit=decode call=203 stage=entry t_ns=218769222007353 elapsed_us=0.130 session=6452faf13190 position=35 tokens=128
+HC_SOLO unit=decode call=203 stage=leave t_ns=218769286168875 elapsed_us=64161.652 session=6452faf13190 position=35 tokens=128
+HC_SOLO unit=decode call=204 stage=entry t_ns=218769286186115 elapsed_us=0.100 session=6452faf13190 position=40 tokens=123
+HC_SOLO unit=decode call=204 stage=leave t_ns=218769334729464 elapsed_us=48543.449 session=6452faf13190 position=40 tokens=123
+HC_SOLO unit=decode call=205 stage=entry t_ns=218769334762533 elapsed_us=0.130 session=6452faf13190 position=42 tokens=121
+HC_SOLO unit=decode call=205 stage=leave t_ns=218769411112171 elapsed_us=76349.768 session=6452faf13190 position=42 tokens=121
+HC_SOLO unit=decode call=206 stage=entry t_ns=218769411141770 elapsed_us=0.090 session=6452faf13190 position=50 tokens=113
+HC_SOLO unit=decode call=206 stage=leave t_ns=218769492642064 elapsed_us=81500.384 session=6452faf13190 position=50 tokens=113
+HC_SOLO unit=decode call=207 stage=entry t_ns=218769492656384 elapsed_us=0.100 session=6452faf13190 position=55 tokens=108
+HC_SOLO unit=decode call=207 stage=leave t_ns=218769533383956 elapsed_us=40727.672 session=6452faf13190 position=55 tokens=108
+HC_SOLO unit=decode call=208 stage=entry t_ns=218769533393416 elapsed_us=0.070 session=6452faf13190 position=57 tokens=106
+HC_SOLO unit=decode call=208 stage=leave t_ns=218769583078751 elapsed_us=49685.405 session=6452faf13190 position=57 tokens=106
+HC_SOLO unit=decode call=209 stage=entry t_ns=218769583088981 elapsed_us=0.070 session=6452faf13190 position=60 tokens=103
+HC_SOLO unit=decode call=209 stage=leave t_ns=218769630053207 elapsed_us=46964.296 session=6452faf13190 position=60 tokens=103
+HC_SOLO unit=decode call=210 stage=entry t_ns=218769630064287 elapsed_us=0.070 session=6452faf13190 position=63 tokens=100
+HC_SOLO unit=decode call=210 stage=leave t_ns=218769672111310 elapsed_us=42047.093 session=6452faf13190 position=63 tokens=100
+HC_SOLO unit=decode call=211 stage=entry t_ns=218769672120630 elapsed_us=0.100 session=6452faf13190 position=65 tokens=98
+HC_SOLO unit=decode call=211 stage=leave t_ns=218769714039457 elapsed_us=41918.927 session=6452faf13190 position=65 tokens=98
+HC_SOLO unit=decode call=212 stage=entry t_ns=218769714049206 elapsed_us=0.070 session=6452faf13190 position=67 tokens=96
+HC_SOLO unit=decode call=212 stage=leave t_ns=218769755865167 elapsed_us=41816.031 session=6452faf13190 position=67 tokens=96
+HC_SOLO unit=decode call=213 stage=entry t_ns=218769755875866 elapsed_us=0.100 session=6452faf13190 position=68 tokens=95
+HC_SOLO unit=decode call=213 stage=leave t_ns=218769797277619 elapsed_us=41401.853 session=6452faf13190 position=68 tokens=95
+HC_SOLO unit=decode call=214 stage=entry t_ns=218769797286699 elapsed_us=0.100 session=6452faf13190 position=70 tokens=93
+HC_SOLO unit=decode call=214 stage=leave t_ns=218769846601535 elapsed_us=49314.936 session=6452faf13190 position=70 tokens=93
+HC_SOLO unit=decode call=215 stage=entry t_ns=218769846612924 elapsed_us=0.100 session=6452faf13190 position=72 tokens=91
+HC_SOLO unit=decode call=215 stage=leave t_ns=218769888964668 elapsed_us=42351.844 session=6452faf13190 position=72 tokens=91
+HC_SOLO unit=decode call=216 stage=entry t_ns=218769888976468 elapsed_us=0.100 session=6452faf13190 position=73 tokens=90
+HC_SOLO unit=decode call=216 stage=leave t_ns=218769971103513 elapsed_us=82127.145 session=6452faf13190 position=73 tokens=90
+HC_SOLO unit=decode call=217 stage=entry t_ns=218769971116983 elapsed_us=0.070 session=6452faf13190 position=81 tokens=82
+HC_SOLO unit=decode call=217 stage=leave t_ns=218770013544345 elapsed_us=42427.432 session=6452faf13190 position=81 tokens=82
+HC_SOLO unit=decode call=218 stage=entry t_ns=218770013555315 elapsed_us=0.070 session=6452faf13190 position=82 tokens=81
+HC_SOLO unit=decode call=218 stage=leave t_ns=218770061564270 elapsed_us=48009.025 session=6452faf13190 position=82 tokens=81
+HC_SOLO unit=decode call=219 stage=entry t_ns=218770061574599 elapsed_us=0.060 session=6452faf13190 position=85 tokens=78
+HC_SOLO unit=decode call=219 stage=leave t_ns=218770103846216 elapsed_us=42271.677 session=6452faf13190 position=85 tokens=78
+HC_SOLO unit=decode call=220 stage=entry t_ns=218770103856626 elapsed_us=0.060 session=6452faf13190 position=87 tokens=76
+HC_SOLO unit=decode call=220 stage=leave t_ns=218770187645461 elapsed_us=83788.895 session=6452faf13190 position=87 tokens=76
+HC_SOLO unit=decode call=221 stage=entry t_ns=218770187656211 elapsed_us=0.100 session=6452faf13190 position=88 tokens=75
+HC_SOLO unit=decode call=221 stage=leave t_ns=218770231008435 elapsed_us=43352.324 session=6452faf13190 position=88 tokens=75
+HC_SOLO unit=decode call=222 stage=entry t_ns=218770231017795 elapsed_us=0.100 session=6452faf13190 position=90 tokens=73
+HC_SOLO unit=decode call=222 stage=leave t_ns=218770313708944 elapsed_us=82691.249 session=6452faf13190 position=90 tokens=73
+HC_SOLO unit=decode call=223 stage=entry t_ns=218770313721793 elapsed_us=0.070 session=6452faf13190 position=98 tokens=65
+HC_SOLO unit=decode call=223 stage=leave t_ns=218770379698241 elapsed_us=65976.518 session=6452faf13190 position=98 tokens=65
+HC_SOLO unit=decode call=224 stage=entry t_ns=218770379710721 elapsed_us=0.070 session=6452faf13190 position=104 tokens=59
+HC_SOLO unit=decode call=224 stage=leave t_ns=218770421024796 elapsed_us=41314.145 session=6452faf13190 position=104 tokens=59
+HC_SOLO unit=decode call=225 stage=entry t_ns=218770421034996 elapsed_us=0.060 session=6452faf13190 position=106 tokens=57
+HC_SOLO unit=decode call=225 stage=leave t_ns=218770485316934 elapsed_us=64281.998 session=6452faf13190 position=106 tokens=57
+HC_SOLO unit=decode call=226 stage=entry t_ns=218770485328944 elapsed_us=0.100 session=6452faf13190 position=110 tokens=53
+HC_SOLO unit=decode call=226 stage=leave t_ns=218770533660060 elapsed_us=48331.216 session=6452faf13190 position=110 tokens=53
+HC_SOLO unit=decode call=227 stage=entry t_ns=218770533670319 elapsed_us=0.060 session=6452faf13190 position=113 tokens=50
+HC_SOLO unit=decode call=227 stage=leave t_ns=218770584102782 elapsed_us=50432.523 session=6452faf13190 position=113 tokens=50
+HC_SOLO unit=decode call=228 stage=entry t_ns=218770584114071 elapsed_us=0.060 session=6452faf13190 position=115 tokens=48
+HC_SOLO unit=decode call=228 stage=leave t_ns=218770631172715 elapsed_us=47058.704 session=6452faf13190 position=115 tokens=48
+HC_SOLO unit=decode call=229 stage=entry t_ns=218770631183105 elapsed_us=0.100 session=6452faf13190 position=117 tokens=46
+HC_SOLO unit=decode call=229 stage=leave t_ns=218770681131112 elapsed_us=49948.107 session=6452faf13190 position=117 tokens=46
+HC_SOLO unit=decode call=230 stage=entry t_ns=218770681142052 elapsed_us=0.100 session=6452faf13190 position=119 tokens=44
+HC_SOLO unit=decode call=230 stage=leave t_ns=218770728865655 elapsed_us=47723.703 session=6452faf13190 position=119 tokens=44
+HC_SOLO unit=decode call=231 stage=entry t_ns=218770728874865 elapsed_us=0.070 session=6452faf13190 position=121 tokens=42
+HC_SOLO unit=decode call=231 stage=leave t_ns=218770782017737 elapsed_us=53142.942 session=6452faf13190 position=121 tokens=42
+HC_SOLO unit=decode call=232 stage=entry t_ns=218770782028376 elapsed_us=0.070 session=6452faf13190 position=125 tokens=38
+HC_SOLO unit=decode call=232 stage=leave t_ns=218770823539195 elapsed_us=41510.889 session=6452faf13190 position=125 tokens=38
+HC_SOLO unit=decode call=233 stage=entry t_ns=218770823549525 elapsed_us=0.090 session=6452faf13190 position=127 tokens=36
+HC_SOLO unit=decode call=233 stage=leave t_ns=218770873106064 elapsed_us=49556.629 session=6452faf13190 position=127 tokens=36
+HC_SOLO unit=decode call=234 stage=entry t_ns=218770873115654 elapsed_us=0.060 session=6452faf13190 position=130 tokens=33
+HC_SOLO unit=decode call=234 stage=leave t_ns=218770946913878 elapsed_us=73798.284 session=6452faf13190 position=130 tokens=33
+HC_SOLO unit=decode call=235 stage=entry t_ns=218770946925928 elapsed_us=0.060 session=6452faf13190 position=136 tokens=27
+HC_SOLO unit=decode call=235 stage=leave t_ns=218771028362644 elapsed_us=81436.776 session=6452faf13190 position=136 tokens=27
+HC_SOLO unit=decode call=236 stage=entry t_ns=218771028371393 elapsed_us=0.060 session=6452faf13190 position=137 tokens=26
+HC_SOLO unit=decode call=236 stage=leave t_ns=218771075023549 elapsed_us=46652.216 session=6452faf13190 position=137 tokens=26
+HC_SOLO unit=decode call=237 stage=entry t_ns=218771075037798 elapsed_us=0.100 session=6452faf13190 position=140 tokens=23
+HC_SOLO unit=decode call=237 stage=leave t_ns=218771128729054 elapsed_us=53691.356 session=6452faf13190 position=140 tokens=23
+HC_SOLO unit=decode call=238 stage=entry t_ns=218771128759953 elapsed_us=0.140 session=6452faf13190 position=143 tokens=20
+HC_SOLO unit=decode call=238 stage=leave t_ns=218771189754390 elapsed_us=60994.577 session=6452faf13190 position=143 tokens=20
+HC_SOLO unit=decode call=239 stage=entry t_ns=218771189771289 elapsed_us=0.130 session=6452faf13190 position=146 tokens=17
+HC_SOLO unit=decode call=239 stage=leave t_ns=218771273152357 elapsed_us=83381.198 session=6452faf13190 position=146 tokens=17
+HC_SOLO unit=decode call=240 stage=entry t_ns=218771273165117 elapsed_us=0.070 session=6452faf13190 position=154 tokens=9
+HC_SOLO unit=decode call=240 stage=leave t_ns=218771322465913 elapsed_us=49300.866 session=6452faf13190 position=154 tokens=9
+HC_SOLO unit=decode call=241 stage=entry t_ns=218771322475663 elapsed_us=0.060 session=6452faf13190 position=156 tokens=7
+HC_SOLO unit=decode call=241 stage=leave t_ns=218771394635926 elapsed_us=72160.323 session=6452faf13190 position=156 tokens=7
+2026-11-02 10:16:11 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=35 rank=0 unique_bytes_freed=0 ledger_bytes=962893224
+2026-11-02 10:16:11 [INFO] [http] request=r10 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2351.2 outcome=completed prompt_tokens=35 prefill_tokens=35 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.3 shared_prefix_wait_ms=0.0 ttft_ms=139.4 prefill_tps=253.6 decode_tps=58.0 batch_width=1 plan=serial-fallback draft_accepted=88 draft_proposed=122 draft_rounds=39 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962897054 acceptance_pct=72.1 ngram_rows=3152 ngram_dedup_rows=0 ngram_cache_hits=3142 ngram_disk_reads=10 cache_snapshot_bytes=267737660 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2139 host_available_mib=29931
+2026-11-02 10:16:11 [INFO] [http] request=r11 event=received method=POST path=/v1/chat/completions body_bytes=465
+2026-11-02 10:16:11 [INFO] [cache] schema=component-cache-v1 event=acquire reuse=none selected_tokens=0 restored_bytes=0
+HC_SOLO unit=prefill call=242 stage=entry t_ns=218771431484105 elapsed_us=0.180 session=6452f90b17c0 position=0 tokens=30
+2026-11-02 10:16:11 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=1 tokens=30 rank=0 unique_bytes_freed=32158 ledger_bytes=962914120
+HC_SOLO unit=prefill call=242 stage=leave t_ns=218771561789900 elapsed_us=130305.975 session=6452f90b17c0 position=0 tokens=30
+2026-11-02 10:16:11 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=3 tokens=23 rank=3 unique_bytes_freed=31958 ledger_bytes=962861058
+2026-11-02 10:16:11 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=23 rank=3 unique_bytes_freed=0 ledger_bytes=962861058
+HC_SOLO unit=decode call=243 stage=entry t_ns=218771566335254 elapsed_us=0.090 session=6452f90b17c0 position=30 tokens=128
+HC_SOLO unit=decode call=243 stage=leave t_ns=218771607472965 elapsed_us=41137.801 session=6452f90b17c0 position=30 tokens=128
+HC_SOLO unit=decode call=244 stage=entry t_ns=218771607487774 elapsed_us=0.060 session=6452f90b17c0 position=32 tokens=126
+HC_SOLO unit=decode call=244 stage=leave t_ns=218771660797321 elapsed_us=53309.607 session=6452f90b17c0 position=32 tokens=126
+HC_SOLO unit=decode call=245 stage=entry t_ns=218771660811891 elapsed_us=0.100 session=6452f90b17c0 position=36 tokens=122
+HC_SOLO unit=decode call=245 stage=leave t_ns=218771721596084 elapsed_us=60784.293 session=6452f90b17c0 position=36 tokens=122
+HC_SOLO unit=decode call=246 stage=entry t_ns=218771721618543 elapsed_us=0.130 session=6452f90b17c0 position=41 tokens=117
+HC_SOLO unit=decode call=246 stage=leave t_ns=218771788719028 elapsed_us=67100.615 session=6452f90b17c0 position=41 tokens=117
+HC_SOLO unit=decode call=247 stage=entry t_ns=218771788734997 elapsed_us=0.100 session=6452f90b17c0 position=47 tokens=111
+HC_SOLO unit=decode call=247 stage=leave t_ns=218771837029994 elapsed_us=48295.097 session=6452f90b17c0 position=47 tokens=111
+HC_SOLO unit=decode call=248 stage=entry t_ns=218771837052883 elapsed_us=0.090 session=6452f90b17c0 position=50 tokens=108
+HC_SOLO unit=decode call=248 stage=leave t_ns=218771892276172 elapsed_us=55223.379 session=6452f90b17c0 position=50 tokens=108
+HC_SOLO unit=decode call=249 stage=entry t_ns=218771892286602 elapsed_us=0.130 session=6452f90b17c0 position=53 tokens=105
+HC_SOLO unit=decode call=249 stage=leave t_ns=218771934075453 elapsed_us=41788.981 session=6452f90b17c0 position=53 tokens=105
+HC_SOLO unit=decode call=250 stage=entry t_ns=218771934084093 elapsed_us=0.060 session=6452f90b17c0 position=54 tokens=104
+HC_SOLO unit=decode call=250 stage=leave t_ns=218771981947112 elapsed_us=47863.079 session=6452f90b17c0 position=54 tokens=104
+HC_SOLO unit=decode call=251 stage=entry t_ns=218771981955642 elapsed_us=0.060 session=6452f90b17c0 position=55 tokens=103
+HC_SOLO unit=decode call=251 stage=leave t_ns=218772029051504 elapsed_us=47095.922 session=6452f90b17c0 position=55 tokens=103
+HC_SOLO unit=decode call=252 stage=entry t_ns=218772029062314 elapsed_us=0.060 session=6452f90b17c0 position=58 tokens=100
+HC_SOLO unit=decode call=252 stage=leave t_ns=218772069114547 elapsed_us=40052.293 session=6452f90b17c0 position=58 tokens=100
+HC_SOLO unit=decode call=253 stage=entry t_ns=218772069123337 elapsed_us=0.070 session=6452f90b17c0 position=60 tokens=98
+HC_SOLO unit=decode call=253 stage=leave t_ns=218772119232499 elapsed_us=50109.232 session=6452f90b17c0 position=60 tokens=98
+HC_SOLO unit=decode call=254 stage=entry t_ns=218772119244129 elapsed_us=0.060 session=6452f90b17c0 position=63 tokens=95
+HC_SOLO unit=decode call=254 stage=leave t_ns=218772166641662 elapsed_us=47397.593 session=6452f90b17c0 position=63 tokens=95
+HC_SOLO unit=decode call=255 stage=entry t_ns=218772166651462 elapsed_us=0.360 session=6452f90b17c0 position=64 tokens=94
+HC_SOLO unit=decode call=255 stage=leave t_ns=218772241321900 elapsed_us=74670.798 session=6452f90b17c0 position=64 tokens=94
+HC_SOLO unit=decode call=256 stage=entry t_ns=218772241388308 elapsed_us=0.450 session=6452f90b17c0 position=70 tokens=88
+HC_SOLO unit=decode call=256 stage=leave t_ns=218772290881619 elapsed_us=49493.761 session=6452f90b17c0 position=70 tokens=88
+HC_SOLO unit=decode call=257 stage=entry t_ns=218772290923317 elapsed_us=0.250 session=6452f90b17c0 position=73 tokens=85
+HC_SOLO unit=decode call=257 stage=leave t_ns=218772332197254 elapsed_us=41274.187 session=6452f90b17c0 position=73 tokens=85
+HC_SOLO unit=decode call=258 stage=entry t_ns=218772332212593 elapsed_us=0.110 session=6452f90b17c0 position=75 tokens=83
+HC_SOLO unit=decode call=258 stage=leave t_ns=218772380130791 elapsed_us=47918.308 session=6452f90b17c0 position=75 tokens=83
+HC_SOLO unit=decode call=259 stage=entry t_ns=218772380146161 elapsed_us=0.110 session=6452f90b17c0 position=78 tokens=80
+HC_SOLO unit=decode call=259 stage=leave t_ns=218772423634421 elapsed_us=43488.370 session=6452f90b17c0 position=78 tokens=80
+HC_SOLO unit=decode call=260 stage=entry t_ns=218772423647141 elapsed_us=0.110 session=6452f90b17c0 position=80 tokens=78
+HC_SOLO unit=decode call=260 stage=leave t_ns=218772480043715 elapsed_us=56396.684 session=6452f90b17c0 position=80 tokens=78
+HC_SOLO unit=decode call=261 stage=entry t_ns=218772480057274 elapsed_us=0.170 session=6452f90b17c0 position=83 tokens=75
+HC_SOLO unit=decode call=261 stage=leave t_ns=218772521312591 elapsed_us=41255.487 session=6452f90b17c0 position=83 tokens=75
+HC_SOLO unit=decode call=262 stage=entry t_ns=218772521325421 elapsed_us=0.120 session=6452f90b17c0 position=85 tokens=73
+HC_SOLO unit=decode call=262 stage=leave t_ns=218772563742493 elapsed_us=42417.192 session=6452f90b17c0 position=85 tokens=73
+HC_SOLO unit=decode call=263 stage=entry t_ns=218772563754593 elapsed_us=0.120 session=6452f90b17c0 position=87 tokens=71
+HC_SOLO unit=decode call=263 stage=leave t_ns=218772626616544 elapsed_us=62862.071 session=6452f90b17c0 position=87 tokens=71
+HC_SOLO unit=decode call=264 stage=entry t_ns=218772626653703 elapsed_us=0.160 session=6452f90b17c0 position=92 tokens=66
+HC_SOLO unit=decode call=264 stage=leave t_ns=218772708380990 elapsed_us=81727.447 session=6452f90b17c0 position=92 tokens=66
+HC_SOLO unit=decode call=265 stage=entry t_ns=218772708415989 elapsed_us=0.150 session=6452f90b17c0 position=100 tokens=58
+HC_SOLO unit=decode call=265 stage=leave t_ns=218772770044997 elapsed_us=61629.158 session=6452f90b17c0 position=100 tokens=58
+HC_SOLO unit=decode call=266 stage=entry t_ns=218772770065117 elapsed_us=0.120 session=6452f90b17c0 position=104 tokens=54
+HC_SOLO unit=decode call=266 stage=leave t_ns=218772813193628 elapsed_us=43128.631 session=6452f90b17c0 position=104 tokens=54
+HC_SOLO unit=decode call=267 stage=entry t_ns=218772813218517 elapsed_us=0.120 session=6452f90b17c0 position=105 tokens=53
+HC_SOLO unit=decode call=267 stage=leave t_ns=218772860921241 elapsed_us=47702.844 session=6452f90b17c0 position=105 tokens=53
+HC_SOLO unit=decode call=268 stage=entry t_ns=218772860933101 elapsed_us=0.110 session=6452f90b17c0 position=106 tokens=52
+HC_SOLO unit=decode call=268 stage=leave t_ns=218772903154769 elapsed_us=42221.778 session=6452f90b17c0 position=106 tokens=52
+HC_SOLO unit=decode call=269 stage=entry t_ns=218772903188578 elapsed_us=0.270 session=6452f90b17c0 position=107 tokens=51
+HC_SOLO unit=decode call=269 stage=leave t_ns=218772956611651 elapsed_us=53423.343 session=6452f90b17c0 position=107 tokens=51
+HC_SOLO unit=decode call=270 stage=entry t_ns=218772956639810 elapsed_us=0.130 session=6452f90b17c0 position=111 tokens=47
+HC_SOLO unit=decode call=270 stage=leave t_ns=218772998753751 elapsed_us=42114.071 session=6452f90b17c0 position=111 tokens=47
+HC_SOLO unit=decode call=271 stage=entry t_ns=218772998766921 elapsed_us=0.060 session=6452f90b17c0 position=112 tokens=46
+HC_SOLO unit=decode call=271 stage=leave t_ns=218773045807425 elapsed_us=47040.564 session=6452f90b17c0 position=112 tokens=46
+HC_SOLO unit=decode call=272 stage=entry t_ns=218773045826095 elapsed_us=0.090 session=6452f90b17c0 position=113 tokens=45
+HC_SOLO unit=decode call=272 stage=leave t_ns=218773087137320 elapsed_us=41311.315 session=6452f90b17c0 position=113 tokens=45
+HC_SOLO unit=decode call=273 stage=entry t_ns=218773087146889 elapsed_us=0.060 session=6452f90b17c0 position=114 tokens=44
+HC_SOLO unit=decode call=273 stage=leave t_ns=218773137936541 elapsed_us=50789.712 session=6452f90b17c0 position=114 tokens=44
+HC_SOLO unit=decode call=274 stage=entry t_ns=218773137954291 elapsed_us=0.060 session=6452f90b17c0 position=116 tokens=42
+HC_SOLO unit=decode call=274 stage=leave t_ns=218773190046414 elapsed_us=52092.183 session=6452f90b17c0 position=116 tokens=42
+HC_SOLO unit=decode call=275 stage=entry t_ns=218773190060104 elapsed_us=0.060 session=6452f90b17c0 position=120 tokens=38
+HC_SOLO unit=decode call=275 stage=leave t_ns=218773232155205 elapsed_us=42095.161 session=6452f90b17c0 position=120 tokens=38
+HC_SOLO unit=decode call=276 stage=entry t_ns=218773232164705 elapsed_us=0.070 session=6452f90b17c0 position=122 tokens=36
+HC_SOLO unit=decode call=276 stage=leave t_ns=218773274395523 elapsed_us=42230.888 session=6452f90b17c0 position=122 tokens=36
+HC_SOLO unit=decode call=277 stage=entry t_ns=218773274405123 elapsed_us=0.060 session=6452f90b17c0 position=124 tokens=34
+HC_SOLO unit=decode call=277 stage=leave t_ns=218773331070839 elapsed_us=56665.776 session=6452f90b17c0 position=124 tokens=34
+HC_SOLO unit=decode call=278 stage=entry t_ns=218773331089208 elapsed_us=0.100 session=6452f90b17c0 position=127 tokens=31
+HC_SOLO unit=decode call=278 stage=leave t_ns=218773379226760 elapsed_us=48137.652 session=6452f90b17c0 position=127 tokens=31
+HC_SOLO unit=decode call=279 stage=entry t_ns=218773379237489 elapsed_us=0.060 session=6452f90b17c0 position=130 tokens=28
+HC_SOLO unit=decode call=279 stage=leave t_ns=218773428538276 elapsed_us=49300.847 session=6452f90b17c0 position=130 tokens=28
+HC_SOLO unit=decode call=280 stage=entry t_ns=218773428554435 elapsed_us=0.060 session=6452f90b17c0 position=132 tokens=26
+HC_SOLO unit=decode call=280 stage=leave t_ns=218773470539220 elapsed_us=41984.845 session=6452f90b17c0 position=132 tokens=26
+HC_SOLO unit=decode call=281 stage=entry t_ns=218773470562040 elapsed_us=0.060 session=6452f90b17c0 position=133 tokens=25
+HC_SOLO unit=decode call=281 stage=leave t_ns=218773511883835 elapsed_us=41321.855 session=6452f90b17c0 position=133 tokens=25
+HC_SOLO unit=decode call=282 stage=entry t_ns=218773511901954 elapsed_us=0.060 session=6452f90b17c0 position=135 tokens=23
+HC_SOLO unit=decode call=282 stage=leave t_ns=218773554229549 elapsed_us=42327.655 session=6452f90b17c0 position=135 tokens=23
+HC_SOLO unit=decode call=283 stage=entry t_ns=218773554239769 elapsed_us=0.060 session=6452f90b17c0 position=136 tokens=22
+HC_SOLO unit=decode call=283 stage=leave t_ns=218773602180146 elapsed_us=47940.437 session=6452f90b17c0 position=136 tokens=22
+HC_SOLO unit=decode call=284 stage=entry t_ns=218773602192546 elapsed_us=0.080 session=6452f90b17c0 position=138 tokens=20
+HC_SOLO unit=decode call=284 stage=leave t_ns=218773647577219 elapsed_us=45384.753 session=6452f90b17c0 position=138 tokens=20
+HC_SOLO unit=decode call=285 stage=entry t_ns=218773647588979 elapsed_us=0.080 session=6452f90b17c0 position=139 tokens=19
+HC_SOLO unit=decode call=285 stage=leave t_ns=218773694826707 elapsed_us=47237.808 session=6452f90b17c0 position=139 tokens=19
+HC_SOLO unit=decode call=286 stage=entry t_ns=218773694836916 elapsed_us=0.060 session=6452f90b17c0 position=142 tokens=16
+HC_SOLO unit=decode call=286 stage=leave t_ns=218773737179021 elapsed_us=42342.165 session=6452f90b17c0 position=142 tokens=16
+HC_SOLO unit=decode call=287 stage=entry t_ns=218773737196660 elapsed_us=0.060 session=6452f90b17c0 position=143 tokens=15
+HC_SOLO unit=decode call=287 stage=leave t_ns=218773792147008 elapsed_us=54950.408 session=6452f90b17c0 position=143 tokens=15
+HC_SOLO unit=decode call=288 stage=entry t_ns=218773792163898 elapsed_us=0.060 session=6452f90b17c0 position=146 tokens=12
+HC_SOLO unit=decode call=288 stage=leave t_ns=218773834089255 elapsed_us=41925.417 session=6452f90b17c0 position=146 tokens=12
+HC_SOLO unit=decode call=289 stage=entry t_ns=218773834099114 elapsed_us=0.070 session=6452f90b17c0 position=147 tokens=11
+HC_SOLO unit=decode call=289 stage=leave t_ns=218773874078289 elapsed_us=39979.245 session=6452f90b17c0 position=147 tokens=11
+HC_SOLO unit=decode call=290 stage=entry t_ns=218773874087759 elapsed_us=0.060 session=6452f90b17c0 position=149 tokens=9
+HC_SOLO unit=decode call=290 stage=leave t_ns=218773914844951 elapsed_us=40757.252 session=6452f90b17c0 position=149 tokens=9
+HC_SOLO unit=decode call=291 stage=entry t_ns=218773914854860 elapsed_us=0.060 session=6452f90b17c0 position=151 tokens=7
+HC_SOLO unit=decode call=291 stage=leave t_ns=218773964774029 elapsed_us=49919.229 session=6452f90b17c0 position=151 tokens=7
+HC_SOLO unit=decode call=292 stage=entry t_ns=218773964783558 elapsed_us=0.090 session=6452f90b17c0 position=152 tokens=6
+HC_SOLO unit=decode call=292 stage=leave t_ns=218774007976987 elapsed_us=43193.519 session=6452f90b17c0 position=152 tokens=6
+HC_SOLO unit=decode call=293 stage=entry t_ns=218774007987137 elapsed_us=0.060 session=6452f90b17c0 position=153 tokens=5
+HC_SOLO unit=decode call=293 stage=leave t_ns=218774056670542 elapsed_us=48683.465 session=6452f90b17c0 position=153 tokens=5
+HC_SOLO unit=decode call=294 stage=entry t_ns=218774056681132 elapsed_us=0.100 session=6452f90b17c0 position=156 tokens=2
+HC_SOLO unit=decode call=294 stage=leave t_ns=218774098497602 elapsed_us=41816.570 session=6452f90b17c0 position=156 tokens=2
+2026-11-02 10:16:14 [INFO] [cache] schema=component-cache-v1 event=retention action=0 reason=0 tokens=30 rank=0 unique_bytes_freed=0 ledger_bytes=962893244
+2026-11-02 10:16:14 [INFO] [http] request=r11 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2702.9 outcome=completed prompt_tokens=30 prefill_tokens=30 generated_tokens=128 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=1.0 shared_prefix_wait_ms=0.0 ttft_ms=131.5 prefill_tps=229.8 decode_tps=49.9 batch_width=1 plan=serial-fallback draft_accepted=75 draft_proposed=106 draft_rounds=52 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=962897054 acceptance_pct=70.8 ngram_rows=3024 ngram_dedup_rows=0 ngram_cache_hits=3007 ngram_disk_reads=17 cache_snapshot_bytes=267471380 cache_miss_reason=disabled common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=2140 host_available_mib=29957
+2026-11-02 10:16:14 [INFO] [server] event=shutdown_requested signal=2
+2026-11-02 10:16:14 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=12 rank=3 unique_bytes_freed=32118 ledger_bytes=962835072
+2026-11-02 10:16:14 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=23 rank=3 unique_bytes_freed=32102 ledger_bytes=962802970
+2026-11-02 10:16:14 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=2041 rank=3 unique_bytes_freed=153070 ledger_bytes=962649900
+2026-11-02 10:16:14 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=28 rank=3 unique_bytes_freed=32122 ledger_bytes=962617778
+2026-11-02 10:16:14 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=35 rank=3 unique_bytes_freed=32174 ledger_bytes=962585604
+2026-11-02 10:16:14 [INFO] [cache] schema=component-cache-v1 event=retention action=2 reason=9 tokens=30 rank=3 unique_bytes_freed=32154 ledger_bytes=962553450

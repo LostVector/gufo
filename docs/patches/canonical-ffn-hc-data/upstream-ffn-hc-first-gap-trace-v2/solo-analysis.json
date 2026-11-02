@@ -1,0 +1,64 @@
+{
+  "arms": {
+    "before-baseline": {
+      "gap_ms": 68.529122,
+      "C2_prompt_tokens": [
+        35,
+        30
+      ],
+      "solo_spans_overlapping_gap": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "start_ns": 218529553755019,
+          "session": "56c8dc989ed0",
+          "position": 35,
+          "tokens": 128,
+          "end_ns": 218529617854293,
+          "wall_ms": 64.099274,
+          "first_gap_overlap_ms": 64.099274
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "start_ns": 218529617922131,
+          "session": "56c8daafb7c0",
+          "position": 30,
+          "tokens": 128,
+          "end_ns": 218529659443880,
+          "wall_ms": 41.521749,
+          "first_gap_overlap_ms": 0.071268
+        }
+      ],
+      "prefill_overlap_union_ms": 0.0,
+      "serial_decode_overlap_union_ms": 64.170542,
+      "all_engine_prefill_decode_union_ms": 64.170542,
+      "uncovered_ms": 4.3585800000000035
+    },
+    "candidate": {
+      "gap_ms": 70.888631,
+      "C2_prompt_tokens": [
+        35,
+        30
+      ],
+      "solo_spans_overlapping_gap": [],
+      "prefill_overlap_union_ms": 0.0,
+      "serial_decode_overlap_union_ms": 0.0,
+      "all_engine_prefill_decode_union_ms": 65.527381,
+      "uncovered_ms": 5.361249999999998
+    },
+    "after-baseline": {
+      "gap_ms": 68.344068,
+      "C2_prompt_tokens": [
+        35,
+        30
+      ],
+      "solo_spans_overlapping_gap": [],
+      "prefill_overlap_union_ms": 0.0,
+      "serial_decode_overlap_union_ms": 0.0,
+      "all_engine_prefill_decode_union_ms": 62.9273,
+      "uncovered_ms": 5.4167679999999905
+    }
+  },
+  "scope": "Diagnostic same-clock wall-span overlap with client first-followup. Union avoids nested/double-counted time. Prefill/DecodeStep durations include necessary GPU/I/O work, not pure CPU overhead. Uncovered wall time is not automatically wasted. Logging may change arrival/cohort/adaptive timing. No exoneration of original uninstrumented candidate flag from one diagnostic reversal."
+}

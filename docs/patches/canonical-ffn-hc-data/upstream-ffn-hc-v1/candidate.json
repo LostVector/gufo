@@ -1,0 +1,8 @@
+{
+  "head": "6ec3f75f338d9f2154ef60e1c14e2dd2c70ff53b",
+  "base": "8ab834a5902bf19341750daecf27516a57840dd1",
+  "production_change": "SingleimmediateFFNpair; same code asfork74f, noRDMA additions. AdditiveHCoperator48referencecases alloriginalpreserved.",
+  "operator_pass": true,
+  "operator_build_scope": "FreshcanonicalGPUtest/headers/cacheABI, buildstartedwithuncommittedpatchonbase8ab; byte-identicalproduction/test sourcescommittedafterpass. Gufoexecutableistesting-enabled, not timing artifact.",
+  "format_API": "PASS866,canonicalextensionAPI0.1.15 (fork0.1.16ABI notused)."
+}

@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "exits": {
+    "worker": 0,
+    "server": 0
+  },
+  "minimum_available_kib": 30537288,
+  "elapsed_seconds": 49.38361018500291,
+  "boot_unchanged": true
+}

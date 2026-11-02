@@ -1,0 +1,74 @@
+{
+  "before-baseline": {
+    "first_gap_ms": 109.432776,
+    "first_engine_start_after_first_content_ms": 109.29309,
+    "first_target_start_after_followup_ms": 15.569475,
+    "first_engine_positions": {
+      "requests": [
+        2
+      ],
+      "position0": [
+        32
+      ],
+      "planned_drafts": [
+        3
+      ],
+      "verification_rows": [
+        3,
+        2
+      ]
+    },
+    "first_target_rows": [
+      5
+    ],
+    "target_batch_allocation_ms": 0.00193
+  },
+  "candidate": {
+    "first_gap_ms": 69.310352,
+    "first_engine_start_after_first_content_ms": 4.324681,
+    "first_target_start_after_followup_ms": -51.28143,
+    "first_engine_positions": {
+      "requests": [
+        2
+      ],
+      "position0": [
+        35
+      ],
+      "planned_drafts": [
+        2
+      ],
+      "verification_rows": [
+        3,
+        1
+      ]
+    },
+    "first_target_rows": [
+      4
+    ],
+    "target_batch_allocation_ms": 0.00222
+  },
+  "after-baseline": {
+    "first_gap_ms": 66.001081,
+    "first_engine_start_after_first_content_ms": 4.185255,
+    "first_target_start_after_followup_ms": -51.130055,
+    "first_engine_positions": {
+      "requests": [
+        2
+      ],
+      "position0": [
+        35
+      ],
+      "planned_drafts": [
+        2
+      ],
+      "verification_rows": [
+        3,
+        1
+      ]
+    },
+    "first_target_rows": [
+      4
+    ],
+    "target_batch_allocation_ms": 0.00233
+  }
+}

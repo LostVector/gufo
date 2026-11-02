@@ -1,0 +1,53 @@
+START depth=0 sampled=0
+STATE depth=0 sampled=0 phase=borrowed-same actor=0 bytes=120235388 sha256=37ec2a349ee88e11787b9cfcf921c3fb32e2805acbea31cf9daa7efac58aee7e
+STATE depth=0 sampled=0 phase=borrowed-same actor=1 bytes=120235388 sha256=c1d082470a11ad7c799f7750fba0d75204260ff842e557315de62c8881dc521d
+PASS depth=0 sampled=0 phase=borrowed-same
+STATE depth=0 sampled=0 phase=borrowed-cross actor=0 bytes=120235388 sha256=37ec2a349ee88e11787b9cfcf921c3fb32e2805acbea31cf9daa7efac58aee7e
+STATE depth=0 sampled=0 phase=borrowed-cross actor=1 bytes=120235388 sha256=c1d082470a11ad7c799f7750fba0d75204260ff842e557315de62c8881dc521d
+PASS depth=0 sampled=0 phase=borrowed-cross
+STATE depth=0 sampled=0 phase=serialized-cross actor=0 bytes=120235388 sha256=37ec2a349ee88e11787b9cfcf921c3fb32e2805acbea31cf9daa7efac58aee7e
+STATE depth=0 sampled=0 phase=serialized-cross actor=1 bytes=120235388 sha256=c1d082470a11ad7c799f7750fba0d75204260ff842e557315de62c8881dc521d
+PASS depth=0 sampled=0 phase=serialized-cross
+STATE depth=0 sampled=0 phase=file-cross actor=0 bytes=120235388 sha256=37ec2a349ee88e11787b9cfcf921c3fb32e2805acbea31cf9daa7efac58aee7e
+STATE depth=0 sampled=0 phase=file-cross actor=1 bytes=120235388 sha256=c1d082470a11ad7c799f7750fba0d75204260ff842e557315de62c8881dc521d
+PASS depth=0 sampled=0 phase=file-cross
+START depth=0 sampled=1
+STATE depth=0 sampled=1 phase=borrowed-same actor=0 bytes=120716712 sha256=4f45a2c9518b448a7c127ebeb13d47a4e6773a7c1454ad9666a6e733b5591590
+STATE depth=0 sampled=1 phase=borrowed-same actor=1 bytes=120540060 sha256=f5cb4d15929bc490e55537453f558f24128a578e44de2cb1c5e16b4ef1dcf76c
+PASS depth=0 sampled=1 phase=borrowed-same
+STATE depth=0 sampled=1 phase=borrowed-cross actor=0 bytes=120716712 sha256=4f45a2c9518b448a7c127ebeb13d47a4e6773a7c1454ad9666a6e733b5591590
+STATE depth=0 sampled=1 phase=borrowed-cross actor=1 bytes=120540060 sha256=f5cb4d15929bc490e55537453f558f24128a578e44de2cb1c5e16b4ef1dcf76c
+PASS depth=0 sampled=1 phase=borrowed-cross
+STATE depth=0 sampled=1 phase=serialized-cross actor=0 bytes=120716712 sha256=4f45a2c9518b448a7c127ebeb13d47a4e6773a7c1454ad9666a6e733b5591590
+STATE depth=0 sampled=1 phase=serialized-cross actor=1 bytes=120540060 sha256=f5cb4d15929bc490e55537453f558f24128a578e44de2cb1c5e16b4ef1dcf76c
+PASS depth=0 sampled=1 phase=serialized-cross
+STATE depth=0 sampled=1 phase=file-cross actor=0 bytes=120716712 sha256=4f45a2c9518b448a7c127ebeb13d47a4e6773a7c1454ad9666a6e733b5591590
+STATE depth=0 sampled=1 phase=file-cross actor=1 bytes=120540060 sha256=f5cb4d15929bc490e55537453f558f24128a578e44de2cb1c5e16b4ef1dcf76c
+PASS depth=0 sampled=1 phase=file-cross
+START depth=32768 sampled=0
+STATE depth=32768 sampled=0 phase=borrowed-same actor=0 bytes=1019056136 sha256=e914e7bf50e23b15934962a4a859d2fc392c89946e85341ea02f1fa1d8fe3cd8
+STATE depth=32768 sampled=0 phase=borrowed-same actor=1 bytes=1019056136 sha256=df2b60e1eb6cfe816a489dd61460ec237d8319132d01fb26727b905840d194a0
+PASS depth=32768 sampled=0 phase=borrowed-same
+STATE depth=32768 sampled=0 phase=borrowed-cross actor=0 bytes=1019056136 sha256=e914e7bf50e23b15934962a4a859d2fc392c89946e85341ea02f1fa1d8fe3cd8
+STATE depth=32768 sampled=0 phase=borrowed-cross actor=1 bytes=1019056136 sha256=df2b60e1eb6cfe816a489dd61460ec237d8319132d01fb26727b905840d194a0
+PASS depth=32768 sampled=0 phase=borrowed-cross
+STATE depth=32768 sampled=0 phase=serialized-cross actor=0 bytes=1019056136 sha256=e914e7bf50e23b15934962a4a859d2fc392c89946e85341ea02f1fa1d8fe3cd8
+STATE depth=32768 sampled=0 phase=serialized-cross actor=1 bytes=1019056136 sha256=df2b60e1eb6cfe816a489dd61460ec237d8319132d01fb26727b905840d194a0
+PASS depth=32768 sampled=0 phase=serialized-cross
+STATE depth=32768 sampled=0 phase=file-cross actor=0 bytes=1019056136 sha256=e914e7bf50e23b15934962a4a859d2fc392c89946e85341ea02f1fa1d8fe3cd8
+STATE depth=32768 sampled=0 phase=file-cross actor=1 bytes=1019056136 sha256=df2b60e1eb6cfe816a489dd61460ec237d8319132d01fb26727b905840d194a0
+PASS depth=32768 sampled=0 phase=file-cross
+START depth=32768 sampled=1
+STATE depth=32768 sampled=1 phase=borrowed-same actor=0 bytes=1019385900 sha256=d9caa4d2a452755b2003dcc225c352a0294a7966f7c4c4a53aa30d1a7a2e7b8a
+STATE depth=32768 sampled=1 phase=borrowed-same actor=1 bytes=1019321124 sha256=0420794dbdac33b5936ad350c3bbe015bc6ded3aecbacec7d296599184109f28
+PASS depth=32768 sampled=1 phase=borrowed-same
+STATE depth=32768 sampled=1 phase=borrowed-cross actor=0 bytes=1019385900 sha256=d9caa4d2a452755b2003dcc225c352a0294a7966f7c4c4a53aa30d1a7a2e7b8a
+STATE depth=32768 sampled=1 phase=borrowed-cross actor=1 bytes=1019321124 sha256=0420794dbdac33b5936ad350c3bbe015bc6ded3aecbacec7d296599184109f28
+PASS depth=32768 sampled=1 phase=borrowed-cross
+STATE depth=32768 sampled=1 phase=serialized-cross actor=0 bytes=1019385900 sha256=d9caa4d2a452755b2003dcc225c352a0294a7966f7c4c4a53aa30d1a7a2e7b8a
+STATE depth=32768 sampled=1 phase=serialized-cross actor=1 bytes=1019321124 sha256=0420794dbdac33b5936ad350c3bbe015bc6ded3aecbacec7d296599184109f28
+PASS depth=32768 sampled=1 phase=serialized-cross
+STATE depth=32768 sampled=1 phase=file-cross actor=0 bytes=1019385900 sha256=d9caa4d2a452755b2003dcc225c352a0294a7966f7c4c4a53aa30d1a7a2e7b8a
+STATE depth=32768 sampled=1 phase=file-cross actor=1 bytes=1019321124 sha256=0420794dbdac33b5936ad350c3bbe015bc6ded3aecbacec7d296599184109f28
+PASS depth=32768 sampled=1 phase=file-cross
+PASS records=104 actual_ffn_hc_enabled_batches=44 full_state_pairs=32 borrowed_same_cross_serialized_file_tokens_logits_RNG_work_exact=true

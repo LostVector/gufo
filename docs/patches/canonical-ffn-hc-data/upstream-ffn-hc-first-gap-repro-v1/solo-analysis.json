@@ -1,0 +1,123 @@
+{
+  "arms": {
+    "baseline-1": {
+      "gap_ms": 66.503302,
+      "C2_prompt_tokens": [
+        35,
+        30
+      ],
+      "solo_spans_overlapping_gap": [],
+      "prefill_overlap_union_ms": 0.0,
+      "serial_decode_overlap_union_ms": 0.0,
+      "all_engine_prefill_decode_union_ms": 60.991907,
+      "uncovered_ms": 5.511395000000007
+    },
+    "baseline-2": {
+      "gap_ms": 68.820872,
+      "C2_prompt_tokens": [
+        35,
+        30
+      ],
+      "solo_spans_overlapping_gap": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "start_ns": 218813502470854,
+          "session": "5e21a30eece0",
+          "position": 35,
+          "tokens": 128,
+          "end_ns": 218813566538359,
+          "wall_ms": 64.067505,
+          "first_gap_overlap_ms": 64.067505
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "start_ns": 218813566562589,
+          "session": "5e21a12607c0",
+          "position": 30,
+          "tokens": 128,
+          "end_ns": 218813607843235,
+          "wall_ms": 41.280646,
+          "first_gap_overlap_ms": 0.475055
+        }
+      ],
+      "prefill_overlap_union_ms": 0.0,
+      "serial_decode_overlap_union_ms": 64.54256,
+      "all_engine_prefill_decode_union_ms": 64.54256,
+      "uncovered_ms": 4.278312
+    },
+    "baseline-3": {
+      "gap_ms": 65.136283,
+      "C2_prompt_tokens": [
+        35,
+        30
+      ],
+      "solo_spans_overlapping_gap": [],
+      "prefill_overlap_union_ms": 0.0,
+      "serial_decode_overlap_union_ms": 0.0,
+      "all_engine_prefill_decode_union_ms": 60.846142,
+      "uncovered_ms": 4.2901410000000055
+    },
+    "baseline-4": {
+      "gap_ms": 63.855581,
+      "C2_prompt_tokens": [
+        35,
+        30
+      ],
+      "solo_spans_overlapping_gap": [],
+      "prefill_overlap_union_ms": 0.0,
+      "serial_decode_overlap_union_ms": 0.0,
+      "all_engine_prefill_decode_union_ms": 59.409974,
+      "uncovered_ms": 4.4456070000000025
+    },
+    "baseline-5": {
+      "gap_ms": 72.499593,
+      "C2_prompt_tokens": [
+        35,
+        30
+      ],
+      "solo_spans_overlapping_gap": [],
+      "prefill_overlap_union_ms": 0.0,
+      "serial_decode_overlap_union_ms": 0.0,
+      "all_engine_prefill_decode_union_ms": 66.011368,
+      "uncovered_ms": 6.488225
+    },
+    "baseline-6": {
+      "gap_ms": 67.990378,
+      "C2_prompt_tokens": [
+        35,
+        30
+      ],
+      "solo_spans_overlapping_gap": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "start_ns": 219011025031872,
+          "session": "5cf606a311b0",
+          "position": 35,
+          "tokens": 128,
+          "end_ns": 219011090550824,
+          "wall_ms": 65.518952,
+          "first_gap_overlap_ms": 65.518952
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "start_ns": 219011090582493,
+          "session": "5cf604bc7cd0",
+          "position": 30,
+          "tokens": 128,
+          "end_ns": 219011132068943,
+          "wall_ms": 41.48645,
+          "first_gap_overlap_ms": 0.170305
+        }
+      ],
+      "prefill_overlap_union_ms": 0.0,
+      "serial_decode_overlap_union_ms": 65.689257,
+      "all_engine_prefill_decode_union_ms": 65.689257,
+      "uncovered_ms": 2.301121000000009
+    }
+  },
+  "scope": "Diagnostic same-clock wall-span overlap with client first-followup. Union avoids nested/double-counted time. Prefill/DecodeStep durations include necessary GPU/I/O work, not pure CPU overhead. Uncovered wall time is not automatically wasted. Logging may change arrival/cohort/adaptive timing. No exoneration of original uninstrumented candidate flag from one diagnostic reversal."
+}

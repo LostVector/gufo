@@ -1,0 +1,5 @@
+{
+  "real_GPU_operator_tests": 1,
+  "skips": 0,
+  "scope": "Freshcanonical8ab headers/objects, originalHCfixture+48batchreference conditions, HIP/assertionsenabled. No fork/privateABI/transportdependency. Modelstate/performance qualification separate."
+}

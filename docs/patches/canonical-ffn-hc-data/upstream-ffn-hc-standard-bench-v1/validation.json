@@ -1,0 +1,15 @@
+{
+  "status": "pass",
+  "output_token_hashes": {
+    "baseline": [
+      "5177a75da6988d5ce9a14e1a744ed16829784eda18d40139d8a1e76469af8412",
+      "5177a75da6988d5ce9a14e1a744ed16829784eda18d40139d8a1e76469af8412"
+    ],
+    "candidate": [
+      "5177a75da6988d5ce9a14e1a744ed16829784eda18d40139d8a1e76469af8412",
+      "5177a75da6988d5ce9a14e1a744ed16829784eda18d40139d8a1e76469af8412"
+    ]
+  },
+  "scope": "One fresh production CLI process per arm, two repetitions; canonical fixed-token standard benchmark. pp2048 and tg128 are separate workloads. Generation prefix16, actual128 tokens with stop_at_eos=false in stock driver; capacity4096 at depth0. Synthetic tokens, not HTTP chat or a 2048-token-history continuation. No significance/equivalence/adoption claim, no pooling with HTTP or TP2 results.",
+  "HTTP_original_failure_and_flags_retained": true
+}

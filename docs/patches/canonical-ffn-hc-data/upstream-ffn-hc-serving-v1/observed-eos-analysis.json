@@ -1,0 +1,175 @@
+{
+  "status": "functional-pass-with-original-tg128-contract-unmet",
+  "original_analysis_failure_retained": "analysis.log",
+  "posthoc_analysis_change": "Request maximum128 is not actual generated length. All six pp2048 responses stop naturally at96 on both controls and candidate, with exact output hashes; 128-token pp2048 generation is NOT qualified by this screen. All other numerical/cache/output/phase/work assertions retained.",
+  "records": 27,
+  "solo_concurrent_exact_checks": [
+    {
+      "arm": "before-baseline",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "before-baseline",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "candidate",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "candidate",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "after-baseline",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "after-baseline",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    }
+  ],
+  "phase_flags": [
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "server_max_inter_token_ms",
+      "baseline_ms": 80.47927,
+      "candidate_ms": 108.741156,
+      "increase_ms": 28.261886000000004
+    },
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "first_followup_content_gap_ms",
+      "baseline_ms": 71.507517,
+      "candidate_ms": 108.795814,
+      "increase_ms": 37.288296999999986
+    },
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "maximum_content_gap_ms",
+      "baseline_ms": 80.505409,
+      "candidate_ms": 108.795814,
+      "increase_ms": 28.290404999999993
+    },
+    {
+      "control": "after-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "server_max_inter_token_ms",
+      "baseline_ms": 81.318205,
+      "candidate_ms": 108.741156,
+      "increase_ms": 27.422950999999998
+    },
+    {
+      "control": "after-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "first_followup_content_gap_ms",
+      "baseline_ms": 70.348422,
+      "candidate_ms": 108.795814,
+      "increase_ms": 38.447391999999994
+    },
+    {
+      "control": "after-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "maximum_content_gap_ms",
+      "baseline_ms": 81.255506,
+      "candidate_ms": 108.795814,
+      "increase_ms": 27.540307999999996
+    }
+  ],
+  "adaptive_work_changes": [
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_tokens",
+      "baseline": 83,
+      "candidate": 94
+    },
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_accepted_tokens",
+      "baseline": 71,
+      "candidate": 77
+    },
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_tokens",
+      "baseline": 82,
+      "candidate": 89
+    },
+    {
+      "control": "before-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_accepted_tokens",
+      "baseline": 60,
+      "candidate": 64
+    },
+    {
+      "control": "after-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_tokens",
+      "baseline": 84,
+      "candidate": 94
+    },
+    {
+      "control": "after-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_accepted_tokens",
+      "baseline": 73,
+      "candidate": 77
+    },
+    {
+      "control": "after-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_tokens",
+      "baseline": 84,
+      "candidate": 89
+    },
+    {
+      "control": "after-baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_accepted_tokens",
+      "baseline": 60,
+      "candidate": 64
+    }
+  ],
+  "scope": "Posthoc observed-EOS analysis of the original bounded B/C/B TP1 screen. Exact completions/cache work and actual MTP; pp2048/EOS96 and coding tg128. Original requested pp2048/tg128 scope remains unmet. Timing flags retained; no confidence, equivalence, no-regression or wider-concurrency conclusion. Fixed-history full-state/operator qualification is separate."
+}

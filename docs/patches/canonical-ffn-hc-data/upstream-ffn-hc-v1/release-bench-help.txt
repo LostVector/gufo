@@ -1,0 +1,40 @@
+Usage: gufo bench [OPTIONS]
+
+Benchmark prompt processing (pp) and token generation (tg) throughput.
+
+Model:
+  -m, --model <PATH>         Path to GGUF model file (required)
+      --enable-yarn          Flash-Next: static YaRN, required when depth + prompt or generation exceeds the native 262144
+
+Workload:
+  -p, --n-prompt <n,n,...>   Prompt token lengths to benchmark (default: 2048)
+  -n, --n-gen <n,n,...>      Generation token counts to benchmark (default: 128)
+  -d, --n-depth <n,n,...>    Prefix context lengths to benchmark (default: 0)
+  -c, --concurrency <n,n,...> DS4 simultaneous requests, 1..8 (default: 1); pp is aggregate, tg per user
+  -r, --repetitions <N>      Number of repetitions per measurement (default: 1)
+      --validate-prefill <N> Validate prefill logits against reference for N tokens (default: 0 = disabled)
+
+Speculative:
+      --speculative <none|mtp|dflash2|dspark> Speculative decoding backend (default: none)
+      --mtp-model <PATH>     Path to GGUF model containing MTP draft weights
+      --dflash-model <PATH>  Path to GGUF model containing DFlash draft weights
+      --draft-policy <POLICY> DFlash2 draft length policy: fixed or adaptive (default: adaptive)
+      --dspark-model <PATH>  Path to GGUF model containing DSpark support weights
+      --draft-tokens <N>     Maximum draft tokens per speculative step (default: 7)
+      --min-draft-tokens <N> Minimum draft tokens per speculative step (default: 1)
+
+Sampling:
+      --temperature <T>      Randomness scale; 0.0 selects greedy argmax (default: 0.0)
+      --top-k <K>            Keep only the K highest-logit tokens (default: 0 = disabled)
+      --top-p <P>            Keep the smallest token set whose cumulative probability reaches P (default: 1.0 = disabled)
+      --min-p <P>            Keep tokens with probability at least P times the best token (default: 0.0 = disabled)
+      --min-keep <N>         Minimum candidates retained by enabled sampling filters (default: 0)
+      --seed <N>             RNG seed for reproducible generation (default: -1 = random)
+      --repeat-penalty <N>   Multiplicative penalty for recently used tokens (default: 1.0 = disabled)
+      --repeat-last-n <N>    Trailing token window used by repetition penalties (default: 64; 0 = disabled)
+      --frequency-penalty <N> Penalty multiplied by each token's generated occurrence count (default: 0.0 = disabled)
+      --presence-penalty <N> One-time penalty for tokens already generated in this response (default: 0.0 = disabled)
+
+General:
+  -v, --verbose              Print detailed timing, latency breakdown, and tok/s metrics
+  -h, --help                 Print help

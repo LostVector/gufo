@@ -1,0 +1,23 @@
+[
+  "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/upstream-ffn-hc-release-build/gufo",
+  "bench",
+  "--model",
+  "/home/rkuo/models/Qwen3.8-Flash-Next-GGUF/UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf",
+  "--mtp-model",
+  "/home/rkuo/models/Qwen3.8-Flash-Next-GGUF/MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf",
+  "--speculative",
+  "mtp",
+  "--n-prompt",
+  "2048",
+  "--n-gen",
+  "128",
+  "--n-depth",
+  "0",
+  "--repetitions",
+  "2",
+  "--temperature",
+  "0",
+  "--seed",
+  "1",
+  "--verbose"
+]
