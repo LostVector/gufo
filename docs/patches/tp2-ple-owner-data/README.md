@@ -12,7 +12,7 @@ prefill chunk2048,1GiB RAM cache, approved81C6/TX32 native driver and crossed40+
 links. All77 common model/family compiler commands match after path normalization;
 only2 additional PLE implementation sources are candidate-only. These are
 measurements of those sources, not a later integration revision. The review
-branch additionally merges maintained `tp2` e39d2ad2 (RAM-off cache correctness
+branch additionally merges maintained `tp2` e3215922 (RAM-off cache correctness
 and portable test/platform fixes); the tables do not qualify that later combined binary.
 The combined source2669e07c has separate production runtime/failure qualification
 below; the performance table remains attributed to the measured prototype.
@@ -97,8 +97,17 @@ reproduces the C2 TTFT mode in both candidate and baseline. Actor0's roughly61ms
 publication gap is occupied by actor1 prefill; the new callback queues work in
 microseconds, without measuring completed transfer time. Warmup's roughly35ms
 mode is localized inside the first Forward host span, with GPU/peer/host
-attribution unresolved. All new and prior flags remain; wider concurrency and
-remaining latency qualification precede default integration. No production default or upstream-ready RDMA integration
+attribution unresolved. All new and prior flags remain.
+
+[Four-session qualification](wider-concurrency/README.md) now passes60 exact
+records, C3/C4 and ragged completion with observed widths3/4. Six strict timing
+entries remain for one33-token request with changed adaptive work; its slower
+mode also occurs in a later baseline. Timing remains inconclusive/unqualified.
+The [portable fixture qualification](portable-fixture-qualification.json) records
+positive and old-fix-removal negative controls plus identical production
+preprocessing for the guarded readiness access. Latest integration source text
+therefore differs from2669e07c by test-only guards; performance is not relabeled.
+Remaining latency qualification precedes default integration. No production default or upstream-ready RDMA integration
 is claimed. Earlier testing-enabled candidate measurements and rejected partial
 timingv1 remain preserved; corrected production timingv2 is fresh. See the
 [build-mode erratum](cooperative-ple-build-mode-erratum.json) and

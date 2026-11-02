@@ -124,7 +124,7 @@
     "cooperative-ple-release-comparison-v2-pair05-candidate.jsonl.gz": "5522abc9be96bfd2365f6094b6ad65e4d1e6bb90530a5531e3bbf0b85861f030",
     "cooperative-ple-release-comparison-v2-pair09-baseline.jsonl.gz": "8622b5fec390ee9ea33f777936ac5aaf22f45bcf165b2aed675935ae69421af4",
     "release-build-provenance.json": "c6e52f7399d06acda89de836fc97f5b92ae59d346e292df2a6185c54a0219862",
-    "README.md": "83e9c2b248bc3c473df15cdc0f3f4e0480777b6ef02c27d13c131b50d71fa708",
+    "README.md": "eb3cf2d3daeba43b7ab9c8235fad006f2c3880a6508f3c0ec013a8ce58640100",
     "cooperative-ple-release-comparison-v2-pair01-candidate.jsonl.gz": "e466bf033d83cd8e8e7d6ec96282bf76219f4856800fdf9ce46dff0c1dc35f25",
     "cooperative-ple-release-comparison-v2-pair03-candidate.jsonl.gz": "de97cab143f88db4dfe6e49488ad38ed93425e541d2fa2a2ebc2135f88425591",
     "cooperative-ple-release-comparison-v2-pair02-candidate.jsonl.gz": "286a206ab23fe96393f0ddff5071808febca2c0ba1d01c2b7fa19ebfd80f2372",
@@ -151,6 +151,17 @@
     "latency-trace/adaptive-work.csv": "679d245b3c3e76104ecb198de425cc36a9bbf63d386012840571c550b1f943c2",
     "latency-trace/acquisition.zip": "3e9f7d41caea871c29d71f35623efa7eb552dea7e1f8b14698bdc3f3960df307",
     "latency-trace/README.md": "4bbae066763a97f161338b998e5abad94dd8b9516a24452623a99a483a5eca3d",
-    "latency-trace/phase-flags.csv": "e121dbea6ab8fa5157f14911b5cd2d4f09312d916b9d323de1142ca0f8250b23"
+    "latency-trace/phase-flags.csv": "e121dbea6ab8fa5157f14911b5cd2d4f09312d916b9d323de1142ca0f8250b23",
+    "portable-fixture-qualification.json": "721cde9e6eab9f274e64934cd0d367b46d7c71b79f7927ff8f2678685e97b259",
+    "wider-concurrency/validation.json": "d76c3eaf743c7ea047c307d266b8ee74060e81aa6dc21ef4c0e39035cd355fb3",
+    "wider-concurrency/protocol.json": "1e953831dbcf17b250b17117d7f07e23a3bb3f8bd695b09d4779c1cb5a1e02cb",
+    "wider-concurrency/design.json": "581214bc8de3564d7228c62755326b1f2128934ab7e8805b4d20f1e4f8e15444",
+    "wider-concurrency/adaptive-work.csv": "bc9048e211497404cb0c1b0815100eb5c3c4dbaea5fbed2d3a5f810ade113210",
+    "wider-concurrency/acquisition.zip": "e22c0f3d756cdfc56c36410e9aff60b2a21a5e3f3215e7eeadb06b64b6bb86b7",
+    "wider-concurrency/matched-progress.pdf": "6537aa4745ff31bf29a8753322958cec7b53390a159f35bb04db089cbc16c4e9",
+    "wider-concurrency/matched-progress.png": "f08189be5d0b3ce3656ed8dcb5bd9aab8186d2244da5522a07d1a3508d97901b",
+    "wider-concurrency/README.md": "bae2d7cc077945a13dc76df482e502e8a60cb6657de858d43d02e6e90b454fa7",
+    "wider-concurrency/phase-flags.csv": "4cbeb61bc16800a514c87f361ed64a871ffb0ee183f11fdb028d96bfa2431091",
+    "wider-concurrency/timing-flag-review.json": "9bab8898aa11e06ff6c2ad3430e1412c3626c6379950943f380a54537809d3c4"
   }
 }
