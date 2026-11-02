@@ -1,0 +1,7 @@
+{
+  "path": "/home/rkuo/strix-dispatch-investigation/instrumentation/bin/gufo-tp2-cooperative-ple-85586a63-release",
+  "sha256": "95bc4c433f547df7e143bcc69fb1fd973a922bb43dfb47f6203cd1332b042fd5",
+  "source_commit": "85586a634d473125af1a9b2f33cb7de05dbfd807",
+  "build_testing": false,
+  "source_tree": "670d8ce8d4db3d21980b64f85f0fe5692b9309b0"
+}

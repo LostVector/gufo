@@ -1,0 +1,137 @@
+{
+  "scope": "Evidence export, not a new measurement. Production85586a63 and baselinefbacf9cc; component f683b344 testing-enabled. All flags and rejected-build history preserved. Further failure/latency gates remain.",
+  "raw": {
+    "cooperative-ple-release-comparison-v2-pair01-baseline.jsonl.gz": {
+      "uncompressed_sha256": "55ea4eac7b3156f7a5483e0e7a56997998b468a7a5ce4de6cfd7fe7a4d3e530f",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair01-candidate.jsonl.gz": {
+      "uncompressed_sha256": "b8058db4840661181952a5dd090b25da2b2ec3d96d6e3c5edbac74c4c3282078",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair02-baseline.jsonl.gz": {
+      "uncompressed_sha256": "9dddc02ded2425179b25108c421aeceb689966c05f267718dab769488d9b08bf",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair02-candidate.jsonl.gz": {
+      "uncompressed_sha256": "d4efa442ab90db516dce7e44683c7daf17ee0bb619cd6066658e7071cbe07232",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair03-candidate.jsonl.gz": {
+      "uncompressed_sha256": "4863ae7cc6f52be4c9e52fac0e1035d4c60469004252906d5f88f5f11599fbbe",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair03-baseline.jsonl.gz": {
+      "uncompressed_sha256": "443d7eaa1dc8f0d9bf9d22e1cf39ea905119853c8461507e498fbec607972f84",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair04-candidate.jsonl.gz": {
+      "uncompressed_sha256": "1da3b0daba5b193cec5956fe85b0ca47c9e66b6b23d2300239525b1fc4900cba",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair04-baseline.jsonl.gz": {
+      "uncompressed_sha256": "21f248c13b6877950b55b74139f887c816a4893f0eb8c5f42d9b4d1cc24d30c1",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair05-baseline.jsonl.gz": {
+      "uncompressed_sha256": "ac17bc6b93994068a281fa5b54354b3dacf1ee96f5f6189fffd0cb24e1e3c61a",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair05-candidate.jsonl.gz": {
+      "uncompressed_sha256": "d7b61b3525c949e34b652e345a461bc944d9feb0bc6f4de6c3308fd72c55ba45",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair06-baseline.jsonl.gz": {
+      "uncompressed_sha256": "d668bb73f01ed941a02198baa477bae5b02670e4f882651476ad283f80df34f8",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair06-candidate.jsonl.gz": {
+      "uncompressed_sha256": "6ef8b0669da4cc051b166239e76a6f62e962265192be1206452e3b20d118f05b",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair07-candidate.jsonl.gz": {
+      "uncompressed_sha256": "bf87b21a25ec6fb6c07bb873d9f7310b79270fa5f7ee25ee20f86d6ee739eb49",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair07-baseline.jsonl.gz": {
+      "uncompressed_sha256": "642e94af6591a9610faf78b25333b5a47d03c35420820f72a5158dc6bacc0b38",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair08-candidate.jsonl.gz": {
+      "uncompressed_sha256": "eb50c9f77b60ac98b882f7395441967b59982e3648c0c78d63070cb99bb73b72",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair08-baseline.jsonl.gz": {
+      "uncompressed_sha256": "b2f6e94f90656aa6b618720a06bfddfd4c362a27600c3b02d50725e830522aa0",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair09-candidate.jsonl.gz": {
+      "uncompressed_sha256": "ee450f1886cadffc003c38e5e437ddf6bfb2d4a38cd3f911d79b757980cc0c2b",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair09-baseline.jsonl.gz": {
+      "uncompressed_sha256": "62b8e54c181b148f323cf7cffa451d175910833b3e90f2be7cca2710906f12e3",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair10-baseline.jsonl.gz": {
+      "uncompressed_sha256": "022c21d56fd4f449fc50c1cc3166d47885845d2411fc0a954bf846c3916caa40",
+      "records": 12
+    },
+    "cooperative-ple-release-comparison-v2-pair10-candidate.jsonl.gz": {
+      "uncompressed_sha256": "7c19bb97601a825afd3d8e6484514f14449b1c5279456dbdd13eebf160580131",
+      "records": 12
+    }
+  },
+  "files": {
+    "cooperative-ple-http-smoke-v2-validation.json": "96b2db265591f97478dcce12cde9f620ded4ff569c0876c580204111f1a5c349",
+    "production-build-rules.md": "a5aa9e8ab7e64c55cd933ad6302367f3c17625b3b19ca016fc1a5d4cc2d45872",
+    "check.py": "4eb3f0f4be6c233c6263440e39b60512e573c82752cadef543838379280d8cb2",
+    "timing-flags.csv": "82cd4f920e9855875b672fed777cf613d777fd032c50df4e9392715a6c8c8c6c",
+    "cooperative-ple-release-comparison-v2-pair08-baseline.jsonl.gz": "6e174140ee13a5b9a176739a8b5cf9e13bd697c6518d3d60169f04d0172690a0",
+    "cooperative-ple-production-compile-command-comparison.json": "367080b326e05e495422b0edc6714bdde276f6a306cae5302f9ed7d75c750606",
+    "component-transport-counter-check.json": "98e5fd886f07475024602bf4521d2741dffe0cf12a96ee0002f02186d087b32e",
+    "cooperative-ple-release-comparison-v2-pair02-baseline.jsonl.gz": "d6e91466d3fbaa29df4629ee97adf64aa7032ede3c3cbd494413be489b0f3c07",
+    "cooperative-ple-release-comparison-v2-pair08-candidate.jsonl.gz": "312b1058bd36fcf7a2c7e537c53967f32a56e4201d0b943ea2b962da8bb56f39",
+    "cooperative-ple-mixed-wire-v1-validation.json": "b9f6ae15f8e3f9e958371ad716ab0c6bba545a16f3ae2880a38cd2c2c7e65a41",
+    "binaries.json": "3be3970b5ae44b82f641a9b98273e590f1d9b593ce4b063b6a99ecebd973b2d2",
+    "cooperative-ple-release-comparison-v2-pair09-candidate.jsonl.gz": "bd9b3c33954e7c47e2c02aae53ee68f77eb79dfd19662e626d2d7aa299e84ddd",
+    "component-results.json": "c8aa1bd6748b5d3ec539b325c98148669c38850ed9537f451ddf5b147e1e6c19",
+    "paired_statistics.py": "38ca0b9df2e80262122632c74d1934ee6fe3feabce5deee27ee8c4f9cc389eea",
+    "cooperative-ple-release-comparison-v2-pair05-baseline.jsonl.gz": "8e0fb8fa8a2604f96d6dbe6f98521de1ed97894f55cfe60193e0bdb356e58722",
+    "cooperative-ple-release-comparison-v2-pair07-baseline.jsonl.gz": "fc78b6f5e505286bbdeb7c37ccd3e20ea1fe41677dd769fad3d592978c8f13a6",
+    "cooperative-ple-release-comparison-v2-pair04-baseline.jsonl.gz": "29a2a61037d62cdd077140b71758bf39439a6105cbb3cb6530e18d45ea3809bc",
+    "plot-results.py": "7c595471a48bf270f223a932bea8b533e005af5c104277f324744d70c23b33b5",
+    "before-after.pdf": "8a117fd7153aeff6106aa22e402f334e04bece8d446945cd0da57b89ac1fda0f",
+    "summary.json": "823d157f7c9c977addc4474b57c703af6f4e08390d5467760adffda879b1389b",
+    "cooperative-ple-release-comparison-v2-pair06-candidate.jsonl.gz": "b809a1f33f33fa26cd0fb41257e93d775de90719a5103e477b274506955be24c",
+    "cooperative-ple-release-comparison-v2-pair04-candidate.jsonl.gz": "a681f0ba9cb1858db9aba0d589099c94f7a664ac4b8f488c220453d7d7cc7f1d",
+    "cooperative-ple-release-comparison-v2-pair07-candidate.jsonl.gz": "b5da3d0a1264516b08ab59454194553c115d39f2cb50f05ab8fb80a27c335fa7",
+    "cooperative-ple-production-binary.json": "4295bc2302fbdf93585e6a783c5b4e8e21f02f05a167f1afc882795001874cf1",
+    "acquisition-scripts.zip": "0311b5773843d7feecc623cc09041245688af5117a340ae72531d1f9391a090c",
+    "cooperative-ple-release-comparison-v2-pair01-baseline.jsonl.gz": "3ad6a99df0cd4fe7e6922be8876bfd4641943f43c7d78e6aab07971eba501152",
+    "statistical-summary.json": "b6d98a537527b800b92fcce209cad865bf6b7a2bb2f60b5ac18af2d59a616e44",
+    "component-manifest.json": "cb68d7f7b651a3417276ffbe1da46b1613459253a9a7222aa5a62c265a213b8a",
+    "cooperative-ple-build-mode-erratum.json": "029c76c94493ef9551bb5443b6c46bfe6b000af49e050d412088ffc405a76026",
+    "cooperative-ple-http-lifecycle-v2-validation.json": "d53f20f4adc5bd08086652f52bdf5f68ae0e2aa1a07750ee339c3c85c8316b3f",
+    "before-after.png": "cc6f8a7969fa3db04db2776adc3fd10d5e11cb7518160899d7048a2ec38ea0b8",
+    "protocol.json": "f35ba51a53cba92825ac7664b873a0771dc4d6e42154c5c15db07cfdb91572a1",
+    "cooperative-ple-production-snapshot-comparison.json": "7903fe133d5e4b55bfc9f923161cbaf34bed89cd79025ac47d8060d7ec892a55",
+    "cooperative-ple-release-comparison-v2-pair10-candidate.jsonl.gz": "6793b1cff623386a5743a0c970acd30ea40ce78d1c573a7a430dd545d84529dc",
+    "functional-gates.json": "03a92bbf18da0d2eef9feb8fc0c082fd8d043f18b807ef4ed4d11401cf4857eb",
+    "cooperative-ple-release-comparison-v2-pair10-baseline.jsonl.gz": "4a3e7fae120d8946a18b6eba8968ae6b0ca9c71d8e09e36c0d716e4160f27900",
+    "design.json": "b3798971fc78ea51a9cae35fb613169f2fbbbca656ae59e2b908dfd113624f0e",
+    "per-request.csv": "5ea238b8d4a712d15131aeba77c1a2f2f52b8feaed22c4c8c0a355ebc9f0f07f",
+    "cooperative-ple-release-comparison-v2-pair05-candidate.jsonl.gz": "5522abc9be96bfd2365f6094b6ad65e4d1e6bb90530a5531e3bbf0b85861f030",
+    "cooperative-ple-release-comparison-v2-pair09-baseline.jsonl.gz": "8622b5fec390ee9ea33f777936ac5aaf22f45bcf165b2aed675935ae69421af4",
+    "release-build-provenance.json": "c6e52f7399d06acda89de836fc97f5b92ae59d346e292df2a6185c54a0219862",
+    "README.md": "40eddf33a61e6d6f1603bc9488a2e6cf6828d356c2c3673112379ffceb41bbbf",
+    "cooperative-ple-release-comparison-v2-pair01-candidate.jsonl.gz": "e466bf033d83cd8e8e7d6ec96282bf76219f4856800fdf9ce46dff0c1dc35f25",
+    "cooperative-ple-release-comparison-v2-pair03-candidate.jsonl.gz": "de97cab143f88db4dfe6e49488ad38ed93425e541d2fa2a2ebc2135f88425591",
+    "cooperative-ple-release-comparison-v2-pair02-candidate.jsonl.gz": "286a206ab23fe96393f0ddff5071808febca2c0ba1d01c2b7fa19ebfd80f2372",
+    "timing-flag-review.json": "b88fd7d3f492220e976cb8b36eb4ba63e8f8147f0d1f687b1abf23b95ee582d4",
+    "cooperative-ple-release-comparison-v2-pair03-baseline.jsonl.gz": "00d9444271af233a387b7b1d3d282f3fabe1b04e981daaec291bce78da1c5611",
+    "cooperative-ple-release-comparison-v2-pair06-baseline.jsonl.gz": "da0aa9f1ff12e1ac527b63f2321247931ed1293d1fabddeb96b040f42635d0c3",
+    "cooperative-ple-snapshot-candidate-v2-validation.json": "d66ac79265b6dca162c8140453d7adfa4d29216fcb7bcb2579b826655c2c8d2c",
+    "cooperative-ple-snapshot-baseline-v1-validation.json": "e672eef6cfdc8d327ed7f6d2f83b70cecf506e8b11cb405487c86db7c6273675"
+  }
+}

@@ -1,0 +1,530 @@
+{
+  "pairs": 10,
+  "all_240_request_identities_exact": true,
+  "c1_speculative_work_exact": true,
+  "c2_work_changes": [
+    {
+      "pair": "pair01",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens"
+      ]
+    },
+    {
+      "pair": "pair02",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair02",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair02",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair02",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair04",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair04",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair04",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair04",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair05",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair05",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair06",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair06",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair06",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair06",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair08",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair08",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair08",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair08",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair09",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair09",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair09",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens"
+      ]
+    },
+    {
+      "pair": "pair10",
+      "case": "short-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair10",
+      "case": "short-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair10",
+      "case": "coding-c2",
+      "actor": 0,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    },
+    {
+      "pair": "pair10",
+      "case": "coding-c2",
+      "actor": 1,
+      "fields": [
+        "draft_tokens",
+        "draft_accepted_tokens",
+        "draft_rounds"
+      ]
+    }
+  ],
+  "observed_order": [
+    1,
+    1,
+    -1,
+    -1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    1
+  ],
+  "metrics": [
+    {
+      "pairs": 10,
+      "paired_log_ratios": [
+        0.006568015760512422,
+        0.00814163933113363,
+        0.0070333043849390075,
+        0.00015993972316031212,
+        0.0037420205754022315,
+        0.009715107430904606,
+        0.007952800177077921,
+        0.006827638632924386,
+        0.00870547533492449,
+        0.010807690561699156
+      ],
+      "mean_log_ratio": 0.006965363191267816,
+      "paired_geometric_throughput_increase_pct": 0.6989677753930887,
+      "duration_reduction_pct": 0.6941161273391838,
+      "marginal_bootstrap95_throughput_increase_pct": [
+        0.4992816647745395,
+        0.8616266633566867
+      ],
+      "signflip_p": 0.001953125,
+      "signflip_assumption": "Pairwise sign symmetry;1024patterns, not constrained assignment distribution",
+      "balanced_assignment_sensitivity_p": 0.007936507936507936,
+      "balanced_assignments": 252,
+      "positive_pairs": 10,
+      "negative_pairs": 0,
+      "metric": "C1-first-server-decode",
+      "baseline_values": [
+        66.82620842401899,
+        66.87065047695002,
+        66.59514442449486,
+        66.92469932630769,
+        66.7548316435289,
+        66.84312834533812,
+        66.57407485420835,
+        66.66154359922395,
+        66.57955531201551,
+        66.66970346182606
+      ],
+      "candidate_values": [
+        67.26656857732613,
+        67.41730952571432,
+        67.06517935755477,
+        66.93540410022699,
+        67.00509755510821,
+        67.4956811962561,
+        67.1056360669149,
+        67.11824184076738,
+        67.16169220131322,
+        67.39415676855991
+      ],
+      "baseline_geometric_mean": 66.7298387521217,
+      "candidate_geometric_mean": 67.19625882157077,
+      "primary": true,
+      "holm_adjusted_p": 0.015873015873015872,
+      "confirmatory_gain": true,
+      "interpretation": "primary increase supported by paired evidence"
+    },
+    {
+      "pairs": 10,
+      "paired_log_ratios": [
+        0.010570973558154511,
+        -0.00014710688096548566,
+        -0.004434142540772549,
+        0.0010316827885301647,
+        0.00504923590180217,
+        0.036123129223601835,
+        0.010457011970941928,
+        0.008647038821685216,
+        -0.000981563205164237,
+        0.1258048898472198
+      ],
+      "mean_log_ratio": 0.019212114948503334,
+      "paired_geometric_throughput_increase_pct": 1.9397855209834498,
+      "duration_reduction_pct": 1.9028738495669661,
+      "marginal_bootstrap95_throughput_increase_pct": [
+        0.24552494584198872,
+        4.613387919805866
+      ],
+      "signflip_p": 0.029296875,
+      "signflip_assumption": "Pairwise sign symmetry;1024patterns, not constrained assignment distribution",
+      "balanced_assignment_sensitivity_p": 0.031746031746031744,
+      "balanced_assignments": 252,
+      "positive_pairs": 7,
+      "negative_pairs": 3,
+      "metric": "C2-short-client-wave",
+      "baseline_values": [
+        71.31543182404582,
+        71.77786327949954,
+        72.13690147649585,
+        71.67944301920006,
+        72.13730456557165,
+        69.7494810773398,
+        71.2925793416138,
+        71.21821614715782,
+        71.19727126033446,
+        63.38173235447469
+      ],
+      "candidate_values": [
+        72.07330403430727,
+        71.76730503852411,
+        71.81774429005696,
+        71.75343162667825,
+        72.50246394576494,
+        72.31511090383745,
+        72.04199820925272,
+        71.83671305657452,
+        71.12742092542473,
+        71.87874316377962
+      ],
+      "baseline_geometric_mean": 70.5421986040989,
+      "candidate_geometric_mean": 71.91056595880461,
+      "primary": true,
+      "holm_adjusted_p": 0.031746031746031744,
+      "confirmatory_gain": true,
+      "interpretation": "primary increase supported by paired evidence"
+    },
+    {
+      "pairs": 10,
+      "paired_log_ratios": [
+        -0.002201642890495495,
+        0.005024694755762798,
+        0.004279483945249541,
+        -0.0012932923793955646,
+        -0.004871057850063039,
+        0.0005390099177247165,
+        0.00787680177688661,
+        0.0011851716863628603,
+        -0.006737612602388006,
+        -0.007366557390885145
+      ],
+      "mean_log_ratio": -0.00035650010312407237,
+      "paired_geometric_throughput_increase_pct": -0.035643656451304004,
+      "duration_reduction_pct": -0.03565636568378938,
+      "marginal_bootstrap95_throughput_increase_pct": [
+        -0.33167738662855295,
+        0.26246739987403206
+      ],
+      "signflip_p": 0.81640625,
+      "signflip_assumption": "Pairwise sign symmetry;1024patterns, not constrained assignment distribution",
+      "balanced_assignment_sensitivity_p": 0.8174603174603174,
+      "balanced_assignments": 252,
+      "positive_pairs": 5,
+      "negative_pairs": 5,
+      "metric": "C1-repeat-server-decode",
+      "baseline_values": [
+        67.19087704581221,
+        66.85014641817821,
+        67.04133155817298,
+        67.15780101608196,
+        67.09021100814188,
+        67.13529064082883,
+        66.8011330912239,
+        66.9121971647071,
+        67.07626962858,
+        67.27298089781861
+      ],
+      "candidate_values": [
+        67.04310945448023,
+        67.18689331498807,
+        67.32884863380048,
+        67.07100248384934,
+        66.7642053499585,
+        67.1714869825308,
+        67.32939013179035,
+        66.99154661833386,
+        66.62585477330836,
+        66.77923147273927
+      ],
+      "baseline_geometric_mean": 67.05266594879895,
+      "candidate_geometric_mean": 67.0287659269067,
+      "primary": false,
+      "interpretation": "secondary exploratory estimate; no multiplicity-adjusted conclusion"
+    },
+    {
+      "pairs": 10,
+      "paired_log_ratios": [
+        0.009239763505723857,
+        0.037486170536902806,
+        0.012442039270219135,
+        0.046187399003769815,
+        0.019535749654954852,
+        0.009786435139027747,
+        0.005682578011770817,
+        0.05184020127048622,
+        0.02393029630628933,
+        0.02463137205314213
+      ],
+      "mean_log_ratio": 0.02407620047522867,
+      "paired_geometric_throughput_increase_pct": 2.436837227346969,
+      "duration_reduction_pct": 2.3788680842797616,
+      "marginal_bootstrap95_throughput_increase_pct": [
+        1.5225718698393758,
+        3.4427773954251935
+      ],
+      "signflip_p": 0.001953125,
+      "signflip_assumption": "Pairwise sign symmetry;1024patterns, not constrained assignment distribution",
+      "balanced_assignment_sensitivity_p": 0.007936507936507936,
+      "balanced_assignments": 252,
+      "positive_pairs": 10,
+      "negative_pairs": 0,
+      "metric": "C2-coding-client-wave",
+      "baseline_values": [
+        80.8816267164093,
+        78.54283408284431,
+        80.65770825923336,
+        78.64797363462438,
+        80.62384144765527,
+        80.69013049456332,
+        81.04805912232759,
+        77.80126011960947,
+        80.52558849006687,
+        79.38415433899114
+      ],
+      "candidate_values": [
+        81.63241704030278,
+        81.54298492611761,
+        81.66752368749695,
+        82.36571447308293,
+        82.2143741702896,
+        81.48367587980076,
+        81.50993211275492,
+        81.94086505457638,
+        82.47583156235481,
+        81.36377528357994
+      ],
+      "baseline_geometric_mean": 79.87246259261158,
+      "candidate_geometric_mean": 81.8188244954671,
+      "primary": false,
+      "interpretation": "secondary exploratory estimate; no multiplicity-adjusted conclusion"
+    }
+  ],
+  "raw_inputs_sha256": {
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair01-baseline.jsonl": "55ea4eac7b3156f7a5483e0e7a56997998b468a7a5ce4de6cfd7fe7a4d3e530f",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair01-candidate.jsonl": "b8058db4840661181952a5dd090b25da2b2ec3d96d6e3c5edbac74c4c3282078",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair02-baseline.jsonl": "9dddc02ded2425179b25108c421aeceb689966c05f267718dab769488d9b08bf",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair02-candidate.jsonl": "d4efa442ab90db516dce7e44683c7daf17ee0bb619cd6066658e7071cbe07232",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair03-candidate.jsonl": "4863ae7cc6f52be4c9e52fac0e1035d4c60469004252906d5f88f5f11599fbbe",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair03-baseline.jsonl": "443d7eaa1dc8f0d9bf9d22e1cf39ea905119853c8461507e498fbec607972f84",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair04-candidate.jsonl": "1da3b0daba5b193cec5956fe85b0ca47c9e66b6b23d2300239525b1fc4900cba",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair04-baseline.jsonl": "21f248c13b6877950b55b74139f887c816a4893f0eb8c5f42d9b4d1cc24d30c1",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair05-baseline.jsonl": "ac17bc6b93994068a281fa5b54354b3dacf1ee96f5f6189fffd0cb24e1e3c61a",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair05-candidate.jsonl": "d7b61b3525c949e34b652e345a461bc944d9feb0bc6f4de6c3308fd72c55ba45",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair06-baseline.jsonl": "d668bb73f01ed941a02198baa477bae5b02670e4f882651476ad283f80df34f8",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair06-candidate.jsonl": "6ef8b0669da4cc051b166239e76a6f62e962265192be1206452e3b20d118f05b",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair07-candidate.jsonl": "bf87b21a25ec6fb6c07bb873d9f7310b79270fa5f7ee25ee20f86d6ee739eb49",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair07-baseline.jsonl": "642e94af6591a9610faf78b25333b5a47d03c35420820f72a5158dc6bacc0b38",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair08-candidate.jsonl": "eb50c9f77b60ac98b882f7395441967b59982e3648c0c78d63070cb99bb73b72",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair08-baseline.jsonl": "b2f6e94f90656aa6b618720a06bfddfd4c362a27600c3b02d50725e830522aa0",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair09-candidate.jsonl": "ee450f1886cadffc003c38e5e437ddf6bfb2d4a38cd3f911d79b757980cc0c2b",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair09-baseline.jsonl": "62b8e54c181b148f323cf7cffa451d175910833b3e90f2be7cca2710906f12e3",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair10-baseline.jsonl": "022c21d56fd4f449fc50c1cc3166d47885845d2411fc0a954bf846c3916caa40",
+    "/home/rkuo/strix-dispatch-investigation/results/model-scaling/cooperative-ple-release-comparison-v2-pair10-candidate.jsonl": "7c19bb97601a825afd3d8e6484514f14449b1c5279456dbdd13eebf160580131"
+  },
+  "scope": "Predeclared two-primary cooperative PLE comparison. All pairs retained. C1 rate is server-accounted; C2 wave includes prefill/admission/terminal wait. Balanced-assignment p and sign-flip p retain their stated assumptions; bootstrap confidence intervals are marginal. Not an equivalence claim. Per-request flags are separate and cannot be waived by aggregates."
+}
