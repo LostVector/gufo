@@ -241,6 +241,25 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
     }
     exec.split_reduce =
         rocm::Executor::TwoRankSplitReduce(options.communicator, c.hidden_size);
+    if (c.ple_layer >= 0 && options.communicator->SupportsPleOwner()) {
+      // Share short passes without staging wide prompts; performance is
+      // unqualified. Verification may still need more rows at higher decode
+      // concurrency.
+      exec.ple_gather = rocm::Executor::TwoRankPleGather(
+          options.communicator, c.ple_heads, c.PleEmbeddingDim(),
+          static_cast<std::uint32_t>(std::max<std::uint64_t>(
+              2,
+              std::min<std::uint64_t>(
+                  exec.max_batch, std::max<std::uint64_t>(
+                                      32, std::uint64_t{exec.max_speculative} *
+                                              options.decode_concurrency)))));
+      const auto communication_status = exec.reduce_status;
+      const auto gather_status = exec.ple_gather.status;
+      exec.reduce_status = [communication_status,
+                            gather_status](std::string* error) {
+        return communication_status(error) && gather_status(error);
+      };
+    }
   }
   exec.moe_observer = options.moe_observer;
   exec.max_context = options.max_context;

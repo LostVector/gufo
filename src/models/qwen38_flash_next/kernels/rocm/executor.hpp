@@ -250,7 +250,25 @@ public:
     std::function<bool(float*, std::size_t, hipStream_t, std::string*)> finish;
   };
 
+  struct PleGather {
+    bool local_owner{false};
+    std::uint32_t max_tokens{0};
+    std::function<bool(std::span<const std::uint32_t>, float*, const float*,
+                       std::size_t, bool, hipStream_t, std::string*)>
+        exchange;
+    std::function<bool(std::string*)> status;
+
+    [[nodiscard]] bool CanGather(std::size_t tokens, bool speculative) const {
+      return exchange && tokens != 0 && tokens <= max_tokens &&
+             (speculative || tokens <= 32);
+    }
+  };
+  [[nodiscard]] static PleGather TwoRankPleGather(
+      std::shared_ptr<Communicator> communicator, std::uint32_t heads,
+      std::uint32_t embedding_dim, std::uint32_t max_tokens);
+
   struct Options {
+    PleGather ple_gather;
     int device_index{0};
     /// Rows of one trunk batch; longer prompts are fed in chunks.
     std::uint32_t max_batch{1};
@@ -608,6 +626,10 @@ private:
   bool PleFetch(Session& s, std::span<const std::int32_t> tokens,
                 bool speculative, std::string* error_msg) const;
   bool WaitPle(std::string* error_msg) const;
+  bool LocalPleFetch(Session& s, std::span<const std::int32_t> tokens,
+                     bool speculative, std::string* error_msg) const;
+  bool LocalWaitPle(std::string* error_msg) const;
+  void DiscardPle() const;
   /// Starts reading `next`'s rows into the prefetch buffer. Best effort: a
   /// prefetch that cannot start is skipped.
   void PrefetchPle(const Session& s, std::span<const std::int32_t> next) const;
@@ -897,6 +919,10 @@ private:
   mutable std::vector<std::uint32_t> host_rows_;
   mutable std::vector<NgramGatherOwner> ngram_owners_;
   mutable bool ple_pending_{false};
+  mutable bool cooperative_pending_{false};
+  mutable bool cooperative_local_ok_{true};
+  mutable std::size_t cooperative_tokens_{0};
+  mutable std::vector<std::uint32_t> cooperative_rows_;
   /// The rows a prefill chunk reads are a pure function of its tokens and
   /// the n-gram history before them, so prefetched rows are claimed only by
   /// a batch with that history whose tokens extend, or are extended by, the
