@@ -1477,7 +1477,11 @@ TextRunnerPool::Request::CommitMetrics TextRunnerPool::Request::Commit() {
         " generated=" + std::to_string(impl_->generated.size()));
   }
   checkpoint.resize(position);
-  if (capabilities.snapshot && capabilities.fork) {
+  // With the RAM cache off the entry names the live state, which can extend
+  // past the prompt snapshot tokens; committing those would let the next
+  // request reuse a prefix the state no longer sits at.
+  if (capabilities.snapshot && capabilities.fork &&
+      impl_->lease.retains_snapshots()) {
     CommitMetrics metrics = impl_->snapshot_metrics;
     metrics.snapshot_bytes += impl_->lease.Commit(
         std::move(impl_->snapshot_tokens), std::move(impl_->prompt_snapshot),
@@ -1539,7 +1543,8 @@ TextRunnerPool::Request::Cancel() noexcept {
       state.Invalidate();
     }
     CommitMetrics metrics = impl_->snapshot_metrics;
-    if (capabilities.snapshot && capabilities.fork) {
+    if (capabilities.snapshot && capabilities.fork &&
+        impl_->lease.retains_snapshots()) {
       metrics.snapshot_bytes += impl_->lease.Commit(
           std::move(impl_->snapshot_tokens), std::move(impl_->prompt_snapshot),
           std::move(checkpoint));

@@ -20,6 +20,11 @@
 #include <ws2tcpip.h>
 #include <windows.h>
 #include <iphlpapi.h>
+// WinUser's drawing alias collides with SamplerState::DrawState when this
+// header is included after sampling.hpp. Keep it inside the platform leaf.
+#ifdef DrawState
+#undef DrawState
+#endif
 // clang-format on
 #else
 #include <arpa/inet.h>
