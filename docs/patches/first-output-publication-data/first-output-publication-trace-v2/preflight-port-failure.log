@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/first-output-publication-trace-v2/run.py", line 32, in <module>
+    sock.bind(('127.0.0.1', port))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 98] Address already in use

@@ -1,0 +1,30 @@
+upstream-ffn-hc-first-gap-trace-v2 after-baseline actor 0 first 0 gap 68.344 units {'engine': 62.927, 'batch': 51.691} uncovered 5.417 snapshot 8.191
+upstream-ffn-hc-first-gap-trace-v2 after-baseline actor 1 first 0 gap 133.754 units {'engine': 128.544, 'batch': 110.091} uncovered 5.209 snapshot 7.898
+upstream-ffn-hc-first-gap-trace-v2 after-baseline actor 1 maximum 0 gap 133.754 units {'engine': 128.544, 'batch': 110.091} uncovered 5.209 snapshot 7.898
+upstream-ffn-hc-first-gap-trace-v2 before-baseline actor 0 first 0 gap 68.529 units {'decode': 64.171} uncovered 4.359 snapshot 7.678
+upstream-ffn-hc-first-gap-trace-v2 before-baseline actor 0 maximum 4 gap 113.835 units {'decode': 41.359, 'engine': 72.379, 'batch': 53.625} uncovered 0.097 snapshot 7.678
+upstream-ffn-hc-first-gap-trace-v2 before-baseline actor 1 first 0 gap 110.083 units {'decode': 105.621, 'engine': 0.2} uncovered 4.262 snapshot 71.455
+upstream-ffn-hc-first-gap-trace-v2 before-baseline actor 1 maximum 0 gap 110.083 units {'decode': 105.621, 'engine': 0.2} uncovered 4.262 snapshot 71.455
+upstream-ffn-hc-first-gap-trace-v2 candidate actor 0 first 0 gap 70.889 units {'engine': 65.527, 'batch': 51.336} uncovered 5.361 snapshot 8.542
+upstream-ffn-hc-first-gap-trace-v2 candidate actor 1 first 0 gap 136.307 units {'engine': 131.025, 'batch': 109.653} uncovered 5.282 snapshot 8.121
+upstream-ffn-hc-first-gap-trace-v2 candidate actor 1 maximum 0 gap 136.307 units {'engine': 131.025, 'batch': 109.653} uncovered 5.282 snapshot 8.121
+upstream-ffn-hc-first-gap-repro-v1 baseline-1 actor 0 first 0 gap 66.503 units {'engine': 60.992, 'batch': 50.915} uncovered 5.511 snapshot 8.29
+upstream-ffn-hc-first-gap-repro-v1 baseline-1 actor 1 first 0 gap 132.11 units {'engine': 126.761, 'batch': 109.454} uncovered 5.349 snapshot 7.968
+upstream-ffn-hc-first-gap-repro-v1 baseline-1 actor 1 maximum 0 gap 132.11 units {'engine': 126.761, 'batch': 109.454} uncovered 5.349 snapshot 7.968
+upstream-ffn-hc-first-gap-repro-v1 baseline-2 actor 0 first 0 gap 68.821 units {'decode': 64.543} uncovered 4.278 snapshot 7.18
+upstream-ffn-hc-first-gap-repro-v1 baseline-2 actor 0 maximum 4 gap 114.059 units {'decode': 40.685, 'engine': 73.313, 'batch': 56.015} uncovered 0.062 snapshot 7.18
+upstream-ffn-hc-first-gap-repro-v1 baseline-2 actor 1 first 0 gap 109.708 units {'decode': 105.348, 'engine': 0.203} uncovered 4.157 snapshot 70.976
+upstream-ffn-hc-first-gap-repro-v1 baseline-2 actor 1 maximum 0 gap 109.708 units {'decode': 105.348, 'engine': 0.203} uncovered 4.157 snapshot 70.976
+upstream-ffn-hc-first-gap-repro-v1 baseline-3 actor 0 first 0 gap 65.136 units {'engine': 60.846, 'batch': 48.477} uncovered 4.29 snapshot 7.543
+upstream-ffn-hc-first-gap-repro-v1 baseline-3 actor 1 first 0 gap 130.712 units {'engine': 126.528, 'batch': 106.954} uncovered 4.184 snapshot 7.158
+upstream-ffn-hc-first-gap-repro-v1 baseline-3 actor 1 maximum 0 gap 130.712 units {'engine': 126.528, 'batch': 106.954} uncovered 4.184 snapshot 7.158
+upstream-ffn-hc-first-gap-repro-v1 baseline-4 actor 0 first 0 gap 63.856 units {'engine': 59.41, 'batch': 51.51} uncovered 4.446 snapshot 7.659
+upstream-ffn-hc-first-gap-repro-v1 baseline-4 actor 1 first 0 gap 129.256 units {'engine': 124.998, 'batch': 109.653} uncovered 4.258 snapshot 7.008
+upstream-ffn-hc-first-gap-repro-v1 baseline-4 actor 1 maximum 0 gap 129.256 units {'engine': 124.998, 'batch': 109.653} uncovered 4.258 snapshot 7.008
+upstream-ffn-hc-first-gap-repro-v1 baseline-5 actor 0 first 0 gap 72.5 units {'engine': 66.011, 'batch': 50.886} uncovered 6.488 snapshot 9.247
+upstream-ffn-hc-first-gap-repro-v1 baseline-5 actor 1 first 0 gap 138.003 units {'engine': 131.816, 'batch': 109.597} uncovered 6.187 snapshot 8.942
+upstream-ffn-hc-first-gap-repro-v1 baseline-5 actor 1 maximum 0 gap 138.003 units {'engine': 131.816, 'batch': 109.597} uncovered 6.187 snapshot 8.942
+upstream-ffn-hc-first-gap-repro-v1 baseline-6 actor 0 first 0 gap 67.99 units {'decode': 65.689} uncovered 2.301 snapshot 5.71
+upstream-ffn-hc-first-gap-repro-v1 baseline-6 actor 0 maximum 4 gap 112.699 units {'decode': 41.21, 'engine': 71.401, 'batch': 53.576} uncovered 0.087 snapshot 5.71
+upstream-ffn-hc-first-gap-repro-v1 baseline-6 actor 1 first 0 gap 109.343 units {'decode': 107.005, 'engine': 0.159} uncovered 2.179 snapshot 70.719
+upstream-ffn-hc-first-gap-repro-v1 baseline-6 actor 1 maximum 0 gap 109.343 units {'decode': 107.005, 'engine': 0.159} uncovered 2.179 snapshot 70.719

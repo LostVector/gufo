@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/first-output-publication-trace-v1/requests.py", line 116, in <module>
+    assert [r['raw_gufo']['resident_requests_at_admission'] for r in records] == [1, 2]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

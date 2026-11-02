@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/first-output-publication-trace-v1/build.py", line 63, in <module>
+    members=subprocess.check_output(['ar','t',str(archive)],text=True).splitlines();changed=[m for m in members if subprocess.check_output(['ar','p',str(archive),m])!=subprocess.check_output(['ar','p',str(copy),m])];assert changed==['text_generation_scheduler.cpp.o'],changed
+                                                                                                                                                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: []

@@ -1,0 +1,1896 @@
+{
+  "inputs_sha256": {
+    "tp-cache-retention/upstream-ffn-hc-first-gap-trace-v2/after-baseline-requests.jsonl": "89f9de9be2e7b3771acd6d99da47816bd886a053cf8e4576d9cee29101842776",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-trace-v2/after-baseline-server.stderr": "ae81115c9f5318155a3e10ecfc52a7edbd2c8a88e88046fe6bca4c9d679fa1f2",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-trace-v2/before-baseline-requests.jsonl": "eb9d5433c307364353d45ff39b78ee54d532480cefcb81de959ff7aa75c24f63",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-trace-v2/before-baseline-server.stderr": "cf0618d466481bf41906cf189b26680b9084d97c44d006b547e37da7dc3e9c55",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-trace-v2/candidate-requests.jsonl": "2604564cbe31bd3f30bbd152aef9cc2c9ce9e3f4e29a4bba5a8e1c05cdf40e10",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-trace-v2/candidate-server.stderr": "f71e8ed039346187a16ccbd8999c514c9b361ac2438333216d3fc648ac071c76",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-1-requests.jsonl": "ab15db8460d792036afa8eccf3102776265fef16f7528dda63650f677344001e",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-1-server.stderr": "3454697f67beb319cc410dd0182069cdcdd5a7a98517b55f3b0a4d0c9ab57f2d",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-2-requests.jsonl": "099fa50f868c25033cc03c21b4269090ad7a03320bab2ae5afb2b99729cca64b",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-2-server.stderr": "714886997c7f9edc5ab11557e539e76b9c1ec29b67c4510444e78e729847e3b2",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-3-requests.jsonl": "a376232a1e259e77942c99b8958f0fe8e7a1950d198da06def457fe4b7cf2757",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-3-server.stderr": "faa4583afbc0bb08a50a343bdfceeac5942fea621c33a20cb217b4427a83d30b",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-4-requests.jsonl": "8e80b525ac62f710470fb4b96ab2c3187ed9ed272f907ebd4f52ea24aeba512b",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-4-server.stderr": "1d605a332b982a63afa5d8fd59d3a214cd1f17f2a175e7513a7d0012c71d14e9",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-5-requests.jsonl": "2d65b9f34f8775198d85acb1cd6344be51b33a19ee1b28b3c2cca1353576dce8",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-5-server.stderr": "4b7851e8deae131465f09109630d5c89aac698b383bd57cad48b32419e10f5f5",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-6-requests.jsonl": "bc438c3a0c5e842b7b4bceaab2fcb876c1d397ce0de2f98d163555ad7dc98215",
+    "tp-cache-retention/upstream-ffn-hc-first-gap-repro-v1/baseline-6-server.stderr": "efa285f4906df7a9e4da2d25fc625885b55922e35693f1a823fc1f2349f7f5d5"
+  },
+  "records": [
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "after-baseline",
+      "actor": 0,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 68.344068,
+      "covered_union_ms": 62.9273,
+      "uncovered_ms": 5.4167679999999905,
+      "by_unit_union_ms": {
+        "engine": 62.9273,
+        "batch": 51.691015
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218626184259163,
+          "end_ns": 218626246872972,
+          "gap_overlap_ms": 62.613809,
+          "start_relative_gap_ms": 5.380299,
+          "end_relative_gap_ms": 67.994108
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218626194768409,
+          "end_ns": 218626246459424,
+          "gap_overlap_ms": 51.691015,
+          "start_relative_gap_ms": 15.889545,
+          "end_relative_gap_ms": 67.58056
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218626246909441,
+          "end_ns": 218626312378974,
+          "gap_overlap_ms": 0.313491,
+          "start_relative_gap_ms": 68.030577,
+          "end_relative_gap_ms": 133.50011
+        }
+      ],
+      "raw_snapshot_ms": 8.190975
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "after-baseline",
+      "actor": 0,
+      "interval": "maximum",
+      "event_index": 104,
+      "gap_ms": 80.487175,
+      "covered_union_ms": 0.0,
+      "uncovered_ms": 80.487175,
+      "by_unit_union_ms": {},
+      "spans": [],
+      "raw_snapshot_ms": 8.190975
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "after-baseline",
+      "actor": 1,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 133.753653,
+      "covered_union_ms": 128.544488,
+      "uncovered_ms": 5.209165000000013,
+      "by_unit_union_ms": {
+        "engine": 128.544488,
+        "batch": 110.09138
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218626184259163,
+          "end_ns": 218626246872972,
+          "gap_overlap_ms": 62.613809,
+          "start_relative_gap_ms": 5.153606,
+          "end_relative_gap_ms": 67.767415
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218626194768409,
+          "end_ns": 218626246459424,
+          "gap_overlap_ms": 51.691015,
+          "start_relative_gap_ms": 15.662852,
+          "end_relative_gap_ms": 67.353867
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218626246909441,
+          "end_ns": 218626312378974,
+          "gap_overlap_ms": 65.469533,
+          "start_relative_gap_ms": 67.803884,
+          "end_relative_gap_ms": 133.273417
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218626252386707,
+          "end_ns": 218626310746453,
+          "gap_overlap_ms": 58.359746,
+          "start_relative_gap_ms": 73.28115,
+          "end_relative_gap_ms": 131.640896
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218626312398064,
+          "end_ns": 218626354704469,
+          "gap_overlap_ms": 0.461146,
+          "start_relative_gap_ms": 133.292507,
+          "end_relative_gap_ms": 175.598912
+        },
+        {
+          "unit": "batch",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218626312818591,
+          "end_ns": 218626354523324,
+          "gap_overlap_ms": 0.040619,
+          "start_relative_gap_ms": 133.713034,
+          "end_relative_gap_ms": 175.417767
+        }
+      ],
+      "raw_snapshot_ms": 7.897504
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "after-baseline",
+      "actor": 1,
+      "interval": "maximum",
+      "event_index": 0,
+      "gap_ms": 133.753653,
+      "covered_union_ms": 128.544488,
+      "uncovered_ms": 5.209165000000013,
+      "by_unit_union_ms": {
+        "engine": 128.544488,
+        "batch": 110.09138
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218626184259163,
+          "end_ns": 218626246872972,
+          "gap_overlap_ms": 62.613809,
+          "start_relative_gap_ms": 5.153606,
+          "end_relative_gap_ms": 67.767415
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218626194768409,
+          "end_ns": 218626246459424,
+          "gap_overlap_ms": 51.691015,
+          "start_relative_gap_ms": 15.662852,
+          "end_relative_gap_ms": 67.353867
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218626246909441,
+          "end_ns": 218626312378974,
+          "gap_overlap_ms": 65.469533,
+          "start_relative_gap_ms": 67.803884,
+          "end_relative_gap_ms": 133.273417
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218626252386707,
+          "end_ns": 218626310746453,
+          "gap_overlap_ms": 58.359746,
+          "start_relative_gap_ms": 73.28115,
+          "end_relative_gap_ms": 131.640896
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218626312398064,
+          "end_ns": 218626354704469,
+          "gap_overlap_ms": 0.461146,
+          "start_relative_gap_ms": 133.292507,
+          "end_relative_gap_ms": 175.598912
+        },
+        {
+          "unit": "batch",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218626312818591,
+          "end_ns": 218626354523324,
+          "gap_overlap_ms": 0.040619,
+          "start_relative_gap_ms": 133.713034,
+          "end_relative_gap_ms": 175.417767
+        }
+      ],
+      "raw_snapshot_ms": 7.897504
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "before-baseline",
+      "actor": 0,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 68.529122,
+      "covered_union_ms": 64.170542,
+      "uncovered_ms": 4.3585800000000035,
+      "by_unit_union_ms": {
+        "decode": 64.170542
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "session": "56c8dc989ed0",
+          "position": 35,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218529553755019,
+          "end_ns": 218529617854293,
+          "gap_overlap_ms": 64.099274,
+          "start_relative_gap_ms": 4.290742,
+          "end_relative_gap_ms": 68.390016
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "56c8daafb7c0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218529617922131,
+          "end_ns": 218529659443880,
+          "gap_overlap_ms": 0.071268,
+          "start_relative_gap_ms": 68.457854,
+          "end_relative_gap_ms": 109.979603
+        }
+      ],
+      "raw_snapshot_ms": 7.678221000000001
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "before-baseline",
+      "actor": 0,
+      "interval": "maximum",
+      "event_index": 4,
+      "gap_ms": 113.835308,
+      "covered_union_ms": 113.738441,
+      "uncovered_ms": 0.09686700000000315,
+      "by_unit_union_ms": {
+        "decode": 41.359474,
+        "engine": 72.378967,
+        "batch": 53.624707
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "56c8daafb7c0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218529617922131,
+          "end_ns": 218529659443880,
+          "gap_overlap_ms": 41.359474,
+          "start_relative_gap_ms": -0.162275,
+          "end_relative_gap_ms": 41.359474
+        },
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218529659494518,
+          "end_ns": 218529731296622,
+          "gap_overlap_ms": 71.802104,
+          "start_relative_gap_ms": 41.410112,
+          "end_relative_gap_ms": 113.212216
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218529677239508,
+          "end_ns": 218529730864215,
+          "gap_overlap_ms": 53.624707,
+          "start_relative_gap_ms": 59.155102,
+          "end_relative_gap_ms": 112.779809
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218529731342851,
+          "end_ns": 218529809384648,
+          "gap_overlap_ms": 0.576863,
+          "start_relative_gap_ms": 113.258445,
+          "end_relative_gap_ms": 191.300242
+        }
+      ],
+      "raw_snapshot_ms": 7.678221000000001
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "before-baseline",
+      "actor": 1,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 110.083169,
+      "covered_union_ms": 105.820747,
+      "uncovered_ms": 4.262422000000001,
+      "by_unit_union_ms": {
+        "decode": 105.621023,
+        "engine": 0.199724
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "session": "56c8dc989ed0",
+          "position": 35,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218529553755019,
+          "end_ns": 218529617854293,
+          "gap_overlap_ms": 64.099274,
+          "start_relative_gap_ms": 4.143946,
+          "end_relative_gap_ms": 68.24322
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "56c8daafb7c0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218529617922131,
+          "end_ns": 218529659443880,
+          "gap_overlap_ms": 41.521749,
+          "start_relative_gap_ms": 68.311058,
+          "end_relative_gap_ms": 109.832807
+        },
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218529659494518,
+          "end_ns": 218529731296622,
+          "gap_overlap_ms": 0.199724,
+          "start_relative_gap_ms": 109.883445,
+          "end_relative_gap_ms": 181.685549
+        }
+      ],
+      "raw_snapshot_ms": 71.455495
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "before-baseline",
+      "actor": 1,
+      "interval": "maximum",
+      "event_index": 0,
+      "gap_ms": 110.083169,
+      "covered_union_ms": 105.820747,
+      "uncovered_ms": 4.262422000000001,
+      "by_unit_union_ms": {
+        "decode": 105.621023,
+        "engine": 0.199724
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "session": "56c8dc989ed0",
+          "position": 35,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218529553755019,
+          "end_ns": 218529617854293,
+          "gap_overlap_ms": 64.099274,
+          "start_relative_gap_ms": 4.143946,
+          "end_relative_gap_ms": 68.24322
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "56c8daafb7c0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218529617922131,
+          "end_ns": 218529659443880,
+          "gap_overlap_ms": 41.521749,
+          "start_relative_gap_ms": 68.311058,
+          "end_relative_gap_ms": 109.832807
+        },
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218529659494518,
+          "end_ns": 218529731296622,
+          "gap_overlap_ms": 0.199724,
+          "start_relative_gap_ms": 109.883445,
+          "end_relative_gap_ms": 181.685549
+        }
+      ],
+      "raw_snapshot_ms": 71.455495
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "candidate",
+      "actor": 0,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 70.888631,
+      "covered_union_ms": 65.527381,
+      "uncovered_ms": 5.361249999999998,
+      "by_unit_union_ms": {
+        "engine": 65.527381,
+        "batch": 51.335506
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218577926526267,
+          "end_ns": 218577991686159,
+          "gap_overlap_ms": 65.159892,
+          "start_relative_gap_ms": 5.315371,
+          "end_relative_gap_ms": 70.475263
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218577939867898,
+          "end_ns": 218577991203404,
+          "gap_overlap_ms": 51.335506,
+          "start_relative_gap_ms": 18.657002,
+          "end_relative_gap_ms": 69.992508
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218577991732038,
+          "end_ns": 218578057028336,
+          "gap_overlap_ms": 0.367489,
+          "start_relative_gap_ms": 70.521142,
+          "end_relative_gap_ms": 135.81744
+        }
+      ],
+      "raw_snapshot_ms": 8.541945
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "candidate",
+      "actor": 0,
+      "interval": "maximum",
+      "event_index": 104,
+      "gap_ms": 80.294161,
+      "covered_union_ms": 0.0,
+      "uncovered_ms": 80.294161,
+      "by_unit_union_ms": {},
+      "spans": [],
+      "raw_snapshot_ms": 8.541945
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "candidate",
+      "actor": 1,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 136.306916,
+      "covered_union_ms": 131.024803,
+      "uncovered_ms": 5.28211300000001,
+      "by_unit_union_ms": {
+        "engine": 131.024803,
+        "batch": 109.653474
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218577926526267,
+          "end_ns": 218577991686159,
+          "gap_overlap_ms": 65.159892,
+          "start_relative_gap_ms": 5.211894,
+          "end_relative_gap_ms": 70.371786
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218577939867898,
+          "end_ns": 218577991203404,
+          "gap_overlap_ms": 51.335506,
+          "start_relative_gap_ms": 18.553525,
+          "end_relative_gap_ms": 69.889031
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218577991732038,
+          "end_ns": 218578057028336,
+          "gap_overlap_ms": 65.296298,
+          "start_relative_gap_ms": 70.417665,
+          "end_relative_gap_ms": 135.713963
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218577997245243,
+          "end_ns": 218578055436024,
+          "gap_overlap_ms": 58.190781,
+          "start_relative_gap_ms": 75.93087,
+          "end_relative_gap_ms": 134.121651
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218578057052676,
+          "end_ns": 218578098771589,
+          "gap_overlap_ms": 0.568613,
+          "start_relative_gap_ms": 135.738303,
+          "end_relative_gap_ms": 177.457216
+        },
+        {
+          "unit": "batch",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218578057494102,
+          "end_ns": 218578098604134,
+          "gap_overlap_ms": 0.127187,
+          "start_relative_gap_ms": 136.179729,
+          "end_relative_gap_ms": 177.289761
+        }
+      ],
+      "raw_snapshot_ms": 8.120847999999999
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-trace-v2",
+      "arm": "candidate",
+      "actor": 1,
+      "interval": "maximum",
+      "event_index": 0,
+      "gap_ms": 136.306916,
+      "covered_union_ms": 131.024803,
+      "uncovered_ms": 5.28211300000001,
+      "by_unit_union_ms": {
+        "engine": 131.024803,
+        "batch": 109.653474
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218577926526267,
+          "end_ns": 218577991686159,
+          "gap_overlap_ms": 65.159892,
+          "start_relative_gap_ms": 5.211894,
+          "end_relative_gap_ms": 70.371786
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218577939867898,
+          "end_ns": 218577991203404,
+          "gap_overlap_ms": 51.335506,
+          "start_relative_gap_ms": 18.553525,
+          "end_relative_gap_ms": 69.889031
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218577991732038,
+          "end_ns": 218578057028336,
+          "gap_overlap_ms": 65.296298,
+          "start_relative_gap_ms": 70.417665,
+          "end_relative_gap_ms": 135.713963
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218577997245243,
+          "end_ns": 218578055436024,
+          "gap_overlap_ms": 58.190781,
+          "start_relative_gap_ms": 75.93087,
+          "end_relative_gap_ms": 134.121651
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218578057052676,
+          "end_ns": 218578098771589,
+          "gap_overlap_ms": 0.568613,
+          "start_relative_gap_ms": 135.738303,
+          "end_relative_gap_ms": 177.457216
+        },
+        {
+          "unit": "batch",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218578057494102,
+          "end_ns": 218578098604134,
+          "gap_overlap_ms": 0.127187,
+          "start_relative_gap_ms": 136.179729,
+          "end_relative_gap_ms": 177.289761
+        }
+      ],
+      "raw_snapshot_ms": 8.120847999999999
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-1",
+      "actor": 0,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 66.503302,
+      "covered_union_ms": 60.991907,
+      "uncovered_ms": 5.511395000000007,
+      "by_unit_union_ms": {
+        "engine": 60.991907,
+        "batch": 50.914998
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218765137119434,
+          "end_ns": 218765197847019,
+          "gap_overlap_ms": 60.727585,
+          "start_relative_gap_ms": 5.474486,
+          "end_relative_gap_ms": 66.202071
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218765146565842,
+          "end_ns": 218765197480840,
+          "gap_overlap_ms": 50.914998,
+          "start_relative_gap_ms": 14.920894,
+          "end_relative_gap_ms": 65.835892
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218765197883928,
+          "end_ns": 218765263405000,
+          "gap_overlap_ms": 0.264322,
+          "start_relative_gap_ms": 66.23898,
+          "end_relative_gap_ms": 131.760052
+        }
+      ],
+      "raw_snapshot_ms": 8.289534
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-1",
+      "actor": 0,
+      "interval": "maximum",
+      "event_index": 104,
+      "gap_ms": 80.860263,
+      "covered_union_ms": 0.0,
+      "uncovered_ms": 80.860263,
+      "by_unit_union_ms": {},
+      "spans": [],
+      "raw_snapshot_ms": 8.289534
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-1",
+      "actor": 1,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 132.109722,
+      "covered_union_ms": 126.760562,
+      "uncovered_ms": 5.349160000000012,
+      "by_unit_union_ms": {
+        "engine": 126.760562,
+        "batch": 109.453788
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218765137119434,
+          "end_ns": 218765197847019,
+          "gap_overlap_ms": 60.727585,
+          "start_relative_gap_ms": 5.294072,
+          "end_relative_gap_ms": 66.021657
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218765146565842,
+          "end_ns": 218765197480840,
+          "gap_overlap_ms": 50.914998,
+          "start_relative_gap_ms": 14.74048,
+          "end_relative_gap_ms": 65.655478
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218765197883928,
+          "end_ns": 218765263405000,
+          "gap_overlap_ms": 65.521072,
+          "start_relative_gap_ms": 66.058566,
+          "end_relative_gap_ms": 131.579638
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218765203320826,
+          "end_ns": 218765261765989,
+          "gap_overlap_ms": 58.445163,
+          "start_relative_gap_ms": 71.495464,
+          "end_relative_gap_ms": 129.940627
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218765263423179,
+          "end_ns": 218765306029686,
+          "gap_overlap_ms": 0.511905,
+          "start_relative_gap_ms": 131.597817,
+          "end_relative_gap_ms": 174.204324
+        },
+        {
+          "unit": "batch",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218765263841457,
+          "end_ns": 218765305842931,
+          "gap_overlap_ms": 0.093627,
+          "start_relative_gap_ms": 132.016095,
+          "end_relative_gap_ms": 174.017569
+        }
+      ],
+      "raw_snapshot_ms": 7.967872
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-1",
+      "actor": 1,
+      "interval": "maximum",
+      "event_index": 0,
+      "gap_ms": 132.109722,
+      "covered_union_ms": 126.760562,
+      "uncovered_ms": 5.349160000000012,
+      "by_unit_union_ms": {
+        "engine": 126.760562,
+        "batch": 109.453788
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218765137119434,
+          "end_ns": 218765197847019,
+          "gap_overlap_ms": 60.727585,
+          "start_relative_gap_ms": 5.294072,
+          "end_relative_gap_ms": 66.021657
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218765146565842,
+          "end_ns": 218765197480840,
+          "gap_overlap_ms": 50.914998,
+          "start_relative_gap_ms": 14.74048,
+          "end_relative_gap_ms": 65.655478
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218765197883928,
+          "end_ns": 218765263405000,
+          "gap_overlap_ms": 65.521072,
+          "start_relative_gap_ms": 66.058566,
+          "end_relative_gap_ms": 131.579638
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218765203320826,
+          "end_ns": 218765261765989,
+          "gap_overlap_ms": 58.445163,
+          "start_relative_gap_ms": 71.495464,
+          "end_relative_gap_ms": 129.940627
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218765263423179,
+          "end_ns": 218765306029686,
+          "gap_overlap_ms": 0.511905,
+          "start_relative_gap_ms": 131.597817,
+          "end_relative_gap_ms": 174.204324
+        },
+        {
+          "unit": "batch",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218765263841457,
+          "end_ns": 218765305842931,
+          "gap_overlap_ms": 0.093627,
+          "start_relative_gap_ms": 132.016095,
+          "end_relative_gap_ms": 174.017569
+        }
+      ],
+      "raw_snapshot_ms": 7.967872
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-2",
+      "actor": 0,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 68.820872,
+      "covered_union_ms": 64.54256,
+      "uncovered_ms": 4.278312,
+      "by_unit_union_ms": {
+        "decode": 64.54256
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "session": "5e21a30eece0",
+          "position": 35,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218813502470854,
+          "end_ns": 218813566538359,
+          "gap_overlap_ms": 64.067505,
+          "start_relative_gap_ms": 4.254082,
+          "end_relative_gap_ms": 68.321587
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "5e21a12607c0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218813566562589,
+          "end_ns": 218813607843235,
+          "gap_overlap_ms": 0.475055,
+          "start_relative_gap_ms": 68.345817,
+          "end_relative_gap_ms": 109.626463
+        }
+      ],
+      "raw_snapshot_ms": 7.179924999999999
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-2",
+      "actor": 0,
+      "interval": "maximum",
+      "event_index": 4,
+      "gap_ms": 114.059031,
+      "covered_union_ms": 113.997273,
+      "uncovered_ms": 0.06175799999999754,
+      "by_unit_union_ms": {
+        "decode": 40.684644,
+        "engine": 73.312629,
+        "batch": 56.015176
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "5e21a12607c0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218813566562589,
+          "end_ns": 218813607843235,
+          "gap_overlap_ms": 40.684644,
+          "start_relative_gap_ms": -0.596002,
+          "end_relative_gap_ms": 40.684644
+        },
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218813607866814,
+          "end_ns": 218813680609690,
+          "gap_overlap_ms": 72.742876,
+          "start_relative_gap_ms": 40.708223,
+          "end_relative_gap_ms": 113.451099
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218813624265154,
+          "end_ns": 218813680280330,
+          "gap_overlap_ms": 56.015176,
+          "start_relative_gap_ms": 57.106563,
+          "end_relative_gap_ms": 113.121739
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218813680647869,
+          "end_ns": 218813758563450,
+          "gap_overlap_ms": 0.569753,
+          "start_relative_gap_ms": 113.489278,
+          "end_relative_gap_ms": 191.404859
+        }
+      ],
+      "raw_snapshot_ms": 7.179924999999999
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-2",
+      "actor": 1,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 109.708181,
+      "covered_union_ms": 105.551105,
+      "uncovered_ms": 4.157075999999989,
+      "by_unit_union_ms": {
+        "decode": 105.348151,
+        "engine": 0.202954
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "session": "5e21a30eece0",
+          "position": 35,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218813502470854,
+          "end_ns": 218813566538359,
+          "gap_overlap_ms": 64.067505,
+          "start_relative_gap_ms": 4.109267,
+          "end_relative_gap_ms": 68.176772
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "5e21a12607c0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218813566562589,
+          "end_ns": 218813607843235,
+          "gap_overlap_ms": 41.280646,
+          "start_relative_gap_ms": 68.201002,
+          "end_relative_gap_ms": 109.481648
+        },
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218813607866814,
+          "end_ns": 218813680609690,
+          "gap_overlap_ms": 0.202954,
+          "start_relative_gap_ms": 109.505227,
+          "end_relative_gap_ms": 182.248103
+        }
+      ],
+      "raw_snapshot_ms": 70.975989
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-2",
+      "actor": 1,
+      "interval": "maximum",
+      "event_index": 0,
+      "gap_ms": 109.708181,
+      "covered_union_ms": 105.551105,
+      "uncovered_ms": 4.157075999999989,
+      "by_unit_union_ms": {
+        "decode": 105.348151,
+        "engine": 0.202954
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "session": "5e21a30eece0",
+          "position": 35,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218813502470854,
+          "end_ns": 218813566538359,
+          "gap_overlap_ms": 64.067505,
+          "start_relative_gap_ms": 4.109267,
+          "end_relative_gap_ms": 68.176772
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "5e21a12607c0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 218813566562589,
+          "end_ns": 218813607843235,
+          "gap_overlap_ms": 41.280646,
+          "start_relative_gap_ms": 68.201002,
+          "end_relative_gap_ms": 109.481648
+        },
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218813607866814,
+          "end_ns": 218813680609690,
+          "gap_overlap_ms": 0.202954,
+          "start_relative_gap_ms": 109.505227,
+          "end_relative_gap_ms": 182.248103
+        }
+      ],
+      "raw_snapshot_ms": 70.975989
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-3",
+      "actor": 0,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 65.136283,
+      "covered_union_ms": 60.846142,
+      "uncovered_ms": 4.2901410000000055,
+      "by_unit_union_ms": {
+        "engine": 60.846142,
+        "batch": 48.476891
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218862382974247,
+          "end_ns": 218862443506408,
+          "gap_overlap_ms": 60.532161,
+          "start_relative_gap_ms": 4.248803,
+          "end_relative_gap_ms": 64.780964
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218862394622849,
+          "end_ns": 218862443099740,
+          "gap_overlap_ms": 48.476891,
+          "start_relative_gap_ms": 15.897405,
+          "end_relative_gap_ms": 64.374296
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218862443547746,
+          "end_ns": 218862509018830,
+          "gap_overlap_ms": 0.313981,
+          "start_relative_gap_ms": 64.822302,
+          "end_relative_gap_ms": 130.293386
+        }
+      ],
+      "raw_snapshot_ms": 7.543023999999999
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-3",
+      "actor": 0,
+      "interval": "maximum",
+      "event_index": 104,
+      "gap_ms": 81.133265,
+      "covered_union_ms": 0.0,
+      "uncovered_ms": 81.133265,
+      "by_unit_union_ms": {},
+      "spans": [],
+      "raw_snapshot_ms": 7.543023999999999
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-3",
+      "actor": 1,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 130.712113,
+      "covered_union_ms": 126.528499,
+      "uncovered_ms": 4.1836139999999915,
+      "by_unit_union_ms": {
+        "engine": 126.528499,
+        "batch": 106.954073
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218862382974247,
+          "end_ns": 218862443506408,
+          "gap_overlap_ms": 60.532161,
+          "start_relative_gap_ms": 4.113087,
+          "end_relative_gap_ms": 64.645248
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218862394622849,
+          "end_ns": 218862443099740,
+          "gap_overlap_ms": 48.476891,
+          "start_relative_gap_ms": 15.761689,
+          "end_relative_gap_ms": 64.23858
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218862443547746,
+          "end_ns": 218862509018830,
+          "gap_overlap_ms": 65.471084,
+          "start_relative_gap_ms": 64.686586,
+          "end_relative_gap_ms": 130.15767
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218862449024413,
+          "end_ns": 218862507423347,
+          "gap_overlap_ms": 58.398934,
+          "start_relative_gap_ms": 70.163253,
+          "end_relative_gap_ms": 128.562187
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218862509048019,
+          "end_ns": 218862551630286,
+          "gap_overlap_ms": 0.525254,
+          "start_relative_gap_ms": 130.186859,
+          "end_relative_gap_ms": 172.769126
+        },
+        {
+          "unit": "batch",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218862509495025,
+          "end_ns": 218862551428942,
+          "gap_overlap_ms": 0.078248,
+          "start_relative_gap_ms": 130.633865,
+          "end_relative_gap_ms": 172.567782
+        }
+      ],
+      "raw_snapshot_ms": 7.158465
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-3",
+      "actor": 1,
+      "interval": "maximum",
+      "event_index": 0,
+      "gap_ms": 130.712113,
+      "covered_union_ms": 126.528499,
+      "uncovered_ms": 4.1836139999999915,
+      "by_unit_union_ms": {
+        "engine": 126.528499,
+        "batch": 106.954073
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218862382974247,
+          "end_ns": 218862443506408,
+          "gap_overlap_ms": 60.532161,
+          "start_relative_gap_ms": 4.113087,
+          "end_relative_gap_ms": 64.645248
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218862394622849,
+          "end_ns": 218862443099740,
+          "gap_overlap_ms": 48.476891,
+          "start_relative_gap_ms": 15.761689,
+          "end_relative_gap_ms": 64.23858
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218862443547746,
+          "end_ns": 218862509018830,
+          "gap_overlap_ms": 65.471084,
+          "start_relative_gap_ms": 64.686586,
+          "end_relative_gap_ms": 130.15767
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218862449024413,
+          "end_ns": 218862507423347,
+          "gap_overlap_ms": 58.398934,
+          "start_relative_gap_ms": 70.163253,
+          "end_relative_gap_ms": 128.562187
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218862509048019,
+          "end_ns": 218862551630286,
+          "gap_overlap_ms": 0.525254,
+          "start_relative_gap_ms": 130.186859,
+          "end_relative_gap_ms": 172.769126
+        },
+        {
+          "unit": "batch",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218862509495025,
+          "end_ns": 218862551428942,
+          "gap_overlap_ms": 0.078248,
+          "start_relative_gap_ms": 130.633865,
+          "end_relative_gap_ms": 172.567782
+        }
+      ],
+      "raw_snapshot_ms": 7.158465
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-4",
+      "actor": 0,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 63.855581,
+      "covered_union_ms": 59.409974,
+      "uncovered_ms": 4.4456070000000025,
+      "by_unit_union_ms": {
+        "engine": 59.409974,
+        "batch": 51.5096
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218911456215809,
+          "end_ns": 218911515359951,
+          "gap_overlap_ms": 59.144142,
+          "start_relative_gap_ms": 4.405588,
+          "end_relative_gap_ms": 63.54973
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218911463560060,
+          "end_ns": 218911515069660,
+          "gap_overlap_ms": 51.5096,
+          "start_relative_gap_ms": 11.749839,
+          "end_relative_gap_ms": 63.259439
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218911515399970,
+          "end_ns": 218911580881343,
+          "gap_overlap_ms": 0.265832,
+          "start_relative_gap_ms": 63.589749,
+          "end_relative_gap_ms": 129.071122
+        }
+      ],
+      "raw_snapshot_ms": 7.659051
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-4",
+      "actor": 0,
+      "interval": "maximum",
+      "event_index": 104,
+      "gap_ms": 80.451926,
+      "covered_union_ms": 0.0,
+      "uncovered_ms": 80.451926,
+      "by_unit_union_ms": {},
+      "spans": [],
+      "raw_snapshot_ms": 7.659051
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-4",
+      "actor": 1,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 129.255956,
+      "covered_union_ms": 124.997904,
+      "uncovered_ms": 4.258051999999992,
+      "by_unit_union_ms": {
+        "engine": 124.997904,
+        "batch": 109.652642
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218911456215809,
+          "end_ns": 218911515359951,
+          "gap_overlap_ms": 59.144142,
+          "start_relative_gap_ms": 4.163045,
+          "end_relative_gap_ms": 63.307187
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218911463560060,
+          "end_ns": 218911515069660,
+          "gap_overlap_ms": 51.5096,
+          "start_relative_gap_ms": 11.507296,
+          "end_relative_gap_ms": 63.016896
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218911515399970,
+          "end_ns": 218911580881343,
+          "gap_overlap_ms": 65.481373,
+          "start_relative_gap_ms": 63.347206,
+          "end_relative_gap_ms": 128.828579
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218911520940405,
+          "end_ns": 218911579083447,
+          "gap_overlap_ms": 58.143042,
+          "start_relative_gap_ms": 68.887641,
+          "end_relative_gap_ms": 127.030683
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218911580936331,
+          "end_ns": 218911623497739,
+          "gap_overlap_ms": 0.372389,
+          "start_relative_gap_ms": 128.883567,
+          "end_relative_gap_ms": 171.444975
+        }
+      ],
+      "raw_snapshot_ms": 7.0084
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-4",
+      "actor": 1,
+      "interval": "maximum",
+      "event_index": 0,
+      "gap_ms": 129.255956,
+      "covered_union_ms": 124.997904,
+      "uncovered_ms": 4.258051999999992,
+      "by_unit_union_ms": {
+        "engine": 124.997904,
+        "batch": 109.652642
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218911456215809,
+          "end_ns": 218911515359951,
+          "gap_overlap_ms": 59.144142,
+          "start_relative_gap_ms": 4.163045,
+          "end_relative_gap_ms": 63.307187
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218911463560060,
+          "end_ns": 218911515069660,
+          "gap_overlap_ms": 51.5096,
+          "start_relative_gap_ms": 11.507296,
+          "end_relative_gap_ms": 63.016896
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218911515399970,
+          "end_ns": 218911580881343,
+          "gap_overlap_ms": 65.481373,
+          "start_relative_gap_ms": 63.347206,
+          "end_relative_gap_ms": 128.828579
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218911520940405,
+          "end_ns": 218911579083447,
+          "gap_overlap_ms": 58.143042,
+          "start_relative_gap_ms": 68.887641,
+          "end_relative_gap_ms": 127.030683
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218911580936331,
+          "end_ns": 218911623497739,
+          "gap_overlap_ms": 0.372389,
+          "start_relative_gap_ms": 128.883567,
+          "end_relative_gap_ms": 171.444975
+        }
+      ],
+      "raw_snapshot_ms": 7.0084
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-5",
+      "actor": 0,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 72.499593,
+      "covered_union_ms": 66.011368,
+      "uncovered_ms": 6.488225,
+      "by_unit_union_ms": {
+        "engine": 66.011368,
+        "batch": 50.88597
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218960980713084,
+          "end_ns": 218961046429020,
+          "gap_overlap_ms": 65.715936,
+          "start_relative_gap_ms": 6.447907,
+          "end_relative_gap_ms": 72.163843
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218960995114843,
+          "end_ns": 218961046000813,
+          "gap_overlap_ms": 50.88597,
+          "start_relative_gap_ms": 20.849666,
+          "end_relative_gap_ms": 71.735636
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218961046469338,
+          "end_ns": 218961112272642,
+          "gap_overlap_ms": 0.295432,
+          "start_relative_gap_ms": 72.204161,
+          "end_relative_gap_ms": 138.007465
+        }
+      ],
+      "raw_snapshot_ms": 9.246863000000001
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-5",
+      "actor": 0,
+      "interval": "maximum",
+      "event_index": 104,
+      "gap_ms": 81.450185,
+      "covered_union_ms": 0.0,
+      "uncovered_ms": 81.450185,
+      "by_unit_union_ms": {},
+      "spans": [],
+      "raw_snapshot_ms": 9.246863000000001
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-5",
+      "actor": 1,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 138.002525,
+      "covered_union_ms": 131.815501,
+      "uncovered_ms": 6.18702399999998,
+      "by_unit_union_ms": {
+        "engine": 131.815501,
+        "batch": 109.597145
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218960980713084,
+          "end_ns": 218961046429020,
+          "gap_overlap_ms": 65.715936,
+          "start_relative_gap_ms": 6.115477,
+          "end_relative_gap_ms": 71.831413
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218960995114843,
+          "end_ns": 218961046000813,
+          "gap_overlap_ms": 50.88597,
+          "start_relative_gap_ms": 20.517236,
+          "end_relative_gap_ms": 71.403206
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218961046469338,
+          "end_ns": 218961112272642,
+          "gap_overlap_ms": 65.803304,
+          "start_relative_gap_ms": 71.871731,
+          "end_relative_gap_ms": 137.675035
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218961051907226,
+          "end_ns": 218961110618401,
+          "gap_overlap_ms": 58.711175,
+          "start_relative_gap_ms": 77.309619,
+          "end_relative_gap_ms": 136.020794
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218961112303871,
+          "end_ns": 218961154707893,
+          "gap_overlap_ms": 0.296261,
+          "start_relative_gap_ms": 137.706264,
+          "end_relative_gap_ms": 180.110286
+        }
+      ],
+      "raw_snapshot_ms": 8.941933
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-5",
+      "actor": 1,
+      "interval": "maximum",
+      "event_index": 0,
+      "gap_ms": 138.002525,
+      "covered_union_ms": 131.815501,
+      "uncovered_ms": 6.18702399999998,
+      "by_unit_union_ms": {
+        "engine": 131.815501,
+        "batch": 109.597145
+      },
+      "spans": [
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218960980713084,
+          "end_ns": 218961046429020,
+          "gap_overlap_ms": 65.715936,
+          "start_relative_gap_ms": 6.115477,
+          "end_relative_gap_ms": 71.831413
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 218960995114843,
+          "end_ns": 218961046000813,
+          "gap_overlap_ms": 50.88597,
+          "start_relative_gap_ms": 20.517236,
+          "end_relative_gap_ms": 71.403206
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218961046469338,
+          "end_ns": 218961112272642,
+          "gap_overlap_ms": 65.803304,
+          "start_relative_gap_ms": 71.871731,
+          "end_relative_gap_ms": 137.675035
+        },
+        {
+          "unit": "batch",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 218961051907226,
+          "end_ns": 218961110618401,
+          "gap_overlap_ms": 58.711175,
+          "start_relative_gap_ms": 77.309619,
+          "end_relative_gap_ms": 136.020794
+        },
+        {
+          "unit": "engine",
+          "call": 2,
+          "kind": "stage",
+          "start_ns": 218961112303871,
+          "end_ns": 218961154707893,
+          "gap_overlap_ms": 0.296261,
+          "start_relative_gap_ms": 137.706264,
+          "end_relative_gap_ms": 180.110286
+        }
+      ],
+      "raw_snapshot_ms": 8.941933
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-6",
+      "actor": 0,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 67.990378,
+      "covered_union_ms": 65.689257,
+      "uncovered_ms": 2.301121000000009,
+      "by_unit_union_ms": {
+        "decode": 65.689257
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "session": "5cf606a311b0",
+          "position": 35,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 219011025031872,
+          "end_ns": 219011090550824,
+          "gap_overlap_ms": 65.518952,
+          "start_relative_gap_ms": 2.269452,
+          "end_relative_gap_ms": 67.788404
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "5cf604bc7cd0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 219011090582493,
+          "end_ns": 219011132068943,
+          "gap_overlap_ms": 0.170305,
+          "start_relative_gap_ms": 67.820073,
+          "end_relative_gap_ms": 109.306523
+        }
+      ],
+      "raw_snapshot_ms": 5.709979000000001
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-6",
+      "actor": 0,
+      "interval": "maximum",
+      "event_index": 4,
+      "gap_ms": 112.698782,
+      "covered_union_ms": 112.611804,
+      "uncovered_ms": 0.08697799999998779,
+      "by_unit_union_ms": {
+        "decode": 41.210339,
+        "engine": 71.401465,
+        "batch": 53.575909
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "5cf604bc7cd0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 219011090582493,
+          "end_ns": 219011132068943,
+          "gap_overlap_ms": 41.210339,
+          "start_relative_gap_ms": -0.276111,
+          "end_relative_gap_ms": 41.210339
+        },
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 219011132105642,
+          "end_ns": 219011203359672,
+          "gap_overlap_ms": 71.25403,
+          "start_relative_gap_ms": 41.247038,
+          "end_relative_gap_ms": 112.501068
+        },
+        {
+          "unit": "batch",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 219011149230510,
+          "end_ns": 219011202806419,
+          "gap_overlap_ms": 53.575909,
+          "start_relative_gap_ms": 58.371906,
+          "end_relative_gap_ms": 111.947815
+        },
+        {
+          "unit": "engine",
+          "call": 1,
+          "kind": "stage",
+          "start_ns": 219011203409951,
+          "end_ns": 219011281261774,
+          "gap_overlap_ms": 0.147435,
+          "start_relative_gap_ms": 112.551347,
+          "end_relative_gap_ms": 190.40317
+        }
+      ],
+      "raw_snapshot_ms": 5.709979000000001
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-6",
+      "actor": 1,
+      "interval": "first",
+      "event_index": 0,
+      "gap_ms": 109.342942,
+      "covered_union_ms": 107.164407,
+      "uncovered_ms": 2.1785349999999966,
+      "by_unit_union_ms": {
+        "decode": 107.005402,
+        "engine": 0.159005
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "session": "5cf606a311b0",
+          "position": 35,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 219011025031872,
+          "end_ns": 219011090550824,
+          "gap_overlap_ms": 65.518952,
+          "start_relative_gap_ms": 2.110167,
+          "end_relative_gap_ms": 67.629119
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "5cf604bc7cd0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 219011090582493,
+          "end_ns": 219011132068943,
+          "gap_overlap_ms": 41.48645,
+          "start_relative_gap_ms": 67.660788,
+          "end_relative_gap_ms": 109.147238
+        },
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 219011132105642,
+          "end_ns": 219011203359672,
+          "gap_overlap_ms": 0.159005,
+          "start_relative_gap_ms": 109.183937,
+          "end_relative_gap_ms": 180.437967
+        }
+      ],
+      "raw_snapshot_ms": 70.71905600000001
+    },
+    {
+      "lab": "upstream-ffn-hc-first-gap-repro-v1",
+      "arm": "baseline-6",
+      "actor": 1,
+      "interval": "maximum",
+      "event_index": 0,
+      "gap_ms": 109.342942,
+      "covered_union_ms": 107.164407,
+      "uncovered_ms": 2.1785349999999966,
+      "by_unit_union_ms": {
+        "decode": 107.005402,
+        "engine": 0.159005
+      },
+      "spans": [
+        {
+          "unit": "decode",
+          "call": 192,
+          "session": "5cf606a311b0",
+          "position": 35,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 219011025031872,
+          "end_ns": 219011090550824,
+          "gap_overlap_ms": 65.518952,
+          "start_relative_gap_ms": 2.110167,
+          "end_relative_gap_ms": 67.629119
+        },
+        {
+          "unit": "decode",
+          "call": 193,
+          "session": "5cf604bc7cd0",
+          "position": 30,
+          "tokens": 128,
+          "kind": "solo",
+          "start_ns": 219011090582493,
+          "end_ns": 219011132068943,
+          "gap_overlap_ms": 41.48645,
+          "start_relative_gap_ms": 67.660788,
+          "end_relative_gap_ms": 109.147238
+        },
+        {
+          "unit": "engine",
+          "call": 0,
+          "kind": "stage",
+          "start_ns": 219011132105642,
+          "end_ns": 219011203359672,
+          "gap_overlap_ms": 0.159005,
+          "start_relative_gap_ms": 109.183937,
+          "end_relative_gap_ms": 180.437967
+        }
+      ],
+      "raw_snapshot_ms": 70.71905600000001
+    }
+  ],
+  "scope": "Posthoc read-only analysis of all actors first/maximum content gaps from existing diagnostic traces. Spans nest; union avoids doublecount. GPU completion waits include queuedwork; uncovered time is not proof ofidle orI/O. Doesnotattributeoriginaluninstrumentedcandidateflag or estimateperformancegain."
+}

@@ -1,0 +1,7 @@
+baseline {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30456592, "elapsed_seconds": 51.872185539017664, "boot_unchanged": true}
+candidate {"status": "failed", "exits": {"worker": 1, "server": 0}, "minimum_available_kib": 30604520, "elapsed_seconds": 43.16031753399875, "boot_unchanged": true}
+Traceback (most recent call last):
+  File "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/first-output-publication-trace-v1/run.py", line 117, in <module>
+    assert worker.returncode == 0, f'Request worker exited {worker.returncode}'
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Request worker exited 1

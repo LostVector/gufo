@@ -121,3 +121,15 @@ remain as historical observations.
 The next review decision is about the small common-code dispatch change and its
 correctness. Confirmed end-to-end acceleration, resolved cold first-gap latency,
 wider canonical concurrency and default adoption remain unproven.
+
+## Publication-path follow-up
+
+The [actual publication trace](first-output-publication.md) now maps eight
+controlled-arrival histories through returned selections, preview suppression,
+queueing and consumer delivery. New selections publish within0.002–0.035ms;
+first nonempty pieces reach their consumer within0.012–0.422ms. Observed long
+gaps include peer prefill or multiple useful decode calls; one first result
+contains only the already-published preview and adds no new text. This does not
+attribute the original untraced108.8ms candidate flag or establish a serving
+gain. Five additional diagnostic phase flags/eight work comparisons remain
+visible in the follow-up. The maintained branch and both drafts remain unchanged.

@@ -1,0 +1,65 @@
+from pathlib import Path
+import fcntl,hashlib,json,os,shlex,shutil,subprocess
+lab=Path(__file__).resolve().parent;root=lab.parents[1]
+lock=(root/'overnight/results/model-matrix.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+assert not(lab/'build-protocol.json').exists()
+prior=root/'tp-cache-retention/upstream-ffn-hc-first-gap-trace-v2';parent=json.loads((prior/'build-protocol.json').read_text())
+helper=r'''
+#include <atomic>
+#include <chrono>
+#include <cstdio>
+#include <cstdint>
+namespace {
+void StrixScheduleEvent(const char* event, std::uint64_t request, std::uint64_t a=0, std::uint64_t b=0, std::uint64_t c=0) {
+ static std::atomic<std::uint64_t> count{0};
+ if (count.fetch_add(1,std::memory_order_relaxed)>=8192) return;
+ auto now=std::chrono::steady_clock::now();
+ std::fprintf(stderr,"SCHED_EVENT event=%s request=%llu t_ns=%lld a=%llu b=%llu c=%llu\n",event,(unsigned long long)request,(long long)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count(),(unsigned long long)a,(unsigned long long)b,(unsigned long long)c);
+}
+struct StrixScheduleSpan {
+ bool active; const char* name; std::uint64_t request,call;
+ StrixScheduleSpan(bool enabled,const char* label,std::uint64_t id,std::uint64_t a=0,std::uint64_t b=0):active(enabled),name(label),request(id),call(0) {
+  static std::atomic<std::uint64_t> count{0};
+  if(active){call=count.fetch_add(1,std::memory_order_relaxed);Emit("entry",a,b);}
+ }
+ void Emit(const char* stage,std::uint64_t a=0,std::uint64_t b=0)const{
+  const auto now=std::chrono::steady_clock::now();
+  std::fprintf(stderr,"SCHED_SPAN unit=%s request=%llu call=%llu stage=%s t_ns=%lld a=%llu b=%llu\n",name,(unsigned long long)request,(unsigned long long)call,stage,(long long)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count(),(unsigned long long)a,(unsigned long long)b);
+ }
+ ~StrixScheduleSpan(){if(active)Emit("leave");}
+};
+}
+'''
+def replace(s,a,b):
+ assert s.count(a)==1,(a[:100],s.count(a));return s.replace(a,b)
+records={};env=os.environ.copy();env.update(parent['environment'])
+for role,stem in [('baseline','upstream-ffn-hc-baseline'),('candidate','upstream-ffn-hc')]:
+ out=lab/role;out.mkdir();src=root/'tp-cache-retention'/(stem+'-worktree');build=root/'tp-cache-retention'/(stem+'-release-build')
+ s=(src/'src/cli/serve/text_generation_scheduler.cpp').read_text()
+ s=replace(s,'    const DecodedLogprobs* logprobs = nullptr) {\n  if (!request->publish_token_pieces)', '    const DecodedLogprobs* logprobs = nullptr) {\n  const auto trace_piece_size = text.size();\n  if (!request->publish_token_pieces)')
+ s=replace(s,'  if (reason.empty()) {\n    request->output_condition.notify_one();','  if (reason.empty()) {\n    if (request->result.tokens.size() <= 16) StrixScheduleEvent("piece_queued",request->id,trace_piece_size,request->result.tokens.size());\n    request->output_condition.notify_one();')
+ s=replace(s,'                   bool decoder_runnable, bool peer_waiting = false) {\n    try {','                   bool decoder_runnable, bool peer_waiting = false) {\n    StrixScheduleSpan trace(true,"prefill",request->id,request->runner_request.prompt_tokens(),decoder_runnable);\n    try {')
+ s=replace(s,'      const TextDecodeSelection& selection) {\n    const auto now = Clock::now();', '      const TextDecodeSelection& selection) {\n    if(request->result.tokens.size()<16) StrixScheduleEvent("publish_selection",request->id,selection.token,selection.piece.size(),request->result.tokens.size());\n    const auto now = Clock::now();')
+ s=replace(s,'  void StepMultiTokenDecode(const std::shared_ptr<ScheduledRequest>& request) {\n','  void StepMultiTokenDecode(const std::shared_ptr<ScheduledRequest>& request) {\n    StrixScheduleSpan trace(request->result.tokens.size()<16,"single_decode",request->id,request->result.tokens.size());\n')
+ s=replace(s,'      const auto step = request->runner_request.DecodeStep(remaining);\n','      const auto step = request->runner_request.DecodeStep(remaining);\n      if(request->result.tokens.size()<16) StrixScheduleEvent("single_return",request->id,step.selections.size(),request->result.tokens.size(),request->preview_token.has_value());\n')
+ s=replace(s,'  bool PrepareFirstSnapshot(const std::shared_ptr<ScheduledRequest>& request) {\n','  bool PrepareFirstSnapshot(const std::shared_ptr<ScheduledRequest>& request) {\n    StrixScheduleSpan trace(request->result.tokens.size()<16,"prepare_snapshot",request->id,request->result.tokens.size());\n')
+ s=replace(s,'                               const TextDecodeSelection& selection) {\n    if (request->preview_token)', '                               const TextDecodeSelection& selection) {\n    if(request->result.tokens.size()<16) StrixScheduleEvent("decoded_selection",request->id,selection.token,request->preview_token.has_value(),selection.piece.size());\n    if (request->preview_token)')
+ # Scope every batch-specific insertion to its actual function, preserving all original statements.
+ lo=s.index('  void StepMultiTokenDecodeBatch(');hi=s.index('\n  void ',lo+10);part=s[lo:hi]
+ part=replace(part,'    consecutive_active_prefill_chunks = 0;','    StrixScheduleSpan trace(true,"batch_decode",0,requests.size());\n    consecutive_active_prefill_chunks = 0;')
+ part=replace(part,'      steps = runner_pool->DecodeBatch(runner_requests, max_tokens, plan);','      StrixScheduleEvent("runner_batch_begin",0,prepared.size());\n      steps = runner_pool->DecodeBatch(runner_requests, max_tokens, plan);\n      StrixScheduleEvent("runner_batch_end",0,steps.size());')
+ part=replace(part,'      const auto& step = steps[index];','      const auto& step = steps[index];\n      if(item.request->result.tokens.size()<16) StrixScheduleEvent("batch_row_ready",item.request->id,step.selections.size(),item.request->result.tokens.size(),item.request->preview_token.has_value());')
+ s=s[:lo]+part+s[hi:]
+ s=replace(s,'  Result result;\n  std::exception_ptr scheduler_failure;', '  Result result;\n  std::size_t trace_delivered = 0;\n  std::exception_ptr scheduler_failure;')
+ s=replace(s,'    if (has_piece && deliver_pieces && on_token) {\n      deliver(on_token,', '    if (has_piece && deliver_pieces && on_token) {\n      if(trace_delivered++<16) StrixScheduleEvent("consumer_deliver",impl_->request->id,piece.text.size(),trace_delivered);\n      deliver(on_token,')
+ source=out/'text_generation_scheduler.cpp';source.write_text(helper+s)
+ entries=json.loads((build/'compile_commands.json').read_text());entry=next(e for e in entries if e['file'].endswith('/serve/text_generation_scheduler.cpp'))
+ command=shlex.split(entry['command']);command[command.index('-o')+1]=str(out/'text_generation_scheduler.cpp.o');command[-1]=str(source);assert '-DNDEBUG'in command
+ archive=build/'libgufo_serving.a';assert archive.exists();copy=out/'diagnostic-serving.a';shutil.copy2(archive,copy)
+ link=list(parent['records'][role]['commands'][-1]);assert 'libgufo_serving.a'in link;link=[str(copy)if x=='libgufo_serving.a'else x for x in link];link[link.index('-o')+1]=str(out/'gufo')
+ commands=[command,['ar','r',str(copy),str(out/'text_generation_scheduler.cpp.o')],link]
+ with(out/'build.log').open('w')as log:
+  for cmd in commands:subprocess.run(cmd,cwd=build,env=env,check=True,stdout=log,stderr=subprocess.STDOUT)
+ members=subprocess.check_output(['ar','t',str(archive)],text=True).splitlines();assert subprocess.check_output(['ar','t',str(copy)],text=True).splitlines()==members;changed=[m for m in members if subprocess.check_output(['ar','p',str(archive),m])!=subprocess.check_output(['ar','p',str(copy),m])];assert changed==['text_generation_scheduler.cpp.o'],changed
+ records[role]={'source':parent['records'][role]['source'],'binary_sha256':hashlib.sha256((out/'gufo').read_bytes()).hexdigest(),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'commands':commands,'cwd':str(build),'changed_serving_members':changed,'parent_engine_batch_instrumentation':parent['records'][role]}
+(lab/'build-protocol.json').write_text(json.dumps({'records':records,'environment':parent['environment'],'scope':'Diagnostic scheduler publication/preview/return/consumer chronology only, plus priorv2 engine/batch/serial probes. Own matching canonical release objects/API, no source/math/wait/plan overrides or production adoption. Logging may affect arrivals/controllertiming.'},indent=2)+'\n');print('Publication diagnostics built; only serving scheduler object added to priorv2 diagnostic objects.',flush=True)

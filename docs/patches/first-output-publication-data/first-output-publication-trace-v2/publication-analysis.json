@@ -1,0 +1,2458 @@
+{
+  "inputs_sha256": {
+    "tp-cache-retention/first-output-publication-trace-v1/baseline-server.stderr": "80b031ee494f0abd52a66c074b45293cc3ced2f8b9eeac03f873a6147d927975",
+    "tp-cache-retention/first-output-publication-trace-v1/baseline-requests.jsonl": "4600f677a6f5ab94637a65e31a2e67818476ef53d3a066c3cfafacedca279f50",
+    "tp-cache-retention/first-output-publication-trace-v2/candidate-server.stderr": "1d25323980f6ad7dc333d43bff7237069f58d8d4ad6fc08dc6fafe2c93d8eb60",
+    "tp-cache-retention/first-output-publication-trace-v2/candidate-requests.jsonl": "c518f9538c6257311fd31782deb7568fd7d63072c81178d42cb21ed7b0aebfdf"
+  },
+  "records": [
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 0,
+      "request": 6,
+      "client_first_gap_ms": 68.451022,
+      "server_piece_gap_ms": 68.458181,
+      "client_minus_server_gap_ms": -0.00715900000000147,
+      "queue_to_consumer_first_two_ms": [
+        0.016459,
+        0.01249
+      ],
+      "covered_work_union_ms": 63.974025,
+      "uncovered_ms": 4.484155999999999,
+      "overlapping_work": [
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 93,
+          "start": 220150797726606,
+          "end": 220150798015507,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 0.246912,
+          "start_relative_first_piece_ms": -0.041989
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 6,
+          "call": 94,
+          "start": 220150797728966,
+          "end": 220150797881451,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.112856,
+          "start_relative_first_piece_ms": -0.039629
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 7,
+          "call": 95,
+          "start": 220150797884891,
+          "end": 220150797995428,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.110537,
+          "start_relative_first_piece_ms": 0.116296
+        },
+        {
+          "unit": "single_decode",
+          "request": 6,
+          "call": 96,
+          "start": 220150802252751,
+          "end": 220150866245036,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 63.974025,
+          "start_relative_first_piece_ms": 4.484156
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 6,
+          "call": 97,
+          "start": 220150802257200,
+          "end": 220150802262680,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00548,
+          "start_relative_first_piece_ms": 4.488605
+        }
+      ],
+      "ready_steps_during_gap": [
+        {
+          "event": "single_return",
+          "t_ns": 220150866221467,
+          "returned_selections": 5,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.00372,
+          "after_first_piece_ms": 68.452872
+        }
+      ],
+      "all_initial_ready_steps": [
+        {
+          "event": "single_return",
+          "t_ns": 220150866221467,
+          "returned_selections": 5,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.00372,
+          "after_first_piece_ms": 68.452872
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220150976665693,
+          "returned_selections": 2,
+          "published_tokens_before_step": 5,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.004479,
+          "after_first_piece_ms": 178.897098
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151054691348,
+          "returned_selections": 4,
+          "published_tokens_before_step": 7,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.00242,
+          "after_first_piece_ms": 256.922753
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151099150968,
+          "returned_selections": 1,
+          "published_tokens_before_step": 11,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00223,
+          "after_first_piece_ms": 301.382373
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151142573939,
+          "returned_selections": 1,
+          "published_tokens_before_step": 12,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00221,
+          "after_first_piece_ms": 344.805344
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151199460767,
+          "returned_selections": 2,
+          "published_tokens_before_step": 13,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00618,
+          "after_first_piece_ms": 401.692172
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151256818191,
+          "returned_selections": 2,
+          "published_tokens_before_step": 15,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00228,
+          "after_first_piece_ms": 459.049596
+        }
+      ],
+      "own_events_during_gap": [
+        {
+          "event": "consumer_deliver",
+          "request": 6,
+          "ns": 220150797785054,
+          "a": 3,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "single_return",
+          "request": 6,
+          "ns": 220150866221467,
+          "a": 5,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "decoded_selection",
+          "request": 6,
+          "ns": 220150866222707,
+          "a": 71093,
+          "b": 1,
+          "c": 3
+        },
+        {
+          "event": "decoded_selection",
+          "request": 6,
+          "ns": 220150866223977,
+          "a": 12305,
+          "b": 0,
+          "c": 6
+        },
+        {
+          "event": "publish_selection",
+          "request": 6,
+          "ns": 220150866225187,
+          "a": 12305,
+          "b": 6,
+          "c": 1
+        }
+      ]
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "client_first_gap_ms": 109.747557,
+      "server_piece_gap_ms": 109.775366,
+      "client_minus_server_gap_ms": -0.027809000000004858,
+      "queue_to_consumer_first_two_ms": [
+        0.027799,
+        0.027239
+      ],
+      "covered_work_union_ms": 105.444655,
+      "uncovered_ms": 4.330711000000008,
+      "overlapping_work": [
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 93,
+          "start": 220150797726606,
+          "end": 220150798015507,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 0.090677,
+          "start_relative_first_piece_ms": -0.198224
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 7,
+          "call": 95,
+          "start": 220150797884891,
+          "end": 220150797995428,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.070598,
+          "start_relative_first_piece_ms": -0.039939
+        },
+        {
+          "unit": "single_decode",
+          "request": 6,
+          "call": 96,
+          "start": 220150802252751,
+          "end": 220150866245036,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 63.992285,
+          "start_relative_first_piece_ms": 4.327921
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 6,
+          "call": 97,
+          "start": 220150802257200,
+          "end": 220150802262680,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00548,
+          "start_relative_first_piece_ms": 4.33237
+        },
+        {
+          "unit": "single_decode",
+          "request": 7,
+          "call": 98,
+          "start": 220150866247826,
+          "end": 220150907705506,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 41.45237,
+          "start_relative_first_piece_ms": 68.322996
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 7,
+          "call": 99,
+          "start": 220150866260125,
+          "end": 220150866263125,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.003,
+          "start_relative_first_piece_ms": 68.335295
+        }
+      ],
+      "ready_steps_during_gap": [
+        {
+          "event": "single_return",
+          "t_ns": 220150907693926,
+          "returned_selections": 2,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.004,
+          "after_first_piece_ms": 109.769096
+        }
+      ],
+      "all_initial_ready_steps": [
+        {
+          "event": "single_return",
+          "t_ns": 220150907693926,
+          "returned_selections": 2,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.004,
+          "after_first_piece_ms": 109.769096
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220150976684792,
+          "returned_selections": 3,
+          "published_tokens_before_step": 2,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.00741,
+          "after_first_piece_ms": 178.759962
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151054724347,
+          "returned_selections": 4,
+          "published_tokens_before_step": 5,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.00679,
+          "after_first_piece_ms": 256.799517
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151099158628,
+          "returned_selections": 1,
+          "published_tokens_before_step": 9,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00205,
+          "after_first_piece_ms": 301.233798
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151142581199,
+          "returned_selections": 1,
+          "published_tokens_before_step": 10,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00213,
+          "after_first_piece_ms": 344.656369
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151199475887,
+          "returned_selections": 2,
+          "published_tokens_before_step": 11,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00194,
+          "after_first_piece_ms": 401.551057
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151256827071,
+          "returned_selections": 1,
+          "published_tokens_before_step": 13,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00202,
+          "after_first_piece_ms": 458.902241
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151309479146,
+          "returned_selections": 1,
+          "published_tokens_before_step": 14,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00204,
+          "after_first_piece_ms": 511.554316
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220151363084262,
+          "returned_selections": 2,
+          "published_tokens_before_step": 15,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00284,
+          "after_first_piece_ms": 565.159432
+        }
+      ],
+      "own_events_during_gap": [
+        {
+          "event": "consumer_deliver",
+          "request": 7,
+          "ns": 220150797952629,
+          "a": 1,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "single_return",
+          "request": 7,
+          "ns": 220150907693926,
+          "a": 2,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "decoded_selection",
+          "request": 7,
+          "ns": 220150907695546,
+          "a": 2,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "decoded_selection",
+          "request": 7,
+          "ns": 220150907696686,
+          "a": 417,
+          "b": 0,
+          "c": 2
+        },
+        {
+          "event": "publish_selection",
+          "request": 7,
+          "ns": 220150907697926,
+          "a": 417,
+          "b": 2,
+          "c": 1
+        }
+      ]
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "client_first_gap_ms": 198.718855,
+      "server_piece_gap_ms": 198.634657,
+      "client_minus_server_gap_ms": 0.08419799999998645,
+      "queue_to_consumer_first_two_ms": [
+        0.033339,
+        0.032149
+      ],
+      "covered_work_union_ms": 195.651796,
+      "uncovered_ms": 2.982861000000014,
+      "overlapping_work": [
+        {
+          "unit": "single_decode",
+          "request": 10,
+          "call": 187,
+          "start": 220159932218177,
+          "end": 220159932353253,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.082837,
+          "start_relative_first_piece_ms": -0.052239
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 188,
+          "start": 220159932220337,
+          "end": 220159932351373,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.080957,
+          "start_relative_first_piece_ms": -0.050079
+        },
+        {
+          "unit": "prefill",
+          "request": 11,
+          "call": 189,
+          "start": 220159935138310,
+          "end": 220160065367764,
+          "a": 30,
+          "b": 0,
+          "overlap_ms": 130.229454,
+          "start_relative_first_piece_ms": 2.867894
+        },
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 190,
+          "start": 220160065373534,
+          "end": 220160130923963,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 65.531539,
+          "start_relative_first_piece_ms": 133.103118
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 11,
+          "call": 191,
+          "start": 220160065375984,
+          "end": 220160065554018,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.178034,
+          "start_relative_first_piece_ms": 133.105568
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 192,
+          "start": 220160065556678,
+          "end": 220160065563818,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00714,
+          "start_relative_first_piece_ms": 133.286262
+        },
+        {
+          "unit": "single_decode",
+          "request": 10,
+          "call": 193,
+          "start": 220160065565568,
+          "end": 220160130921883,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 65.339505,
+          "start_relative_first_piece_ms": 133.295152
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 194,
+          "start": 220160065567168,
+          "end": 220160065568708,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00154,
+          "start_relative_first_piece_ms": 133.296752
+        }
+      ],
+      "ready_steps_during_gap": [
+        {
+          "event": "single_return",
+          "t_ns": 220160130898143,
+          "returned_selections": 5,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.00488,
+          "after_first_piece_ms": 198.627727
+        }
+      ],
+      "all_initial_ready_steps": [
+        {
+          "event": "single_return",
+          "t_ns": 220160130898143,
+          "returned_selections": 5,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.00488,
+          "after_first_piece_ms": 198.627727
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160183887808,
+          "returned_selections": 2,
+          "published_tokens_before_step": 5,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00311,
+          "after_first_piece_ms": 251.617392
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160275780319,
+          "returned_selections": 7,
+          "published_tokens_before_step": 7,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 7,
+          "nonempty_novel_publications": 7,
+          "ready_to_first_publication_ms": 0.00223,
+          "after_first_piece_ms": 343.509903
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160388302003,
+          "returned_selections": 6,
+          "published_tokens_before_step": 14,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00229,
+          "after_first_piece_ms": 456.031587
+        }
+      ],
+      "own_events_during_gap": [
+        {
+          "event": "consumer_deliver",
+          "request": 10,
+          "ns": 220159932303755,
+          "a": 3,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "single_return",
+          "request": 10,
+          "ns": 220160130898143,
+          "a": 5,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "decoded_selection",
+          "request": 10,
+          "ns": 220160130899963,
+          "a": 71093,
+          "b": 1,
+          "c": 3
+        },
+        {
+          "event": "decoded_selection",
+          "request": 10,
+          "ns": 220160130901663,
+          "a": 12305,
+          "b": 0,
+          "c": 6
+        },
+        {
+          "event": "publish_selection",
+          "request": 10,
+          "ns": 220160130903023,
+          "a": 12305,
+          "b": 6,
+          "c": 1
+        }
+      ]
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "client_first_gap_ms": 210.064216,
+      "server_piece_gap_ms": 210.343637,
+      "client_minus_server_gap_ms": -0.27942100000001346,
+      "queue_to_consumer_first_two_ms": [
+        0.421908,
+        0.078258
+      ],
+      "covered_work_union_ms": 210.114365,
+      "uncovered_ms": 0.2292720000000088,
+      "overlapping_work": [
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 190,
+          "start": 220160065373534,
+          "end": 220160130923963,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 65.500271,
+          "start_relative_first_piece_ms": -0.050158
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 11,
+          "call": 191,
+          "start": 220160065375984,
+          "end": 220160065554018,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.130326,
+          "start_relative_first_piece_ms": -0.047708
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 192,
+          "start": 220160065556678,
+          "end": 220160065563818,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00714,
+          "start_relative_first_piece_ms": 0.132986
+        },
+        {
+          "unit": "single_decode",
+          "request": 10,
+          "call": 193,
+          "start": 220160065565568,
+          "end": 220160130921883,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 65.356315,
+          "start_relative_first_piece_ms": 0.141876
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 194,
+          "start": 220160065567168,
+          "end": 220160065568708,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00154,
+          "start_relative_first_piece_ms": 0.143476
+        },
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 195,
+          "start": 220160130927193,
+          "end": 220160183904748,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 52.977555,
+          "start_relative_first_piece_ms": 65.503501
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 11,
+          "call": 196,
+          "start": 220160130930133,
+          "end": 220160130933782,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.003649,
+          "start_relative_first_piece_ms": 65.506441
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 197,
+          "start": 220160130935712,
+          "end": 220160130937382,
+          "a": 5,
+          "b": 0,
+          "overlap_ms": 0.00167,
+          "start_relative_first_piece_ms": 65.51202
+        },
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 198,
+          "start": 220160183907478,
+          "end": 220160275812448,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 91.859851,
+          "start_relative_first_piece_ms": 118.483786
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 11,
+          "call": 199,
+          "start": 220160183909308,
+          "end": 220160183920877,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.011569,
+          "start_relative_first_piece_ms": 118.485616
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 200,
+          "start": 220160183922667,
+          "end": 220160183927357,
+          "a": 7,
+          "b": 0,
+          "overlap_ms": 0.00469,
+          "start_relative_first_piece_ms": 118.498975
+        },
+        {
+          "unit": "runner_batch",
+          "start": 220160130943372,
+          "end": 220160183875169,
+          "overlap_ms": 52.931797,
+          "start_relative_first_piece_ms": 65.51968
+        },
+        {
+          "unit": "runner_batch",
+          "start": 220160183929087,
+          "end": 220160275755340,
+          "overlap_ms": 91.826253,
+          "start_relative_first_piece_ms": 118.505395
+        }
+      ],
+      "ready_steps_during_gap": [
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160183882998,
+          "returned_selections": 1,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 0,
+          "nonempty_novel_publications": 0,
+          "ready_to_first_publication_ms": null,
+          "after_first_piece_ms": 118.459306
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160275762110,
+          "returned_selections": 3,
+          "published_tokens_before_step": 1,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.003159,
+          "after_first_piece_ms": 210.338418
+        }
+      ],
+      "all_initial_ready_steps": [
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160183882998,
+          "returned_selections": 1,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 0,
+          "nonempty_novel_publications": 0,
+          "ready_to_first_publication_ms": null,
+          "after_first_piece_ms": 118.459306
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160275762110,
+          "returned_selections": 3,
+          "published_tokens_before_step": 1,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.003159,
+          "after_first_piece_ms": 210.338418
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160388270434,
+          "returned_selections": 6,
+          "published_tokens_before_step": 4,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 6,
+          "nonempty_novel_publications": 6,
+          "ready_to_first_publication_ms": 0.003139,
+          "after_first_piece_ms": 322.846742
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160432019555,
+          "returned_selections": 1,
+          "published_tokens_before_step": 10,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00411,
+          "after_first_piece_ms": 366.595863
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220160512595784,
+          "returned_selections": 5,
+          "published_tokens_before_step": 11,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 5,
+          "nonempty_novel_publications": 5,
+          "ready_to_first_publication_ms": 0.00276,
+          "after_first_piece_ms": 447.172092
+        }
+      ],
+      "own_events_during_gap": [
+        {
+          "event": "consumer_deliver",
+          "request": 11,
+          "ns": 220160065845600,
+          "a": 1,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "batch_row_ready",
+          "request": 11,
+          "ns": 220160183882998,
+          "a": 1,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "decoded_selection",
+          "request": 11,
+          "ns": 220160183885498,
+          "a": 2,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "batch_row_ready",
+          "request": 11,
+          "ns": 220160275762110,
+          "a": 3,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "decoded_selection",
+          "request": 11,
+          "ns": 220160275763679,
+          "a": 417,
+          "b": 0,
+          "c": 2
+        },
+        {
+          "event": "publish_selection",
+          "request": 11,
+          "ns": 220160275765269,
+          "a": 417,
+          "b": 2,
+          "c": 1
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 0,
+      "request": 7,
+      "client_first_gap_ms": 67.85199,
+      "server_piece_gap_ms": 67.83738,
+      "client_minus_server_gap_ms": 0.014610000000004675,
+      "queue_to_consumer_first_two_ms": [
+        0.035379,
+        0.03265
+      ],
+      "covered_work_union_ms": 62.370434,
+      "uncovered_ms": 5.466945999999993,
+      "overlapping_work": [
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 93,
+          "start": 220324775785949,
+          "end": 220324776111319,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 0.131856,
+          "start_relative_first_piece_ms": -0.193514
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 7,
+          "call": 95,
+          "start": 220324775933384,
+          "end": 220324776094310,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.114847,
+          "start_relative_first_piece_ms": -0.046079
+        },
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 96,
+          "start": 220324781398771,
+          "end": 220324843828693,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 62.418072,
+          "start_relative_first_piece_ms": 5.419308
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 6,
+          "call": 97,
+          "start": 220324781402321,
+          "end": 220324781420430,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.018109,
+          "start_relative_first_piece_ms": 5.422858
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 7,
+          "call": 98,
+          "start": 220324781422080,
+          "end": 220324781424640,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00256,
+          "start_relative_first_piece_ms": 5.442617
+        },
+        {
+          "unit": "runner_batch",
+          "start": 220324781426510,
+          "end": 220324843796944,
+          "overlap_ms": 62.370434,
+          "start_relative_first_piece_ms": 5.447047
+        }
+      ],
+      "ready_steps_during_gap": [
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324843808714,
+          "returned_selections": 3,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00494,
+          "after_first_piece_ms": 67.829251
+        }
+      ],
+      "all_initial_ready_steps": [
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324843808714,
+          "returned_selections": 3,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00494,
+          "after_first_piece_ms": 67.829251
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324909277325,
+          "returned_selections": 2,
+          "published_tokens_before_step": 3,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00235,
+          "after_first_piece_ms": 133.297862
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324951514901,
+          "returned_selections": 1,
+          "published_tokens_before_step": 5,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00303,
+          "after_first_piece_ms": 175.535438
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324994190225,
+          "returned_selections": 1,
+          "published_tokens_before_step": 6,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00269,
+          "after_first_piece_ms": 218.210762
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325048195929,
+          "returned_selections": 2,
+          "published_tokens_before_step": 7,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00249,
+          "after_first_piece_ms": 272.216466
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325106180654,
+          "returned_selections": 2,
+          "published_tokens_before_step": 9,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.01457,
+          "after_first_piece_ms": 330.201191
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325158661174,
+          "returned_selections": 2,
+          "published_tokens_before_step": 11,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00253,
+          "after_first_piece_ms": 382.681711
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325227456106,
+          "returned_selections": 3,
+          "published_tokens_before_step": 13,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.00242,
+          "after_first_piece_ms": 451.476643
+        }
+      ],
+      "own_events_during_gap": [
+        {
+          "event": "consumer_deliver",
+          "request": 7,
+          "ns": 220324776014842,
+          "a": 3,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "batch_row_ready",
+          "request": 7,
+          "ns": 220324843808714,
+          "a": 3,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "decoded_selection",
+          "request": 7,
+          "ns": 220324843810384,
+          "a": 71093,
+          "b": 1,
+          "c": 3
+        },
+        {
+          "event": "decoded_selection",
+          "request": 7,
+          "ns": 220324843811864,
+          "a": 12305,
+          "b": 0,
+          "c": 6
+        },
+        {
+          "event": "publish_selection",
+          "request": 7,
+          "ns": 220324843813654,
+          "a": 12305,
+          "b": 6,
+          "c": 1
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "client_first_gap_ms": 133.554054,
+      "server_piece_gap_ms": 133.428869,
+      "client_minus_server_gap_ms": 0.1251850000000161,
+      "queue_to_consumer_first_two_ms": [
+        0.02834,
+        0.033429
+      ],
+      "covered_work_union_ms": 127.738119,
+      "uncovered_ms": 5.690749999999994,
+      "overlapping_work": [
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 93,
+          "start": 220324775785949,
+          "end": 220324776111319,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 0.277782,
+          "start_relative_first_piece_ms": -0.047588
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 6,
+          "call": 94,
+          "start": 220324775788849,
+          "end": 220324775931024,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.097487,
+          "start_relative_first_piece_ms": -0.044688
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 7,
+          "call": 95,
+          "start": 220324775933384,
+          "end": 220324776094310,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.160926,
+          "start_relative_first_piece_ms": 0.099847
+        },
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 96,
+          "start": 220324781398771,
+          "end": 220324843828693,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 62.429922,
+          "start_relative_first_piece_ms": 5.565234
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 6,
+          "call": 97,
+          "start": 220324781402321,
+          "end": 220324781420430,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.018109,
+          "start_relative_first_piece_ms": 5.568784
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 7,
+          "call": 98,
+          "start": 220324781422080,
+          "end": 220324781424640,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00256,
+          "start_relative_first_piece_ms": 5.588543
+        },
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 99,
+          "start": 220324843852252,
+          "end": 220324909297065,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 65.410154,
+          "start_relative_first_piece_ms": 68.018715
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 6,
+          "call": 100,
+          "start": 220324843877632,
+          "end": 220324843881152,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00352,
+          "start_relative_first_piece_ms": 68.044095
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 7,
+          "call": 101,
+          "start": 220324843883241,
+          "end": 220324843884851,
+          "a": 3,
+          "b": 0,
+          "overlap_ms": 0.00161,
+          "start_relative_first_piece_ms": 68.049704
+        },
+        {
+          "unit": "runner_batch",
+          "start": 220324781426510,
+          "end": 220324843796944,
+          "overlap_ms": 62.370434,
+          "start_relative_first_piece_ms": 5.592973
+        },
+        {
+          "unit": "runner_batch",
+          "start": 220324843886871,
+          "end": 220324909254556,
+          "overlap_ms": 65.367685,
+          "start_relative_first_piece_ms": 68.053334
+        }
+      ],
+      "ready_steps_during_gap": [
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324843802374,
+          "returned_selections": 1,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 0,
+          "nonempty_novel_publications": 0,
+          "ready_to_first_publication_ms": null,
+          "after_first_piece_ms": 67.968837
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324909257236,
+          "returned_selections": 3,
+          "published_tokens_before_step": 1,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.003,
+          "after_first_piece_ms": 133.423699
+        }
+      ],
+      "all_initial_ready_steps": [
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324843802374,
+          "returned_selections": 1,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 0,
+          "nonempty_novel_publications": 0,
+          "ready_to_first_publication_ms": null,
+          "after_first_piece_ms": 67.968837
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324909257236,
+          "returned_selections": 3,
+          "published_tokens_before_step": 1,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.003,
+          "after_first_piece_ms": 133.423699
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324951487042,
+          "returned_selections": 1,
+          "published_tokens_before_step": 4,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00388,
+          "after_first_piece_ms": 175.653505
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220324994175905,
+          "returned_selections": 1,
+          "published_tokens_before_step": 5,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00456,
+          "after_first_piece_ms": 218.342368
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325048176980,
+          "returned_selections": 2,
+          "published_tokens_before_step": 6,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.004219,
+          "after_first_piece_ms": 272.343443
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325106164405,
+          "returned_selections": 2,
+          "published_tokens_before_step": 8,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00361,
+          "after_first_piece_ms": 330.330868
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325158645665,
+          "returned_selections": 1,
+          "published_tokens_before_step": 10,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.0029,
+          "after_first_piece_ms": 382.812128
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325227421417,
+          "returned_selections": 3,
+          "published_tokens_before_step": 11,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.00329,
+          "after_first_piece_ms": 451.58788
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325287841310,
+          "returned_selections": 1,
+          "published_tokens_before_step": 14,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.003389,
+          "after_first_piece_ms": 512.007773
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220325340538733,
+          "returned_selections": 2,
+          "published_tokens_before_step": 15,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.0031,
+          "after_first_piece_ms": 564.705196
+        }
+      ],
+      "own_events_during_gap": [
+        {
+          "event": "consumer_deliver",
+          "request": 6,
+          "ns": 220324775861877,
+          "a": 1,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "batch_row_ready",
+          "request": 6,
+          "ns": 220324843802374,
+          "a": 1,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "decoded_selection",
+          "request": 6,
+          "ns": 220324843805164,
+          "a": 2,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "batch_row_ready",
+          "request": 6,
+          "ns": 220324909257236,
+          "a": 3,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "decoded_selection",
+          "request": 6,
+          "ns": 220324909258806,
+          "a": 417,
+          "b": 0,
+          "c": 2
+        },
+        {
+          "event": "publish_selection",
+          "request": 6,
+          "ns": 220324909260236,
+          "a": 417,
+          "b": 2,
+          "c": 1
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "client_first_gap_ms": 200.395225,
+      "server_piece_gap_ms": 200.512751,
+      "client_minus_server_gap_ms": -0.11752599999999802,
+      "queue_to_consumer_first_two_ms": [
+        0.273811,
+        0.079447
+      ],
+      "covered_work_union_ms": 197.261457,
+      "uncovered_ms": 3.2512940000000015,
+      "overlapping_work": [
+        {
+          "unit": "single_decode",
+          "request": 10,
+          "call": 194,
+          "start": 220333916670509,
+          "end": 220333916804425,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.082207,
+          "start_relative_first_piece_ms": -0.051709
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 195,
+          "start": 220333916672579,
+          "end": 220333916802805,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.080587,
+          "start_relative_first_piece_ms": -0.049639
+        },
+        {
+          "unit": "prefill",
+          "request": 11,
+          "call": 196,
+          "start": 220333919864554,
+          "end": 220334050998200,
+          "a": 30,
+          "b": 0,
+          "overlap_ms": 131.133646,
+          "start_relative_first_piece_ms": 3.142336
+        },
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 197,
+          "start": 220334051015530,
+          "end": 220334117255818,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 66.219439,
+          "start_relative_first_piece_ms": 134.293312
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 11,
+          "call": 198,
+          "start": 220334051018350,
+          "end": 220334051177375,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.159025,
+          "start_relative_first_piece_ms": 134.296132
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 199,
+          "start": 220334051180225,
+          "end": 220334051187455,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00723,
+          "start_relative_first_piece_ms": 134.458007
+        },
+        {
+          "unit": "single_decode",
+          "request": 10,
+          "call": 200,
+          "start": 220334051189365,
+          "end": 220334117253928,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 66.045604,
+          "start_relative_first_piece_ms": 134.467147
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 201,
+          "start": 220334051191025,
+          "end": 220334051192675,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00165,
+          "start_relative_first_piece_ms": 134.468807
+        }
+      ],
+      "ready_steps_during_gap": [
+        {
+          "event": "single_return",
+          "t_ns": 220334117227269,
+          "returned_selections": 5,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.0049,
+          "after_first_piece_ms": 200.505051
+        }
+      ],
+      "all_initial_ready_steps": [
+        {
+          "event": "single_return",
+          "t_ns": 220334117227269,
+          "returned_selections": 5,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.0049,
+          "after_first_piece_ms": 200.505051
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334170257902,
+          "returned_selections": 2,
+          "published_tokens_before_step": 5,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00282,
+          "after_first_piece_ms": 253.535684
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334240956727,
+          "returned_selections": 4,
+          "published_tokens_before_step": 7,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.00238,
+          "after_first_piece_ms": 324.234509
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334317315723,
+          "returned_selections": 4,
+          "published_tokens_before_step": 11,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.034929,
+          "after_first_piece_ms": 400.593505
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334394405657,
+          "returned_selections": 4,
+          "published_tokens_before_step": 15,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00227,
+          "after_first_piece_ms": 477.683439
+        }
+      ],
+      "own_events_during_gap": [
+        {
+          "event": "consumer_deliver",
+          "request": 10,
+          "ns": 220333916996029,
+          "a": 3,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "single_return",
+          "request": 10,
+          "ns": 220334117227269,
+          "a": 5,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "decoded_selection",
+          "request": 10,
+          "ns": 220334117229069,
+          "a": 71093,
+          "b": 1,
+          "c": 3
+        },
+        {
+          "event": "decoded_selection",
+          "request": 10,
+          "ns": 220334117230639,
+          "a": 12305,
+          "b": 0,
+          "c": 6
+        },
+        {
+          "event": "publish_selection",
+          "request": 10,
+          "ns": 220334117232169,
+          "a": 12305,
+          "b": 6,
+          "c": 1
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "client_first_gap_ms": 189.88509,
+      "server_piece_gap_ms": 189.87501,
+      "client_minus_server_gap_ms": 0.010079999999987876,
+      "queue_to_consumer_first_two_ms": [
+        0.01605,
+        0.031219
+      ],
+      "covered_work_union_ms": 189.681594,
+      "uncovered_ms": 0.19341600000001336,
+      "overlapping_work": [
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 197,
+          "start": 220334051015530,
+          "end": 220334117255818,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 66.18744,
+          "start_relative_first_piece_ms": -0.052848
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 11,
+          "call": 198,
+          "start": 220334051018350,
+          "end": 220334051177375,
+          "a": 0,
+          "b": 0,
+          "overlap_ms": 0.108997,
+          "start_relative_first_piece_ms": -0.050028
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 199,
+          "start": 220334051180225,
+          "end": 220334051187455,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00723,
+          "start_relative_first_piece_ms": 0.111847
+        },
+        {
+          "unit": "single_decode",
+          "request": 10,
+          "call": 200,
+          "start": 220334051189365,
+          "end": 220334117253928,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 66.064563,
+          "start_relative_first_piece_ms": 0.120987
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 201,
+          "start": 220334051191025,
+          "end": 220334051192675,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00165,
+          "start_relative_first_piece_ms": 0.122647
+        },
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 202,
+          "start": 220334117259668,
+          "end": 220334170273312,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 53.013644,
+          "start_relative_first_piece_ms": 66.19129
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 11,
+          "call": 203,
+          "start": 220334117261728,
+          "end": 220334117266318,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00459,
+          "start_relative_first_piece_ms": 66.19335
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 204,
+          "start": 220334117268308,
+          "end": 220334117269838,
+          "a": 5,
+          "b": 0,
+          "overlap_ms": 0.00153,
+          "start_relative_first_piece_ms": 66.19993
+        },
+        {
+          "unit": "batch_decode",
+          "request": 0,
+          "call": 205,
+          "start": 220334170276442,
+          "end": 220334241003456,
+          "a": 2,
+          "b": 0,
+          "overlap_ms": 70.666946,
+          "start_relative_first_piece_ms": 119.208064
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 11,
+          "call": 206,
+          "start": 220334170278232,
+          "end": 220334170280172,
+          "a": 1,
+          "b": 0,
+          "overlap_ms": 0.00194,
+          "start_relative_first_piece_ms": 119.209854
+        },
+        {
+          "unit": "prepare_snapshot",
+          "request": 10,
+          "call": 207,
+          "start": 220334170281912,
+          "end": 220334170283412,
+          "a": 7,
+          "b": 0,
+          "overlap_ms": 0.0015,
+          "start_relative_first_piece_ms": 119.213534
+        },
+        {
+          "unit": "runner_batch",
+          "start": 220334117271698,
+          "end": 220334170244303,
+          "overlap_ms": 52.972605,
+          "start_relative_first_piece_ms": 66.20332
+        },
+        {
+          "unit": "runner_batch",
+          "start": 220334170284972,
+          "end": 220334240929398,
+          "overlap_ms": 70.644426,
+          "start_relative_first_piece_ms": 119.216594
+        }
+      ],
+      "ready_steps_during_gap": [
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334170252693,
+          "returned_selections": 1,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 0,
+          "nonempty_novel_publications": 0,
+          "ready_to_first_publication_ms": null,
+          "after_first_piece_ms": 119.184315
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334240937198,
+          "returned_selections": 3,
+          "published_tokens_before_step": 1,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.00405,
+          "after_first_piece_ms": 189.86882
+        }
+      ],
+      "all_initial_ready_steps": [
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334170252693,
+          "returned_selections": 1,
+          "published_tokens_before_step": 1,
+          "preview_pending": true,
+          "preview_duplicates": 1,
+          "novel_publications": 0,
+          "nonempty_novel_publications": 0,
+          "ready_to_first_publication_ms": null,
+          "after_first_piece_ms": 119.184315
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334240937198,
+          "returned_selections": 3,
+          "published_tokens_before_step": 1,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.00405,
+          "after_first_piece_ms": 189.86882
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334317292474,
+          "returned_selections": 4,
+          "published_tokens_before_step": 4,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 4,
+          "nonempty_novel_publications": 4,
+          "ready_to_first_publication_ms": 0.004109,
+          "after_first_piece_ms": 266.224096
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334394391287,
+          "returned_selections": 2,
+          "published_tokens_before_step": 8,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 2,
+          "nonempty_novel_publications": 2,
+          "ready_to_first_publication_ms": 0.00399,
+          "after_first_piece_ms": 343.322909
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334440022132,
+          "returned_selections": 1,
+          "published_tokens_before_step": 10,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00447,
+          "after_first_piece_ms": 388.953754
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334496243780,
+          "returned_selections": 3,
+          "published_tokens_before_step": 11,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 3,
+          "nonempty_novel_publications": 3,
+          "ready_to_first_publication_ms": 0.0034,
+          "after_first_piece_ms": 445.175402
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334558668612,
+          "returned_selections": 1,
+          "published_tokens_before_step": 14,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00315,
+          "after_first_piece_ms": 507.600234
+        },
+        {
+          "event": "batch_row_ready",
+          "t_ns": 220334601197990,
+          "returned_selections": 1,
+          "published_tokens_before_step": 15,
+          "preview_pending": false,
+          "preview_duplicates": 0,
+          "novel_publications": 1,
+          "nonempty_novel_publications": 1,
+          "ready_to_first_publication_ms": 0.00295,
+          "after_first_piece_ms": 550.129612
+        }
+      ],
+      "own_events_during_gap": [
+        {
+          "event": "consumer_deliver",
+          "request": 11,
+          "ns": 220334051084428,
+          "a": 1,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "batch_row_ready",
+          "request": 11,
+          "ns": 220334170252693,
+          "a": 1,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "decoded_selection",
+          "request": 11,
+          "ns": 220334170255173,
+          "a": 2,
+          "b": 1,
+          "c": 1
+        },
+        {
+          "event": "batch_row_ready",
+          "request": 11,
+          "ns": 220334240937198,
+          "a": 3,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "event": "decoded_selection",
+          "request": 11,
+          "ns": 220334240939708,
+          "a": 417,
+          "b": 0,
+          "c": 2
+        },
+        {
+          "event": "publish_selection",
+          "request": 11,
+          "ns": 220334240941248,
+          "a": 417,
+          "b": 2,
+          "c": 1
+        }
+      ]
+    }
+  ],
+  "ready_to_first_publication": [
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 0,
+      "request": 6,
+      "ms": 0.00372
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 0,
+      "request": 6,
+      "ms": 0.004479
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 0,
+      "request": 6,
+      "ms": 0.00242
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 0,
+      "request": 6,
+      "ms": 0.00223
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 0,
+      "request": 6,
+      "ms": 0.00221
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 0,
+      "request": 6,
+      "ms": 0.00618
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 0,
+      "request": 6,
+      "ms": 0.00228
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "ms": 0.004
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "ms": 0.00741
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "ms": 0.00679
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "ms": 0.00205
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "ms": 0.00213
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "ms": 0.00194
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "ms": 0.00202
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "ms": 0.00204
+    },
+    {
+      "arm": "baseline",
+      "case": "C2",
+      "actor": 1,
+      "request": 7,
+      "ms": 0.00284
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "ms": 0.00488
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "ms": 0.00311
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "ms": 0.00223
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "ms": 0.00229
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.003159
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.003139
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.00411
+    },
+    {
+      "arm": "baseline",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.00276
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 0,
+      "request": 7,
+      "ms": 0.00494
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 0,
+      "request": 7,
+      "ms": 0.00235
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 0,
+      "request": 7,
+      "ms": 0.00303
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 0,
+      "request": 7,
+      "ms": 0.00269
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 0,
+      "request": 7,
+      "ms": 0.00249
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 0,
+      "request": 7,
+      "ms": 0.01457
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 0,
+      "request": 7,
+      "ms": 0.00253
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 0,
+      "request": 7,
+      "ms": 0.00242
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "ms": 0.003
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "ms": 0.00388
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "ms": 0.00456
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "ms": 0.004219
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "ms": 0.00361
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "ms": 0.0029
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "ms": 0.00329
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "ms": 0.003389
+    },
+    {
+      "arm": "candidate",
+      "case": "C2",
+      "actor": 1,
+      "request": 6,
+      "ms": 0.0031
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "ms": 0.0049
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "ms": 0.00282
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "ms": 0.00238
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "ms": 0.034929
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 0,
+      "request": 10,
+      "ms": 0.00227
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.00405
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.004109
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.00399
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.00447
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.0034
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.00315
+    },
+    {
+      "arm": "candidate",
+      "case": "C2-after-preview",
+      "actor": 1,
+      "request": 11,
+      "ms": 0.00295
+    }
+  ],
+  "scope": "Diagnostic actual-return/preview/publish/queue/consumer chronology under simultaneous and after-preview arrivals. Baselinev1 completed; candidatev2 corrects admission-order metadata assertion only, retains failedv1candidate/serverlogs. CPUspans include necessary GPU/I/O; use union, not nested sum. No pureCPUoverhead attribution or originalcandidateexoneration/performanceconfidence/adoption claim. Source observer may change arrival/controller timing."
+}

@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "exits": {
+    "worker": 1,
+    "server": 0
+  },
+  "minimum_available_kib": 30604520,
+  "elapsed_seconds": 43.16031753399875,
+  "boot_unchanged": true
+}

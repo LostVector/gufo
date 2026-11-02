@@ -1,0 +1,153 @@
+{
+  "status": "diagnostic-functional-pass",
+  "records": 22,
+  "solo_concurrent_exact_checks": [
+    {
+      "arm": "baseline",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "candidate",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "candidate",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    }
+  ],
+  "phase_flags": [
+    {
+      "control": "baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "decode_ms",
+      "baseline_ms": 3276.2479749999993,
+      "candidate_ms": 3446.670334000001,
+      "increase_ms": 170.4223590000015
+    },
+    {
+      "control": "baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "server_max_inter_token_ms",
+      "baseline_ms": 109.774796,
+      "candidate_ms": 133.429069,
+      "increase_ms": 23.654273000000003
+    },
+    {
+      "control": "baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "first_followup_content_gap_ms",
+      "baseline_ms": 109.747557,
+      "candidate_ms": 133.554054,
+      "increase_ms": 23.806497000000007
+    },
+    {
+      "control": "baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "maximum_content_gap_ms",
+      "baseline_ms": 109.747557,
+      "candidate_ms": 133.554054,
+      "increase_ms": 23.806497000000007
+    },
+    {
+      "control": "baseline",
+      "case": "C2-after-preview",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "decode_ms",
+      "baseline_ms": 3726.7563939999995,
+      "candidate_ms": 3914.7242309999983,
+      "increase_ms": 187.96783699999878
+    }
+  ],
+  "adaptive_work_changes": [
+    {
+      "control": "baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_tokens",
+      "baseline": 94,
+      "candidate": 83
+    },
+    {
+      "control": "baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_accepted_tokens",
+      "baseline": 77,
+      "candidate": 71
+    },
+    {
+      "control": "baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_tokens",
+      "baseline": 89,
+      "candidate": 82
+    },
+    {
+      "control": "baseline",
+      "case": "C2",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_accepted_tokens",
+      "baseline": 63,
+      "candidate": 60
+    },
+    {
+      "control": "baseline",
+      "case": "C2-after-preview",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_tokens",
+      "baseline": 104,
+      "candidate": 98
+    },
+    {
+      "control": "baseline",
+      "case": "C2-after-preview",
+      "repetition": 1,
+      "actor": 0,
+      "metric": "draft_accepted_tokens",
+      "baseline": 83,
+      "candidate": 79
+    },
+    {
+      "control": "baseline",
+      "case": "C2-after-preview",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_tokens",
+      "baseline": 94,
+      "candidate": 91
+    },
+    {
+      "control": "baseline",
+      "case": "C2-after-preview",
+      "repetition": 1,
+      "actor": 1,
+      "metric": "draft_accepted_tokens",
+      "baseline": 68,
+      "candidate": 62
+    }
+  ],
+  "scope": "Source-instrumented baseline/candidate publication chronology. Two controlled-arrival C2 histories, simultaneous and after-first-preview, plus solo controls. Not a repeat of originalarrivalhistories or releaseperformance. Exact completions/cache work, actual MTP, pp2048/EOS96 and coding128. Logging may change adaptive timings; not release performance or exoneration of original flags. Timing flags retained; no confidence, equivalence, no-regression or wider-concurrency conclusion. Fixed-history full-state/operator qualification is separate."
+}
