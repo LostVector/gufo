@@ -10,13 +10,18 @@ one-host tables.
 ## Current fork checkpoint
 
 The maintained combined branch is `tp2`; fork `main` mirrors `gufo-org/gufo`.
-The November2 canonical intake includes upstream snapshot `773a1641`, native RDMA,
-shared eligible PLE table reads and scheduler-ordered request completion.
-See the [current intake record](../../patches/tp2-adoption/upstream-773a1641.md)
-for exact source, binary, CI, continuation coverage and retained inconclusive
-startup timings. The [original adoption record](../../patches/tp2-adoption/README.md)
-and earlier [integration record](../../patches/upstream-rdma-integration/README.md)
-preserve their historical source and measurements.
+The November2 canonical intake includes upstream snapshot `8ab834a5`, native RDMA,
+shared eligible PLE table reads and scheduler-ordered request completion. Its
+qualified production source is `5e766353`; it adds measured heap-impact RAM-cache
+admission and clearer capacity errors without changing model kernels or TP
+scheduling. See the [current intake record](../../patches/tp2-adoption/upstream-8ab834a5.md)
+for exact source, binary, CI and focused cache coverage. This is not a new speedup
+or latency-equivalence claim. The [previous intake](../../patches/tp2-adoption/upstream-773a1641.md)
+preserves its actual32K continuation and retained inconclusive startup timings.
+The [original adoption record](../../patches/tp2-adoption/README.md) and earlier
+[integration record](../../patches/upstream-rdma-integration/README.md) retain their
+historical source and measurements. Independent Q8-reuse and fused-HC drafts are
+not included in this maintained branch.
 Both peers must use the same wire22 build and registered host windows. The older
 DMA-BUF/wire8 descriptions below concern different experimental checkpoints.
 
