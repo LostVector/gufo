@@ -1,0 +1,10 @@
+{
+  "baseline": {
+    "name": "gufo-tp2-published-fbacf9cc",
+    "sha256": "5ce244cf22cbb5d9d3d39551139ec8804d89399da8704057ec9f21a1051a5d71"
+  },
+  "candidate": {
+    "name": "gufo-tp2-cooperative-ple-85586a63-release",
+    "sha256": "95bc4c433f547df7e143bcc69fb1fd973a922bb43dfb47f6203cd1332b042fd5"
+  }
+}

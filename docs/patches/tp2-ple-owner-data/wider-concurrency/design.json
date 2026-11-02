@@ -1,0 +1,18 @@
+{
+  "sequence": [
+    [
+      "before-baseline",
+      "baseline"
+    ],
+    [
+      "first-candidate",
+      "candidate"
+    ],
+    [
+      "after-baseline",
+      "baseline"
+    ]
+  ],
+  "requests_per_start": 20,
+  "scope": "Fixed B/C/B four-session functional/phase-latency qualification. Warmup8; four solo128 controls; three solo17/33/65 controls; C3x128; C4x128; raggedC4 limits17/33/65/128; postwave solo128 replay. Require exact outputs within each arm vs matching solo and across arms, actualMTP/no prompt cache, admitted resident widths and observed maximum physical execution widths. Per-request phase flags5%AND3ms, retain all adaptive work. Do not infer every transient batch shape from maximum-width metrics. Not a significance/equivalence study or new isolated-PLE speed claim. No trace/adminsampler/driver/system change/fulltablewarm."
+}

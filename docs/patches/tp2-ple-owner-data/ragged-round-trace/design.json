@@ -1,0 +1,18 @@
+{
+  "sequence": [
+    [
+      "before-baseline",
+      "baseline"
+    ],
+    [
+      "first-candidate",
+      "candidate"
+    ],
+    [
+      "after-baseline",
+      "baseline"
+    ]
+  ],
+  "requests_per_start": 20,
+  "scope": "Original20-request fixed B/C/B history, same productionfbacf9cc/2669e07c and approved stack. Trace only raggedC4 with validatedv5 application recorder. New id8=Session::Sync this pointer, id14=FinishDecode entry/return first3cumulativeu64 counters at304bytes, exact binary-DWARF offsets304/312/320 and real-header48byte Stats layout. Map Sync Session object to containing head StepPrefill shared_ptr identity; compare per-request counter-delta sums with actual server rounds/drafts/accepted. Trace both scalar and true batched MTP; no ordinary-batch-only assumption. Capture host spans for mirrored DecodeBatch, ForwardBatch/MtpForwardBatch, scalar steps, publications, snapshots/End and PLEqueuecallback. Outer durations include useful GPU/peer/host work, not pure dispatch. No GPU/SDK/NVMe/admin sampler, production/driver/system changes or tablewarming. Record necessary probe activation; no new gain/equivalence/flag waiver."
+}

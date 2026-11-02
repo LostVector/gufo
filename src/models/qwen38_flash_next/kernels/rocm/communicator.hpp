@@ -91,6 +91,8 @@ public:
   [[nodiscard]] virtual bool SupportsTargetHeadGather() const noexcept {
     return false;
   }
+  /// Both peers agreed to the extra ordered PLE owner-read exchange.
+  [[nodiscard]] virtual bool SupportsPleOwner() const noexcept { return false; }
   /// Terminates this communicator after local GPU execution failed. Native
   /// transports must release queued GPU waits and notify the peer; no later
   /// operation may succeed. Unsupported test communicators may do nothing.

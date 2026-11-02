@@ -80,6 +80,7 @@ gufo_extension_target(
     kernels/rocm/device_model.cpp
     kernels/rocm/executor.cpp
     kernels/rocm/batch.cpp
+    kernels/rocm/ple_owner.cpp
     engine.cpp
     runner.cpp
     parallel.cpp
@@ -101,6 +102,7 @@ if(TARGET gufo_qwen38_flash_next_hip)
   gufo_extension_hip_sources(gufo_qwen38_flash_next_hip
     SOURCES
       kernels/rocm/kernels.hip.cpp
+      kernels/rocm/ple_owner.hip.cpp
       kernels/rocm/w8a8_wave64.hip
   )
   set_source_files_properties(${QFN_ROCM_DIR}/w8a8_wave64.hip

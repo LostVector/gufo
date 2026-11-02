@@ -1,0 +1,677 @@
+{
+  "phases": [
+    {
+      "phase": "before-baseline",
+      "role": "baseline",
+      "EndRequests": [
+        {
+          "end": {
+            "kind": 2,
+            "end": 175657430551697,
+            "begin": 175657430531688,
+            "tid": 1038447,
+            "id": 4,
+            "depth": 1,
+            "cpu": 4,
+            "pid": 1038114,
+            "value": 872421633,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175657430548647,
+            "begin": 175657430539928,
+            "tid": 1038447,
+            "id": 7,
+            "depth": 1,
+            "cpu": 4,
+            "pid": 1038114,
+            "value": 872421633,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.00824,
+          "send_ms": 0.008719,
+          "post_send_ms": 0.00305,
+          "total_ms": 0.020009,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175660226544132,
+            "begin": 175660226527232,
+            "tid": 1038455,
+            "id": 4,
+            "depth": 1,
+            "cpu": 31,
+            "pid": 1038114,
+            "value": 872424705,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175660226541672,
+            "begin": 175660226534382,
+            "tid": 1038455,
+            "id": 7,
+            "depth": 1,
+            "cpu": 31,
+            "pid": 1038114,
+            "value": 872424705,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.00715,
+          "send_ms": 0.00729,
+          "post_send_ms": 0.00246,
+          "total_ms": 0.0169,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175663028492179,
+            "begin": 175663028466960,
+            "tid": 1038466,
+            "id": 4,
+            "depth": 1,
+            "cpu": 7,
+            "pid": 1038114,
+            "value": 872422913,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175663028489569,
+            "begin": 175663028475579,
+            "tid": 1038466,
+            "id": 7,
+            "depth": 1,
+            "cpu": 7,
+            "pid": 1038114,
+            "value": 872422913,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.008619,
+          "send_ms": 0.01399,
+          "post_send_ms": 0.00261,
+          "total_ms": 0.025219,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175666197309955,
+            "begin": 175666146132213,
+            "tid": 1038479,
+            "id": 4,
+            "depth": 1,
+            "cpu": 5,
+            "pid": 1038114,
+            "value": 1610748929,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175666197303005,
+            "begin": 175666197281936,
+            "tid": 1038479,
+            "id": 7,
+            "depth": 1,
+            "cpu": 5,
+            "pid": 1038114,
+            "value": 1610748929,
+            "entry_value": 0
+          },
+          "pre_send_ms": 51.149723,
+          "send_ms": 0.021069,
+          "post_send_ms": 0.00695,
+          "total_ms": 51.177742,
+          "overlapping_SessionDecodeStep": [
+            {
+              "kind": 2,
+              "end": 175666197262017,
+              "begin": 175666146132683,
+              "tid": 1038429,
+              "id": 13,
+              "depth": 1,
+              "cpu": 30,
+              "pid": 1038114,
+              "value": 1,
+              "entry_value": 0
+            }
+          ],
+          "overlapping_step_ms": 51.129334
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175666539714565,
+            "begin": 175666539689606,
+            "tid": 1038477,
+            "id": 4,
+            "depth": 1,
+            "cpu": 16,
+            "pid": 1038114,
+            "value": 872422913,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175666539710915,
+            "begin": 175666539699185,
+            "tid": 1038477,
+            "id": 7,
+            "depth": 1,
+            "cpu": 16,
+            "pid": 1038114,
+            "value": 872422913,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.009579,
+          "send_ms": 0.01173,
+          "post_send_ms": 0.00365,
+          "total_ms": 0.024959,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        }
+      ],
+      "clients": [
+        {
+          "case": "warmup",
+          "repetition": 0,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.359019,
+          "overlapping_EndRequest_indices": []
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 1,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.32613,
+          "overlapping_EndRequest_indices": [
+            1
+          ]
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 2,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.482136,
+          "overlapping_EndRequest_indices": [
+            2
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.472076,
+          "overlapping_EndRequest_indices": []
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 1,
+          "final_content_to_HTTP_finish_ms": 51.740066,
+          "overlapping_EndRequest_indices": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "phase": "first-candidate",
+      "role": "candidate",
+      "EndRequests": [
+        {
+          "end": {
+            "kind": 2,
+            "end": 175703915088806,
+            "begin": 175703915073167,
+            "tid": 1038864,
+            "id": 4,
+            "depth": 1,
+            "cpu": 1,
+            "pid": 1038676,
+            "value": 134224129,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175703915087936,
+            "begin": 175703915077376,
+            "tid": 1038864,
+            "id": 7,
+            "depth": 1,
+            "cpu": 1,
+            "pid": 1038676,
+            "value": 134224129,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.004209,
+          "send_ms": 0.01056,
+          "post_send_ms": 0.00087,
+          "total_ms": 0.015639,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175706696955472,
+            "begin": 175706696939953,
+            "tid": 1038869,
+            "id": 4,
+            "depth": 1,
+            "cpu": 23,
+            "pid": 1038676,
+            "value": 134227201,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175706696953632,
+            "begin": 175706696946933,
+            "tid": 1038869,
+            "id": 7,
+            "depth": 1,
+            "cpu": 23,
+            "pid": 1038676,
+            "value": 134227201,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.00698,
+          "send_ms": 0.006699,
+          "post_send_ms": 0.00184,
+          "total_ms": 0.015519,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175709478512458,
+            "begin": 175709478491578,
+            "tid": 1038877,
+            "id": 4,
+            "depth": 1,
+            "cpu": 21,
+            "pid": 1038676,
+            "value": 134225409,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175709478510058,
+            "begin": 175709478497778,
+            "tid": 1038877,
+            "id": 7,
+            "depth": 1,
+            "cpu": 21,
+            "pid": 1038676,
+            "value": 134225409,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.0062,
+          "send_ms": 0.01228,
+          "post_send_ms": 0.0024,
+          "total_ms": 0.02088,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175712637078110,
+            "begin": 175712585841939,
+            "tid": 1038890,
+            "id": 4,
+            "depth": 1,
+            "cpu": 18,
+            "pid": 1038676,
+            "value": 1409291009,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175712637068681,
+            "begin": 175712637041631,
+            "tid": 1038890,
+            "id": 7,
+            "depth": 1,
+            "cpu": 18,
+            "pid": 1038676,
+            "value": 1409291009,
+            "entry_value": 0
+          },
+          "pre_send_ms": 51.199692,
+          "send_ms": 0.02705,
+          "post_send_ms": 0.009429,
+          "total_ms": 51.236171,
+          "overlapping_SessionDecodeStep": [
+            {
+              "kind": 2,
+              "end": 175712637020752,
+              "begin": 175712585846199,
+              "tid": 1038846,
+              "id": 13,
+              "depth": 1,
+              "cpu": 22,
+              "pid": 1038676,
+              "value": 1,
+              "entry_value": 0
+            }
+          ],
+          "overlapping_step_ms": 51.174553
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175712977902857,
+            "begin": 175712977885028,
+            "tid": 1038888,
+            "id": 4,
+            "depth": 1,
+            "cpu": 16,
+            "pid": 1038676,
+            "value": 134227457,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175712977900377,
+            "begin": 175712977891428,
+            "tid": 1038888,
+            "id": 7,
+            "depth": 1,
+            "cpu": 16,
+            "pid": 1038676,
+            "value": 134227457,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.0064,
+          "send_ms": 0.008949,
+          "post_send_ms": 0.00248,
+          "total_ms": 0.017829,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        }
+      ],
+      "clients": [
+        {
+          "case": "warmup",
+          "repetition": 0,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.383289,
+          "overlapping_EndRequest_indices": []
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 1,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.325601,
+          "overlapping_EndRequest_indices": []
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 2,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.548764,
+          "overlapping_EndRequest_indices": [
+            2
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.523625,
+          "overlapping_EndRequest_indices": [
+            4
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 1,
+          "final_content_to_HTTP_finish_ms": 52.161523,
+          "overlapping_EndRequest_indices": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "phase": "after-baseline",
+      "role": "baseline",
+      "EndRequests": [
+        {
+          "end": {
+            "kind": 2,
+            "end": 175750556221641,
+            "begin": 175750556190622,
+            "tid": 1039208,
+            "id": 4,
+            "depth": 1,
+            "cpu": 31,
+            "pid": 1039015,
+            "value": 1140857089,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175750556217281,
+            "begin": 175750556202231,
+            "tid": 1039208,
+            "id": 7,
+            "depth": 1,
+            "cpu": 31,
+            "pid": 1039015,
+            "value": 1140857089,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.011609,
+          "send_ms": 0.01505,
+          "post_send_ms": 0.00436,
+          "total_ms": 0.031019,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175753358348862,
+            "begin": 175753358317763,
+            "tid": 1039213,
+            "id": 4,
+            "depth": 1,
+            "cpu": 9,
+            "pid": 1039015,
+            "value": 1140860161,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175753358344822,
+            "begin": 175753358328753,
+            "tid": 1039213,
+            "id": 7,
+            "depth": 1,
+            "cpu": 9,
+            "pid": 1039015,
+            "value": 1140860161,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.01099,
+          "send_ms": 0.016069,
+          "post_send_ms": 0.00404,
+          "total_ms": 0.031099,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175756155936179,
+            "begin": 175756155891390,
+            "tid": 1039217,
+            "id": 4,
+            "depth": 1,
+            "cpu": 21,
+            "pid": 1039015,
+            "value": 1140857089,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175756155931709,
+            "begin": 175756155907140,
+            "tid": 1039217,
+            "id": 7,
+            "depth": 1,
+            "cpu": 21,
+            "pid": 1039015,
+            "value": 1140857089,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.01575,
+          "send_ms": 0.024569,
+          "post_send_ms": 0.00447,
+          "total_ms": 0.044789,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175759333553403,
+            "begin": 175759282560575,
+            "tid": 1039323,
+            "id": 4,
+            "depth": 1,
+            "cpu": 15,
+            "pid": 1039015,
+            "value": 939660289,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175759333545943,
+            "begin": 175759333520224,
+            "tid": 1039323,
+            "id": 7,
+            "depth": 1,
+            "cpu": 15,
+            "pid": 1039015,
+            "value": 939660289,
+            "entry_value": 0
+          },
+          "pre_send_ms": 50.959649,
+          "send_ms": 0.025719,
+          "post_send_ms": 0.00746,
+          "total_ms": 50.992828,
+          "overlapping_SessionDecodeStep": [
+            {
+              "kind": 2,
+              "end": 175759333482345,
+              "begin": 175759282562715,
+              "tid": 1039185,
+              "id": 13,
+              "depth": 1,
+              "cpu": 24,
+              "pid": 1039015,
+              "value": 1,
+              "entry_value": 0
+            }
+          ],
+          "overlapping_step_ms": 50.91963
+        },
+        {
+          "end": {
+            "kind": 2,
+            "end": 175759676532876,
+            "begin": 175759676499107,
+            "tid": 1039321,
+            "id": 4,
+            "depth": 1,
+            "cpu": 13,
+            "pid": 1039015,
+            "value": 1140860417,
+            "entry_value": 0
+          },
+          "send": {
+            "kind": 2,
+            "end": 175759676528126,
+            "begin": 175759676511586,
+            "tid": 1039321,
+            "id": 7,
+            "depth": 1,
+            "cpu": 13,
+            "pid": 1039015,
+            "value": 1140860417,
+            "entry_value": 0
+          },
+          "pre_send_ms": 0.012479,
+          "send_ms": 0.01654,
+          "post_send_ms": 0.00475,
+          "total_ms": 0.033769,
+          "overlapping_SessionDecodeStep": [],
+          "overlapping_step_ms": 0.0
+        }
+      ],
+      "clients": [
+        {
+          "case": "warmup",
+          "repetition": 0,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.35163,
+          "overlapping_EndRequest_indices": []
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 1,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.559734,
+          "overlapping_EndRequest_indices": []
+        },
+        {
+          "case": "pp2048-tg128",
+          "repetition": 2,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 0.548094,
+          "overlapping_EndRequest_indices": [
+            2
+          ]
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 0,
+          "final_content_to_HTTP_finish_ms": 1.00536,
+          "overlapping_EndRequest_indices": []
+        },
+        {
+          "case": "short-c2",
+          "repetition": 1,
+          "actor": 1,
+          "final_content_to_HTTP_finish_ms": 51.647469,
+          "overlapping_EndRequest_indices": [
+            3
+          ]
+        }
+      ]
+    }
+  ],
+  "input_sha256": {
+    "tp-cache-retention/ple-owner-end-send-trace-v2/before-baseline/trace-r0/app.csv": "5384aa31b00b3ac9beef0e9b86b3196fa02032dd83f983ba7ab633740557a0b5",
+    "results/model-scaling/ple-owner-end-send-trace-v2-before-baseline.jsonl": "5bdcf7e3e00038d9924f167484c9ab59c382a8cd637a6ef656b5dd0f00c3bc7d",
+    "tp-cache-retention/ple-owner-end-send-trace-v2/first-candidate/trace-r0/app.csv": "760f028211dfdc9dd2ebffb83b0beb8bcde043ff562d6f0e97fb744d20c1bbd8",
+    "results/model-scaling/ple-owner-end-send-trace-v2-first-candidate.jsonl": "f3e0622617864cc5475a578379564dd7b35bee0d42a1366a2724e169d5f4e1cd",
+    "tp-cache-retention/ple-owner-end-send-trace-v2/after-baseline/trace-r0/app.csv": "5b40bd8d9838cc881b5157ef45b958591975beb3405813dde7770a0f79a380fc",
+    "results/model-scaling/ple-owner-end-send-trace-v2-after-baseline.jsonl": "0a8c4dc7d8033f455167115f94c0632051ec4e5240016e0f009f70daf7f7356f"
+  },
+  "scope": "One targeted diagnostic B/C/B on frozen production binaries and original five-request history. Host pre-send interval includes lock acquisition and request bookkeeping, not measured pure CPU dispatch. Send duration is host API execution, not remote receipt or wire latency. Inner Session::DecodeStep overlap can contain GPU/transport work. Every EndRequest is retained without order-only request assignment. Client-tail overlap is same-host temporal association; no flag waiver or new unprofiled performance claim."
+}

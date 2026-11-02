@@ -1,0 +1,96 @@
+{
+  "sequence": [
+    [
+      "pair01-baseline",
+      "baseline"
+    ],
+    [
+      "pair01-candidate",
+      "candidate"
+    ],
+    [
+      "pair02-baseline",
+      "baseline"
+    ],
+    [
+      "pair02-candidate",
+      "candidate"
+    ],
+    [
+      "pair03-candidate",
+      "candidate"
+    ],
+    [
+      "pair03-baseline",
+      "baseline"
+    ],
+    [
+      "pair04-candidate",
+      "candidate"
+    ],
+    [
+      "pair04-baseline",
+      "baseline"
+    ],
+    [
+      "pair05-baseline",
+      "baseline"
+    ],
+    [
+      "pair05-candidate",
+      "candidate"
+    ],
+    [
+      "pair06-baseline",
+      "baseline"
+    ],
+    [
+      "pair06-candidate",
+      "candidate"
+    ],
+    [
+      "pair07-candidate",
+      "candidate"
+    ],
+    [
+      "pair07-baseline",
+      "baseline"
+    ],
+    [
+      "pair08-candidate",
+      "candidate"
+    ],
+    [
+      "pair08-baseline",
+      "baseline"
+    ],
+    [
+      "pair09-candidate",
+      "candidate"
+    ],
+    [
+      "pair09-baseline",
+      "baseline"
+    ],
+    [
+      "pair10-baseline",
+      "baseline"
+    ],
+    [
+      "pair10-candidate",
+      "candidate"
+    ]
+  ],
+  "requests_per_start": 12,
+  "randomization": {
+    "seed": 202611011817,
+    "uniform_choice_of_five_baseline_first_pairs": [
+      1,
+      2,
+      5,
+      6,
+      10
+    ]
+  },
+  "scope": "Fixed ten randomized balanced pairs /20fresh starts /240records: published TP2 fbacf9cc replicated disk-backed PLE against85586a63 owner reads/native wire22. Fresh production OFF study. Earlier v1 partial acquisition rejected for BUILD_TESTING mismatch and preserved separately; no pooling or throughput inference from it. No exclusions/replacements within this20start acquisition or interim significance testing. Context65536,2sessions,chunk2048,UD-Q4_K_XL+sharedQ8_0 actualMTP; exact output/prompt/cache work and C1 speculative work. Adaptive C2 work retained. All per-request flags at BOTH5% and3ms retained. Co-primaries: first pp2048 C1 server decode rate and first short C2 complete client-wave throughput.20k paired bootstrap, balanced-assignment sensitivity and Holm two-primary adjustment. Secondary repeated C1/codingC2/TTFT/prefill/decode/gaps/tail. No full-table warming, profiler, SMART/admin sampler, parallel build or other model workload. No bulk-prefill speedup assumed: large non-speculative passes retain local reads."
+}
