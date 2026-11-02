@@ -10,11 +10,13 @@ one-host tables.
 ## Current fork checkpoint
 
 The maintained combined branch is `tp2`; fork `main` mirrors `gufo-org/gufo`.
-The November2 adoption includes canonical snapshot276dd180, native RDMA,
+The November2 canonical intake includes upstream snapshot `773a1641`, native RDMA,
 shared eligible PLE table reads and scheduler-ordered request completion.
-See the [adoption record](../../patches/tp2-adoption/README.md) for exact source,
-binary, CI, combined qualification and retained phase flags, and the earlier
-[integration record](../../patches/upstream-rdma-integration/README.md) for history.
+See the [current intake record](../../patches/tp2-adoption/upstream-773a1641.md)
+for exact source, binary, CI, continuation coverage and retained inconclusive
+startup timings. The [original adoption record](../../patches/tp2-adoption/README.md)
+and earlier [integration record](../../patches/upstream-rdma-integration/README.md)
+preserve their historical source and measurements.
 Both peers must use the same wire22 build and registered host windows. The older
 DMA-BUF/wire8 descriptions below concern different experimental checkpoints.
 
