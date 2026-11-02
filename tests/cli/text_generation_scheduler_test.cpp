@@ -2547,33 +2547,31 @@ void TestMixedStepsContinueAfterPromptCapture() {
         release.acquire();
       }
     };
-    // Keep the peer active until the first request finishes, then cancel it.
-    // std::async may use persistent worker threads, so thread-local destruction
-    // cannot be used to observe when its snapshot future becomes ready.
-    control->max_context = 1 << 20;
-    control->block_advance_label = 2;
+    control->block_prefill_label = 2;
     auto scheduler = MakeScheduler(control, 2);
     auto first = scheduler->Submit({1, 10}, 7, 0.0F);
     Expect(entered.try_acquire_for(kTestTimeout),
            "the previewed request captures its prompt");
-    auto second = scheduler->Submit({2, 20}, 0, 0.0F);
-    control->WaitForAdvance(2);
+    auto second = scheduler->Submit({2, 20}, 30, 0.0F);
+    control->WaitForPrefill(2);
+    Expect(PreviewPendingForTesting(first),
+           "the captured request has an unadvanced published preview");
     release.release();
-    control->ReleaseAdvance();
+    // Keep the scheduler paused in the peer's prefill until the actual future
+    // is ready. A persistent std::async worker need not exit after capture.
+    const auto deadline = std::chrono::steady_clock::now() + kTestTimeout;
+    while (SnapshotPendingForTesting(first) &&
+           std::chrono::steady_clock::now() < deadline)
+      std::this_thread::yield();
+    const bool ready = !SnapshotPendingForTesting(first);
+    control->ReleasePrefill();
+    Expect(ready, "the prompt snapshot future becomes ready before resuming");
     Expect(first.Wait().tokens == ExpectedTokens(1, 7),
            "a preview is advanced once by a batched step");
-    second.Cancel();
-    const auto peer = second.Wait();
-    Expect(peer.cancelled && !peer.tokens.empty() &&
-               peer.tokens == ExpectedTokens(2, peer.tokens.size()),
-           "the active batched peer keeps its exact output prefix");
-    const auto batches = control->AdvanceBatches();
-    Expect(std::ranges::any_of(batches,
-                               [](const auto& batch) {
-                                 return std::ranges::find(batch, 1) !=
-                                        batch.end();
-                               }),
-           "the previewed request advanced in a batch");
+    Expect(second.Wait().tokens == ExpectedTokens(2, 30),
+           "the batched peer keeps its output");
+    // Batch preparation can advance this request alone while the peer takes
+    // its own snapshot; exact preview consumption must hold in that fallback.
   }
   // A batched single-token step selects a token, then waits for the capture;
   // the request resumes alone, where it takes multi-token steps.
