@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/upstream-ffn-hc-first-gap-trace-v2/build.py", line 72, in <module>
+    engine = replace_once(engine, '                         std::uint32_t occupancy) {\n', '                         std::uint32_t occupancy) {\n  StrixSoloStageProbe solo_probe(true, "decode", this, Position(), max_tokens);\n')
+  File "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/upstream-ffn-hc-first-gap-trace-v2/build.py", line 49, in replace_once
+    assert source.count(old) == 1, (old[:120], source.count(old))
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('                         std::uint32_t occupancy) {\n', 2)

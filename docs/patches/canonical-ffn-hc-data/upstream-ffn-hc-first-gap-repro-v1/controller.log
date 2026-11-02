@@ -1,0 +1,6 @@
+baseline-1 {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30592536, "elapsed_seconds": 48.18447474599816, "boot_unchanged": true}
+baseline-2 {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30519736, "elapsed_seconds": 48.21927666600095, "boot_unchanged": true}
+baseline-3 {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30557696, "elapsed_seconds": 48.64773342999979, "boot_unchanged": true}
+baseline-4 {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30584040, "elapsed_seconds": 48.87441678499454, "boot_unchanged": true}
+baseline-5 {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30537288, "elapsed_seconds": 49.38361018500291, "boot_unchanged": true}
+baseline-6 {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30701648, "elapsed_seconds": 49.88734022001154, "boot_unchanged": true}

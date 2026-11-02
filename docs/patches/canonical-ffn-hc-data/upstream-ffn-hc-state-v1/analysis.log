@@ -1,0 +1,21 @@
+{
+  "status": "pass",
+  "records": 104,
+  "matched_replay_records": 64,
+  "complete_materialized_state_pairs": 32,
+  "actual_verification_rows": {
+    "4": 20,
+    "2": 36,
+    "16": 4,
+    "7": 12,
+    "8": 22,
+    "10": 10
+  },
+  "depths": [
+    0,
+    32768
+  ],
+  "sampled_and_greedy": true,
+  "scope": "Fixed-history FFNHcRoute-off/on numerical/state comparison. Greedy batch plan forced to alternating1/0 in test-only engine object; sampled production policy unchanged. All canonical headers/GPU objects; no RDMA. Not a production greedy-controller replay or independent teacher/full throughput claim.",
+  "scope_prior_canonical_Q8_failure": "Separate olderQ8 experiment; not a failureof thisHCport or pooled evidence."
+}

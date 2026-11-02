@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/upstream-ffn-hc-first-gap-trace-v1/build.py", line 81, in <module>
+    batch = replace_once(batch, anchor, '  probe.Mark("rollback_done");\n' + anchor)
+  File "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/upstream-ffn-hc-first-gap-trace-v1/build.py", line 49, in replace_once
+    assert source.count(old) == 1, (old[:120], source.count(old))
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('  if (!AllocateBatch(error)) {\n', 2)

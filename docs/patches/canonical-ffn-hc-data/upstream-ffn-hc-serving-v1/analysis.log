@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/upstream-ffn-hc-serving-v1/analyze.py", line 18, in <module>
+    assert row['completion_tokens'] == (8 if row['case'] == 'warmup' else 128)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

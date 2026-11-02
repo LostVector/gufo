@@ -1,0 +1,3 @@
+before-baseline {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30608756, "elapsed_seconds": 49.48832610400859, "boot_unchanged": true}
+candidate {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30590104, "elapsed_seconds": 48.261156786989886, "boot_unchanged": true}
+after-baseline {"status": "pass", "exits": {"worker": 0, "server": 0}, "minimum_available_kib": 30591576, "elapsed_seconds": 48.223962326999754, "boot_unchanged": true}

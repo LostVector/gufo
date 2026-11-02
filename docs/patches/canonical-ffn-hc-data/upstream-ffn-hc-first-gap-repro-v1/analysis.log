@@ -1,0 +1,69 @@
+{
+  "status": "baseline-diagnostic-functional-pass",
+  "records": 54,
+  "solo_concurrent_exact_checks": [
+    {
+      "arm": "baseline-1",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-1",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-2",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-2",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-3",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-3",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-4",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-4",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-5",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-5",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-6",
+      "actor": 0,
+      "solo_before_C2_solo_after_exact": true
+    },
+    {
+      "arm": "baseline-6",
+      "actor": 1,
+      "solo_before_C2_solo_after_exact": true
+    }
+  ],
+  "phase_flags": [],
+  "adaptive_work_changes": [],
+  "scope": "Baseline-only event capture with predeclared six-start cap and >95ms stopping rule; no gain estimates. Exact completions/cache work, actual MTP, pp2048/EOS96 and coding128. Logging may change adaptive timings; not release performance or exoneration of original flags. Timing flags retained; no confidence, equivalence, no-regression or wider-concurrency conclusion. Fixed-history full-state/operator qualification is separate."
+}

@@ -1,0 +1,4 @@
+/home/rkuo/strix-dispatch-investigation/tp-cache-retention/upstream-ffn-hc-first-gap-trace-v1/candidate/batch.cpp:331:62: warning: missing field 'name' initializer [-Wmissing-designated-field-initializers]
+  331 |       const TensorRef layout{.type = kv.type, .cols = kv.cols};
+      |                                                              ^
+1 warning generated.

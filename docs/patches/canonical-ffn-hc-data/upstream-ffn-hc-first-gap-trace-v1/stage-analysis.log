@@ -1,0 +1,52 @@
+before-baseline first gap ms 109.432776
+engine 0 entry policy_done 0.025 {'requests': [2], 'position0': [32], 'planned_drafts': [3], 'verification_rows': [3, 2]}
+engine 0 policy_done prepare_decode_done 0.082 {'requests': [2], 'position0': [32], 'planned_drafts': [3], 'verification_rows': [3, 2]}
+engine 0 prepare_decode_done draft_catchup_done 7.049 {'requests': [2], 'position0': [32], 'planned_drafts': [3], 'verification_rows': [3, 2]}
+candidate first gap ms 69.310352
+engine 0 entry policy_done 0.036 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 policy_done prepare_decode_done 0.126 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 prepare_decode_done draft_catchup_done 5.855 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 draft_catchup_done drafting_done 7.649 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 drafting_done before_target_forward 0.035 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 before_target_forward target_forward_done 50.832 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 target_forward_done finish_decode_done 0.286 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 finish_decode_done leave 0.006 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+batch 0 entry rollback_start 0.011 {'rows': [4], 'requests': [2]}
+batch 0 rollback_start rollback_done 0.02 {'rows': [4], 'requests': [2]}
+batch 0 rollback_done allocate_batch_done 0.002 {'rows': [4], 'requests': [2]}
+batch 0 allocate_batch_done controls_done 0.667 {'rows': [4], 'requests': [2]}
+batch 0 controls_done prior_ple_prefetch_done 0.004 {'rows': [4], 'requests': [2]}
+batch 0 prior_ple_prefetch_done ngram_submitted 0.055 {'rows': [4], 'requests': [2]}
+batch 0 ngram_submitted before_layers 0.035 {'rows': [4], 'requests': [2]}
+batch 0 before_layers before_ple_wait 0.16 {'rows': [4], 'requests': [2]}
+batch 0 before_ple_wait after_ple_wait 0.019 {'rows': [4], 'requests': [2]}
+batch 0 after_ple_wait body_submitted 2.469 {'rows': [4], 'requests': [2]}
+batch 0 body_submitted stream_complete 47.38 {'rows': [4], 'requests': [2]}
+batch 0 stream_complete leave 0.004 {'rows': [4], 'requests': [2]}
+engine 1 entry policy_done 0.007 {'requests': [2], 'position0': [38], 'planned_drafts': [2], 'verification_rows': [3, 3]}
+engine 1 policy_done prepare_decode_done 0.078 {'requests': [2], 'position0': [38], 'planned_drafts': [2], 'verification_rows': [3, 3]}
+engine 1 prepare_decode_done draft_catchup_done 1.585 {'requests': [2], 'position0': [38], 'planned_drafts': [2], 'verification_rows': [3, 3]}
+after-baseline first gap ms 66.001081
+engine 0 entry policy_done 0.03 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 policy_done prepare_decode_done 0.117 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 prepare_decode_done draft_catchup_done 6.471 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 draft_catchup_done drafting_done 4.046 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 drafting_done before_target_forward 0.017 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 before_target_forward target_forward_done 50.652 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 target_forward_done finish_decode_done 0.293 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+engine 0 finish_decode_done leave 0.007 {'requests': [2], 'position0': [35], 'planned_drafts': [2], 'verification_rows': [3, 1]}
+batch 0 entry rollback_start 0.01 {'rows': [4], 'requests': [2]}
+batch 0 rollback_start rollback_done 0.019 {'rows': [4], 'requests': [2]}
+batch 0 rollback_done allocate_batch_done 0.002 {'rows': [4], 'requests': [2]}
+batch 0 allocate_batch_done controls_done 0.571 {'rows': [4], 'requests': [2]}
+batch 0 controls_done prior_ple_prefetch_done 0.003 {'rows': [4], 'requests': [2]}
+batch 0 prior_ple_prefetch_done ngram_submitted 0.061 {'rows': [4], 'requests': [2]}
+batch 0 ngram_submitted before_layers 0.043 {'rows': [4], 'requests': [2]}
+batch 0 before_layers before_ple_wait 0.144 {'rows': [4], 'requests': [2]}
+batch 0 before_ple_wait after_ple_wait 0.005 {'rows': [4], 'requests': [2]}
+batch 0 after_ple_wait body_submitted 3.682 {'rows': [4], 'requests': [2]}
+batch 0 body_submitted stream_complete 46.085 {'rows': [4], 'requests': [2]}
+batch 0 stream_complete leave 0.019 {'rows': [4], 'requests': [2]}
+engine 1 entry policy_done 0.008 {'requests': [2], 'position0': [38], 'planned_drafts': [2], 'verification_rows': [3, 3]}
+engine 1 policy_done prepare_decode_done 0.077 {'requests': [2], 'position0': [38], 'planned_drafts': [2], 'verification_rows': [3, 3]}
+engine 1 prepare_decode_done draft_catchup_done 1.581 {'requests': [2], 'position0': [38], 'planned_drafts': [2], 'verification_rows': [3, 3]}

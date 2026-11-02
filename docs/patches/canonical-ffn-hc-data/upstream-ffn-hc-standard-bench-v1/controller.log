@@ -1,0 +1,2 @@
+baseline {"exit": 0, "minimum_available_kib": 36318304, "elapsed_seconds": 35.28783004698926, "boot_unchanged": true} ['5177a75da6988d5ce9a14e1a744ed16829784eda18d40139d8a1e76469af8412', '5177a75da6988d5ce9a14e1a744ed16829784eda18d40139d8a1e76469af8412']
+candidate {"exit": 0, "minimum_available_kib": 36316348, "elapsed_seconds": 37.0395200230123, "boot_unchanged": true} ['5177a75da6988d5ce9a14e1a744ed16829784eda18d40139d8a1e76469af8412', '5177a75da6988d5ce9a14e1a744ed16829784eda18d40139d8a1e76469af8412']
