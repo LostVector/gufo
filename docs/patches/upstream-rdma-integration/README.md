@@ -26,7 +26,8 @@ are retained; the distinct TP record produces API **0.1.12**. All six
 include/ownership/family gates pass without exceptions.
 
 On the latest binary: production HIP build, format/docs/API policy, isolation,
-18 discovery cases, metadata and nine focused CPU tests pass. A fresh real TP2
+18 discovery cases, metadata and nine focused CPU tests pass. The current-tree
+cache-retention and MTP-backoff regressions also pass (two additional CPU tests). A fresh real TP2
 start passes all twelve standard output/prompt/cache-work identities; greedy and
 sampled keep/discard cache cases and cancellation in both slots preserve the
 live width-two survivor and subsequent replay. Both hosts finish idle with no
@@ -70,6 +71,15 @@ which does not prove complete attribution. Short-C2 TTFT has approximately
 These measurements do not test the later `f25f4744` refresh or establish a new
 optimization gain. Existing earlier optimization studies remain separately
 attributed; do not add their percentages or pool the studies.
+
+## Existing fork PR ancestry
+
+Original heads of PRs #1, #2, #3, #4 and #8 are ancestors of this branch.
+PRs #5–#7 have separately reviewed source ports (ordinary target head `6f1dcdc4`,
+host-window allocation `d9d80fa3`, batched target head `49490e91`), subsequently
+adapted to canonical model interfaces. Do not merge their older lab bases again
+to manufacture an ancestry relationship. All eight original GitHub drafts remain
+open during consolidation review; this record does not claim formal merges.
 
 ## Upstreaming strategy
 
