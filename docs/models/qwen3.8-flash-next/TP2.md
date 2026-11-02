@@ -359,7 +359,8 @@ device windows are ([Design](#design)).
   comparison on both ranks; `--split N` checks that a prefill does not depend
   on its steps (every layer's MoE input and output, and the logits, bit for
   bit), `--decode-tail K` compares decoding the last K tokens with
-  prefilling them.
+  prefilling them, and `--split S --decode-span D` prefills the rest on top
+  of D decoded tokens, as a request reusing a decoded reply does.
 - `qwen38_flash_next_tp_batched_probe` (`gpu-tp2`): batched against serial
   decoding on both ranks without the serving stack; `--prefill-chunk N` and
   `--prefill-interleave` prefill as the serving pool does under concurrency;
@@ -430,6 +431,33 @@ On both hosts, from one commit (record it and the binary hash):
    host, bit-identical between the `rdma` build of `0b6978aa` and the
    integration. That `rdma` build fails the same isolated replay; it passed
    the suite only because earlier cases left it a different checkpoint.
+   `tp_probe --split S --decode-span D` measures the reuse directly: it
+   prefills S tokens, decodes D, prefills the rest and compares the final
+   logits with one prefill (Q4, AR, this prompt). Decoding a single token
+   already moves them by up to 2.24 on one host and 3.24 under TP2; 12 tokens
+   3.49 and 4.22; 24 tokens 3.03 and 2.88. A prefill split alone is bit
+   exact on both. The decode/prefill difference is a property of the shared
+   kernels, not of the split; TP2 changes its direction here and tips a
+   close choice.
+9. **Checkpoint records under TP2**: rank 0 retains snapshots in the
+   generic continuation cache, whose 128 records bind long before its byte
+   budget (13 of 34 GB in a full functional run); one host retains Flash-Next
+   in its component cache, which has no record limit. Upstream's record rule
+   keeps every conversation's last copy and lets a new copy evict only its own
+   conversation's earlier boundaries or redundant copies, so after about 128
+   conversations retry copies were skipped (`event=snapshot action=skipped
+   reason=entry_capacity`, 1,092 times) and edits lost their earlier
+   boundaries: `cache-edits`, `sampling-defaults` and `image-count` failed
+   late in a long run and passed on a fresh server. `TpMirroredRunner` now
+   enables `ContinuationCache::set_optional_copies_displace_idle`: under
+   record pressure a new copy first replaces the least recently used copy of
+   another conversation (never a branch point, its source or its own
+   conversation), as a byte-bounded cache would. The full Q4 MTP functional
+   run then passes everything except `tool-reasoning` and
+   `tool-native-schemas` (items above), with no record skips. Mirroring the
+   component cache itself on rank 1 would remove the record limit, but needs
+   every row copy, borrow, preservation copy, backing growth and disk write
+   replayed on rank 1.
 
 ## ROCm 10.1 upstream integration
 

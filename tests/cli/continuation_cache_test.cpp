@@ -907,6 +907,72 @@ void TestOptionalPublicationRechecksRecordPressure() {
   }
 }
 
+void TestOptionalCopyDisplacesIdleConversationWhenEnabled() {
+  using gufo::server::ContinuationToken;
+  using gufo::server::SnapshotEventAction;
+  using gufo::server::SnapshotEventReason;
+  using gufo::server::SnapshotPurpose;
+  std::vector<std::size_t> invalidations(1);
+  std::size_t created = 0;
+  std::vector<gufo::server::SnapshotEvent> events;
+  gufo::server::ContinuationCache cache(
+      1, [&] { return std::make_unique<FakeState>(created++, &invalidations); },
+      {.restore =
+           [](auto& state, const auto& snapshot) {
+             dynamic_cast<FakeState&>(state).value =
+                 dynamic_cast<const FakeSnapshot&>(snapshot).value;
+           },
+       .capacity_bytes = [] { return 64; },
+       .on_event = [&](const auto& event) { events.push_back(event); }},
+      3);
+  cache.set_optional_copies_displace_idle(true);
+  auto save = [&](std::vector<ContinuationToken> tokens,
+                  SnapshotPurpose purpose) {
+    auto lease = cache.Acquire(tokens);
+    Expect(lease.TryReserveSnapshot(8, tokens.size(), false, purpose),
+           "copy is admitted while bytes remain");
+    lease.Commit(tokens, std::make_unique<FakeSnapshot>(tokens.front(), 8));
+  };
+  // Three conversations fill every record with a last copy.
+  save({1, 2}, SnapshotPurpose::kContinuation);
+  save({8, 9}, SnapshotPurpose::kContinuation);
+  save({6, 7}, SnapshotPurpose::kContinuation);
+  events.clear();
+  save({4, 5}, SnapshotPurpose::kRetry);
+  Expect(events.size() == 1 &&
+             events.front().action == SnapshotEventAction::kRemoved &&
+             events.front().reason == SnapshotEventReason::kEntryCapacity &&
+             events.front().token_count == 2,
+         "a retry copy replaces one idle last copy instead of being skipped");
+  for (const auto& [tokens, kept] :
+       {std::pair{std::vector<ContinuationToken>{1, 2, 0}, false},
+        std::pair{std::vector<ContinuationToken>{8, 9, 0}, true},
+        std::pair{std::vector<ContinuationToken>{6, 7, 0}, true},
+        std::pair{std::vector<ContinuationToken>{4, 5, 0}, true}}) {
+    auto returned = cache.Acquire(tokens);
+    Expect(returned.cached_tokens() == (kept ? 2U : 0U),
+           "only the least recently used conversation is displaced");
+    returned.Invalidate();
+  }
+  Expect(cache.retained_snapshot_bytes() == 24 &&
+             cache.reserved_snapshot_bytes() == 0,
+         "displacement keeps exact aggregate accounting");
+
+  // A continuation keeps its own earlier boundary, which an edit restores,
+  // and replaces the least recently used other conversation instead.
+  save({8, 9, 5, 5}, SnapshotPurpose::kContinuation);
+  for (const auto& [tokens, cached] :
+       {std::pair{std::vector<ContinuationToken>{8, 9, 7}, 2U},
+        std::pair{std::vector<ContinuationToken>{8, 9, 5, 5, 0}, 4U},
+        std::pair{std::vector<ContinuationToken>{6, 7, 0}, 0U},
+        std::pair{std::vector<ContinuationToken>{4, 5, 0}, 2U}}) {
+    auto returned = cache.Acquire(tokens);
+    Expect(returned.cached_tokens() == cached,
+           "record pressure evicts another idle conversation first");
+    returned.Invalidate();
+  }
+}
+
 void TestNewConversationReplacesItsOwnHistoryFirst() {
   using gufo::server::ContinuationToken;
   using gufo::server::SnapshotPurpose;
@@ -1389,6 +1455,7 @@ int main() {
   TestEntryReplacementLogsRemovedSnapshot();
   TestRetentionPrefersExtraCopiesUnderPressure();
   TestOptionalPublicationRechecksRecordPressure();
+  TestOptionalCopyDisplacesIdleConversationWhenEnabled();
   TestNewConversationReplacesItsOwnHistoryFirst();
   TestRetryDoesNotDisplaceEarlierHistory();
   TestEditedTailReplacementPreservesSharedCheckpoints();

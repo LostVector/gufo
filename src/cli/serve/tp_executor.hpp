@@ -235,6 +235,13 @@ public:
       const TextRunnerState& state) const override;
   void RestoreOrFork(TextRunnerState& state,
                      const TextRunnerSnapshot& snapshot) const override;
+  /// The 128 checkpoint records bind before the byte budget here, while one
+  /// host retains Flash-Next in its component cache, which has no record
+  /// limit: under record pressure, replace the least recently used other
+  /// conversation first.
+  [[nodiscard]] bool OptionalCopiesDisplaceIdle() const override {
+    return true;
+  }
   [[nodiscard]] bool CanReuse(const TextRunnerState& state) const override;
   [[nodiscard]] bool CanReuse(
       const TextRunnerSnapshot& snapshot) const override;

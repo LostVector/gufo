@@ -595,6 +595,8 @@ struct TextRunnerPool::Impl {
         },
         MakeSnapshotSupport(&validated, ram_cache_options),
         TextRunnerRamCacheOptions::kMaxEntries);
+    cache->set_optional_copies_displace_idle(
+        validated.runner->OptionalCopiesDisplaceIdle());
     // Entry and byte limits constrain retention independently of session count.
     if (validated.descriptor.capabilities.snapshot) {
       // Report the same post-allocation limits that selected the capacity.

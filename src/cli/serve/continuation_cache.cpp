@@ -83,6 +83,7 @@ struct ContinuationCache::Impl {
   std::vector<std::unique_ptr<Entry>> entries;
   std::size_t state_count{0};
   SnapshotSupport snapshot_support;
+  bool optional_copies_displace_idle{false};
   mutable std::mutex mutex;
   std::condition_variable condition;
   std::uint64_t clock{0};
@@ -814,6 +815,12 @@ std::size_t ContinuationCache::entry_capacity() const noexcept {
                                 : impl_->entries.size();
 }
 
+void ContinuationCache::set_optional_copies_displace_idle(
+    bool enabled) noexcept {
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
+  impl_->optional_copies_displace_idle = enabled;
+}
+
 std::size_t ContinuationCache::snapshot_capacity_bytes() const noexcept {
   const std::lock_guard<std::mutex> lock(impl_->mutex);
   return impl_->snapshot_capacity_bytes;
@@ -869,7 +876,7 @@ bool ContinuationCache::ReserveSnapshot(
       return snapshot_bytes != 0 && used <= impl_->snapshot_capacity_bytes &&
              snapshot_bytes <= impl_->snapshot_capacity_bytes - used;
     };
-    if (!IsContinuation(purpose) &&
+    if (!IsContinuation(purpose) && !impl_->optional_copies_displace_idle &&
         std::ranges::none_of(impl_->entries.begin() + impl_->state_count,
                              impl_->entries.end(),
                              [](const auto& entry) { return !entry->valid; }) &&
@@ -1106,6 +1113,28 @@ std::size_t ContinuationCache::Commit(
             if (!impl_->entries[candidate]->valid) {
               target = candidate;
               break;
+            }
+          }
+        }
+        if (target == no_entry && impl_->optional_copies_displace_idle) {
+          // Records bind before bytes: replace the least recently used copy
+          // of a conversation this one does not extend, as a byte-bounded
+          // cache would, and keep this conversation's own earlier boundaries
+          // (an edit restores them). Branch points and the source stay.
+          std::uint64_t oldest = std::numeric_limits<std::uint64_t>::max();
+          for (std::size_t candidate = impl_->state_count;
+               candidate < impl_->entries.size(); ++candidate) {
+            const auto& entry = *impl_->entries[candidate];
+            const bool family = entry.input_identity == input_identity &&
+                                (IsPrefix(entry.tokens, tokens) ||
+                                 IsPrefix(tokens, entry.tokens));
+            if (candidate == source_index || !entry.valid ||
+                entry.snapshot == nullptr || family ||
+                impl_->IsBranchPoint(candidate))
+              continue;
+            if (entry.snapshot_last_used < oldest) {
+              target = candidate;
+              oldest = entry.snapshot_last_used;
             }
           }
         }

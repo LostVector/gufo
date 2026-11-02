@@ -403,6 +403,10 @@ public:
       const = 0;
 
   [[nodiscard]] virtual bool UsesComponentCache() const { return false; }
+  /// See ContinuationCache::set_optional_copies_displace_idle.
+  [[nodiscard]] virtual bool OptionalCopiesDisplaceIdle() const {
+    return false;
+  }
   [[nodiscard]] virtual std::unique_ptr<ComponentCacheResources>
   CreateComponentCacheResources(cache::ResourceLedger&, std::size_t) const;
   [[nodiscard]] virtual std::unique_ptr<TextRunnerState> BindComponentState(
