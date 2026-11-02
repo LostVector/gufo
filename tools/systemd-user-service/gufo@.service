@@ -80,7 +80,7 @@ ExecStartPre=/bin/sh -c 'cache=$${GUFO_CACHE_DIR:-$HOME/.cache}; \
 ExecStart=/bin/sh -c 'model=$(printenv GUFO_MODEL_$(echo %i | tr a-z- A-Z_)); \
   dir=$${GUFO_MODEL_DIR:-/opt/models}; checkout=$${GUFO_CHECKOUT:-$HOME/git/gufo}; cache=$${GUFO_CACHE_DIR:-$HOME/.cache}; \
   exec podman run --rm --log-driver none --security-opt label=disable \
-  --userns keep-id:uid=1000,gid=1000 \
+  --userns keep-id:uid=1000,gid=1000 --user 1000:1000 \
   --device /dev/kfd --device /dev/dri \
   --device /dev/infiniband $${GUFO_RDMA_DRIVERS:+-v "$${GUFO_RDMA_DRIVERS%%/*}:$${GUFO_RDMA_DRIVERS%%/*}:ro" -e RDMAV_DRIVERS=$GUFO_RDMA_DRIVERS} \
   $${GUFO_LD_LIBRARY_PATH:+-e LD_LIBRARY_PATH=$GUFO_LD_LIBRARY_PATH} \
