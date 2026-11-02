@@ -36,6 +36,7 @@ ExecStart=/bin/sh -c 'dir=$${GUFO_MODEL_DIR:-/opt/models}; checkout=$${GUFO_CHEC
   --userns keep-id:uid=1000,gid=1000 \
   --device /dev/kfd --device /dev/dri \
   --device /dev/infiniband $${GUFO_RDMA_DRIVERS:+-v "$${GUFO_RDMA_DRIVERS%%/*}:$${GUFO_RDMA_DRIVERS%%/*}:ro" -e RDMAV_DRIVERS=$GUFO_RDMA_DRIVERS} \
+  $${GUFO_LD_LIBRARY_PATH:+-e LD_LIBRARY_PATH=$GUFO_LD_LIBRARY_PATH} \
   --group-add keep-groups --ulimit memlock=-1 --network host \
   -v "$checkout:/workspace/gufo:ro" -v "$dir:$dir:ro" \
   -v "$cache/gufo-tp2/%i:/cache" \
