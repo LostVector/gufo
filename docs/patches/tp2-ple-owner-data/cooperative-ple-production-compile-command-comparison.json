@@ -1,0 +1,32 @@
+{
+  "inputs": {
+    "baseline": {
+      "compile_commands_sha256": "39fb8115374171aab80d0861d75e9d4896daed095a1a8cc06c152890cb917205",
+      "CMakeCache_sha256": "a64859383faed4be86d6e7ecd09c2d102b66abc06a1ba63340ea596ed1d6e709",
+      "BUILD_TESTING": false,
+      "build_type": "RelWithDebInfo",
+      "preset": "release"
+    },
+    "candidate": {
+      "compile_commands_sha256": "9bc6ce3b0748f0d4b8ddd0da639be977bbe7d3a8ac2b389cd17980e6b65a568b",
+      "CMakeCache_sha256": "f0d0ce2b3d6c4f302841dd6d6890cce80f11c7a9b326e0ec9576a214ee3fc31c",
+      "BUILD_TESTING": false,
+      "build_type": "RelWithDebInfo",
+      "preset": "release"
+    }
+  },
+  "common_model_family_compile_commands": 77,
+  "all_common_commands_identical_after_source_build_path_normalization": true,
+  "differences": [],
+  "candidate_only": [
+    [
+      "src/models/qwen38_flash_next/kernels/rocm/ple_owner.cpp",
+      "extensions/build/qwen38_flash_next/build/CMakeFiles/gufo_qwen38_flash_next_hip.dir<SOURCE>/src/models/qwen38_flash_next/kernels/rocm/ple_owner.cpp.o"
+    ],
+    [
+      "src/models/qwen38_flash_next/kernels/rocm/ple_owner.hip.cpp",
+      "extensions/build/qwen38_flash_next/build/CMakeFiles/gufo_qwen38_flash_next_hip.dir<SOURCE>/src/models/qwen38_flash_next/kernels/rocm/ple_owner.hip.cpp.o"
+    ]
+  ],
+  "scope": "Production release-preset/OFF builds; compile commands, not machine-code equivalence. Fresh functional qualification still required."
+}

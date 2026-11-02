@@ -1,0 +1,556 @@
+{
+  "functional_qualification_pass": true,
+  "canonical_records": 60,
+  "exact_vs_matching_solo_controls": true,
+  "actual_MTP_no_prompt_cache": true,
+  "settings_frozen_harness_binary_PIDs_boot_topology_kernel_final_idle_pass": true,
+  "checked_transport_error_deltas": {
+    "before-baseline/rank0": {},
+    "before-baseline/rank1": {},
+    "first-candidate/rank0": {},
+    "first-candidate/rank1": {},
+    "after-baseline/rank0": {},
+    "after-baseline/rank1": {}
+  },
+  "waves": [
+    {
+      "phase": "before-baseline",
+      "waves": [
+        {
+          "case": "C3",
+          "admissions": [
+            1,
+            2,
+            3
+          ],
+          "observed_max_physical_widths": [
+            3,
+            3,
+            3
+          ],
+          "client_wave_tok_s": 86.18587823783987
+        },
+        {
+          "case": "C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 98.52474215992581
+        },
+        {
+          "case": "ragged-C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 67.915423116608
+        }
+      ]
+    },
+    {
+      "phase": "first-candidate",
+      "waves": [
+        {
+          "case": "C3",
+          "admissions": [
+            1,
+            2,
+            3
+          ],
+          "observed_max_physical_widths": [
+            3,
+            3,
+            3
+          ],
+          "client_wave_tok_s": 85.7090473230481
+        },
+        {
+          "case": "C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 98.53378576421792
+        },
+        {
+          "case": "ragged-C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 67.83354971745477
+        }
+      ]
+    },
+    {
+      "phase": "after-baseline",
+      "waves": [
+        {
+          "case": "C3",
+          "admissions": [
+            1,
+            2,
+            3
+          ],
+          "observed_max_physical_widths": [
+            3,
+            3,
+            3
+          ],
+          "client_wave_tok_s": 85.55949948886125
+        },
+        {
+          "case": "C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 99.27428127133298
+        },
+        {
+          "case": "ragged-C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 67.21102070907112
+        }
+      ]
+    }
+  ],
+  "strict_phase_flags": [
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 0,
+      "order": 8,
+      "metric": "server_max_inter_token_ms",
+      "baseline_ms": 117.239241,
+      "candidate_ms": 123.558933,
+      "delta_ms": 6.319691999999989
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 0,
+      "order": 8,
+      "metric": "first_followup_content_gap_ms",
+      "baseline_ms": 117.128154,
+      "candidate_ms": 123.550343,
+      "delta_ms": 6.422189000000003
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 0,
+      "order": 8,
+      "metric": "maximum_content_gap_ms",
+      "baseline_ms": 117.128154,
+      "candidate_ms": 123.550343,
+      "delta_ms": 6.422189000000003
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 0,
+      "order": 8,
+      "metric": "raw.max_inter_token_ms",
+      "baseline_ms": 117.239241,
+      "candidate_ms": 123.558933,
+      "delta_ms": 6.319691999999989
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 1,
+      "order": 9,
+      "metric": "server_max_inter_token_ms",
+      "baseline_ms": 117.179873,
+      "candidate_ms": 123.492005,
+      "delta_ms": 6.312132000000005
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 1,
+      "order": 9,
+      "metric": "first_followup_content_gap_ms",
+      "baseline_ms": 117.094916,
+      "candidate_ms": 123.376598,
+      "delta_ms": 6.2816820000000035
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 1,
+      "order": 9,
+      "metric": "maximum_content_gap_ms",
+      "baseline_ms": 117.094916,
+      "candidate_ms": 123.376598,
+      "delta_ms": 6.2816820000000035
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 1,
+      "order": 9,
+      "metric": "raw.max_inter_token_ms",
+      "baseline_ms": 117.179873,
+      "candidate_ms": 123.492005,
+      "delta_ms": 6.312132000000005
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 2,
+      "order": 10,
+      "metric": "server_max_inter_token_ms",
+      "baseline_ms": 152.107461,
+      "candidate_ms": 161.468312,
+      "delta_ms": 9.360850999999997
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 2,
+      "order": 10,
+      "metric": "first_followup_content_gap_ms",
+      "baseline_ms": 152.100291,
+      "candidate_ms": 161.486521,
+      "delta_ms": 9.386230000000012
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 2,
+      "order": 10,
+      "metric": "maximum_content_gap_ms",
+      "baseline_ms": 152.100291,
+      "candidate_ms": 161.486521,
+      "delta_ms": 9.386230000000012
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 2,
+      "order": 10,
+      "metric": "raw.cache_snapshot_ms",
+      "baseline_ms": 232.539991,
+      "candidate_ms": 248.837065,
+      "delta_ms": 16.29707400000001
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 2,
+      "order": 10,
+      "metric": "raw.max_inter_token_ms",
+      "baseline_ms": 152.107461,
+      "candidate_ms": 161.468312,
+      "delta_ms": 9.360850999999997
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "decode_ms",
+      "baseline_ms": 4111.791495000001,
+      "candidate_ms": 4327.928587,
+      "delta_ms": 216.13709199999903
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "server_max_inter_token_ms",
+      "baseline_ms": 164.717085,
+      "candidate_ms": 204.147949,
+      "delta_ms": 39.430864000000014
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "first_followup_content_gap_ms",
+      "baseline_ms": 164.857921,
+      "candidate_ms": 204.137658,
+      "delta_ms": 39.27973699999998
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "maximum_content_gap_ms",
+      "baseline_ms": 164.857921,
+      "candidate_ms": 204.137658,
+      "delta_ms": 39.27973699999998
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "raw.cache_snapshot_ms",
+      "baseline_ms": 335.85272799999996,
+      "candidate_ms": 403.12741000000005,
+      "delta_ms": 67.2746820000001
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "raw.decode_ms",
+      "baseline_ms": 4111.791495000001,
+      "candidate_ms": 4327.928587,
+      "delta_ms": 216.13709199999903
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "raw.max_inter_token_ms",
+      "baseline_ms": 164.717085,
+      "candidate_ms": 204.147949,
+      "delta_ms": 39.430864000000014
+    }
+  ],
+  "adaptive_work_fields": [
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 0,
+      "order": 11,
+      "metric": "draft_tokens",
+      "baseline": 85,
+      "candidate": 82
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 0,
+      "order": 11,
+      "metric": "draft_accepted_tokens",
+      "baseline": 59,
+      "candidate": 57
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 0,
+      "order": 11,
+      "metric": "raw.draft_rounds",
+      "baseline": 50,
+      "candidate": 56
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 1,
+      "order": 12,
+      "metric": "draft_tokens",
+      "baseline": 84,
+      "candidate": 79
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 1,
+      "order": 12,
+      "metric": "draft_accepted_tokens",
+      "baseline": 69,
+      "candidate": 63
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 1,
+      "order": 12,
+      "metric": "raw.draft_rounds",
+      "baseline": 42,
+      "candidate": 44
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 2,
+      "order": 13,
+      "metric": "draft_tokens",
+      "baseline": 93,
+      "candidate": 83
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 2,
+      "order": 13,
+      "metric": "draft_accepted_tokens",
+      "baseline": 62,
+      "candidate": 61
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 2,
+      "order": 13,
+      "metric": "raw.draft_rounds",
+      "baseline": 47,
+      "candidate": 51
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "draft_tokens",
+      "baseline": 88,
+      "candidate": 79
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "draft_accepted_tokens",
+      "baseline": 67,
+      "candidate": 58
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "raw.draft_rounds",
+      "baseline": 44,
+      "candidate": 49
+    },
+    {
+      "control": "after-baseline",
+      "case": "ragged-C4",
+      "actor": 0,
+      "order": 15,
+      "metric": "draft_tokens",
+      "baseline": 15,
+      "candidate": 16
+    },
+    {
+      "control": "after-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "draft_tokens",
+      "baseline": 20,
+      "candidate": 22
+    },
+    {
+      "control": "after-baseline",
+      "case": "ragged-C4",
+      "actor": 2,
+      "order": 17,
+      "metric": "draft_tokens",
+      "baseline": 41,
+      "candidate": 45
+    },
+    {
+      "control": "after-baseline",
+      "case": "ragged-C4",
+      "actor": 2,
+      "order": 17,
+      "metric": "draft_accepted_tokens",
+      "baseline": 32,
+      "candidate": 31
+    },
+    {
+      "control": "after-baseline",
+      "case": "ragged-C4",
+      "actor": 2,
+      "order": 17,
+      "metric": "raw.draft_rounds",
+      "baseline": 21,
+      "candidate": 24
+    },
+    {
+      "control": "after-baseline",
+      "case": "ragged-C4",
+      "actor": 3,
+      "order": 18,
+      "metric": "draft_tokens",
+      "baseline": 86,
+      "candidate": 88
+    },
+    {
+      "control": "after-baseline",
+      "case": "ragged-C4",
+      "actor": 3,
+      "order": 18,
+      "metric": "draft_accepted_tokens",
+      "baseline": 61,
+      "candidate": 63
+    },
+    {
+      "control": "after-baseline",
+      "case": "ragged-C4",
+      "actor": 3,
+      "order": 18,
+      "metric": "raw.draft_rounds",
+      "baseline": 53,
+      "candidate": 50
+    }
+  ],
+  "timing_qualified": false,
+  "scope": "One fixed application-traced B/C/B four-session qualification; not statistical/equivalence/isolated PLE gain. Maximum width metrics do not expose every batch transition; ragged requests have staggered limits. Baselinefbacf9cc vs combined production2669e07c. All timing flags retained, not waived by exact outputs or throughput."
+}

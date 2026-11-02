@@ -1,0 +1,18 @@
+{
+  "sequence": [
+    [
+      "before-baseline",
+      "baseline"
+    ],
+    [
+      "first-candidate",
+      "candidate"
+    ],
+    [
+      "after-baseline",
+      "baseline"
+    ]
+  ],
+  "requests_per_start": 5,
+  "scope": "Fixed B/C/B of original performance first five requests: warmup8, first/repeated2048 max128, shortC2 max128. Frozen production binaries, approved81C6/TX32 unchanged, 65K capacity,2slots,chunk2048,1GiBcache, actualMTP. Same application-only v3 recorder in both arms; candidate-only PLE callback span. No profiler SDK/GPU/NVMe/admin sampling/idle/table priming. Outer spans can contain useful peer GPU work. Trace does not waive old flags or establish unprofiled throughput."
+}

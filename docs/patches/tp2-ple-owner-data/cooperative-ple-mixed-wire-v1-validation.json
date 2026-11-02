@@ -1,0 +1,32 @@
+{
+  "both_wire21_wire22_rank_orders_explicitly_reject": true,
+  "cases": [
+    {
+      "versions": [
+        "new",
+        "old"
+      ],
+      "exit_codes": [
+        1,
+        1
+      ],
+      "both_explicitly_rejected": true,
+      "elapsed_s": 0.3517163549840916
+    },
+    {
+      "versions": [
+        "old",
+        "new"
+      ],
+      "exit_codes": [
+        1,
+        1
+      ],
+      "both_explicitly_rejected": true,
+      "elapsed_s": 0.3355861169984564
+    }
+  ],
+  "no_model_or_collective_execution": true,
+  "same_boot_topology_approved_idle_clean_counters_kernel": true,
+  "scope": "Real native two-peer startup compatibility, not inference or performance. Wire22 component probe is testing-enabledf683b344; wire21 numerical probe is production-OFF373a98cd. Same framing/version declaration as model candidate; no equivalence of build flags asserted. Both directions must reject placement metadata before model/collective execution."
+}

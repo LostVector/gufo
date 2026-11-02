@@ -1,0 +1,582 @@
+{
+  "all_actual_choices_replayed_exactly": true,
+  "choice_count": 104,
+  "peer_choice_counts": {
+    "before-baseline": 0,
+    "first-candidate": 0,
+    "after-baseline": 0
+  },
+  "phases": [
+    {
+      "phase": "before-baseline",
+      "choices": 35,
+      "selected_counts": {
+        "2": 14,
+        "5": 6,
+        "3": 5,
+        "1": 2,
+        "0": 7,
+        "6": 1
+      },
+      "branch_counts": {
+        "cost-score": 23,
+        "budget-zero": 3,
+        "headless-calibration": 4,
+        "explore": 2,
+        "hold-probe": 3
+      },
+      "first": {
+        "phase": "before-baseline",
+        "object": 96871184967224,
+        "count": 2,
+        "context": 39,
+        "bin": 0,
+        "ms_bits": [
+          1107470465,
+          1110367127,
+          1110843503,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "samples": [
+          1,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cycles": 20,
+        "last_drafts": 0,
+        "tail": [
+          2,
+          0,
+          3
+        ],
+        "rows": [
+          {
+            "object": 96871305967404,
+            "actor": 0,
+            "budget": 7,
+            "policy": [
+              7,
+              4,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "object": 96871274696172,
+            "actor": 1,
+            "budget": 7,
+            "policy": [
+              7,
+              4,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "selected": 2,
+        "begin_ns": 173914768305608,
+        "batch_begin_ns": 173914767138363,
+        "batch_begin_ms": 582.835408,
+        "ms": [
+          32.664554595947266,
+          43.71444320678711,
+          45.531673431396484,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "replayed": 2,
+        "branch": "cost-score",
+        "actual_members": [
+          {
+            "actor": 0,
+            "cycles": 1,
+            "drafted": 2,
+            "accepted": 2
+          },
+          {
+            "actor": 1,
+            "cycles": 1,
+            "drafted": 2,
+            "accepted": 2
+          }
+        ]
+      }
+    },
+    {
+      "phase": "first-candidate",
+      "choices": 35,
+      "selected_counts": {
+        "2": 14,
+        "5": 6,
+        "3": 5,
+        "1": 2,
+        "0": 7,
+        "6": 1
+      },
+      "branch_counts": {
+        "cost-score": 23,
+        "budget-zero": 3,
+        "headless-calibration": 4,
+        "explore": 2,
+        "hold-probe": 3
+      },
+      "first": {
+        "phase": "first-candidate",
+        "object": 106283637564808,
+        "count": 2,
+        "context": 39,
+        "bin": 0,
+        "ms_bits": [
+          1107465561,
+          1110369028,
+          1110913471,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "samples": [
+          1,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cycles": 20,
+        "last_drafts": 0,
+        "tail": [
+          2,
+          0,
+          3
+        ],
+        "rows": [
+          {
+            "object": 106283759847148,
+            "actor": 0,
+            "budget": 7,
+            "policy": [
+              7,
+              4,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "object": 106283727290124,
+            "actor": 1,
+            "budget": 7,
+            "policy": [
+              7,
+              4,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "selected": 2,
+        "begin_ns": 173980000076697,
+        "batch_begin_ns": 173980000071107,
+        "batch_begin_ms": 584.604076,
+        "ms": [
+          32.64584732055664,
+          43.72169494628906,
+          45.798580169677734,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "replayed": 2,
+        "branch": "cost-score",
+        "actual_members": [
+          {
+            "actor": 0,
+            "cycles": 1,
+            "drafted": 2,
+            "accepted": 2
+          },
+          {
+            "actor": 1,
+            "cycles": 1,
+            "drafted": 2,
+            "accepted": 2
+          }
+        ]
+      }
+    },
+    {
+      "phase": "after-baseline",
+      "choices": 34,
+      "selected_counts": {
+        "2": 12,
+        "4": 2,
+        "5": 5,
+        "3": 4,
+        "1": 3,
+        "0": 7,
+        "6": 1
+      },
+      "branch_counts": {
+        "cost-score": 23,
+        "budget-zero": 3,
+        "headless-calibration": 4,
+        "explore": 2,
+        "hold-probe": 2
+      },
+      "first": {
+        "phase": "after-baseline",
+        "object": 94918912344936,
+        "count": 2,
+        "context": 39,
+        "bin": 0,
+        "ms_bits": [
+          1107402365,
+          1110482658,
+          1110537040,
+          1114783873,
+          0,
+          0,
+          0,
+          0
+        ],
+        "samples": [
+          1,
+          2,
+          4,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cycles": 21,
+        "last_drafts": 1,
+        "tail": [
+          2,
+          0,
+          4
+        ],
+        "rows": [
+          {
+            "object": 94919034485244,
+            "actor": 0,
+            "budget": 7,
+            "policy": [
+              7,
+              4,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "object": 94919035671820,
+            "actor": 1,
+            "budget": 7,
+            "policy": [
+              7,
+              4,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1069547520,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              1056964608,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "selected": 2,
+        "begin_ns": 174045595317920,
+        "batch_begin_ns": 174045595311251,
+        "batch_begin_ms": 585.555098,
+        "ms": [
+          32.4047737121582,
+          44.15515899658203,
+          44.36260986328125,
+          60.562992095947266,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "replayed": 2,
+        "branch": "cost-score",
+        "actual_members": [
+          {
+            "actor": 0,
+            "cycles": 1,
+            "drafted": 2,
+            "accepted": 2
+          },
+          {
+            "actor": 1,
+            "cycles": 1,
+            "drafted": 2,
+            "accepted": 2
+          }
+        ]
+      }
+    }
+  ],
+  "first_choice_input_swaps": [
+    {
+      "own": "before-baseline",
+      "donor": "first-candidate",
+      "own_selected": 2,
+      "donor_selected": 2,
+      "own_context": 39,
+      "donor_context": 39,
+      "own_budgets": [
+        7,
+        7
+      ],
+      "donor_budgets": [
+        7,
+        7
+      ],
+      "replayed_swaps": {
+        "ms": 2,
+        "samples": 2,
+        "costs": 2,
+        "schedule": 2,
+        "acceptance": 2,
+        "all": 2
+      }
+    },
+    {
+      "own": "before-baseline",
+      "donor": "after-baseline",
+      "own_selected": 2,
+      "donor_selected": 2,
+      "own_context": 39,
+      "donor_context": 39,
+      "own_budgets": [
+        7,
+        7
+      ],
+      "donor_budgets": [
+        7,
+        7
+      ],
+      "replayed_swaps": {
+        "ms": 2,
+        "samples": 2,
+        "costs": 2,
+        "schedule": 2,
+        "acceptance": 2,
+        "all": 2
+      }
+    },
+    {
+      "own": "first-candidate",
+      "donor": "before-baseline",
+      "own_selected": 2,
+      "donor_selected": 2,
+      "own_context": 39,
+      "donor_context": 39,
+      "own_budgets": [
+        7,
+        7
+      ],
+      "donor_budgets": [
+        7,
+        7
+      ],
+      "replayed_swaps": {
+        "ms": 2,
+        "samples": 2,
+        "costs": 2,
+        "schedule": 2,
+        "acceptance": 2,
+        "all": 2
+      }
+    },
+    {
+      "own": "first-candidate",
+      "donor": "after-baseline",
+      "own_selected": 2,
+      "donor_selected": 2,
+      "own_context": 39,
+      "donor_context": 39,
+      "own_budgets": [
+        7,
+        7
+      ],
+      "donor_budgets": [
+        7,
+        7
+      ],
+      "replayed_swaps": {
+        "ms": 2,
+        "samples": 2,
+        "costs": 2,
+        "schedule": 2,
+        "acceptance": 2,
+        "all": 2
+      }
+    },
+    {
+      "own": "after-baseline",
+      "donor": "before-baseline",
+      "own_selected": 2,
+      "donor_selected": 2,
+      "own_context": 39,
+      "donor_context": 39,
+      "own_budgets": [
+        7,
+        7
+      ],
+      "donor_budgets": [
+        7,
+        7
+      ],
+      "replayed_swaps": {
+        "ms": 2,
+        "samples": 2,
+        "costs": 2,
+        "schedule": 2,
+        "acceptance": 2,
+        "all": 2
+      }
+    },
+    {
+      "own": "after-baseline",
+      "donor": "first-candidate",
+      "own_selected": 2,
+      "donor_selected": 2,
+      "own_context": 39,
+      "donor_context": 39,
+      "own_budgets": [
+        7,
+        7
+      ],
+      "donor_budgets": [
+        7,
+        7
+      ],
+      "replayed_swaps": {
+        "ms": 2,
+        "samples": 2,
+        "costs": 2,
+        "schedule": 2,
+        "acceptance": 2,
+        "all": 2
+      }
+    }
+  ],
+  "scope": "Recorded real planner inputs plus actual uint32 return, exact header C++ CPU replay; input-group swaps are offline decision counterfactuals, not inference performance results. Rows map via exact Session acceptance offset108, then Sync/StepPrefill identity. No crosshost clocks or order-only attribution. Every captured choice retained; no performance significance or phase-flag waiver."
+}

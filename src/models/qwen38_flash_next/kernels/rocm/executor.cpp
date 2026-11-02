@@ -2282,6 +2282,68 @@ bool Executor::HcMix(const DeviceMixer& m, const float* res, bool normed,
 
 bool Executor::PleFetch(Session& session, std::span<const std::int32_t> tokens,
                         bool speculative, std::string* error_msg) const {
+  if (ple_pending_ && !WaitPle(error_msg))
+    return false;
+  if (!options_.ple_gather.CanGather(tokens.size(), speculative))
+    return LocalPleFetch(session, tokens, speculative, error_msg);
+  cooperative_tokens_ = tokens.size();
+  cooperative_rows_.resize(tokens.size() * config().ple_heads);
+  auto history = session.ngram_;
+  if (speculative) {
+    // A rejected draft restores any proper prefix, not just the whole chain.
+    // The owner records these through LocalPleFetch; the receiver must keep
+    // exactly the same n-gram rollback boundaries without reading the table.
+    for (std::size_t i = 0; i < tokens.size(); ++i) {
+      HashNgramRows(config(), history, tokens.subspan(i, 1),
+                    std::span(cooperative_rows_)
+                        .subspan(i * config().ple_heads, config().ple_heads));
+      if (!options_.ple_gather.local_owner && i + 1 < tokens.size())
+        session.ngram_snapshots_[i] = history;
+    }
+  } else {
+    HashNgramRows(config(), history, tokens, cooperative_rows_);
+  }
+  if (options_.ple_gather.local_owner) {
+    std::string local_error;
+    cooperative_local_ok_ =
+        LocalPleFetch(session, tokens, speculative, &local_error);
+  } else {
+    FinishPrefetch();
+    prefetch_.ready = false;
+    prefetch_.claimed = 0;
+    prefetch_.tail = false;
+    session.ngram_ = history;
+    cooperative_local_ok_ = true;
+  }
+  cooperative_pending_ = true;
+  ple_pending_ = true;
+  return true;
+}
+
+bool Executor::WaitPle(std::string* error_msg) const {
+  if (!cooperative_pending_)
+    return LocalWaitPle(error_msg);
+  bool ok = cooperative_local_ok_;
+  if (options_.ple_gather.local_owner && ok)
+    ok = LocalWaitPle(nullptr);
+  cooperative_pending_ = false;
+  ple_pending_ = false;
+  return options_.ple_gather.exchange(
+      cooperative_rows_, host_emb_, s_.ple_emb,
+      cooperative_tokens_ * config().PleEmbeddingDim(), ok, stream_, error_msg);
+}
+
+void Executor::DiscardPle() const {
+  if (ple_pending_ &&
+      (!cooperative_pending_ || options_.ple_gather.local_owner))
+    (void)LocalWaitPle(nullptr);
+  cooperative_pending_ = false;
+  ple_pending_ = false;
+}
+
+bool Executor::LocalPleFetch(Session& session,
+                             std::span<const std::int32_t> tokens,
+                             bool speculative, std::string* error_msg) const {
   if (ple_pending_ && !WaitPle(error_msg)) {
     return false;
   }
@@ -2355,7 +2417,7 @@ bool Executor::PleFetch(Session& session, std::span<const std::int32_t> tokens,
   return ple_pending_;
 }
 
-bool Executor::WaitPle(std::string* error_msg) const {
+bool Executor::LocalWaitPle(std::string* error_msg) const {
   bool ok = ple_pending_;
   if (ok && prefetch_.claimed != 0) {
     FinishPrefetch();
@@ -2384,7 +2446,9 @@ void Executor::PrefetchPle(const Session& session,
   const Config& c = config();
   // A paired prefill chunk (PrefillChunk) is the widest batch PleFetch reads.
   if (ple_pending_ || prefetch_.pending || next.empty() ||
-      next.size() > PrefillChunk()) {
+      next.size() > PrefillChunk() ||
+      (!options_.ple_gather.local_owner &&
+       options_.ple_gather.CanGather(next.size(), false))) {
     return;
   }
   // Hashed from the history after this batch, which PleFetch already
@@ -3472,11 +3536,13 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
   struct PinnedInputGuard {
     hipStream_t stream;
     bool completed{false};
+    std::function<void()> discard;
     ~PinnedInputGuard() {
+      discard();
       if (!completed)
         (void)hipStreamSynchronize(stream);
     }
-  } pinned_inputs{stream_};
+  } pinned_inputs{stream_, false, [this] { DiscardPle(); }};
   // Start the disk rows before protecting checkpoint rows, which can commit
   // device pages: layer 0 alone cannot hide the whole read.
   if (session.continuation_hooks_) {
@@ -3500,7 +3566,7 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
     session.PreserveSnapshots(session.position_, session.mtp_.position);
   } catch (...) {
     // The forward never ran; leave the n-gram window where it was.
-    (void)WaitPle(nullptr);
+    DiscardPle();
     session.ngram_ = ngram;
     throw;
   }

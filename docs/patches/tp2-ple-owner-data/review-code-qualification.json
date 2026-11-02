@@ -1,0 +1,13 @@
+{
+  "production_code_head": "74bf4b5e091ee191616d3f9834b42cdc4322a2e3",
+  "maintained_head": "e250a07cfe1c9fcb0905c9b1cfca438261248c81",
+  "canonical_head": "13f6456628bfaa17aa5d5cef1ed0922a738a1f39",
+  "review_repository_CI": 41397279327,
+  "review_Windows_CI": 41397282071,
+  "maintained_repository_CI": 41397237414,
+  "maintained_Windows_CI": 41397237381,
+  "state": "All four completed successfully on the recorded code heads. Subsequent evidence-only commit does not relabel exact-head CI.",
+  "followup_scope": "Only docs/patches/tp2-ple-owner-data changes; no app source, public header, CMake, extension manifest, compiler option or workflow change.",
+  "performance_attribution": "Original untraced statistical study remains fbacf9cc versus85586a63; diagnostic triplets are not pooled or relabeled as current-source performance.",
+  "unresolved": "Warmup wait root cause and original maximum-gap comparisons remain unassigned; wider timings remain inconclusive. Common modes are not flag waivers."
+}

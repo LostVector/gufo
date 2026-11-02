@@ -1,0 +1,7 @@
+control,case,actor,order,metric,baseline_ms,candidate_ms,delta_ms
+after-baseline,ragged-C4,1,16,wall_ms,1524.2283279949334,1781.6571660223417,257.42883802740835
+after-baseline,ragged-C4,1,16,client_event_inter_token_ms,30.58992128171667,38.176639875018736,7.586718593302066
+after-baseline,ragged-C4,1,16,decode_ms,805.7256869999999,1049.825647,244.09996
+after-baseline,ragged-C4,1,16,server_inter_token_ms,30.592896781249998,38.182385624999995,7.589488843749997
+after-baseline,ragged-C4,1,16,raw.decode_ms,805.7256869999999,1049.825647,244.09996
+after-baseline,ragged-C4,1,16,raw.mean_inter_token_ms,30.592896781249998,38.182385624999995,7.589488843749997

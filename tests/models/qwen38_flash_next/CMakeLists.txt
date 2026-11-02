@@ -120,3 +120,10 @@ if (ENGINE_ENABLE_HIP)
   target_link_libraries(qwen38_flash_next_gpu_probe PRIVATE
     gufo_qwen38_flash_next_reference gufo_qwen38_flash_next_hip hip::host gufo_core)
 endif()
+
+# Requires two real native RDMA peers; intentionally outside automatic CTest.
+if (ENGINE_ENABLE_HIP AND GUFO_ENABLE_TP2_RDMA)
+  add_executable(qwen38_flash_next_ple_owner_probe EXCLUDE_FROM_ALL ple_owner_probe.cpp)
+  target_link_libraries(qwen38_flash_next_ple_owner_probe PRIVATE
+    gufo_qwen38_flash_next_hip gufo_qwen38_flash_next_rdma hip::host gufo_core)
+endif()

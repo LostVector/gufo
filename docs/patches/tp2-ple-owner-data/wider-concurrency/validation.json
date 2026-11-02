@@ -1,0 +1,551 @@
+{
+  "functional_qualification_pass": true,
+  "canonical_records": 60,
+  "exact_vs_matching_solo_controls": true,
+  "actual_MTP_no_prompt_cache": true,
+  "settings_frozen_harness_binary_PIDs_boot_topology_kernel_final_idle_pass": true,
+  "checked_transport_error_deltas": {
+    "before-baseline/rank0": {},
+    "before-baseline/rank1": {},
+    "first-candidate/rank0": {},
+    "first-candidate/rank1": {},
+    "after-baseline/rank0": {},
+    "after-baseline/rank1": {}
+  },
+  "waves": [
+    {
+      "phase": "before-baseline",
+      "waves": [
+        {
+          "case": "C3",
+          "admissions": [
+            1,
+            2,
+            3
+          ],
+          "observed_max_physical_widths": [
+            3,
+            3,
+            3
+          ],
+          "client_wave_tok_s": 86.0133250155298
+        },
+        {
+          "case": "C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 97.98408192864228
+        },
+        {
+          "case": "ragged-C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 65.5751186416647
+        }
+      ]
+    },
+    {
+      "phase": "first-candidate",
+      "waves": [
+        {
+          "case": "C3",
+          "admissions": [
+            1,
+            2,
+            3
+          ],
+          "observed_max_physical_widths": [
+            3,
+            3,
+            3
+          ],
+          "client_wave_tok_s": 85.787137933103
+        },
+        {
+          "case": "C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 98.50612079755179
+        },
+        {
+          "case": "ragged-C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 67.04731568887408
+        }
+      ]
+    },
+    {
+      "phase": "after-baseline",
+      "waves": [
+        {
+          "case": "C3",
+          "admissions": [
+            1,
+            2,
+            3
+          ],
+          "observed_max_physical_widths": [
+            3,
+            3,
+            3
+          ],
+          "client_wave_tok_s": 85.61718596429873
+        },
+        {
+          "case": "C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 98.50706725369253
+        },
+        {
+          "case": "ragged-C4",
+          "admissions": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "observed_max_physical_widths": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "client_wave_tok_s": 66.54790667816815
+        }
+      ]
+    }
+  ],
+  "strict_phase_flags": [
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "wall_ms",
+      "baseline_ms": 1540.6205450126436,
+      "candidate_ms": 1758.7038799829315,
+      "delta_ms": 218.08333497028798
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "client_event_inter_token_ms",
+      "baseline_ms": 30.80523956214165,
+      "candidate_ms": 38.579124562602374,
+      "delta_ms": 7.773885000460723
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "decode_ms",
+      "baseline_ms": 810.045158,
+      "candidate_ms": 1061.449961,
+      "delta_ms": 251.40480300000002
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "server_inter_token_ms",
+      "baseline_ms": 30.794309593750004,
+      "candidate_ms": 38.57611621875001,
+      "delta_ms": 7.781806625000005
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "raw.decode_ms",
+      "baseline_ms": 810.045158,
+      "candidate_ms": 1061.449961,
+      "delta_ms": 251.40480300000002
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "raw.mean_inter_token_ms",
+      "baseline_ms": 30.794309593750004,
+      "candidate_ms": 38.57611621875001,
+      "delta_ms": 7.781806625000005
+    }
+  ],
+  "adaptive_work_fields": [
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 0,
+      "order": 8,
+      "metric": "draft_tokens",
+      "baseline": 79,
+      "candidate": 78
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 0,
+      "order": 8,
+      "metric": "draft_accepted_tokens",
+      "baseline": 57,
+      "candidate": 56
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 0,
+      "order": 8,
+      "metric": "raw.draft_rounds",
+      "baseline": 50,
+      "candidate": 49
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 2,
+      "order": 10,
+      "metric": "draft_tokens",
+      "baseline": 88,
+      "candidate": 87
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 2,
+      "order": 10,
+      "metric": "draft_accepted_tokens",
+      "baseline": 59,
+      "candidate": 56
+    },
+    {
+      "control": "before-baseline",
+      "case": "C3",
+      "actor": 2,
+      "order": 10,
+      "metric": "raw.draft_rounds",
+      "baseline": 49,
+      "candidate": 48
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 0,
+      "order": 11,
+      "metric": "draft_tokens",
+      "baseline": 81,
+      "candidate": 82
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 0,
+      "order": 11,
+      "metric": "draft_accepted_tokens",
+      "baseline": 56,
+      "candidate": 57
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 0,
+      "order": 11,
+      "metric": "raw.draft_rounds",
+      "baseline": 54,
+      "candidate": 56
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 1,
+      "order": 12,
+      "metric": "draft_tokens",
+      "baseline": 80,
+      "candidate": 79
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 1,
+      "order": 12,
+      "metric": "draft_accepted_tokens",
+      "baseline": 64,
+      "candidate": 63
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 2,
+      "order": 13,
+      "metric": "draft_tokens",
+      "baseline": 85,
+      "candidate": 83
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 2,
+      "order": 13,
+      "metric": "draft_accepted_tokens",
+      "baseline": 62,
+      "candidate": 61
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "draft_tokens",
+      "baseline": 81,
+      "candidate": 79
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "draft_accepted_tokens",
+      "baseline": 60,
+      "candidate": 58
+    },
+    {
+      "control": "before-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "raw.draft_rounds",
+      "baseline": 48,
+      "candidate": 49
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 0,
+      "order": 15,
+      "metric": "draft_tokens",
+      "baseline": 17,
+      "candidate": 16
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "draft_tokens",
+      "baseline": 23,
+      "candidate": 22
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "draft_accepted_tokens",
+      "baseline": 21,
+      "candidate": 15
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 1,
+      "order": 16,
+      "metric": "raw.draft_rounds",
+      "baseline": 10,
+      "candidate": 13
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 2,
+      "order": 17,
+      "metric": "draft_tokens",
+      "baseline": 47,
+      "candidate": 45
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 2,
+      "order": 17,
+      "metric": "draft_accepted_tokens",
+      "baseline": 32,
+      "candidate": 31
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 3,
+      "order": 18,
+      "metric": "draft_tokens",
+      "baseline": 85,
+      "candidate": 88
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 3,
+      "order": 18,
+      "metric": "draft_accepted_tokens",
+      "baseline": 58,
+      "candidate": 63
+    },
+    {
+      "control": "before-baseline",
+      "case": "ragged-C4",
+      "actor": 3,
+      "order": 18,
+      "metric": "raw.draft_rounds",
+      "baseline": 57,
+      "candidate": 50
+    },
+    {
+      "control": "after-baseline",
+      "case": "C3",
+      "actor": 1,
+      "order": 9,
+      "metric": "draft_tokens",
+      "baseline": 85,
+      "candidate": 84
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 0,
+      "order": 11,
+      "metric": "draft_accepted_tokens",
+      "baseline": 56,
+      "candidate": 57
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 0,
+      "order": 11,
+      "metric": "raw.draft_rounds",
+      "baseline": 54,
+      "candidate": 56
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 1,
+      "order": 12,
+      "metric": "draft_tokens",
+      "baseline": 80,
+      "candidate": 79
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 1,
+      "order": 12,
+      "metric": "draft_accepted_tokens",
+      "baseline": 64,
+      "candidate": 63
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 2,
+      "order": 13,
+      "metric": "draft_tokens",
+      "baseline": 85,
+      "candidate": 83
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 2,
+      "order": 13,
+      "metric": "draft_accepted_tokens",
+      "baseline": 62,
+      "candidate": 61
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "draft_tokens",
+      "baseline": 81,
+      "candidate": 79
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "draft_accepted_tokens",
+      "baseline": 60,
+      "candidate": 58
+    },
+    {
+      "control": "after-baseline",
+      "case": "C4",
+      "actor": 3,
+      "order": 14,
+      "metric": "raw.draft_rounds",
+      "baseline": 48,
+      "candidate": 49
+    }
+  ],
+  "timing_qualified": false,
+  "scope": "One fixed untraced B/C/B four-session qualification; not statistical/equivalence/isolated PLE gain. Maximum width metrics do not expose every batch transition; ragged requests have staggered limits. Baselinefbacf9cc vs combined production2669e07c. All timing flags retained, not waived by exact outputs or throughput."
+}

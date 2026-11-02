@@ -1,0 +1,468 @@
+{
+  "phases": [
+    {
+      "phase": "before-baseline",
+      "role": "baseline",
+      "warmup_TTFT_ms": 148.74939297442324,
+      "first_request_forwards": [
+        {
+          "forward": {
+            "kind": 2,
+            "end": 176530827628438,
+            "begin": 176530749295399,
+            "tid": 1041521,
+            "id": 3,
+            "depth": 1,
+            "cpu": 8,
+            "pid": 1041332,
+            "value": 2718703617,
+            "entry_value": 12
+          },
+          "token_rows": 12,
+          "host_ms": 78.333039,
+          "HIP_API_union_ms": 70.135019,
+          "outside_probed_HIP_APIs_ms": 8.19802,
+          "APIs": {
+            "hipEventSynchronize": {
+              "calls": 48,
+              "sum_host_ms": 66.25356,
+              "max_host_ms": 2.106787,
+              "nonzero_returns": {}
+            },
+            "hipStreamSynchronize": {
+              "calls": 2,
+              "sum_host_ms": 3.220104,
+              "max_host_ms": 3.00918,
+              "nonzero_returns": {}
+            },
+            "hipMemcpyAsync": {
+              "calls": 102,
+              "sum_host_ms": 0.661355,
+              "max_host_ms": 0.110267,
+              "nonzero_returns": {}
+            }
+          }
+        },
+        {
+          "forward": {
+            "kind": 2,
+            "end": 176530896638325,
+            "begin": 176530835374456,
+            "tid": 1041521,
+            "id": 3,
+            "depth": 1,
+            "cpu": 8,
+            "pid": 1041332,
+            "value": 2718703617,
+            "entry_value": 7
+          },
+          "token_rows": 7,
+          "host_ms": 61.263869,
+          "HIP_API_union_ms": 57.6512,
+          "outside_probed_HIP_APIs_ms": 3.612669,
+          "APIs": {
+            "hipEventSynchronize": {
+              "calls": 48,
+              "sum_host_ms": 53.27653,
+              "max_host_ms": 1.566813,
+              "nonzero_returns": {}
+            },
+            "hipStreamSynchronize": {
+              "calls": 2,
+              "sum_host_ms": 3.813176,
+              "max_host_ms": 3.632221,
+              "nonzero_returns": {}
+            },
+            "hipMemcpyAsync": {
+              "calls": 102,
+              "sum_host_ms": 0.561494,
+              "max_host_ms": 0.015419,
+              "nonzero_returns": {}
+            }
+          }
+        }
+      ],
+      "full_trace_HIP_APIs_per_rank": [
+        {
+          "hipEventSynchronize": {
+            "calls": 580,
+            "sum_host_ms": 1200.346059,
+            "max_host_ms": 19.737861,
+            "nonzero_returns": {}
+          },
+          "hipMalloc": {
+            "calls": 28,
+            "sum_host_ms": 7.732978999999999,
+            "max_host_ms": 0.943081,
+            "nonzero_returns": {}
+          },
+          "hipStreamSynchronize": {
+            "calls": 1483,
+            "sum_host_ms": 6788.268229,
+            "max_host_ms": 55.665726,
+            "nonzero_returns": {}
+          },
+          "hipHostMalloc": {
+            "calls": 3,
+            "sum_host_ms": 0.149975,
+            "max_host_ms": 0.065388,
+            "nonzero_returns": {}
+          },
+          "hipMemcpyAsync": {
+            "calls": 7996,
+            "sum_host_ms": 35.675939,
+            "max_host_ms": 0.110267,
+            "nonzero_returns": {}
+          }
+        },
+        {
+          "hipEventSynchronize": {
+            "calls": 580,
+            "sum_host_ms": 1483.299662,
+            "max_host_ms": 19.059311,
+            "nonzero_returns": {}
+          },
+          "hipMalloc": {
+            "calls": 28,
+            "sum_host_ms": 7.121929,
+            "max_host_ms": 0.84746,
+            "nonzero_returns": {}
+          },
+          "hipStreamSynchronize": {
+            "calls": 1483,
+            "sum_host_ms": 7374.317286,
+            "max_host_ms": 49.414937,
+            "nonzero_returns": {}
+          },
+          "hipHostMalloc": {
+            "calls": 3,
+            "sum_host_ms": 0.15632400000000002,
+            "max_host_ms": 0.063908,
+            "nonzero_returns": {}
+          },
+          "hipMemcpyAsync": {
+            "calls": 8097,
+            "sum_host_ms": 35.09996,
+            "max_host_ms": 0.209443,
+            "nonzero_returns": {}
+          }
+        }
+      ]
+    },
+    {
+      "phase": "first-candidate",
+      "role": "candidate",
+      "warmup_TTFT_ms": 148.27297799638472,
+      "first_request_forwards": [
+        {
+          "forward": {
+            "kind": 2,
+            "end": 176577556023371,
+            "begin": 176577478361632,
+            "tid": 1041880,
+            "id": 3,
+            "depth": 1,
+            "cpu": 1,
+            "pid": 1041710,
+            "value": 3053602817,
+            "entry_value": 12
+          },
+          "token_rows": 12,
+          "host_ms": 77.661739,
+          "HIP_API_union_ms": 70.124709,
+          "outside_probed_HIP_APIs_ms": 7.53703,
+          "APIs": {
+            "hipEventSynchronize": {
+              "calls": 48,
+              "sum_host_ms": 66.179345,
+              "max_host_ms": 3.128576,
+              "nonzero_returns": {}
+            },
+            "hipStreamSynchronize": {
+              "calls": 2,
+              "sum_host_ms": 3.222344,
+              "max_host_ms": 3.01592,
+              "nonzero_returns": {}
+            },
+            "hipMemcpyAsync": {
+              "calls": 102,
+              "sum_host_ms": 0.72302,
+              "max_host_ms": 0.076038,
+              "nonzero_returns": {}
+            }
+          }
+        },
+        {
+          "forward": {
+            "kind": 2,
+            "end": 176577625672669,
+            "begin": 176577563893835,
+            "tid": 1041880,
+            "id": 3,
+            "depth": 1,
+            "cpu": 17,
+            "pid": 1041710,
+            "value": 3053602817,
+            "entry_value": 7
+          },
+          "token_rows": 7,
+          "host_ms": 61.778834,
+          "HIP_API_union_ms": 58.900399,
+          "outside_probed_HIP_APIs_ms": 2.878435,
+          "APIs": {
+            "hipEventSynchronize": {
+              "calls": 48,
+              "sum_host_ms": 54.417679,
+              "max_host_ms": 2.187794,
+              "nonzero_returns": {}
+            },
+            "hipStreamSynchronize": {
+              "calls": 2,
+              "sum_host_ms": 3.891434,
+              "max_host_ms": 3.67475,
+              "nonzero_returns": {}
+            },
+            "hipMemcpyAsync": {
+              "calls": 102,
+              "sum_host_ms": 0.591286,
+              "max_host_ms": 0.018869,
+              "nonzero_returns": {}
+            }
+          }
+        }
+      ],
+      "full_trace_HIP_APIs_per_rank": [
+        {
+          "hipEventSynchronize": {
+            "calls": 580,
+            "sum_host_ms": 1263.872379,
+            "max_host_ms": 18.932864,
+            "nonzero_returns": {}
+          },
+          "hipMalloc": {
+            "calls": 28,
+            "sum_host_ms": 7.329573,
+            "max_host_ms": 0.901323,
+            "nonzero_returns": {}
+          },
+          "hipStreamSynchronize": {
+            "calls": 1485,
+            "sum_host_ms": 6969.462126,
+            "max_host_ms": 49.797951,
+            "nonzero_returns": {}
+          },
+          "hipHostMalloc": {
+            "calls": 3,
+            "sum_host_ms": 0.152395,
+            "max_host_ms": 0.059398,
+            "nonzero_returns": {}
+          },
+          "hipMemcpyAsync": {
+            "calls": 8000,
+            "sum_host_ms": 33.575076,
+            "max_host_ms": 0.100117,
+            "nonzero_returns": {}
+          }
+        },
+        {
+          "hipEventSynchronize": {
+            "calls": 580,
+            "sum_host_ms": 1422.505236,
+            "max_host_ms": 19.026812,
+            "nonzero_returns": {}
+          },
+          "hipMalloc": {
+            "calls": 28,
+            "sum_host_ms": 7.074784,
+            "max_host_ms": 0.84244,
+            "nonzero_returns": {}
+          },
+          "hipStreamSynchronize": {
+            "calls": 1485,
+            "sum_host_ms": 7178.50851,
+            "max_host_ms": 48.515028,
+            "nonzero_returns": {}
+          },
+          "hipHostMalloc": {
+            "calls": 3,
+            "sum_host_ms": 0.138235,
+            "max_host_ms": 0.061708,
+            "nonzero_returns": {}
+          },
+          "hipMemcpyAsync": {
+            "calls": 8101,
+            "sum_host_ms": 35.950557,
+            "max_host_ms": 0.176553,
+            "nonzero_returns": {}
+          }
+        }
+      ]
+    },
+    {
+      "phase": "after-baseline",
+      "role": "baseline",
+      "warmup_TTFT_ms": 180.65607899916358,
+      "first_request_forwards": [
+        {
+          "forward": {
+            "kind": 2,
+            "end": 176624433072540,
+            "begin": 176624321712019,
+            "tid": 1042220,
+            "id": 3,
+            "depth": 1,
+            "cpu": 24,
+            "pid": 1042057,
+            "value": 3516141569,
+            "entry_value": 12
+          },
+          "token_rows": 12,
+          "host_ms": 111.360521,
+          "HIP_API_union_ms": 104.242275,
+          "outside_probed_HIP_APIs_ms": 7.118246,
+          "APIs": {
+            "hipEventSynchronize": {
+              "calls": 48,
+              "sum_host_ms": 99.36311,
+              "max_host_ms": 34.685104,
+              "nonzero_returns": {}
+            },
+            "hipStreamSynchronize": {
+              "calls": 2,
+              "sum_host_ms": 3.230513,
+              "max_host_ms": 3.01072,
+              "nonzero_returns": {}
+            },
+            "hipMemcpyAsync": {
+              "calls": 102,
+              "sum_host_ms": 1.648652,
+              "max_host_ms": 1.118776,
+              "nonzero_returns": {}
+            }
+          }
+        },
+        {
+          "forward": {
+            "kind": 2,
+            "end": 176624501609461,
+            "begin": 176624440846647,
+            "tid": 1042220,
+            "id": 3,
+            "depth": 1,
+            "cpu": 24,
+            "pid": 1042057,
+            "value": 3516141569,
+            "entry_value": 7
+          },
+          "token_rows": 7,
+          "host_ms": 60.762814,
+          "HIP_API_union_ms": 58.096427,
+          "outside_probed_HIP_APIs_ms": 2.666387,
+          "APIs": {
+            "hipEventSynchronize": {
+              "calls": 48,
+              "sum_host_ms": 53.702616,
+              "max_host_ms": 1.460286,
+              "nonzero_returns": {}
+            },
+            "hipStreamSynchronize": {
+              "calls": 2,
+              "sum_host_ms": 3.813046,
+              "max_host_ms": 3.632492,
+              "nonzero_returns": {}
+            },
+            "hipMemcpyAsync": {
+              "calls": 102,
+              "sum_host_ms": 0.580765,
+              "max_host_ms": 0.013189,
+              "nonzero_returns": {}
+            }
+          }
+        }
+      ],
+      "full_trace_HIP_APIs_per_rank": [
+        {
+          "hipEventSynchronize": {
+            "calls": 580,
+            "sum_host_ms": 1192.008456,
+            "max_host_ms": 34.685104,
+            "nonzero_returns": {}
+          },
+          "hipMalloc": {
+            "calls": 27,
+            "sum_host_ms": 7.586132,
+            "max_host_ms": 0.920452,
+            "nonzero_returns": {}
+          },
+          "hipStreamSynchronize": {
+            "calls": 1477,
+            "sum_host_ms": 6725.090393,
+            "max_host_ms": 51.701205,
+            "nonzero_returns": {}
+          },
+          "hipHostMalloc": {
+            "calls": 3,
+            "sum_host_ms": 0.279392,
+            "max_host_ms": 0.157575,
+            "nonzero_returns": {}
+          },
+          "hipMemcpyAsync": {
+            "calls": 8077,
+            "sum_host_ms": 34.785534,
+            "max_host_ms": 1.118776,
+            "nonzero_returns": {}
+          }
+        },
+        {
+          "hipEventSynchronize": {
+            "calls": 580,
+            "sum_host_ms": 1516.612318,
+            "max_host_ms": 19.105749,
+            "nonzero_returns": {}
+          },
+          "hipMalloc": {
+            "calls": 27,
+            "sum_host_ms": 7.008183,
+            "max_host_ms": 0.841461,
+            "nonzero_returns": {}
+          },
+          "hipStreamSynchronize": {
+            "calls": 1477,
+            "sum_host_ms": 8202.103478,
+            "max_host_ms": 141.070691,
+            "nonzero_returns": {}
+          },
+          "hipHostMalloc": {
+            "calls": 3,
+            "sum_host_ms": 0.131765,
+            "max_host_ms": 0.060987,
+            "nonzero_returns": {}
+          },
+          "hipMemcpyAsync": {
+            "calls": 8181,
+            "sum_host_ms": 33.7604,
+            "max_host_ms": 0.174134,
+            "nonzero_returns": {}
+          }
+        }
+      ]
+    }
+  ],
+  "library": {
+    "path": "/home/rkuo/.local/opt/rocm-7.14.1/lib/libamdhip64.so.7.14.60850-0000000",
+    "sha256": "00ca863da1cce26bd91d14bf268903a0ee3107595b531fa27fc06c88c6402e0d",
+    "bytes": 28856816
+  },
+  "input_sha256": {
+    "tp-cache-retention/ple-owner-startup-hip-trace-v1/before-baseline/trace-r0/app.csv": "0e979233f6593860986b88331f8026f1b457d3ff11cd8971b7953a70220ecfbf",
+    "tp-cache-retention/ple-owner-startup-hip-trace-v1/before-baseline/trace-r1/app.csv": "ff24ae2ef7430f91020d67fbe53ba13e0e7e2ea2ec89c436ba0c7472f337f42d",
+    "results/model-scaling/ple-owner-startup-hip-trace-v1-before-baseline.jsonl": "6b77341b2a5326677935592f4fc23c59402ee77a547ece60db3574199fe053de",
+    "tp-cache-retention/ple-owner-startup-hip-trace-v1/first-candidate/trace-r0/app.csv": "af02b6c2e808613c9791fb866d1cc504ba795fa6cec3c15dd2503ab5f6181898",
+    "tp-cache-retention/ple-owner-startup-hip-trace-v1/first-candidate/trace-r1/app.csv": "f1d2d95d7687a1518f70ff8dee641f4e36ac205a2221279fc9e7b677bf434cb8",
+    "results/model-scaling/ple-owner-startup-hip-trace-v1-first-candidate.jsonl": "1c603bcd09de80845219a5060a3cc694b4525da013dbd554f5ff761848e3d555",
+    "tp-cache-retention/ple-owner-startup-hip-trace-v1/after-baseline/trace-r0/app.csv": "91e72f4a3d8a206de48064c52e1acdc585612290fc275f1e4ff330a3d552ed67",
+    "tp-cache-retention/ple-owner-startup-hip-trace-v1/after-baseline/trace-r1/app.csv": "623385e786c5d590b06973731d6872558d25943d2eef73ffbd81a5bd45926c31",
+    "results/model-scaling/ple-owner-startup-hip-trace-v1-after-baseline.jsonl": "a29058604eea17f1464769633fde78a7e89ba63a8dea0ac66a5d2fdff4ba4b8d"
+  },
+  "scope": "Same-thread host intervals inside the first request Forward. API unions avoid nested double counting; per-API sums may overlap. Waits can contain useful GPU/peer/transport work, and outside-probed-API time can include untraced CPU launch work and asynchronous GPU execution. Neither is a GPU busy/idle split or an avoidable-overhead estimate. Uprobes perturb API wall durations. No cross-host clock alignment, kernel-launch-count claim or new unprofiled throughput claim. All original flags remain."
+}
