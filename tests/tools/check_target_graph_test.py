@@ -25,7 +25,7 @@ class LinkGraphTest(unittest.TestCase):
             (root / "stub.cpp").write_text("int graph_stub() { return 0; }\n")
             script = f"""cmake_minimum_required(VERSION 3.21)
 project(link_guard LANGUAGES CXX)
-include("{ROOT / 'cmake/TargetGraph.cmake'}")
+include("{(ROOT / 'cmake/TargetGraph.cmake').as_posix()}")
 add_library(dependency STATIC stub.cpp)
 add_library(subject STATIC stub.cpp)
 target_link_libraries(subject PRIVATE dependency dl)
