@@ -1,0 +1,9 @@
+{
+  "entries": 584,
+  "uncompressed_bytes": 14315004,
+  "zip_bytes": 2595510,
+  "zip_sha256": "e9cab4c73f7e201e6288f8f3a114e6fe6b1271abffcd07712c41b068739887a3",
+  "production_source": "f5e9290cabf48dfeca521847dd60f3692b3c2927",
+  "parent": "94f1232d4b28b2f4cec4ecc4505492283c6e2b54",
+  "scope": "Source/scripts/rawCSV/rawclientandranklogs/qualificationandstatistics,includingfailedbuild/fixtureattempts. No models,executables,archives/objects,controltokens ormultiGBsnapshotfiles. Snapshotbyteequalitiesassertedinretainedprobe; completepostreplayhashes/countsretained. OfflineauditdoesnotrerunGPU/NVMe/livePIDchecks."
+}
