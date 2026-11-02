@@ -1,0 +1,9 @@
+{
+  "archive": "acquisition.zip",
+  "sha256": "51b9d9731a2f5e0554855501d6d4ca2f0f959c18f19e37871dfbdff3a770db94",
+  "bytes": 801167,
+  "files": 214,
+  "qualified_source": "246a8d11a979e2c98b42e2f3c1a638ad623471e6",
+  "qualified_tree": "10cd589189ec41fd9b4b19f8baba9269b1da7962",
+  "scope": "Combined246 local source/build and native qualification only. No standalone statistical data relabeling. Actual fork adoption and hosted CI outcomes are separate adoption.json, populated only after successful merges. Full launcher stdout/stderr/control-token excluded; exact owner lines and original stderr hashes retained."
+}

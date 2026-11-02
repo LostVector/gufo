@@ -1,0 +1,86 @@
+[
+  {
+    "label": "combined-ple-early-end-http-smoke-v1-candidate",
+    "rank": 0,
+    "line": "cooperative_ple rank=0 owner_rows=0 remote_rows=25088",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/combined-ple-early-end-http-smoke-v1-candidate-rank0.stderr",
+    "original_sha256": "8071f455765fa6cde759b3ccce87a71a0d1e9910486555902dfff4ea01af1b23"
+  },
+  {
+    "label": "combined-ple-early-end-http-smoke-v1-candidate",
+    "rank": 1,
+    "line": "cooperative_ple rank=1 owner_rows=25088 remote_rows=0",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/corsair/combined-ple-early-end-http-smoke-v1-candidate-rank1.stderr",
+    "original_sha256": "4fb4a10be6809b94164a1a1ad8dd3eb17f6523b8e9c9c67592a467263a0adcad"
+  },
+  {
+    "label": "combined-ple-early-end-http-lifecycle-v1-candidate",
+    "rank": 0,
+    "line": "cooperative_ple rank=0 owner_rows=0 remote_rows=27984",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/combined-ple-early-end-http-lifecycle-v1-candidate-rank0.stderr",
+    "original_sha256": "af72c4f5d8fc38a80b1c08eafcdfb1484bed5e8878916ab5325eec67757b200b"
+  },
+  {
+    "label": "combined-ple-early-end-http-lifecycle-v1-candidate",
+    "rank": 1,
+    "line": "cooperative_ple rank=1 owner_rows=27984 remote_rows=0",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/corsair/combined-ple-early-end-http-lifecycle-v1-candidate-rank1.stderr",
+    "original_sha256": "57579e8174ff7c07bac6df6f8ad2e53a2696d468360cde68b57a165510cc8f15"
+  },
+  {
+    "label": "combined-ple-early-end-wider-v1-first-candidate",
+    "rank": 0,
+    "line": "cooperative_ple rank=0 owner_rows=0 remote_rows=48896",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/combined-ple-early-end-wider-v1-first-candidate-rank0.stderr",
+    "original_sha256": "98d1ba382a9d1ae3feb935a4c3374c6fd3b1197e2db11b165d7c9b34f59edeeb"
+  },
+  {
+    "label": "combined-ple-early-end-wider-v1-first-candidate",
+    "rank": 1,
+    "line": "cooperative_ple rank=1 owner_rows=48896 remote_rows=0",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/corsair/combined-ple-early-end-wider-v1-first-candidate-rank1.stderr",
+    "original_sha256": "4927c9a59b41c21f91d89b3e460d13d85c61e5eebef99341c7f414d2691f99d4"
+  },
+  {
+    "label": "combined-ple-early-end-live-faults-v2-initial-control",
+    "rank": 0,
+    "line": "cooperative_ple rank=0 owner_rows=0 remote_rows=8816",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/combined-ple-early-end-live-faults-v2-initial-control-rank0.stderr",
+    "original_sha256": "1dc8f5cb23143c40bbc46797e6dbdc606667f069d80c03b4420b16c8eb64a9ed"
+  },
+  {
+    "label": "combined-ple-early-end-live-faults-v2-initial-control",
+    "rank": 1,
+    "line": "cooperative_ple rank=1 owner_rows=8816 remote_rows=0",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/corsair/combined-ple-early-end-live-faults-v2-initial-control-rank1.stderr",
+    "original_sha256": "39ae32d1497e3d3c848be8e9ae5387df583c35c54f809cf6648ec1d25a18a79d"
+  },
+  {
+    "label": "combined-ple-early-end-live-faults-v2-read-recovery",
+    "rank": 0,
+    "line": "cooperative_ple rank=0 owner_rows=0 remote_rows=8848",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/combined-ple-early-end-live-faults-v2-read-recovery-rank0.stderr",
+    "original_sha256": "4af9ed0d5b78c8988594ae1d12612eb188558ce903baa71883c941c439d5b91e"
+  },
+  {
+    "label": "combined-ple-early-end-live-faults-v2-read-recovery",
+    "rank": 1,
+    "line": "cooperative_ple rank=1 owner_rows=8848 remote_rows=0",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/corsair/combined-ple-early-end-live-faults-v2-read-recovery-rank1.stderr",
+    "original_sha256": "961e14d7e97d040be5602f4633c7d0a15ce7982ed39cc2479fad83dce4eb1416"
+  },
+  {
+    "label": "combined-ple-early-end-live-faults-v2-loss-recovery",
+    "rank": 0,
+    "line": "cooperative_ple rank=0 owner_rows=0 remote_rows=8816",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/combined-ple-early-end-live-faults-v2-loss-recovery-rank0.stderr",
+    "original_sha256": "b07b524c1d256f15c13f4e5344cad69766a9816a3621281f29a8b784350539f6"
+  },
+  {
+    "label": "combined-ple-early-end-live-faults-v2-loss-recovery",
+    "rank": 1,
+    "line": "cooperative_ple rank=1 owner_rows=8816 remote_rows=0",
+    "original_file": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/corsair/combined-ple-early-end-live-faults-v2-loss-recovery-rank1.stderr",
+    "original_sha256": "de47781b4dc4f34de3bc99e1bc53f7061bcd4c206eae3124233dbe38185e32e9"
+  }
+]
