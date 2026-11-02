@@ -1,0 +1,9 @@
+{
+  "archive": "acquisition.zip",
+  "sha256": "e138e5baa9ca1e25ac4fbb58f5cb0facd9bcaf3083cf0b8a42ca8bd517431c75",
+  "bytes": 1664911,
+  "files": 439,
+  "production_code": "dd9449e690f5ff4e916c05b3e2be2397e05fd217",
+  "baseline": "e250a07cfe1c9fcb0905c9b1cfca438261248c81",
+  "scope": "Focused raw100 primary-study records,60 wider controls,12 healthy fault controls/2 failures; protocols, per-rank audits, frozen source/binary manifests and original harness. Launch stdout/stderr and control-token excluded. Initial superseded f5 study not pooled; retained in lab only."
+}

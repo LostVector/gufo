@@ -83,6 +83,10 @@ public:
     bool stop_at_eos{true};
     std::vector<std::string> stop_sequences;
     bool return_progress{false};
+    /// Success/cancellation hook after cache/model work, before terminal
+    /// publication and the next scheduler turn. Must not await a peer verdict.
+    /// Model failures retain the caller's existing finalization fallback.
+    std::function<void()> before_terminal;
   };
 
   class Request {

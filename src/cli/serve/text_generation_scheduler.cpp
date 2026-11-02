@@ -159,6 +159,7 @@ struct ScheduledRequest {
   std::atomic<std::size_t> live_prefill_tokens{0};
   std::atomic<std::size_t> live_generated_tokens{0};
   std::exception_ptr failure;
+  std::function<void()> before_terminal;
   bool terminal{false};
 
   ~ScheduledRequest() {
@@ -804,6 +805,8 @@ struct TextGenerationScheduler::Impl {
         request->result.cache_disk_enqueue_ms = retained.disk_enqueue_ms;
       }
       request->result.cancelled = true;
+      if (auto finish = std::exchange(request->before_terminal, {}))
+        finish();
       FinalizeResult(request, TextGenerationBackend::FinishReason::kCancelled);
       LogDecodeProgress(request, true);
       RecordRequestMetrics(request->result);
@@ -984,6 +987,8 @@ struct TextGenerationScheduler::Impl {
     request->result.cache_shared_prefix_bytes =
         cache_commit.shared_prefix_bytes;
     request->result.cache_shared_prefix_ms = cache_commit.shared_prefix_ms;
+    if (auto finish = std::exchange(request->before_terminal, {}))
+      finish();
     FinalizeResult(request, finish_reason);
     LogDecodeProgress(request, true);
     // Recorded here rather than by the HTTP adapter, so a client that leaves
@@ -2423,6 +2428,7 @@ TextGenerationScheduler::Request TextGenerationScheduler::Submit(
       impl_->runner_pool->capacity() == 1 ? "serial-c1" : "serial-fallback";
   request->prompt = std::move(prompt);
   request->prompt_context = std::move(metadata.prompt_context);
+  request->before_terminal = std::move(metadata.before_terminal);
   request->cache_prompt = metadata.cache_prompt;
   request->cache_persist = metadata.cache_persist;
   request->cache_prefix_tokens = metadata.cache_prefix_tokens;

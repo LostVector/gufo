@@ -103,7 +103,8 @@ struct InferenceBackend::Impl {
     TpRequest(std::shared_ptr<const State> state,
               std::shared_ptr<std::atomic<std::size_t>> open,
               std::uint64_t sequence)
-        : state_(std::move(state)),
+        : runner_(state->tp_runner),
+          broker_(state->response_broker),
           open_(std::move(open)),
           sequence_(sequence) {}
 
@@ -111,6 +112,23 @@ struct InferenceBackend::Impl {
     TpRequest& operator=(const TpRequest&) = delete;
 
     [[nodiscard]] bool finished() const noexcept { return finished_; }
+
+    /// Queue the final instruction once local model/cache work is complete.
+    /// The scheduler calls this before starting its next work unit; only the
+    /// HTTP consumer below waits for rank 1's verdict.
+    void QueueEnd() {
+      std::call_once(end_once_, [&] {
+        try {
+          std::string error;
+          if (!runner_->EndRequest(sequence_, &error)) {
+            end_problem_ = std::move(error);
+            broker_->FailAll("TP request end failed: " + end_problem_);
+          }
+        } catch (...) {
+          end_failure_ = std::current_exception();
+        }
+      });
+    }
 
     /// Ends the request on rank 1 (`kEnd` with rank 0's instruction count and
     /// digest) and collects rank 1's verdict, and the verdicts on any state
@@ -130,26 +148,27 @@ struct InferenceBackend::Impl {
             problem = std::move(message);
           }
         };
+        QueueEnd();
+        if (end_failure_ != nullptr)
+          std::rethrow_exception(end_failure_);
         std::string error;
-        if (!state_->tp_runner->EndRequest(sequence_, &error)) {
-          note(error);
-          state_->response_broker->FailAll("TP request end failed: " + error);
+        if (!end_problem_.empty()) {
+          note(end_problem_);
         } else {
           TpControlResponse response;
-          if (!state_->response_broker->WaitForResponse(sequence_, &response,
-                                                        &error)) {
+          if (!broker_->WaitForResponse(sequence_, &response, &error)) {
             note("TP worker response failed: " + error);
           } else if (!response.error.empty()) {
             note("TP worker failed: " + response.error);
           }
         }
-        if (!state_->tp_runner->AwaitDependencies(sequence_)) {
+        if (!runner_->AwaitDependencies(sequence_)) {
           note("TP request reused a state rank 1 rejected");
         }
         // A request the ranks disagree about leaves a state that may differ
         // between them; it is never reused, and the cache replaces it in
         // time. Other requests keep theirs.
-        state_->tp_runner->Settle(sequence_, problem.empty());
+        runner_->Settle(sequence_, problem.empty());
         settled = true;
       } catch (...) {
         try {
@@ -162,7 +181,7 @@ struct InferenceBackend::Impl {
       if (!settled) {
         // Requests that reused this one's state wait for its verdict.
         try {
-          state_->tp_runner->Settle(sequence_, false);
+          runner_->Settle(sequence_, false);
         } catch (...) {
         }
       }
@@ -171,9 +190,15 @@ struct InferenceBackend::Impl {
     }
 
   private:
-    std::shared_ptr<const State> state_;
+    // Retain transport/model resources without retaining the scheduler that
+    // owns the queued completion callback.
+    std::shared_ptr<TpMirroredRunner> runner_;
+    std::shared_ptr<TpResponseBroker> broker_;
     std::shared_ptr<std::atomic<std::size_t>> open_;
     std::uint64_t sequence_{0};
+    std::once_flag end_once_;
+    std::string end_problem_;
+    std::exception_ptr end_failure_;
     bool finished_{false};
   };
 
@@ -184,7 +209,7 @@ struct InferenceBackend::Impl {
         TextGenerationScheduler::Request scheduled_request,
         InitialOutputState initial = InitialOutputState::kContent,
         std::optional<sampling::JsonConstraint::ToolFormat> tool_format = {},
-        std::unique_ptr<TpRequest> tp = {})
+        std::shared_ptr<TpRequest> tp = {})
         : state_(std::move(model_state)),
           request_(std::move(scheduled_request)),
           tool_format_(tool_format),
@@ -242,6 +267,13 @@ struct InferenceBackend::Impl {
     /// stops the request between model calls, and `Wait` then ends it.
     void Cancel() noexcept override { request_.Cancel(); }
 
+    /// Construct this adapter before submission, so allocation or reasoning
+    /// setup cannot fail after handing a request to the scheduler.
+    void BindScheduledRequest(
+        TextGenerationScheduler::Request request) noexcept {
+      request_ = std::move(request);
+    }
+
     std::optional<sampling::JsonConstraint::ToolFormat> ToolFormat()
         const override {
       return tool_format_;
@@ -252,7 +284,7 @@ struct InferenceBackend::Impl {
     TextGenerationScheduler::Request request_;
     std::vector<tokenization::TokenId> reasoning_end_;
     const std::optional<sampling::JsonConstraint::ToolFormat> tool_format_;
-    std::unique_ptr<TpRequest> tp_;
+    std::shared_ptr<TpRequest> tp_;
   };
 
   [[nodiscard]] std::shared_ptr<const State> Snapshot() const {
@@ -356,8 +388,10 @@ struct InferenceBackend::Impl {
     }
     state->tp_runner->BeginRequest(begin.sequence,
                                    begin.constraint_source.has_value());
-    auto tp = std::make_unique<TpRequest>(state, tp_open, begin.sequence);
+    auto tp = std::make_shared<TpRequest>(state, tp_open, begin.sequence);
     try {
+      auto generation = std::make_shared<ScheduledGenerationRequest>(
+          state, TextGenerationScheduler::Request{}, initial, tool_format, tp);
       auto scheduled = state->scheduler->Submit(
           std::move(prompt), max_tokens, sampling, is_cancelled, stream_output,
           TextRequestMetadata{
@@ -371,9 +405,14 @@ struct InferenceBackend::Impl {
               .stop_at_eos = stop_at_eos,
               .stop_sequences = std::move(stop_sequences),
               .return_progress = return_progress,
+              .before_terminal =
+                  [weak = std::weak_ptr<TpRequest>(tp)] {
+                    if (auto request = weak.lock())
+                      request->QueueEnd();
+                  },
           });
-      return std::make_shared<ScheduledGenerationRequest>(
-          state, std::move(scheduled), initial, tool_format, std::move(tp));
+      generation->BindScheduledRequest(std::move(scheduled));
+      return generation;
     } catch (...) {
       // Rank 0 made no model call for the request, so it ends on rank 1 with
       // none either.
