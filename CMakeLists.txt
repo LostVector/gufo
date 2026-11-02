@@ -414,6 +414,9 @@ add_library(gufo_http STATIC
   src/cli/serve/http_server.cpp
   src/cli/serve/websocket.cpp
   src/cli/serve/asr_websocket.cpp
+  src/cli/serve/voice_websocket.cpp
+  src/cli/serve/voice_page.cpp
+  src/cli/serve/decision_service.cpp
   src/cli/serve/tts_websocket.cpp
   src/cli/serve/openai_chat.cpp
 )
@@ -425,12 +428,17 @@ add_executable(gufo
   src/cli/banner.cpp
   src/cli/eval/eval.cpp
   src/cli/transcribe/transcribe.cpp
+  src/cli/speak/speak.cpp
+  src/cli/decide/decide.cpp
   src/cli/video/video.cpp
   src/cli/serve/serve.cpp
   src/eval/http_client.cpp
 )
 target_link_libraries(gufo PRIVATE gufo_cache gufo_diagnostics gufo_core gufo_eval
   gufo_llm_cli gufo_http gufo_serving CURL::libcurl)
+# Extension directories register their own tests, so CTest is enabled before
+# they are added.
+include(CTest)
 gufo_build_discovered_extensions()
 
 get_property(gufo_selected_extensions GLOBAL PROPERTY GUFO_SELECTED_EXTENSIONS)
@@ -736,7 +744,8 @@ endfunction()
 
   add_executable(transcribe_cli_test
     tests/cli/transcribe_test.cpp
-    src/cli/transcribe/transcribe.cpp)
+    src/cli/transcribe/transcribe.cpp
+    src/cli/serve/audio_buffer.cpp)
   target_link_libraries(transcribe_cli_test PRIVATE gufo_core gufo_ext_runtime)
   add_test(NAME transcribe_cli_test COMMAND transcribe_cli_test
     "${CMAKE_CURRENT_SOURCE_DIR}/tests/functional/fixtures/audio/clear-english-voice.wav")
