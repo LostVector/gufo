@@ -20,6 +20,7 @@
   enableTp2Rdma ? false,
   releaseVersion ? null,
   extensionsFromLock ? false,
+  extensions ? [ ],
   revision,
   sourceRoot ? ../..,
 }:
@@ -124,7 +125,8 @@ stdenv.mkDerivation {
     "-DGUFO_FFMPEG_EXECUTABLE=${ffmpeg-headless}/bin/ffmpeg"
     "-DGUFO_FFPROBE_EXECUTABLE=${ffmpeg-headless}/bin/ffprobe"
     "-DCMAKE_HIP_COMPILER=${rocmPackages.llvm.clang}/bin/clang"
-  ] ++ lib.optionals enableTp2Rdma [ "-DGUFO_ENABLE_TP2_RDMA=ON" ];
+  ] ++ lib.optionals enableTp2Rdma [ "-DGUFO_ENABLE_TP2_RDMA=ON" ]
+    ++ lib.optional (extensions != [ ]) "-DGUFO_EXTENSION_DIRS=${lib.concatMapStringsSep ";" (ext: "${ext}") extensions}";
 
   # CI exposes a persistent /tmp/gufo-ccache through extra-sandbox-paths for
   # C/C++ sources. Keep HIP uncached: Clang emits a bundled preprocessor output
