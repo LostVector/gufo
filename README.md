@@ -48,6 +48,8 @@ It is the only model with multi-host support so far and needs an optional build
 with libibverbs (`-DGUFO_ENABLE_TP2_RDMA=ON`); see
 [TP2](docs/models/qwen3.8-flash-next/TP2.md).
 
+To add or maintain a model, start with the [source extension guide](docs/extensions.md).
+
 ## Philosophy
 
 - Contributions are welcome! We need the help of Strix Halo community to keep improving gufo!

@@ -183,6 +183,9 @@ stdenv.mkDerivation {
 
   passthru = {
     inherit releaseVersion revision rocmPackages rocmRuntime extensionsFromLock;
+    extensionMetadata = import ./extension-metadata.nix {
+      inherit lib sourceRoot extensions extensionsFromLock;
+    };
     toolchain = {
       targetPlatform = "x86_64-linux";
       targetGpu = "gfx1151";
