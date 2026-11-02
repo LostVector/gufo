@@ -434,8 +434,7 @@ std::shared_ptr<TpControlChannel> TpControlChannel::Listen(
     SetError(error, SystemError("TP control socket"));
     return nullptr;
   }
-  int reuse = 1;
-  (void)::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+  (void)net::SetReuseAddr(fd);
   sockaddr_in address{};
   address.sin_family = AF_INET;
   address.sin_addr.s_addr = htonl(INADDR_ANY);
