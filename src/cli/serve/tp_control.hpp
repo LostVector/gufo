@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "src/core/platform/net.hpp"
 #include "src/core/sampling.hpp"
 
 namespace gufo::server {
@@ -289,7 +290,7 @@ public:
   [[nodiscard]] std::uint32_t world_size() const noexcept;
 
 private:
-  TpControlChannel(int fd, std::uint32_t rank, std::uint16_t port);
+  TpControlChannel(net::Socket fd, std::uint32_t rank, std::uint16_t port);
 
   [[nodiscard]] bool SendFrame(std::uint16_t type, std::uint64_t sequence,
                                const std::vector<std::uint8_t>& payload,
@@ -301,7 +302,7 @@ private:
                              std::string* error);
   [[nodiscard]] bool RecvAll(void* data, std::size_t bytes, std::string* error);
 
-  int fd_{-1};
+  net::Socket fd_{net::kInvalidSocket};
   std::uint16_t port_{0};
   std::uint32_t rank_{0};
   std::uint32_t world_size_{1};

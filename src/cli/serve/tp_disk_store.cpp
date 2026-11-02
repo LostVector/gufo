@@ -1,9 +1,5 @@
 #include "src/cli/serve/tp_disk_store.hpp"
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include <algorithm>
 #include <array>
 #include <condition_variable>
@@ -19,6 +15,7 @@
 #include <utility>
 
 #include "src/core/crypto/sha256.hpp"
+#include "src/core/platform/fs.hpp"
 
 namespace gufo::server {
 namespace {
@@ -34,17 +31,17 @@ using Digest = std::array<std::uint8_t, 32>;
 
 class Fd {
 public:
-  explicit Fd(int fd = -1) : fd_(fd) {}
+  explicit Fd(platform::PlatformFile fd = platform::kInvalidFile) : fd_(fd) {}
   ~Fd() {
-    if (fd_ >= 0)
-      ::close(fd_);
+    if (platform::FileValid(fd_))
+      platform::CloseFile(fd_);
   }
   Fd(const Fd&) = delete;
   Fd& operator=(const Fd&) = delete;
-  [[nodiscard]] int get() const { return fd_; }
+  [[nodiscard]] platform::PlatformFile get() const { return fd_; }
 
 private:
-  int fd_;
+  platform::PlatformFile fd_;
 };
 
 void Put(std::uint8_t* out, std::uint64_t value, int bytes) {
@@ -66,12 +63,14 @@ std::string Name(std::uint64_t key, const char* suffix) {
   return name;
 }
 
-bool WriteAll(int fd, const std::uint8_t* data, std::size_t bytes) {
+bool WriteAll(platform::PlatformFile fd, const std::uint8_t* data,
+              std::size_t bytes) {
   while (bytes > 0) {
-    const auto written = ::write(fd, data, bytes);
-    if (written < 0 && errno == EINTR)
+    std::error_code ec;
+    const auto written = platform::Write(fd, data, bytes, ec);
+    if (ec == std::errc::interrupted)
       continue;
-    if (written <= 0)
+    if (ec || written == 0)
       return false;
     data += written;
     bytes -= static_cast<std::size_t>(written);
@@ -79,12 +78,13 @@ bool WriteAll(int fd, const std::uint8_t* data, std::size_t bytes) {
   return true;
 }
 
-bool ReadAll(int fd, std::uint8_t* data, std::size_t bytes) {
+bool ReadAll(platform::PlatformFile fd, std::uint8_t* data, std::size_t bytes) {
   while (bytes > 0) {
-    const auto got = ::read(fd, data, bytes);
-    if (got < 0 && errno == EINTR)
+    std::error_code ec;
+    const auto got = platform::Read(fd, data, bytes, ec);
+    if (ec == std::errc::interrupted)
       continue;
-    if (got <= 0)
+    if (ec || got == 0)
       return false;
     data += got;
     bytes -= static_cast<std::size_t>(got);
@@ -120,11 +120,9 @@ struct TpDiskStore::Impl {
     std::filesystem::permissions(this->options.directory,
                                  std::filesystem::perms::owner_all,
                                  std::filesystem::perm_options::replace);
-    directory_fd = ::open(this->options.directory.c_str(),
-                          O_RDONLY | O_DIRECTORY | O_CLOEXEC | O_NOFOLLOW);
-    if (directory_fd < 0)
-      throw std::system_error(errno, std::generic_category(),
-                              "TP disk cache directory");
+    std::error_code ec;
+    if (!directory.Open(this->options.directory, ec))
+      throw std::system_error(ec, "TP disk cache directory");
     Index();
     worker = std::thread([this] { Work(); });
   }
@@ -136,7 +134,6 @@ struct TpDiskStore::Impl {
     }
     changed.notify_all();
     worker.join();
-    ::close(directory_fd);
   }
 
   /// Indexes the entries a previous run left, oldest use first, and removes
@@ -153,7 +150,8 @@ struct TpDiskStore::Impl {
           !file.is_regular_file())
         continue;
       if (std::strcmp(suffix, "tmp") == 0) {
-        (void)::unlinkat(directory_fd, name.c_str(), 0);
+        std::error_code ignored;
+        (void)platform::Unlink(directory, name, ignored);
       } else if (std::strcmp(suffix, "snap") == 0 && key != 0) {
         entries[key].bytes = file.file_size();
         retained += entries[key].bytes;
@@ -182,7 +180,8 @@ struct TpDiskStore::Impl {
       return;
     retained -= found->second.bytes;
     entries.erase(found);
-    (void)::unlinkat(directory_fd, Name(key, ".snap").c_str(), 0);
+    std::error_code ignored;
+    (void)platform::Unlink(directory, Name(key, ".snap"), ignored);
   }
 
   void Work() {
@@ -218,16 +217,17 @@ struct TpDiskStore::Impl {
   /// `mutex`; a failure leaves no file.
   bool Write(const Job& job) {
     const auto temporary = Name(job.key, ".tmp");
-    Fd fd(::openat(directory_fd, temporary.c_str(),
-                   O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_NOFOLLOW,
-                   0600));
-    if (fd.get() < 0)
+    std::error_code ec;
+    Fd fd(platform::OpenAt(directory, temporary,
+                           platform::FileMode::kOpenOrCreate, ec));
+    if (!platform::FileValid(fd.get()))
       return false;
+    if (!platform::Truncate(fd.get(), 0, ec)) {
+      (void)platform::Unlink(directory, temporary, ec);
+      return false;
+    }
     std::array<std::uint8_t, kHeaderBytes> header{};
-    bool valid = ::pwrite(fd.get(), header.data(), header.size(), 0) ==
-                     static_cast<ssize_t>(header.size()) &&
-                 ::lseek(fd.get(), kHeaderBytes, SEEK_SET) ==
-                     static_cast<off_t>(kHeaderBytes);
+    bool valid = WriteAll(fd.get(), header.data(), header.size());
     crypto::Sha256Hasher hasher;
     std::size_t streamed = 0;
     try {
@@ -253,19 +253,19 @@ struct TpDiskStore::Impl {
                 header.begin() + 32);
       const Digest payload = hasher.Finish();
       std::copy(payload.begin(), payload.end(), header.begin() + 64);
-      valid = ::pwrite(fd.get(), header.data(), header.size(), 0) ==
-                  static_cast<ssize_t>(header.size()) &&
-              ::fsync(fd.get()) == 0;
+      valid = platform::SeekTo(fd.get(), 0, ec) &&
+              WriteAll(fd.get(), header.data(), header.size()) &&
+              platform::SyncFile(fd.get(), ec);
       // The image is durable now. Drop its clean pages, as rank 0's disk cache
       // does, so multi-GB halves don't accumulate in the page cache.
       if (valid)
-        (void)::posix_fadvise(fd.get(), 0, 0, POSIX_FADV_DONTNEED);
-      valid = valid && ::renameat(directory_fd, temporary.c_str(), directory_fd,
-                                  Name(job.key, ".snap").c_str()) == 0;
-      valid = valid && ::fsync(directory_fd) == 0;
+        platform::Advise(fd.get(), platform::AdviseHint::kDontNeed, 0, 0);
+      valid = valid && platform::Rename(directory, temporary, directory,
+                                        Name(job.key, ".snap"), ec);
+      valid = valid && platform::SyncDirectory(directory, ec);
     }
     if (!valid)
-      (void)::unlinkat(directory_fd, temporary.c_str(), 0);
+      (void)platform::Unlink(directory, temporary, ec);
     return valid;
   }
 
@@ -277,22 +277,22 @@ struct TpDiskStore::Impl {
       const std::lock_guard<std::mutex> lock(mutex);
       if (!entries.contains(key))
         throw std::runtime_error("TP disk cache has no entry for this key");
-      Fd fd(::openat(directory_fd, name.c_str(),
-                     O_RDONLY | O_CLOEXEC | O_NOFOLLOW));
-      struct stat info{};
-      if (fd.get() < 0 || ::fstat(fd.get(), &info) != 0 ||
-          !S_ISREG(info.st_mode) ||
-          static_cast<std::size_t>(info.st_size) < kHeaderBytes) {
+      std::error_code ec;
+      Fd fd(platform::OpenAt(directory, name, platform::FileMode::kRead, ec));
+      platform::FileInfo info{};
+      if (!platform::FileValid(fd.get()) ||
+          !platform::Stat(fd.get(), &info, ec) || !info.regular ||
+          info.size < kHeaderBytes) {
         Remove(key);
         throw std::runtime_error("TP disk cache entry is unreadable");
       }
-      file.resize(static_cast<std::size_t>(info.st_size));
+      file.resize(static_cast<std::size_t>(info.size));
       if (!ReadAll(fd.get(), file.data(), file.size())) {
         Remove(key);
         throw std::runtime_error("TP disk cache entry read failed");
       }
       // Restore uses the in-memory copy; drop the page-cache one.
-      (void)::posix_fadvise(fd.get(), 0, 0, POSIX_FADV_DONTNEED);
+      platform::Advise(fd.get(), platform::AdviseHint::kDontNeed, 0, 0);
       entries[key].used = ++clock;
     }
     const auto payload =
@@ -314,14 +314,14 @@ struct TpDiskStore::Impl {
       Remove(key);
       throw std::runtime_error("TP disk cache entry is corrupt or foreign");
     }
-    (void)::utimensat(directory_fd, name.c_str(), nullptr, AT_SYMLINK_NOFOLLOW);
+    (void)platform::TouchAt(directory, name);
     runner.RestorePersistentSnapshot(state, payload);
   }
 
   Options options;
   Digest identity_digest;
   std::uint32_t payload_version;
-  int directory_fd{-1};
+  platform::Directory directory;
   mutable std::mutex mutex;
   std::condition_variable changed;
   std::deque<Job> jobs;

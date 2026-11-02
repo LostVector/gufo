@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <string>
 
 #if defined(_WIN32)
 // clang-format off
@@ -90,6 +91,20 @@ Socket AcceptClientSocket(Socket listener) noexcept;
 /// Poll a single socket for readability. Returns >0 if readable or
 /// closed/error, 0 on timeout, and <0 on poll error.
 int PollReadable(Socket socket, int timeout_ms) noexcept;
+
+/// Poll a socket for connect/write readiness with the same timeout semantics.
+int PollWritable(Socket socket, int timeout_ms) noexcept;
+/// Whether a non-blocking connect is still in progress.
+bool IsSocketConnectPending() noexcept;
+/// Read SO_ERROR after connect readiness; true only for a successful connect.
+bool SocketHasNoError(Socket socket) noexcept;
+/// Address-resolution diagnostic in the native narrow-string API.
+std::string AddressErrorMessage(int error);
+/// Enable keepalive and tune its idle/interval/probe limits where supported.
+bool SetKeepAlive(Socket socket, int idle_seconds, int interval_seconds,
+                  int probes) noexcept;
+/// Set only the receive timeout; zero restores an unbounded idle receive.
+bool SetReceiveTimeout(Socket socket, int timeout_ms) noexcept;
 
 /// Non-blocking check whether the remote peer has closed or reset the socket.
 bool IsPeerDisconnected(Socket socket) noexcept;

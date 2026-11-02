@@ -1624,11 +1624,7 @@ int RunServe(std::span<const char* const> args) {
       // Rank 1 serves nothing and keeps nothing worth saving: stop at once on
       // SIGINT or SIGTERM, also while loading. As a container's PID 1 it
       // would otherwise ignore them.
-      struct sigaction stop{};
-      stop.sa_handler = [](int) { std::_Exit(0); };
-      ::sigemptyset(&stop.sa_mask);
-      (void)::sigaction(SIGTERM, &stop, nullptr);
-      (void)::sigaction(SIGINT, &stop, nullptr);
+      platform::InstallImmediateTerminationHandlers();
     }
     if (tp_world_size == 2) {
       const ext::TextParallelTransportOptions rdma_config{

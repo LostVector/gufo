@@ -1,18 +1,9 @@
 #include "src/cli/serve/tp_control.hpp"
 
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
 #include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
 #include <openssl/rand.h>
-#include <poll.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <unistd.h>
 
 #include <algorithm>
 #include <array>
@@ -24,6 +15,7 @@
 #include <span>
 #include <stdexcept>
 #include <string_view>
+#include <system_error>
 #include <thread>
 #include <unordered_map>
 #include <utility>
@@ -61,7 +53,8 @@ void SetError(std::string* error, std::string message) {
 }
 
 std::string SystemError(const char* operation) {
-  return std::string(operation) + ": " + std::strerror(errno);
+  return std::string(operation) + ": " +
+         std::system_category().message(net::LastSocketError());
 }
 
 /// Proves the control token without sending it: HMAC-SHA256 keyed by the token
@@ -86,35 +79,18 @@ bool ControlMac(const std::string& token, std::uint32_t sender,
 /// a peer whose host died is reported even on an idle channel, and disables
 /// Nagle's algorithm: a cache instruction is a round trip, and a small frame
 /// held back for a delayed ACK stalls it by tens of milliseconds.
-void SetStartupSocketOptions(int fd, std::chrono::milliseconds io_timeout) {
-  const auto milliseconds = std::max<std::int64_t>(io_timeout.count(), 1);
-  timeval timeout{};
-  timeout.tv_sec = static_cast<time_t>(milliseconds / 1000);
-  timeout.tv_usec = static_cast<suseconds_t>((milliseconds % 1000) * 1000);
-  (void)::setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-  (void)::setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
-  const int enabled = 1;
-  (void)::setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &enabled, sizeof(enabled));
-  (void)::setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &enabled, sizeof(enabled));
-#if defined(TCP_KEEPIDLE) && defined(TCP_KEEPINTVL) && defined(TCP_KEEPCNT)
-  // Probe after one idle minute, then every ten seconds: a dead host is
-  // reported about two minutes after it stops answering.
-  const int idle_seconds = 60;
-  const int interval_seconds = 10;
-  const int probes = 6;
-  (void)::setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &idle_seconds,
-                     sizeof(idle_seconds));
-  (void)::setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, &interval_seconds,
-                     sizeof(interval_seconds));
-  (void)::setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT, &probes, sizeof(probes));
-#endif
+void SetStartupSocketOptions(net::Socket fd,
+                             std::chrono::milliseconds io_timeout) {
+  const int milliseconds = static_cast<int>(std::clamp<std::int64_t>(
+      io_timeout.count(), 1, std::numeric_limits<int>::max()));
+  (void)net::SetSocketTimeouts(fd, milliseconds);
+  (void)net::SetKeepAlive(fd, 60, 10, 6);
+  (void)net::SetNoDelay(fd);
 }
 
-/// After the handshake a rank waits for the next command or response for as
-/// long as the server stays idle, so a receive timeout would end the pair.
-void ClearReceiveTimeout(int fd) {
-  const timeval none{};
-  (void)::setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &none, sizeof(none));
+/// A handshaken peer can remain idle indefinitely; retain its send deadline.
+void ClearReceiveTimeout(net::Socket fd) {
+  (void)net::SetReceiveTimeout(fd, 0);
 }
 
 void AppendU32(std::vector<std::uint8_t>* out, std::uint32_t value) {
@@ -436,12 +412,12 @@ bool ValidateTpControlResponse(const TpControlResponse& response,
   return true;
 }
 
-TpControlChannel::TpControlChannel(int fd, std::uint32_t rank,
+TpControlChannel::TpControlChannel(net::Socket fd, std::uint32_t rank,
                                    std::uint16_t port)
     : fd_(fd), port_(port), rank_(rank) {
   if (port_ == 0) {
     sockaddr_in address{};
-    socklen_t length = sizeof(address);
+    net::SocklenT length = sizeof(address);
     if (::getsockname(fd_, reinterpret_cast<sockaddr*>(&address), &length) ==
         0) {
       port_ = ntohs(address.sin_port);
@@ -452,8 +428,9 @@ TpControlChannel::TpControlChannel(int fd, std::uint32_t rank,
 std::shared_ptr<TpControlChannel> TpControlChannel::Listen(
     std::uint16_t port, std::string* error,
     std::chrono::milliseconds io_timeout) {
-  const int fd = ::socket(AF_INET, SOCK_STREAM, 0);
-  if (fd < 0) {
+  net::EnsureSocketRuntimeStarted();
+  const net::Socket fd = net::CreateStreamSocket(AF_INET);
+  if (fd == net::kInvalidSocket) {
     SetError(error, SystemError("TP control socket"));
     return nullptr;
   }
@@ -466,23 +443,22 @@ std::shared_ptr<TpControlChannel> TpControlChannel::Listen(
   if (::bind(fd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) != 0 ||
       ::listen(fd, 1) != 0) {
     SetError(error, SystemError("TP control bind/listen"));
-    ::close(fd);
+    net::CloseSocket(fd);
     return nullptr;
   }
-  pollfd descriptor{.fd = fd, .events = POLLIN, .revents = 0};
-  const int poll_result = ::poll(&descriptor, 1, 30000);
+  const int poll_result = net::PollReadable(fd, 30000);
   if (poll_result <= 0) {
     SetError(error, poll_result == 0 ? "TP control accept timed out"
                                      : SystemError("TP control poll"));
-    ::close(fd);
+    net::CloseSocket(fd);
     return nullptr;
   }
-  int peer = -1;
+  net::Socket peer = net::kInvalidSocket;
   do {
-    peer = ::accept(fd, nullptr, nullptr);
-  } while (peer < 0 && errno == EINTR);
-  ::close(fd);
-  if (peer < 0) {
+    peer = net::AcceptClientSocket(fd);
+  } while (peer == net::kInvalidSocket && net::IsSocketInterrupted());
+  net::CloseSocket(fd);
+  if (peer == net::kInvalidSocket) {
     SetError(error, SystemError("TP control accept"));
     return nullptr;
   }
@@ -497,6 +473,7 @@ std::shared_ptr<TpControlChannel> TpControlChannel::Connect(
     SetError(error, "TP control rank one requires a host");
     return nullptr;
   }
+  net::EnsureSocketRuntimeStarted();
   const auto deadline = std::chrono::steady_clock::now() + kIoTimeout;
   for (;;) {
     addrinfo hints{};
@@ -507,44 +484,37 @@ std::shared_ptr<TpControlChannel> TpControlChannel::Connect(
     const int resolve =
         ::getaddrinfo(host.c_str(), service.c_str(), &hints, &addresses);
     if (resolve != 0) {
-      SetError(error, "TP control getaddrinfo: " +
-                          std::string(::gai_strerror(resolve)));
+      SetError(error,
+               "TP control getaddrinfo: " + net::AddressErrorMessage(resolve));
       return nullptr;
     }
-    int fd = -1;
+    net::Socket fd = net::kInvalidSocket;
     for (auto* address = addresses; address != nullptr;
          address = address->ai_next) {
-      fd = ::socket(address->ai_family, address->ai_socktype,
-                    address->ai_protocol);
-      if (fd < 0) {
+      fd = net::CreateStreamSocket(address->ai_family);
+      if (fd == net::kInvalidSocket) {
         continue;
       }
-      const int flags = ::fcntl(fd, F_GETFL, 0);
-      if (flags < 0 || ::fcntl(fd, F_SETFL, flags | O_NONBLOCK) != 0) {
-        ::close(fd);
-        fd = -1;
+      if (!net::SetNonBlocking(fd)) {
+        net::CloseSocket(fd);
+        fd = net::kInvalidSocket;
         continue;
       }
       bool connected =
-          ::connect(fd, address->ai_addr, address->ai_addrlen) == 0;
-      if (!connected && errno == EINPROGRESS) {
-        pollfd descriptor{.fd = fd, .events = POLLOUT, .revents = 0};
-        const int poll_result = ::poll(&descriptor, 1, 1000);
-        int socket_error = 0;
-        socklen_t error_size = sizeof(socket_error);
-        connected = poll_result > 0 &&
-                    ::getsockopt(fd, SOL_SOCKET, SO_ERROR, &socket_error,
-                                 &error_size) == 0 &&
-                    socket_error == 0;
+          ::connect(fd, address->ai_addr,
+                    static_cast<net::SocklenT>(address->ai_addrlen)) == 0;
+      if (!connected && net::IsSocketConnectPending()) {
+        connected =
+            net::PollWritable(fd, 1000) > 0 && net::SocketHasNoError(fd);
       }
-      if (connected && ::fcntl(fd, F_SETFL, flags) == 0) {
+      if (connected && net::SetBlocking(fd)) {
         break;
       }
-      ::close(fd);
-      fd = -1;
+      net::CloseSocket(fd);
+      fd = net::kInvalidSocket;
     }
     ::freeaddrinfo(addresses);
-    if (fd >= 0) {
+    if (fd != net::kInvalidSocket) {
       SetStartupSocketOptions(fd, io_timeout);
       return std::shared_ptr<TpControlChannel>(
           new TpControlChannel(fd, 1, port));
@@ -559,16 +529,17 @@ std::shared_ptr<TpControlChannel> TpControlChannel::Connect(
 
 TpControlChannel::~TpControlChannel() {
   interrupted_.store(true, std::memory_order_release);
-  if (fd_ >= 0) {
-    ::shutdown(fd_, SHUT_RDWR);
-    ::close(fd_);
-    fd_ = -1;
+  if (fd_ != net::kInvalidSocket) {
+    (void)net::ShutdownSocket(fd_, net::ShutdownHow::kReadWrite);
+    net::CloseSocket(fd_);
+    fd_ = net::kInvalidSocket;
   }
 }
 
 void TpControlChannel::Interrupt() noexcept {
-  if (!interrupted_.exchange(true, std::memory_order_acq_rel) && fd_ >= 0) {
-    ::shutdown(fd_, SHUT_RDWR);
+  if (!interrupted_.exchange(true, std::memory_order_acq_rel) &&
+      fd_ != net::kInvalidSocket) {
+    (void)net::ShutdownSocket(fd_, net::ShutdownHow::kReadWrite);
   }
 }
 
@@ -577,13 +548,13 @@ bool TpControlChannel::SendAll(const void* data, std::size_t bytes,
   const auto* cursor = static_cast<const std::uint8_t*>(data);
   std::size_t sent = 0;
   while (sent < bytes) {
-    const ssize_t result =
-        ::send(fd_, cursor + sent, bytes - sent, MSG_NOSIGNAL);
+    const std::intptr_t result =
+        net::SendNoSignal(fd_, cursor + sent, bytes - sent);
     if (result > 0) {
       sent += static_cast<std::size_t>(result);
       continue;
     }
-    if (result < 0 && errno == EINTR) {
+    if (result < 0 && net::IsSocketInterrupted()) {
       continue;
     }
     SetError(error, SystemError("TP control send"));
@@ -597,7 +568,8 @@ bool TpControlChannel::RecvAll(void* data, std::size_t bytes,
   auto* cursor = static_cast<std::uint8_t*>(data);
   std::size_t received = 0;
   while (received < bytes) {
-    const ssize_t result = ::recv(fd_, cursor + received, bytes - received, 0);
+    const std::intptr_t result =
+        net::Receive(fd_, cursor + received, bytes - received);
     if (result > 0) {
       received += static_cast<std::size_t>(result);
       continue;
@@ -606,7 +578,7 @@ bool TpControlChannel::RecvAll(void* data, std::size_t bytes,
       SetError(error, "TP control peer closed the channel");
       return false;
     }
-    if (errno == EINTR) {
+    if (net::IsSocketInterrupted()) {
       continue;
     }
     SetError(error, SystemError("TP control receive"));
