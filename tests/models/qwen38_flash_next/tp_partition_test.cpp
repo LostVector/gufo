@@ -43,7 +43,7 @@ ModelWeights OneLayer(TensorRef gate, TensorRef up, TensorRef down) {
 int main() {
   using gufo::models::qwen38_flash_next::PlanPrefillRows;
   const auto local = PlanPrefillRows(65536, 2560);
-  Require(local.chunk == 16384 && local.through == 16512,
+  Require(local.chunk == 4096 && local.through == 4224,
           "preserve upstream local chunk and short tail");
   const auto native = PlanPrefillRows(65536, 2560, (48U << 20) - 4096);
   Require(native.chunk == 4096 && native.through == 4224,

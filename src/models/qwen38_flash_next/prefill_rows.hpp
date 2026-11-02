@@ -20,7 +20,7 @@ struct PrefillRows {
 constexpr PrefillRows PlanPrefillRows(
     std::uint32_t context, std::uint32_t hidden,
     std::size_t exchange_bytes = std::numeric_limits<std::size_t>::max()) {
-  constexpr std::uint32_t chunk = 16384, tail = 128;
+  constexpr std::uint32_t chunk = 4096, tail = 128;
   if (hidden == 0)
     return {};
   const auto limit = static_cast<std::uint32_t>(std::min<std::size_t>(
