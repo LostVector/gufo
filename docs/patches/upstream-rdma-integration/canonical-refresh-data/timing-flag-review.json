@@ -1,0 +1,1368 @@
+{
+  "flag_entries": 52,
+  "flagged_request_comparisons": 20,
+  "case_counts": {
+    "short-c2": 30,
+    "coding-c2": 22
+  },
+  "metric_counts": {
+    "client_ttft_ms": 5,
+    "server_ttft_ms": 5,
+    "decode_ms": 3,
+    "server_max_inter_token_ms": 8,
+    "first_followup_content_gap_ms": 8,
+    "maximum_content_gap_ms": 8,
+    "raw_cache_snapshot_ms": 8,
+    "final_content_to_HTTP_finish_ms": 6,
+    "wall_ms": 1
+  },
+  "flagged_requests": [
+    {
+      "pair": "pair02",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair02",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "client_ttft_ms",
+          "baseline": "265.8299869799521",
+          "candidate": "329.76856897585094",
+          "delta_ms": "63.93858199589886"
+        },
+        {
+          "pair": "pair02",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_ttft_ms",
+          "baseline": "264.889275",
+          "candidate": "328.981671",
+          "delta_ms": "64.09239600000001"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair02-baseline.jsonl",
+          "source_sha256": "b5eb1aacdd27a9be01f9be43a04f721ed8a761991aa681dd7030566b7f06150c",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 58,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 55,
+          "queue_ms": 1.955492,
+          "prefill_ms": 162.445482,
+          "decode_ms": 3182.0421509999987,
+          "client_ttft_ms": 265.8299869799521,
+          "cache_snapshot_ms": 167.01995499999998
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair02-candidate.jsonl",
+          "source_sha256": "47688e2ee18e1e53d5258875a0dbb04ae354c0154d3577d3128a831549208f70",
+          "work": {
+            "draft_tokens": 83,
+            "draft_accepted_tokens": 56,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 56,
+          "queue_ms": 1.526044,
+          "prefill_ms": 166.005595,
+          "decode_ms": 3243.794120999999,
+          "client_ttft_ms": 329.76856897585094,
+          "cache_snapshot_ms": 101.2103
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair02",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair02",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "decode_ms",
+          "baseline": "2772.8482640000007",
+          "candidate": "2929.5539190000004",
+          "delta_ms": "156.70565499999975"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair02-baseline.jsonl",
+          "source_sha256": "b5eb1aacdd27a9be01f9be43a04f721ed8a761991aa681dd7030566b7f06150c",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 95.236158,
+          "prefill_ms": 160.53458799999999,
+          "decode_ms": 2772.8482640000007,
+          "client_ttft_ms": 321.66112001868896,
+          "cache_snapshot_ms": 155.428942
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair02-candidate.jsonl",
+          "source_sha256": "47688e2ee18e1e53d5258875a0dbb04ae354c0154d3577d3128a831549208f70",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 65,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 44,
+          "queue_ms": 94.49315,
+          "prefill_ms": 159.175259,
+          "decode_ms": 2929.5539190000004,
+          "client_ttft_ms": 319.53534300555475,
+          "cache_snapshot_ms": 116.770305
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair02",
+      "case": "coding-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair02",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_max_inter_token_ms",
+          "baseline": "82.245356",
+          "candidate": "111.270809",
+          "delta_ms": "29.025453"
+        },
+        {
+          "pair": "pair02",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "first_followup_content_gap_ms",
+          "baseline": "47.444544",
+          "candidate": "111.459064",
+          "delta_ms": "64.01452"
+        },
+        {
+          "pair": "pair02",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "maximum_content_gap_ms",
+          "baseline": "82.253735",
+          "candidate": "111.459064",
+          "delta_ms": "29.205328999999992"
+        },
+        {
+          "pair": "pair02",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "raw_cache_snapshot_ms",
+          "baseline": "93.695473",
+          "candidate": "155.757182",
+          "delta_ms": "62.06170899999999"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair02-baseline.jsonl",
+          "source_sha256": "b5eb1aacdd27a9be01f9be43a04f721ed8a761991aa681dd7030566b7f06150c",
+          "work": {
+            "draft_tokens": 185,
+            "draft_accepted_tokens": 152,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 82,
+          "queue_ms": 1.180345,
+          "prefill_ms": 159.100371,
+          "decode_ms": 5195.5080130000015,
+          "client_ttft_ms": 315.55771199055016,
+          "cache_snapshot_ms": 93.695473
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair02-candidate.jsonl",
+          "source_sha256": "47688e2ee18e1e53d5258875a0dbb04ae354c0154d3577d3128a831549208f70",
+          "work": {
+            "draft_tokens": 202,
+            "draft_accepted_tokens": 158,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 75,
+          "queue_ms": 1.587963,
+          "prefill_ms": 157.435291,
+          "decode_ms": 5148.389432000001,
+          "client_ttft_ms": 251.67533897911198,
+          "cache_snapshot_ms": 155.757182
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair03",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair03",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "client_ttft_ms",
+          "baseline": "265.64262199099176",
+          "candidate": "330.5562349851243",
+          "delta_ms": "64.91361299413256"
+        },
+        {
+          "pair": "pair03",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_ttft_ms",
+          "baseline": "264.776048",
+          "candidate": "329.591233",
+          "delta_ms": "64.81518499999999"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair03-baseline.jsonl",
+          "source_sha256": "2bb98329a1910f44da2692dd85f98a3e8f4eacdfeeb92b6923c83b957b6af504",
+          "work": {
+            "draft_tokens": 83,
+            "draft_accepted_tokens": 58,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 55,
+          "queue_ms": 1.720199,
+          "prefill_ms": 162.924947,
+          "decode_ms": 3186.412495000001,
+          "client_ttft_ms": 265.64262199099176,
+          "cache_snapshot_ms": 166.8332
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair03-candidate.jsonl",
+          "source_sha256": "2d5b5566b2686e002ba6bb83a0365d7bfc8d0dc35c95d446f950d3db5fd17861",
+          "work": {
+            "draft_tokens": 85,
+            "draft_accepted_tokens": 58,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 56,
+          "queue_ms": 1.750768,
+          "prefill_ms": 166.795191,
+          "decode_ms": 3177.108409,
+          "client_ttft_ms": 330.5562349851243,
+          "cache_snapshot_ms": 100.82751099999999
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair03",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair03",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "final_content_to_HTTP_finish_ms",
+          "baseline": "45.642706990242004",
+          "candidate": "52.8242230117321",
+          "delta_ms": "7.181516021490097"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair03-baseline.jsonl",
+          "source_sha256": "2bb98329a1910f44da2692dd85f98a3e8f4eacdfeeb92b6923c83b957b6af504",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 95.778522,
+          "prefill_ms": 159.377714,
+          "decode_ms": 2779.778478,
+          "client_ttft_ms": 321.84924400644377,
+          "cache_snapshot_ms": 154.21830699999998
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair03-candidate.jsonl",
+          "source_sha256": "2d5b5566b2686e002ba6bb83a0365d7bfc8d0dc35c95d446f950d3db5fd17861",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 95.375813,
+          "prefill_ms": 158.717663,
+          "decode_ms": 2771.102424,
+          "client_ttft_ms": 320.0028600113001,
+          "cache_snapshot_ms": 117.217442
+        }
+      },
+      "work_changed": false
+    },
+    {
+      "pair": "pair04",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair04",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_max_inter_token_ms",
+          "baseline": "104.21583",
+          "candidate": "115.742466",
+          "delta_ms": "11.526635999999996"
+        },
+        {
+          "pair": "pair04",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "first_followup_content_gap_ms",
+          "baseline": "51.95785",
+          "candidate": "115.704557",
+          "delta_ms": "63.746706999999994"
+        },
+        {
+          "pair": "pair04",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "maximum_content_gap_ms",
+          "baseline": "104.068155",
+          "candidate": "115.704557",
+          "delta_ms": "11.63640199999999"
+        },
+        {
+          "pair": "pair04",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "raw_cache_snapshot_ms",
+          "baseline": "101.292157",
+          "candidate": "166.001665",
+          "delta_ms": "64.709508"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair04-baseline.jsonl",
+          "source_sha256": "3f71b1cfc938b21e821e3a8212047a7296ac262f56792c6d28d2fa61b1ee3792",
+          "work": {
+            "draft_tokens": 86,
+            "draft_accepted_tokens": 58,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 56,
+          "queue_ms": 1.731109,
+          "prefill_ms": 166.319747,
+          "decode_ms": 3205.5934100000004,
+          "client_ttft_ms": 329.318261006847,
+          "cache_snapshot_ms": 101.292157
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair04-candidate.jsonl",
+          "source_sha256": "7a62c492685b42a612ad33bd572269778efdf0869392194c90ec31251bdf4f09",
+          "work": {
+            "draft_tokens": 83,
+            "draft_accepted_tokens": 58,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 55,
+          "queue_ms": 1.883074,
+          "prefill_ms": 162.633485,
+          "decode_ms": 3181.2596300000014,
+          "client_ttft_ms": 264.97533201472834,
+          "cache_snapshot_ms": 166.001665
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair04",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair04",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "server_max_inter_token_ms",
+          "baseline": "96.300306",
+          "candidate": "135.881304",
+          "delta_ms": "39.580997999999994"
+        },
+        {
+          "pair": "pair04",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "first_followup_content_gap_ms",
+          "baseline": "96.188969",
+          "candidate": "135.800038",
+          "delta_ms": "39.611069"
+        },
+        {
+          "pair": "pair04",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "maximum_content_gap_ms",
+          "baseline": "96.188969",
+          "candidate": "135.800038",
+          "delta_ms": "39.611069"
+        },
+        {
+          "pair": "pair04",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "raw_cache_snapshot_ms",
+          "baseline": "116.970738",
+          "candidate": "156.823801",
+          "delta_ms": "39.853063000000006"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair04-baseline.jsonl",
+          "source_sha256": "3f71b1cfc938b21e821e3a8212047a7296ac262f56792c6d28d2fa61b1ee3792",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 95.088102,
+          "prefill_ms": 158.331984,
+          "decode_ms": 2799.154518,
+          "client_ttft_ms": 319.11023598513566,
+          "cache_snapshot_ms": 116.970738
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair04-candidate.jsonl",
+          "source_sha256": "7a62c492685b42a612ad33bd572269778efdf0869392194c90ec31251bdf4f09",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 95.608816,
+          "prefill_ms": 159.239687,
+          "decode_ms": 2769.9960119999996,
+          "client_ttft_ms": 320.86313399486244,
+          "cache_snapshot_ms": 156.823801
+        }
+      },
+      "work_changed": false
+    },
+    {
+      "pair": "pair05",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair05",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_max_inter_token_ms",
+          "baseline": "105.344856",
+          "candidate": "114.736126",
+          "delta_ms": "9.391270000000006"
+        },
+        {
+          "pair": "pair05",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "first_followup_content_gap_ms",
+          "baseline": "53.027387",
+          "candidate": "114.704577",
+          "delta_ms": "61.67719"
+        },
+        {
+          "pair": "pair05",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "maximum_content_gap_ms",
+          "baseline": "104.967087",
+          "candidate": "114.704577",
+          "delta_ms": "9.737489999999994"
+        },
+        {
+          "pair": "pair05",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "raw_cache_snapshot_ms",
+          "baseline": "102.353825",
+          "candidate": "167.88726",
+          "delta_ms": "65.533435"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair05-baseline.jsonl",
+          "source_sha256": "a33f0985a374e12e72f7b1075e60c25f62f88ba2ce28e99eaa49312f4ca8755c",
+          "work": {
+            "draft_tokens": 86,
+            "draft_accepted_tokens": 58,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 56,
+          "queue_ms": 1.759297,
+          "prefill_ms": 169.045776,
+          "decode_ms": 3202.4933809999998,
+          "client_ttft_ms": 333.23283499339595,
+          "cache_snapshot_ms": 102.353825
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair05-candidate.jsonl",
+          "source_sha256": "4a2e3d59ec174934d2c1f27cb5ba644623304b9b21a29c390029d80d21146a77",
+          "work": {
+            "draft_tokens": 83,
+            "draft_accepted_tokens": 58,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 55,
+          "queue_ms": 2.168585,
+          "prefill_ms": 164.33606500000002,
+          "decode_ms": 3187.4805460000002,
+          "client_ttft_ms": 267.61999298469163,
+          "cache_snapshot_ms": 167.88726
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair05",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair05",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "server_max_inter_token_ms",
+          "baseline": "96.997746",
+          "candidate": "133.530655",
+          "delta_ms": "36.53290899999999"
+        },
+        {
+          "pair": "pair05",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "first_followup_content_gap_ms",
+          "baseline": "97.444142",
+          "candidate": "133.453607",
+          "delta_ms": "36.009465000000006"
+        },
+        {
+          "pair": "pair05",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "maximum_content_gap_ms",
+          "baseline": "97.444142",
+          "candidate": "133.453607",
+          "delta_ms": "36.009465000000006"
+        },
+        {
+          "pair": "pair05",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "raw_cache_snapshot_ms",
+          "baseline": "120.10386600000001",
+          "candidate": "155.655505",
+          "delta_ms": "35.551638999999994"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair05-baseline.jsonl",
+          "source_sha256": "a33f0985a374e12e72f7b1075e60c25f62f88ba2ce28e99eaa49312f4ca8755c",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 94.677055,
+          "prefill_ms": 159.615675,
+          "decode_ms": 2796.570654999999,
+          "client_ttft_ms": 322.69581899163313,
+          "cache_snapshot_ms": 120.10386600000001
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair05-candidate.jsonl",
+          "source_sha256": "4a2e3d59ec174934d2c1f27cb5ba644623304b9b21a29c390029d80d21146a77",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 96.098431,
+          "prefill_ms": 161.327116,
+          "decode_ms": 2778.300238999999,
+          "client_ttft_ms": 324.72802902339026,
+          "cache_snapshot_ms": 155.655505
+        }
+      },
+      "work_changed": false
+    },
+    {
+      "pair": "pair06",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair06",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "client_ttft_ms",
+          "baseline": "264.75154800573364",
+          "candidate": "333.51244701771066",
+          "delta_ms": "68.76089901197702"
+        },
+        {
+          "pair": "pair06",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_ttft_ms",
+          "baseline": "264.110578",
+          "candidate": "332.773019",
+          "delta_ms": "68.662441"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair06-baseline.jsonl",
+          "source_sha256": "e25fd53dc0f1957c74a1a3f041bce7581c22eb3f76550bfc65ebb3f8890348d2",
+          "work": {
+            "draft_tokens": 78,
+            "draft_accepted_tokens": 55,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 57,
+          "queue_ms": 1.149536,
+          "prefill_ms": 163.54412,
+          "decode_ms": 3329.153167,
+          "client_ttft_ms": 264.75154800573364,
+          "cache_snapshot_ms": 166.050454
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair06-candidate.jsonl",
+          "source_sha256": "c0ba70162dddbc8df6ab88b3cf803b9d132938d94fbd07c1f0a5b016483b9c81",
+          "work": {
+            "draft_tokens": 86,
+            "draft_accepted_tokens": 58,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 56,
+          "queue_ms": 1.974902,
+          "prefill_ms": 168.86076100000002,
+          "decode_ms": 3202.077706999999,
+          "client_ttft_ms": 333.51244701771066,
+          "cache_snapshot_ms": 102.37966399999999
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair06",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair06",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "final_content_to_HTTP_finish_ms",
+          "baseline": "40.648737013339996",
+          "candidate": "53.0293869972229",
+          "delta_ms": "12.380649983882904"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair06-baseline.jsonl",
+          "source_sha256": "e25fd53dc0f1957c74a1a3f041bce7581c22eb3f76550bfc65ebb3f8890348d2",
+          "work": {
+            "draft_tokens": 79,
+            "draft_accepted_tokens": 66,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 43,
+          "queue_ms": 94.637965,
+          "prefill_ms": 159.55224900000002,
+          "decode_ms": 2940.4142999999995,
+          "client_ttft_ms": 320.93540200730786,
+          "cache_snapshot_ms": 155.554827
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair06-candidate.jsonl",
+          "source_sha256": "c0ba70162dddbc8df6ab88b3cf803b9d132938d94fbd07c1f0a5b016483b9c81",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 95.929497,
+          "prefill_ms": 159.434032,
+          "decode_ms": 2796.0318239999992,
+          "client_ttft_ms": 323.17394501296803,
+          "cache_snapshot_ms": 119.724176
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair06",
+      "case": "coding-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair06",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_max_inter_token_ms",
+          "baseline": "83.819888",
+          "candidate": "111.494843",
+          "delta_ms": "27.674954999999997"
+        },
+        {
+          "pair": "pair06",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "first_followup_content_gap_ms",
+          "baseline": "47.480672",
+          "candidate": "111.491742",
+          "delta_ms": "64.01107"
+        },
+        {
+          "pair": "pair06",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "maximum_content_gap_ms",
+          "baseline": "83.801269",
+          "candidate": "111.491742",
+          "delta_ms": "27.690472999999997"
+        },
+        {
+          "pair": "pair06",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "raw_cache_snapshot_ms",
+          "baseline": "94.929057",
+          "candidate": "156.889917",
+          "delta_ms": "61.96086"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair06-baseline.jsonl",
+          "source_sha256": "e25fd53dc0f1957c74a1a3f041bce7581c22eb3f76550bfc65ebb3f8890348d2",
+          "work": {
+            "draft_tokens": 179,
+            "draft_accepted_tokens": 151,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 80,
+          "queue_ms": 1.899374,
+          "prefill_ms": 159.627016,
+          "decode_ms": 5268.4182980000005,
+          "client_ttft_ms": 318.2879710220732,
+          "cache_snapshot_ms": 94.929057
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair06-candidate.jsonl",
+          "source_sha256": "c0ba70162dddbc8df6ab88b3cf803b9d132938d94fbd07c1f0a5b016483b9c81",
+          "work": {
+            "draft_tokens": 185,
+            "draft_accepted_tokens": 152,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 82,
+          "queue_ms": 1.853334,
+          "prefill_ms": 158.979585,
+          "decode_ms": 5252.640738999999,
+          "client_ttft_ms": 254.51416400028393,
+          "cache_snapshot_ms": 156.889917
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair07",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair07",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "final_content_to_HTTP_finish_ms",
+          "baseline": "41.76283401250839",
+          "candidate": "52.65796899795532",
+          "delta_ms": "10.89513498544693"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair07-baseline.jsonl",
+          "source_sha256": "a6a297b523b8ecfdf4d154c2929e52a7827ae9554b08c0238fb6126b4cff161c",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 65,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 44,
+          "queue_ms": 95.794351,
+          "prefill_ms": 158.060393,
+          "decode_ms": 2929.854357,
+          "client_ttft_ms": 320.02237901906483,
+          "cache_snapshot_ms": 116.27688900000001
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair07-candidate.jsonl",
+          "source_sha256": "6be85cf0fe27d50bb141bf0c2e2c1ced4dae7c7b0f3dee0364e4731a4c0422aa",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 95.317335,
+          "prefill_ms": 158.122411,
+          "decode_ms": 2775.9656330000003,
+          "client_ttft_ms": 319.8051060026046,
+          "cache_snapshot_ms": 117.94461899999999
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair07",
+      "case": "coding-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair07",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "client_ttft_ms",
+          "baseline": "253.90999199589714",
+          "candidate": "317.27875099750236",
+          "delta_ms": "63.36875900160521"
+        },
+        {
+          "pair": "pair07",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "final_content_to_HTTP_finish_ms",
+          "baseline": "32.93706700205803",
+          "candidate": "39.08450299501419",
+          "delta_ms": "6.1474359929561615"
+        },
+        {
+          "pair": "pair07",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_ttft_ms",
+          "baseline": "253.162215",
+          "candidate": "316.285201",
+          "delta_ms": "63.12298599999997"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair07-baseline.jsonl",
+          "source_sha256": "a6a297b523b8ecfdf4d154c2929e52a7827ae9554b08c0238fb6126b4cff161c",
+          "work": {
+            "draft_tokens": 199,
+            "draft_accepted_tokens": 158,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 76,
+          "queue_ms": 1.957932,
+          "prefill_ms": 158.221697,
+          "decode_ms": 5193.138327999998,
+          "client_ttft_ms": 253.90999199589714,
+          "cache_snapshot_ms": 157.44776
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair07-candidate.jsonl",
+          "source_sha256": "6be85cf0fe27d50bb141bf0c2e2c1ced4dae7c7b0f3dee0364e4731a4c0422aa",
+          "work": {
+            "draft_tokens": 185,
+            "draft_accepted_tokens": 152,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 82,
+          "queue_ms": 1.603662,
+          "prefill_ms": 159.691204,
+          "decode_ms": 5196.534459000002,
+          "client_ttft_ms": 317.27875099750236,
+          "cache_snapshot_ms": 94.225648
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair08",
+      "case": "coding-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair08",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "server_max_inter_token_ms",
+          "baseline": "84.218567",
+          "candidate": "114.754525",
+          "delta_ms": "30.535958000000008"
+        },
+        {
+          "pair": "pair08",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "first_followup_content_gap_ms",
+          "baseline": "84.328514",
+          "candidate": "114.749456",
+          "delta_ms": "30.420941999999997"
+        },
+        {
+          "pair": "pair08",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "maximum_content_gap_ms",
+          "baseline": "84.328514",
+          "candidate": "114.749456",
+          "delta_ms": "30.420941999999997"
+        },
+        {
+          "pair": "pair08",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "raw_cache_snapshot_ms",
+          "baseline": "112.499972",
+          "candidate": "144.143489",
+          "delta_ms": "31.64351699999999"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair08-baseline.jsonl",
+          "source_sha256": "f2322fe2449bb3423d94a17563397514c39af14623bda4e64f9aad6bc38397e7",
+          "work": {
+            "draft_tokens": 177,
+            "draft_accepted_tokens": 140,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 91,
+          "queue_ms": 92.031303,
+          "prefill_ms": 154.315294,
+          "decode_ms": 5878.894868999997,
+          "client_ttft_ms": 311.9207709969487,
+          "cache_snapshot_ms": 112.499972
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair08-candidate.jsonl",
+          "source_sha256": "5ea8a2e23b2f1f51e7cbfa37691cf73b66b6e39ac7de5a31879339fd6d2bca13",
+          "work": {
+            "draft_tokens": 166,
+            "draft_accepted_tokens": 131,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 97,
+          "queue_ms": 91.711013,
+          "prefill_ms": 153.160598,
+          "decode_ms": 5963.717044,
+          "client_ttft_ms": 309.21999100246467,
+          "cache_snapshot_ms": 144.143489
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair09",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair09",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "decode_ms",
+          "baseline": "2789.3370900000004",
+          "candidate": "2965.096962",
+          "delta_ms": "175.75987199999963"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair09-baseline.jsonl",
+          "source_sha256": "5a8ee58e217c3feadd0bab554eb51900c31062356ba496369ab605e1d984a5e4",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 96.16545,
+          "prefill_ms": 159.93383599999999,
+          "decode_ms": 2789.3370900000004,
+          "client_ttft_ms": 324.2931620043237,
+          "cache_snapshot_ms": 120.63355899999999
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair09-candidate.jsonl",
+          "source_sha256": "a5667b9bd09f89f007c4a0fd759a6e998b1e94e7c46ae4e016da90f09ef8b5b2",
+          "work": {
+            "draft_tokens": 80,
+            "draft_accepted_tokens": 63,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 45,
+          "queue_ms": 95.789381,
+          "prefill_ms": 158.588537,
+          "decode_ms": 2965.096962,
+          "client_ttft_ms": 320.23328298237175,
+          "cache_snapshot_ms": 116.482824
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair09",
+      "case": "coding-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair09",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "final_content_to_HTTP_finish_ms",
+          "baseline": "32.83122098445892",
+          "candidate": "40.36256501078606",
+          "delta_ms": "7.531344026327133"
+        },
+        {
+          "pair": "pair09",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_max_inter_token_ms",
+          "baseline": "82.611924",
+          "candidate": "111.773544",
+          "delta_ms": "29.16162"
+        },
+        {
+          "pair": "pair09",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "first_followup_content_gap_ms",
+          "baseline": "47.346147",
+          "candidate": "111.710236",
+          "delta_ms": "64.36408899999999"
+        },
+        {
+          "pair": "pair09",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "maximum_content_gap_ms",
+          "baseline": "82.610764",
+          "candidate": "111.710236",
+          "delta_ms": "29.09947199999999"
+        },
+        {
+          "pair": "pair09",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "raw_cache_snapshot_ms",
+          "baseline": "94.383693",
+          "candidate": "158.089521",
+          "delta_ms": "63.705828"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair09-baseline.jsonl",
+          "source_sha256": "5a8ee58e217c3feadd0bab554eb51900c31062356ba496369ab605e1d984a5e4",
+          "work": {
+            "draft_tokens": 192,
+            "draft_accepted_tokens": 154,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 79,
+          "queue_ms": 1.850225,
+          "prefill_ms": 159.47419000000002,
+          "decode_ms": 5195.994492999999,
+          "client_ttft_ms": 317.46950501110405,
+          "cache_snapshot_ms": 94.383693
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair09-candidate.jsonl",
+          "source_sha256": "a5667b9bd09f89f007c4a0fd759a6e998b1e94e7c46ae4e016da90f09ef8b5b2",
+          "work": {
+            "draft_tokens": 197,
+            "draft_accepted_tokens": 157,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 76,
+          "queue_ms": 1.953882,
+          "prefill_ms": 159.510149,
+          "decode_ms": 5199.685255,
+          "client_ttft_ms": 256.2351429951377,
+          "cache_snapshot_ms": 158.089521
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair09",
+      "case": "coding-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair09",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "wall_ms",
+          "baseline": "6238.630298001226",
+          "candidate": "6566.859331011074",
+          "delta_ms": "328.2290330098476"
+        },
+        {
+          "pair": "pair09",
+          "case": "coding-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "decode_ms",
+          "baseline": "5847.9671590000025",
+          "candidate": "6173.343083",
+          "delta_ms": "325.3759239999972"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair09-baseline.jsonl",
+          "source_sha256": "5a8ee58e217c3feadd0bab554eb51900c31062356ba496369ab605e1d984a5e4",
+          "work": {
+            "draft_tokens": 173,
+            "draft_accepted_tokens": 137,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 92,
+          "queue_ms": 90.45034,
+          "prefill_ms": 152.203877,
+          "decode_ms": 5847.9671590000025,
+          "client_ttft_ms": 307.23124102223665,
+          "cache_snapshot_ms": 145.16181799999998
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair09-candidate.jsonl",
+          "source_sha256": "a5667b9bd09f89f007c4a0fd759a6e998b1e94e7c46ae4e016da90f09ef8b5b2",
+          "work": {
+            "draft_tokens": 178,
+            "draft_accepted_tokens": 128,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 103,
+          "queue_ms": 91.560828,
+          "prefill_ms": 153.719541,
+          "decode_ms": 6173.343083,
+          "client_ttft_ms": 309.9504190031439,
+          "cache_snapshot_ms": 145.62104499999998
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair10",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 0,
+      "flags": [
+        {
+          "pair": "pair10",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "client_ttft_ms",
+          "baseline": "264.321752008982",
+          "candidate": "329.9894410010893",
+          "delta_ms": "65.66768899210729"
+        },
+        {
+          "pair": "pair10",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "0",
+          "metric": "server_ttft_ms",
+          "baseline": "263.745508",
+          "candidate": "329.268883",
+          "delta_ms": "65.52337500000004"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair10-baseline.jsonl",
+          "source_sha256": "4465bed76fa893c0f1ff1641bc800e4cc8659fdf9c93d48147b5c371b21c316f",
+          "work": {
+            "draft_tokens": 77,
+            "draft_accepted_tokens": 56,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 56,
+          "queue_ms": 1.561353,
+          "prefill_ms": 162.872319,
+          "decode_ms": 3212.07282,
+          "client_ttft_ms": 264.321752008982,
+          "cache_snapshot_ms": 165.949176
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair10-candidate.jsonl",
+          "source_sha256": "52864dc37f2d18385f9118639237285fa3d903546b6c38247674f46be23a3a61",
+          "work": {
+            "draft_tokens": 85,
+            "draft_accepted_tokens": 58,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 56,
+          "queue_ms": 1.544804,
+          "prefill_ms": 166.32325600000001,
+          "decode_ms": 3174.9907000000007,
+          "client_ttft_ms": 329.9894410010893,
+          "cache_snapshot_ms": 100.92401799999999
+        }
+      },
+      "work_changed": true
+    },
+    {
+      "pair": "pair10",
+      "case": "short-c2",
+      "repetition": 1,
+      "actor": 1,
+      "flags": [
+        {
+          "pair": "pair10",
+          "case": "short-c2",
+          "repetition": "1",
+          "request_index": "1",
+          "metric": "final_content_to_HTTP_finish_ms",
+          "baseline": "32.43520200252533",
+          "candidate": "53.00514900684357",
+          "delta_ms": "20.569947004318237"
+        }
+      ],
+      "evidence": {
+        "baseline": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair10-baseline.jsonl",
+          "source_sha256": "4465bed76fa893c0f1ff1641bc800e4cc8659fdf9c93d48147b5c371b21c316f",
+          "work": {
+            "draft_tokens": 79,
+            "draft_accepted_tokens": 62,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 45,
+          "queue_ms": 95.017424,
+          "prefill_ms": 159.307906,
+          "decode_ms": 2995.8442909999994,
+          "client_ttft_ms": 320.5576529726386,
+          "cache_snapshot_ms": 155.47103900000002
+        },
+        "candidate": {
+          "source": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/extensions-release-comparison-v1-pair10-candidate.jsonl",
+          "source_sha256": "52864dc37f2d18385f9118639237285fa3d903546b6c38247674f46be23a3a61",
+          "work": {
+            "draft_tokens": 84,
+            "draft_accepted_tokens": 69,
+            "physical_execution_width": 2
+          },
+          "draft_rounds": 42,
+          "queue_ms": 94.539069,
+          "prefill_ms": 159.16161,
+          "decode_ms": 2768.3417099999992,
+          "client_ttft_ms": 319.79742500698194,
+          "cache_snapshot_ms": 117.61278899999999
+        }
+      },
+      "work_changed": true
+    }
+  ],
+  "interpretation": [
+    "All52 strict flags retained;20 distinct paired request comparisons; aliased client/server/gap fields are not independent incidents.",
+    "No C1 flag. All three flagged C2 decode-duration comparisons have changed adaptive work. The largest coding wall+328.229ms/decode+325.376ms also has92->103draft rounds and137->128accepted drafts. These observations do not attribute the entire delay to adaptive work.",
+    "Actor0 shortC2 TTFT has both ~265ms and~330ms modes on each arm (baseline6/10above300ms;candidate8/10). Five paired TTFT flags reflect differing mode membership. Root cause not established; do not dismiss as noise or equivalence.",
+    "raw_cache_snapshot_ms is elapsed future-consumption accounting, not pure GPU snapshot-copy time. No per-stage CPU/GPU trace was acquired in this untraced comparison.",
+    "End-to-end aggregate estimates are inconclusive, not evidence that individual flags are harmless. No regression waiver or universal latency-bound claim."
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "scope": "Evidence export, not a new measurement. Paired timing and seven full-model reports belong to739eb86a/eddcfea6. Latest binary4e8a2dc0/f25f4744 has build/static/CPU and fresh12request smoke plus cache/cancel coverage. No relabeling of previous full numerical/fault/disk studies as latest runtime tests.",
+  "raw": {
+    "extensions-release-comparison-v1-pair01-candidate.jsonl.gz": {
+      "uncompressed_sha256": "7b60491617a30706a920091879722e95fc8c39da5feb8c54041636b0bb6eda9a",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair01-baseline.jsonl.gz": {
+      "uncompressed_sha256": "00beba06fc814700e5e630d57a66a2e59c74172ed2c794415cbeecd234975847",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair02-baseline.jsonl.gz": {
+      "uncompressed_sha256": "b5eb1aacdd27a9be01f9be43a04f721ed8a761991aa681dd7030566b7f06150c",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair02-candidate.jsonl.gz": {
+      "uncompressed_sha256": "47688e2ee18e1e53d5258875a0dbb04ae354c0154d3577d3128a831549208f70",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair03-baseline.jsonl.gz": {
+      "uncompressed_sha256": "2bb98329a1910f44da2692dd85f98a3e8f4eacdfeeb92b6923c83b957b6af504",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair03-candidate.jsonl.gz": {
+      "uncompressed_sha256": "2d5b5566b2686e002ba6bb83a0365d7bfc8d0dc35c95d446f950d3db5fd17861",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair04-candidate.jsonl.gz": {
+      "uncompressed_sha256": "7a62c492685b42a612ad33bd572269778efdf0869392194c90ec31251bdf4f09",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair04-baseline.jsonl.gz": {
+      "uncompressed_sha256": "3f71b1cfc938b21e821e3a8212047a7296ac262f56792c6d28d2fa61b1ee3792",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair05-baseline.jsonl.gz": {
+      "uncompressed_sha256": "a33f0985a374e12e72f7b1075e60c25f62f88ba2ce28e99eaa49312f4ca8755c",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair05-candidate.jsonl.gz": {
+      "uncompressed_sha256": "4a2e3d59ec174934d2c1f27cb5ba644623304b9b21a29c390029d80d21146a77",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair06-baseline.jsonl.gz": {
+      "uncompressed_sha256": "e25fd53dc0f1957c74a1a3f041bce7581c22eb3f76550bfc65ebb3f8890348d2",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair06-candidate.jsonl.gz": {
+      "uncompressed_sha256": "c0ba70162dddbc8df6ab88b3cf803b9d132938d94fbd07c1f0a5b016483b9c81",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair07-candidate.jsonl.gz": {
+      "uncompressed_sha256": "6be85cf0fe27d50bb141bf0c2e2c1ced4dae7c7b0f3dee0364e4731a4c0422aa",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair07-baseline.jsonl.gz": {
+      "uncompressed_sha256": "a6a297b523b8ecfdf4d154c2929e52a7827ae9554b08c0238fb6126b4cff161c",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair08-baseline.jsonl.gz": {
+      "uncompressed_sha256": "f2322fe2449bb3423d94a17563397514c39af14623bda4e64f9aad6bc38397e7",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair08-candidate.jsonl.gz": {
+      "uncompressed_sha256": "5ea8a2e23b2f1f51e7cbfa37691cf73b66b6e39ac7de5a31879339fd6d2bca13",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair09-candidate.jsonl.gz": {
+      "uncompressed_sha256": "a5667b9bd09f89f007c4a0fd759a6e998b1e94e7c46ae4e016da90f09ef8b5b2",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair09-baseline.jsonl.gz": {
+      "uncompressed_sha256": "5a8ee58e217c3feadd0bab554eb51900c31062356ba496369ab605e1d984a5e4",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair10-candidate.jsonl.gz": {
+      "uncompressed_sha256": "52864dc37f2d18385f9118639237285fa3d903546b6c38247674f46be23a3a61",
+      "records": 12
+    },
+    "extensions-release-comparison-v1-pair10-baseline.jsonl.gz": {
+      "uncompressed_sha256": "4465bed76fa893c0f1ff1641bc800e4cc8659fdf9c93d48147b5c371b21c316f",
+      "records": 12
+    },
+    "f25-http-smoke-v1-candidate.jsonl.gz": {
+      "uncompressed_sha256": "3e913084254409c6f9f98b90e10edaa17cd08f4db32232647db7a702fd46d2f2",
+      "records": 12
+    },
+    "f25-http-lifecycle-v1-candidate.jsonl.gz": {
+      "uncompressed_sha256": "efb029d0f40d924da1dc8252864dc9cd060cdd6efa27fd98e2b621a4e637028c",
+      "records": 13
+    }
+  },
+  "reports": {
+    "extensions-head-quality-v1": "extensions-head-quality-v1-validation.json",
+    "extensions-ordinary-head-quality-v1": "extensions-ordinary-head-quality-v1-validation.json",
+    "extensions-wide-fallback-quality-v1": "extensions-wide-fallback-quality-v1-validation.json",
+    "extensions-snapshot-quality-v1": "extensions-snapshot-quality-v1-validation.json",
+    "extensions-http-lifecycle-v1": "extensions-http-lifecycle-v1-validation.json",
+    "extensions-head-faults-v1": "extensions-head-faults-v1-validation.json",
+    "extensions-disk-restart-v2": "extensions-disk-restart-v2-validation.json",
+    "f25-http-smoke-v1": "f25-http-smoke-v1-validation.json",
+    "f25-http-lifecycle-v1": "f25-http-lifecycle-v1-validation.json"
+  },
+  "files": {
+    "extensions-ordinary-head-quality-v1-validation.json": "903714ebf85bc929b651d741b9ede1f1faba7484891edf1b243f52a60f0adbfd",
+    "extensions-release-comparison-v1-pair02-candidate.jsonl.gz": "7a424295e2c846fe8192062695b5114c9718d191ba57f24259ff3e67e6b674cb",
+    "check.py": "558bf20f254f92a0dc01d44c7053176bcec623a4747b4c97f70af172f7c75dc3",
+    "timing-flags.csv": "59310bbac9f7a20793868749b58fd1dca7c85577ea4d6bf096457edc117f0348",
+    "extensions-release-comparison-v1-pair05-candidate.jsonl.gz": "3b5280853d1f237c1cadd4fdb6b8baf01f3500bc038d6ad2b92327f02a7cf10d",
+    "extensions-release-comparison-v1-pair01-baseline.jsonl.gz": "472c693ee4deb6dad2890ef7d7794db1dcdd1b0593945eeccb808d61e7734423",
+    "gufo-org-sync-f25f4744-docs.log.gz": "ce6c64fc121cd81c74dacefc813be23c97900dd5860d3f5d8c36dca91e5dee54",
+    "binaries.json": "35573131c3cb27162e630ed40828259b7e4d2115ddd57162b11338ab485b2413",
+    "extensions-http-lifecycle-v1-validation.json": "d21e2853d0fa8f2204335ab2c121f2402a0a94e8f3b50f9e083c5374d95188ae",
+    "gufo-org-sync-f25f4744-isolation.log.gz": "2c7c948653fa688f81ac6c151a25493c6e0fd2edbe195664cce49a8117efd7c5",
+    "extensions-release-comparison-v1-pair07-candidate.jsonl.gz": "5916841af62df2a6e550df4475874fba2ea369b77ac0e6f3985919f5acce9629",
+    "extensions-disk-restart-v2-validation.json": "379bbce2dbbeba7a9ae8f8e96c25a7a714a7127f40339a4c8194af1c63c63339",
+    "gufo-org-sync-f25f4744-format.log.gz": "8163d722ed51463ace22108588ed25c8b06cd50f5db4d8b6c9449e7f52a3c55d",
+    "extensions-release-comparison-v1-pair04-baseline.jsonl.gz": "9f6babd0754e763a155e203921d315edb4479b47f56fd5d20868888aff60d127",
+    "paired_statistics.py": "38ca0b9df2e80262122632c74d1934ee6fe3feabce5deee27ee8c4f9cc389eea",
+    "extensions-release-comparison-v1-pair01-candidate.jsonl.gz": "8cd14fd583d3bfceddd7e5c8a01e072712b973d40d9a965fd512834ba80b6ea6",
+    "extensions-release-comparison-v1-pair03-candidate.jsonl.gz": "e3912683c90469e71701521e84702bb1f4da6cc0b1534c3ffc565c3634b410c4",
+    "gufo-org-sync-f25f4744-cpu.log.gz": "a2ecdbccc4c696801680c8b00024cfd2ff6654b657b67b792b44bfeafa85c6e7",
+    "extensions-release-comparison-v1-pair08-candidate.jsonl.gz": "7f7721a84170996b4b714d4c62106aaf85b2ec3958e79bfb980fc2041389cfd7",
+    "extensions-head-faults-v1-validation.json": "6920639383e9d0ba5dbba8bcc15895ab69715fad64b91ae55deb4201e10a42f5",
+    "gufo-org-sync-f25f4744-discovery.log.gz": "da34b34989345ae7a28380edf8c6073a748729f81b73f35f3e4876a7d9fd98ae",
+    "extensions-release-comparison-v1-pair09-candidate.jsonl.gz": "a27291232e693650c6134470a57f4eb3d65171ddc03f5faebd9cfd1b0443ecfc",
+    "extensions-release-comparison-v1-pair03-baseline.jsonl.gz": "abe1287ca082587d96f26adbd9a07d0346494d98f49fe118c90f6a12bd449bf4",
+    "extensions-release-comparison-v1-pair10-candidate.jsonl.gz": "a505c008d6c3aea26a6689c156519a4bee2bae0f0ff52672f0ed3d89e134907d",
+    "before-after.pdf": "fc8c66f9b391ca7641f392a8feedd9d58c2ca903014e76a9e0ced25527ee1ac7",
+    "f25-flash-compile-input-comparison.json": "0489f234bb8ff90f1c5ab1548b12087f74d0c0c4ebe104cec6d836f215705401",
+    "gufo-org-sync-f25f4744-api-policy.log.gz": "c9a96280adce1fc0c291751caf7b98fc5d1cbaab52d3efeec850aa88a7601eef",
+    "extensions-release-comparison-v1-pair02-baseline.jsonl.gz": "c936a5fe15a2323032f028e360cbbbb80bd27aa79c1c4e8e55cb3c05c9791ff5",
+    "extensions-release-comparison-v1-pair10-baseline.jsonl.gz": "a909d20670a0135d4511476451edfcaa6a3a9f52fd653b85546b2c2f3f471e0b",
+    "f25-http-smoke-v1-candidate.jsonl.gz": "0e361fdc813f468624e27744519149ca5dedff85578f0eb9924e89b59bcd907a",
+    "gufo-org-sync-f25f4744-api.log.gz": "e998394ef6874f81f491f15d1ed488021a967096b1081b35e658927cb6d5b35b",
+    "f25-http-smoke-v1-validation.json": "9a5e4026abde33e65ceccf648c7e7c8b8b41a5bcdc0428a73d5dfd84c9eab4f2",
+    "extensions-release-comparison-v1-pair06-baseline.jsonl.gz": "a5f397f94e0b73af005f61cb2afbcbf8153c5f2b89ca16e63061719b99be3160",
+    "gufo-org-sync-f25f4744-metadata.log.gz": "4f9b170670df749dba3a358de35854e766e0efc914daa2b013f64e069738e237",
+    "statistical-summary.json": "e8e5c3616adc3919d47bd1ead4583ddd1816e5b1adc601d660a954107d1c395f",
+    "extensions-head-quality-v1-validation.json": "a54c99db3d453ffbd32ec95248eaaa9683aac65173b27344f620bce3897f0675",
+    "extensions-snapshot-quality-v1-validation.json": "6c0c2dd9e2cbad6ec5597d345ac8e33ebd58fc69f906e8dd2a361c177a768f94",
+    "extensions-release-comparison-v1-pair04-candidate.jsonl.gz": "6048042127d8e1c1ed2dc0215c0544b243ac8810e857ccd394884d04589eafc4",
+    "extensions-wide-fallback-quality-v1-validation.json": "ccba8f5c1d0461179b555205fde31928a6f8cb85ecc8f92f145b20917f04b546",
+    "gufo-org-sync-cross-revision-quality.json": "888ccab881b0a42e71f711bebb225e1c5af0019a26ba3fcff9cae8ba86064f99",
+    "before-after.png": "51591d3bdc1464a1a26fcf670049c3169dcfef38da8fd605d567c0a35edcb0bc",
+    "protocol.json": "f42b17597b1caa11f3485757f8783cdb388c6c6c610f3743f36a4902d564a070",
+    "extensions-release-comparison-v1-pair06-candidate.jsonl.gz": "9d38c29765d2af16f35c1f93ca48c0ac790286f0794150289d8167d520c18e34",
+    "design.json": "b6c41514c67935eb45d68f73c4b09a0c28b230fbb69f35d9174792b8772dd93b",
+    "gufo-org-sync-f25f4744-release-binary.json": "08a172577913f848a6b5da1f32421be845c31d8096bda761bcdaa901de6b73bd",
+    "extensions-release-comparison-v1-pair07-baseline.jsonl.gz": "3114f43adbf5db497bdd05938268c897e096d4ec9fc6eb8a3ac5db8365b16175",
+    "extensions-release-comparison-v1-pair09-baseline.jsonl.gz": "ca050d61823d040bbd4349f165179af9d8fd57b733be0aac0b5348cbec5724c6",
+    "extensions-release-comparison-v1-pair08-baseline.jsonl.gz": "597623a44ddc2c72374a2bbdf3b62cd5721dcaa30213ce187c0ac912990685d6",
+    "gufo-org-sync-f25f4744-isolation-policy.log.gz": "7f203b5060839eb750369cdb4ced107ddd5c84d7f063c8f84a87e9bf3fa455bb",
+    "README.md": "f80d6428ef886de8ec1bdb0f8700e62d9be490d3d7393b45c3091f1d414041f2",
+    "timing-flag-review.json": "7ac5c76ef0822551e67d8d087dc9a5a5677f9e526f66881f7f61f1c457529418",
+    "extensions-release-comparison-v1-pair05-baseline.jsonl.gz": "4c335356ab46916d3975798a7fe013cdbd6f5b3f91d0f014d01cbe760fc2a801",
+    "f25-http-lifecycle-v1-validation.json": "984200e6ab7acf696d2b4c707ccde7b0db3dfc24073c7655612588e8eb1c42f8",
+    "f25-http-lifecycle-v1-candidate.jsonl.gz": "26d16e3bd0b175cf37c3e3e1b1febe07a5d926abbf1e789217bde188e3aabf83"
+  }
+}

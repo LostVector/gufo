@@ -1,4 +1,99 @@
-# Current-upstream RDMA integration checkpoint
+# Maintained TP2 integration
+
+The fork's working branch is **`tp2`**. It combines canonical
+[gufo-org/gufo](https://github.com/gufo-org/gufo), the RDMA implementation
+originating in [Neuhaus](https://github.com/neuhaus/gufo/tree/rdma), and the
+validated downstream fixes. Fork `main` mirrors canonical upstream; dated
+integration and measurement branches remain historical references. Review new
+canonical updates and relevant Neuhaus RDMA changes on `tp2`; qualify changes
+before advancing deployed binaries. Do not merge unrelated fork development
+solely to match a branch tip.
+
+## November 1 checkpoint
+
+Production source **`4e8a2dc0`** incorporates canonical **`f25f4744`** and the
+current Neuhaus `rdma` head **`0b6978aa`**, plus the source ports from fork
+PRs #1–#8. Existing PRs retain their original measured revisions; a source port
+is not a formal GitHub merge. The current transport is **wire 21**, using
+OS-selected registered **host** windows. Both peers need matching qualified
+builds. This checkpoint does not establish a DMA-BUF performance gain.
+
+The model owns native transport and TP runner creation through an optional,
+host-only `TextProvider::create_parallel`/`TextParallelRuntime` interface.
+Serving retains scheduling, mirroring, control messages and verdicts without
+model-private includes. Canonical permanent API records and generated versioning
+are retained; the distinct TP record produces API **0.1.12**. All six
+include/ownership/family gates pass without exceptions.
+
+On the latest binary: production HIP build, format/docs/API policy, isolation,
+18 discovery cases, metadata and nine focused CPU tests pass. A fresh real TP2
+start passes all twelve standard output/prompt/cache-work identities; greedy and
+sampled keep/discard cache cases and cancellation in both slots preserve the
+live width-two survivor and subsequent replay. Both hosts finish idle with no
+checked transport error delta.
+
+The preceding extension migration at **`739eb86a`** has the fuller numerical,
+materialized-state, snapshot, injected-failure/recovery and actual disk-restart
+coverage. The latest refresh changes build/API discovery rather than model math:
+77 Flash-Next/Qwen-family translation-unit sources are identical; eleven host
+commands add only the generated public-header include directory and normalized
+HIP commands match. This comparison is not a fresh full numerical/fault/disk
+sweep of `4e8a2dc0`. Revision attribution is retained in the
+[exported reports](canonical-refresh-data/manifest.json).
+
+## Migration measurements
+
+Ten fixed matched pairs on `739eb86a`, twenty fresh process-pair starts and
+240 exact request identities compare against the preserved pre-migration
+EndRequest-fixed release. Same UD-Q4_K_XL/shared-Q8_0 MTP, 65,536 context
+capacity, two slots, 2,048 prefill chunk, 1 GiB RAM cache and crossed 40+20 Gb/s
+native links. The driver remains 81C6/TX32, four rails.
+
+| Co-primary metric | Before | After | Paired change | Marginal 95% interval |
+|---|---:|---:|---:|---:|
+| C1 server-accounted decode | 66.7232 tok/s | 66.7240 tok/s | +0.0011% | [-0.2095%, +0.2003%] |
+| C2 short complete client wave | 71.2399 tok/s | 71.5597 tok/s | +0.4489% | [-0.3701%, +1.3246%] |
+
+Both results are **inconclusive**, not equivalence. C1 uses server-accounted
+decode duration; C2 includes admission, prefill and terminal waits. C1 speculative
+work matches; 32 C2 comparisons have adaptive-work differences. All 52 strict
+timing entries over 20 request comparisons remain visible. No C1 flag occurs.
+The largest coding wall delay (+328.229 ms) overlaps changed speculative work,
+which does not prove complete attribution. Short-C2 TTFT has approximately
+265/330 ms modes in both arms; their cause remains unresolved.
+
+[Paired figure](canonical-refresh-data/before-after.png),
+[statistics](canonical-refresh-data/statistical-summary.json),
+[all flags](canonical-refresh-data/timing-flags.csv),
+[flag review](canonical-refresh-data/timing-flag-review.json) and
+[portable data verification](canonical-refresh-data/README.md) are retained.
+These measurements do not test the later `f25f4744` refresh or establish a new
+optimization gain. Existing earlier optimization studies remain separately
+attributed; do not add their percentages or pool the studies.
+
+## Upstreaming strategy
+
+Keep one usable combined branch while submitting independently reviewable
+changes to canonical upstream:
+
+1. Maintain the generic cache-retention [PR #902](https://github.com/gufo-org/gufo/pull/902)
+   and MTP-backoff [PR #912](https://github.com/gufo-org/gufo/pull/912) separately
+   from the transport. Both were open when this checkpoint was prepared.
+2. Separate the migrated GPU/session-test dependency and typed-loader repairs;
+   these can be reviewed without a two-node runtime.
+3. Offer the neutral optional parallel-provider contracts with CPU contract and
+   registration tests. A mock-provider test proves interfaces and scheduling
+   contracts, not real distributed performance.
+4. Propose RDMA implementation pieces with default-off dependencies, CPU
+   bootstrap/control/executor tests and reproducible two-host evidence. Keep
+   hardware-dependent support in `tp2` when upstream cannot validate it yet.
+
+The aggregate fork PR is the combined-branch review view. It does not require
+canonical upstream to accept the full distributed stack, and does not replace
+the focused upstream PRs. The historical checkpoints below preserve their
+original scope and limitations.
+
+# Historical bdf800de integration checkpoint
 
 The working integration branch is `integrate/tp2-optimized-current-upstream`.
 Canonical upstream is **gufo-org/gufo**, pinned here to
@@ -13,7 +108,7 @@ Both nodes must use the same qualified build. The original fixed-address/token-o
 checkpoints below are retained for diagnosis and must not be deployed or used
 as optimizer performance references.
 
-## Current full-model checks
+## Historical bdf800de full-model checks
 
 The first actual model load exposed an incompatibility missed by component tests:
 upstream's 16,384-row chunk plus 128-row tail exceeds the native transport's

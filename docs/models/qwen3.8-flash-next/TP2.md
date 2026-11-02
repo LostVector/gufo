@@ -7,6 +7,23 @@ libibverbs and the build option `GUFO_ENABLE_TP2_RDMA` (off by default). Its
 measurements are in [EXPERIMENTS.md](EXPERIMENTS.md#tp2), not in the published
 one-host tables.
 
+## Current fork checkpoint
+
+The maintained combined branch is `tp2`; fork `main` mirrors `gufo-org/gufo`.
+See the [integration record](../../patches/upstream-rdma-integration/README.md)
+for revision-specific validation and retained timing flags. The November 1
+checkpoint uses wire 21, matching builds on both ranks and registered host
+windows. The older DMA-BUF/wire-8 descriptions below concern different
+experimental checkpoints.
+
+The tested text-serving configuration is UD-Q4_K_XL target/shared-Q8_0 MTP,
+`--context 65536 --sessions 2 --prefill-chunk 2048`,
+`--cache-ram-bytes 1073741824 --think off --tp-rdma-device usb4_rdma0`.
+The tested driver setup uses TX32, four rails across two cables trained at
+40+20 Gb/s; do not relabel it as two 40 Gb/s links. These are measured settings
+for this setup, not a claim of universal optimality. The one-host benchmark
+tables and historical USB4/InfiniBand comparisons use their own workloads.
+
 ## Build
 
 ```sh

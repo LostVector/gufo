@@ -1,0 +1,19 @@
+{
+  "records_per_rank": 48,
+  "actual_full_head_rows": [
+    9,
+    10,
+    12
+  ],
+  "complete_materialized_state_pairs_per_rank": 24,
+  "actual_gather_calls": 0,
+  "all_sessions_MTP_enabled": true,
+  "prefixes": "8 distinct short prefixes",
+  "session_context_capacity": 256,
+  "model_context_capacity": 65536,
+  "full_logits_tokens_positions_RNG_proposal_work_state_exact": true,
+  "cross_rank_records_exact": true,
+  "frozen_sources_harness_binary_PIDs_counters_kernel_boot_topology_idle_pass": true,
+  "scope": "Supplementary production all-MTP packed fallback shapes9/10/12 using8 distinct short-prefix sessions with256context capacity. Force at most one proposal in1/2/4actors and zero in the rest, retaining production confidence policy;8sessions obey supported limit. Actual head width and zero gathers asserted; outputs/RNG/work and24fullstatepairs exact. No timing claim.",
+  "limits": "Supplementary fallback-only shape checks. One-proposal caps on1/2/4actors and zero on other actors produce actual9/10/12rows across8sessions; confidence policy unchanged. State bytes asserted in probe, no cross-rank byte claim. Not long-context9/10/12or performance/HTTP lifecycle coverage."
+}

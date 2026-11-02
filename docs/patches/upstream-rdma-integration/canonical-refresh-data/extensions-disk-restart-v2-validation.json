@@ -1,0 +1,77 @@
+{
+  "status": "passed",
+  "requests": [
+    {
+      "stage": "disk",
+      "request": "cold",
+      "prompt_tokens": 2294,
+      "cached_tokens": 0,
+      "prefill_tokens": 2294,
+      "completion_tokens": 20,
+      "disk_hit": false,
+      "draft_tokens": 18,
+      "accepted": 15,
+      "content_sha256": "79cab30a1dfd26da5f6c1e41ed5722ffa191c5d9f26d734250c2a6ce3c45b790"
+    },
+    {
+      "stage": "disk",
+      "request": "retry",
+      "prompt_tokens": 2294,
+      "cached_tokens": 2294,
+      "prefill_tokens": 0,
+      "completion_tokens": 20,
+      "disk_hit": false,
+      "draft_tokens": 18,
+      "accepted": 15,
+      "content_sha256": "79cab30a1dfd26da5f6c1e41ed5722ffa191c5d9f26d734250c2a6ce3c45b790"
+    },
+    {
+      "stage": "restart",
+      "request": "restored",
+      "prompt_tokens": 2294,
+      "cached_tokens": 2287,
+      "prefill_tokens": 7,
+      "completion_tokens": 20,
+      "disk_hit": true,
+      "draft_tokens": 18,
+      "accepted": 15,
+      "content_sha256": "79cab30a1dfd26da5f6c1e41ed5722ffa191c5d9f26d734250c2a6ce3c45b790"
+    }
+  ],
+  "actual_both_host_process_pairs_restarted": true,
+  "both_rank_cache_file_inventories": [
+    {
+      "rank": 0,
+      "files": [
+        {
+          "path": "5ba1a9af42a384996a63addbe98b5f18432374de96785a0eb765042b8e2f1fc4-96ee139450c1bda8.kvc",
+          "bytes": 95248033,
+          "sha256": "dbe6652d28ed4f6b92caf26f2b35abbbae641b02be15cb54474a081af5ed5b7a"
+        }
+      ]
+    },
+    {
+      "rank": 1,
+      "files": [
+        {
+          "path": "tp2-60f5a949663c34c7.snap",
+          "bytes": 95238156,
+          "sha256": "2a021775c1adf3adab8621802d3947476320d8acb0a7d1bdbd99ecaa4597e21f"
+        }
+      ]
+    }
+  ],
+  "expected_peer_control_close_errors": [
+    {
+      "stage": "disk",
+      "line": "2026-11-01 15:41:42 [ERROR] [server] event=tp_worker_failed reason=TP worker command receive failed: TP control peer closed the channel"
+    },
+    {
+      "stage": "restart",
+      "line": "2026-11-01 15:42:07 [ERROR] [server] event=tp_worker_failed reason=TP worker command receive failed: TP control peer closed the channel"
+    }
+  ],
+  "unknown_server_errors": [],
+  "frozen_source_harness_binary_options_PIDs_boot_topology_counters_kernel_idle_pass": true,
+  "scope": "Canonical eddcfea6 extension migration/wire21 two-host persistent checkpoint publication, wholeprocesspairrestart and actualdiskhit with exactgreedyoutput/actualMTP. Private2GiBdiskbudgetperrank,1GiBRAM,65Kcapacity,2slots/chunk2K/Q4XLsharedQ8. Functionalonly; no sampled-diskrestore/cancel-during-restore/physicalstoragefailure orspeedclaim. Fullartifactfingerprintingatinitialdiskstartup isenginebehavior; no separatetablewarming/sampler/systemchange."
+}
