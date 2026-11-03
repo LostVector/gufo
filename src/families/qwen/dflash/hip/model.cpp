@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+#include "src/families/qwen/dflash/donor.hpp"
 #include "src/families/qwen/dflash/hip/executor.hpp"
 #include "src/families/qwen/hip_common/device_allocation.hpp"
 #include "src/families/qwen/kernels/dflash_kernels.hpp"
@@ -317,6 +318,18 @@ std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
       *error_msg = "DFlash reader and target GPU model are required";
     }
     return nullptr;
+  }
+
+  for (const auto& [table, role] :
+       {std::pair{target.token_embedding, "token embedding"},
+        std::pair{target.output, "output"}}) {
+    const auto error = speculative::DFlashDonorError(
+        table, target.config.hidden_size, target.config.vocab_size, role);
+    if (!error.empty()) {
+      if (error_msg != nullptr)
+        *error_msg = error;
+      return nullptr;
+    }
   }
 
   auto raw_weights =

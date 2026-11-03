@@ -423,11 +423,13 @@ void QwenDFlashGpuExecutor::RunBlockGemm(const models::QwenTensorRef& weight,
     return;
   }
 
-  if (weight.type != core::GgmlType::kBF16) {
-    LaunchBatchedGEMM(weight.data, weight.type == core::GgmlType::kBF16, input,
-                      output, batch_size, output_size, input_size, stream_);
+  if (weight.type == core::GgmlType::kF32) {
+    LaunchBatchedGEMM(weight.data, false, input, output, batch_size,
+                      output_size, input_size, stream_);
     return;
   }
+  if (weight.type != core::GgmlType::kBF16)
+    throw std::invalid_argument("unsupported DFlash block matrix format");
 
   if (batch_size <= kDFlashMaxSharedBatch) {
     LaunchExactBf16GEMMFp32SmallBatch(weight.data, input, output, batch_size,

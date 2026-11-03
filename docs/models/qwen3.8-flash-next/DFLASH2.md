@@ -34,6 +34,11 @@ Rank 0 plans each width; both ranks verify agreement on the complete token and
 sampled-probability inputs before target execution. Native `--mtp-model` and
 external `--dflash-model` are mutually exclusive.
 
+Borrowed embedding/head formats must be supported by the shared draft kernels.
+F16 donor tables are rejected at load time with the table role in the error;
+they are not silently interpreted as F32 or packed quantization. The shared
+factory also validates row geometry, element count and available storage.
+
 ## Implementation and validation
 
 - Captures the mean of raw hyper-connection streams after the selected layers,

@@ -63,6 +63,39 @@ int main(int argc, char** argv) {
       owner = model;
       auto draft = model->LoadDFlashDraft(argv[2], &error);
       Require(bool(draft), error);
+      // The public shared factory must reject borrowed half tables before
+      // packing weights or launching GPU work. Tiny host tables deliberately
+      // differ from the artifact geometry, so removal of the donor check
+      // fails this test safely at the later dimension check.
+      auto draft_reader = gufo::core::GgufReader::OpenFile(argv[2], &error);
+      Require(bool(draft_reader), error);
+      std::shared_ptr<const gufo::core::GgufReader> reader(
+          std::move(draft_reader));
+      std::array<float, 32 * 32> host_table{};
+      for (bool half_embedding : {false, true}) {
+        gufo::hip::DFlashTarget synthetic;
+        synthetic.config.hidden_size = 32;
+        synthetic.config.vocab_size = 32;
+        synthetic.token_embedding = {host_table.data(),
+                                     half_embedding
+                                         ? gufo::core::GgmlType::kF16
+                                         : gufo::core::GgmlType::kF32,
+                                     host_table.size(), sizeof(host_table)};
+        synthetic.output = {host_table.data(),
+                            half_embedding ? gufo::core::GgmlType::kF32
+                                           : gufo::core::GgmlType::kF16,
+                            host_table.size(), sizeof(host_table)};
+        synthetic.tokenizer = &model->tokenizer();
+        synthetic.owner = model;
+        Require(
+            !gufo::hip::QwenDFlashGpuModel::Create(reader, synthetic, &error),
+            "shared factory accepted an F16 donor");
+        Require(error.find(half_embedding ? "token embedding" : "output") !=
+                        std::string::npos &&
+                    error.find("F16") != std::string::npos,
+                "shared factory did not reject the F16 donor before packing");
+        error.clear();
+      }
       auto ar = model->CreateSession(gufo::core::SessionMode::kAutoregressive,
                                      8192, &error);
       auto session = model->CreateSession(

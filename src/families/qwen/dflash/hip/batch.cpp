@@ -108,9 +108,11 @@ void ProjectBlock(const models::QwenTensorRef& weight, const float* input,
              detail::IsNativeWmmaQuant(weight.type)) {
     LaunchBatchedQuantGEMMFp32(weight.type, weight.data, input, output, rows,
                                output_size, input_size, stream);
-  } else {
+  } else if (weight.type == core::GgmlType::kF32) {
     LaunchBatchedGEMM(weight.data, false, input, output, rows, output_size,
                       input_size, stream);
+  } else {
+    throw std::invalid_argument("unsupported DFlash batch matrix format");
   }
 }
 
