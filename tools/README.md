@@ -82,3 +82,8 @@ dispatch (exact outputs, weights rotated beyond the MALL cache); build the
 `qwen27b/dflash_reference.py` checks a GPU trace against
 pinned upstream PyTorch operators using the same GGUF weights. See
 `docs/models/qwen3.8-27b/BENCHMARKS.md` and its quality report for commands and evidence.
+The same oracle supports Flash Next traces, CPU execution via `--device cpu`,
+and a recorded isolated environment via `--external-env`. Optional
+`--bf16-diagnostic` reports precision drift separately from the unchanged strict
+FP32 gate. See `docs/models/qwen3.8-flash-next/DFLASH2.md` for trace commands,
+state-path coverage and limits.

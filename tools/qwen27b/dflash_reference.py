@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 """Trace Gufo against pinned, unmodified upstream PyTorch DFlash2 operators.
 
-Consume --trace output from qwen_dflash_gpu_test. Weights come from the same
-GGUF artifact: this checks execution and binding, not the GGUF converter or
-equivalence to an unquantized target checkpoint. No model download is implicit.
+Consume --trace output from qwen_dflash_gpu_test or the Flash Next dflash_trace
+probe. Weights come from the same GGUF artifact: this checks execution and
+binding, not the GGUF converter or equivalence to an unquantized target
+checkpoint. No model download is implicit. Optional BF16 modes are diagnostic
+and do not alter the strict packed-weight/FP32 execution gate.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import importlib.util
+import importlib.metadata
 import json
 import os
+import re
 from pathlib import Path
 
 import numpy as np
@@ -30,9 +34,9 @@ def module(name: str, path: Path):
 
 
 class Weights:
-    def __init__(self, path: Path, codec):
-        self.path, self.codec = path, codec
-        self.state = codec.parse_gguf(path)
+    def __init__(self, path: Path, codec, device="cuda", *, include_tokenizer=False):
+        self.path, self.codec, self.device = path, codec, device
+        self.state = codec.parse_gguf(path, include_tokenizer=include_tokenizer)
         self.tensors = {t["name"]: t for t in self.state["tensors"]}
 
     def read(self, name: str) -> torch.Tensor:
@@ -43,7 +47,7 @@ class Weights:
             shape=(self.codec.tensor_bytes(self.state, info),),
         )
         values = self.codec.DEQUANT[info["type"]](data).reshape(info["shape"])
-        return torch.from_numpy(np.array(values, dtype=np.float32)).cuda()
+        return torch.from_numpy(np.array(values, dtype=np.float32)).to(self.device)
 
     def rows(self, name: str, indices: list[int]) -> torch.Tensor:
         info = self.tensors[name]
@@ -57,7 +61,7 @@ class Weights:
                 offset=self.state["data_offset"] + info["offset"] + index * row_bytes,
                 shape=(row_bytes,))
             decoded[index] = torch.from_numpy(
-                np.array(self.codec.DEQUANT[info["type"]](data), dtype=np.float32)).cuda()
+                np.array(self.codec.DEQUANT[info["type"]](data), dtype=np.float32)).to(self.device)
         return torch.stack([decoded[index] for index in indices])[None]
 
 
@@ -106,7 +110,8 @@ def compare(args) -> dict:
         raise ValueError("upstream model.py does not match the pinned source")
     upstream = module("dflash_upstream", args.upstream)
     codec = module("gufo_gguf", ROOT / "tools/gufo/gguf.py")
-    weights = Weights(args.draft, codec)
+    device = args.device
+    weights = Weights(args.draft, codec, device, include_tokenizer=True)
     meta = json.loads((args.trace / "trace.json").read_text())
     config = upstream.Qwen3Config(**json.loads(args.config.read_text()))
     config._attn_implementation = "sdpa"
@@ -126,19 +131,73 @@ def compare(args) -> dict:
             rounded.add(name.removesuffix(".weight"))
         state[name] = value
     model.load_state_dict(state, strict=True, assign=True)
-    model.rotary_emb = upstream.Qwen3RotaryEmbedding(config, device="cuda")
+    model.rotary_emb = upstream.Qwen3RotaryEmbedding(config, device=device)
     model.eval()
     del state
-    target = Weights(args.target, codec)
+    target = Weights(args.target, codec, device)
     if target.tensors["output.weight"]["type"] != int(meta["head_type"]):
         raise ValueError("trace uses a repacked target head; export that head before comparing")
     head = torch.nn.Linear(config.hidden_size, config.vocab_size, bias=False, device="meta")
     head.weight = torch.nn.Parameter(target.read("output.weight"))
     position, block = int(meta["position"]), int(meta["draft_count"]) + 1
+    presence_penalty = float(meta.get("presence_penalty", 0))
+    penalty_history = set(meta.get("penalty_history", []))
+    policy_candidates, policy_row, policy_prefix = None, 0, 0
+    original_sampling_probs = upstream._sampling_probs
+
+    def policy_probs(scores, temperature, top_p=1.0, top_k=0):
+        nonlocal policy_row
+        ids = policy_candidates[:, policy_row:policy_row + 1]
+        seen = penalty_history | set(meta["proposed"][:policy_prefix + policy_row])
+        mask = torch.tensor(
+            [token in seen for token in ids.reshape(-1).cpu().tolist()],
+            dtype=torch.float32, device=device).reshape(ids.shape)
+        policy_row += 1
+        return original_sampling_probs(scores.float() - presence_penalty * mask,
+                                       temperature, top_p, top_k)
+
+    if presence_penalty:
+        # Gufo policy extension, independently applied to the author's scores.
+        # Candidate membership remains the original unpenalized unary top-k.
+        upstream._sampling_probs = policy_probs
+    target_rows = []
+    if "target_sampling" in meta:
+        target_sampling = meta["target_sampling"]
+        for row in range(block - 1):
+            raw = np.fromfile(args.trace / f"target_logits.{row}.f32", dtype="<f4")
+            if raw.size != config.vocab_size or not np.isfinite(raw).all():
+                raise ValueError(f"target row {row}: malformed logits")
+            scores = torch.from_numpy(raw).to(device)
+            seen = penalty_history | set(meta["proposed"][:row])
+            if presence_penalty:
+                scores[torch.tensor(sorted(seen), dtype=torch.long, device=device)] -= presence_penalty
+            p = original_sampling_probs(scores[None, None], target_sampling["temperature"],
+                top_p=target_sampling["top_p"], top_k=target_sampling["top_k"])[0, 0]
+            target_rows.append(p)
+
+    def trace_values(name: str, width: int):
+        if name.startswith("context.0."):
+            suffix = name.removeprefix("context.0.")
+            chunks = []
+            for path in args.trace.glob("context.*.f32"):
+                match = re.fullmatch(r"context\.(\d+)\." + re.escape(suffix) + r"\.f32", path.name)
+                if match:
+                    chunks.append((int(match[1]), path))
+            cursor, values = 0, []
+            for offset, path in sorted(chunks):
+                chunk = np.fromfile(path, dtype="<f4")
+                if offset != cursor or chunk.size % width:
+                    raise ValueError(f"{name}: incomplete/discontinuous context trace at {offset}")
+                values.append(chunk)
+                cursor += chunk.size // width
+            if cursor != position:
+                raise ValueError(f"{name}: context trace has {cursor} rows, expected {position}")
+            return np.concatenate(values)
+        return np.fromfile(args.trace / f"{name}.f32", dtype="<f4")
 
     def captured(name: str, width: int) -> torch.Tensor:
-        values = np.fromfile(args.trace / f"{name}.f32", dtype="<f4")
-        return torch.from_numpy(values.reshape(1, -1, width)).cuda()
+        values = trace_values(name, width)
+        return torch.from_numpy(values.reshape(1, -1, width)).to(device)
 
     features = captured("target_features", config.hidden_size *
                         len(config.dflash_config["target_layer_ids"]))
@@ -151,9 +210,9 @@ def compare(args) -> dict:
     active_layer = 0
 
     def record(name, tensor):
-        path = args.trace / f"{name}.f32"
         reference = tensor.detach().float().cpu().numpy().reshape(-1)
-        actual = np.fromfile(path, dtype="<f4")
+        width = reference.size // position if name.startswith("context.0.") else tensor.shape[-1]
+        actual = trace_values(name, width)
         if actual.shape != reference.shape or not np.isfinite(reference).all():
             raise ValueError(f"{name}: Gufo shape={actual.shape}, reference shape={reference.shape}, "
                              f"reference finite={np.isfinite(reference).sum()}/{reference.size}")
@@ -243,7 +302,7 @@ def compare(args) -> dict:
     outputs, output_logits = {}, {}
     for mode in ("packed", "local"):
         outputs[mode] = model(
-            position_ids=torch.arange(position + block, device="cuda")[None],
+            position_ids=torch.arange(position + block, device=device)[None],
             noise_embedding=embedding, target_hidden=features, use_cache=False,
         )
         record("selector_hidden", model.candidate_selector.hidden_projection(outputs[mode][:, 1:]))
@@ -273,10 +332,13 @@ def compare(args) -> dict:
     full_tv, full_sets = [], 0
     for row in range(block - 1):
         predecessor = int(meta["anchor"] if row == 0 else meta["proposed"][row - 1])
+        policy_candidates = torch.topk(output_logits["packed"][:, row:row + 1], k,
+                                       dim=-1, sorted=False).indices
+        policy_row, policy_prefix = 0, row
         _, ids, probs = model.candidate_selector.select(
             outputs["packed"][:, row + 1:row + 2],
             output_logits["packed"][:, row:row + 1],
-            torch.tensor([predecessor], device="cuda"), float(meta["temperature"]))
+            torch.tensor([predecessor], device=device), float(meta["temperature"]))
         expected = dict(zip(ids[0, 0].cpu().tolist(), probs[0, 0].cpu().tolist()))
         actual = dict(zip(actual_ids[row], actual_q[row]))
         full_sets += set(expected) == set(actual)
@@ -287,10 +349,13 @@ def compare(args) -> dict:
     # Force its sampled predecessor path to Gufo's so every conditional q row
     # refers to exactly the same prefix. Candidate order is not a distribution.
     selector = model.candidate_selector
+    original_hidden_projection = selector.hidden_projection
     selector.hidden_projection = torch.nn.Identity()
     logits = captured("logits", config.vocab_size)
+    observed_logits = logits
     projected = captured("selector_hidden", config.dflash_config["selector_rank"])
     reference_candidates = torch.topk(logits, k, dim=-1, sorted=False).indices
+    policy_candidates, policy_row, policy_prefix = reference_candidates, 0, 0
     draw = 0
 
     def forced_draw(q):
@@ -302,7 +367,7 @@ def compare(args) -> dict:
         return choice[:, 1]
     upstream._sample_probs = forced_draw
     path, ids, probs = selector.select(
-        projected, logits, torch.tensor([int(meta["anchor"])], device="cuda"),
+        projected, logits, torch.tensor([int(meta["anchor"])], device=device),
         float(meta["temperature"]),
     )
     max_error = 0.0
@@ -317,16 +382,22 @@ def compare(args) -> dict:
     report = {
         "upstream_revision": UPSTREAM_REVISION, "upstream_sha256": UPSTREAM_SHA256,
         "config_sha256": hashlib.sha256(args.config.read_bytes()).hexdigest(),
-        "torch": torch.__version__, "trace": str(args.trace),
+        "torch": torch.__version__, "device": device,
+        "transformers": importlib.metadata.version("transformers"),
+        "environment": "nix" if os.environ.get("IN_NIX_SHELL") else "external",
+        "trace": str(args.trace),
         "target": str(args.target), "draft": str(args.draft),
         "target_layer_ids": meta["target_layer_ids"],
         "block_activation_dtype": meta.get("block_activation_dtype", "bf16"),
+        "presence_penalty": presence_penalty,
         "selector": {"rows": draw, "top_k": k, "max_probability_error": max_error,
-                     "uniform_draws_match": True},
+                     "uniform_draws_match": True,
+                     "draw_scope": "exported Gufo q and candidate order; upstream order need not give identical same-seed draws"},
         "full_forward": {"same_candidate_sets": full_sets, "rows": block - 1,
                          "max_total_variation": max(full_tv),
                          "mean_total_variation": float(np.mean(full_tv))},
-        "stages": records,
+        "strict_contract": "same converted weights and supplied features; packed-weight FP32 execution",
+        "stages": {name: dict(stages) for name, stages in records.items()},
     }
     # Numerical tolerances permit different FP32 reduction trees. They are not
     # learned from each run; a new discrepancy must be investigated.
@@ -336,6 +407,134 @@ def compare(args) -> dict:
         and full_sets == block - 1
         and max(full_tv) <= 1e-4
     )
+    def conditional_delta(hidden, logits):
+        nonlocal policy_candidates, policy_row, policy_prefix
+        variation, fixed_variation, details, sets = [], [], [], 0
+        for row in range(block - 1):
+            predecessor = int(meta["anchor"] if row == 0 else meta["proposed"][row - 1])
+            policy_candidates = torch.topk(logits[:, row:row + 1], k,
+                                           dim=-1, sorted=False).indices
+            policy_row, policy_prefix = 0, row
+            _, ids, probs = selector.select(
+                hidden[:, row + 1:row + 2], logits[:, row:row + 1],
+                torch.tensor([predecessor], device=device), float(meta["temperature"]))
+            expected = dict(zip(ids[0, 0].cpu().tolist(), probs[0, 0].cpu().tolist()))
+            actual = dict(zip(actual_ids[row], actual_q[row]))
+            sets += set(expected) == set(actual)
+            distance = float(sum(abs(expected.get(token, 0) - actual.get(token, 0))
+                                 for token in expected.keys() | actual.keys()) * .5)
+            variation.append(distance)
+            forced_ids = torch.tensor(actual_ids[row], device=device)[None, None]
+            masked = torch.full_like(logits[:, row:row + 1], -torch.inf)
+            masked.scatter_(-1, forced_ids, logits[:, row:row + 1].gather(-1, forced_ids))
+            policy_candidates = torch.topk(masked, k, dim=-1, sorted=False).indices
+            policy_row, policy_prefix = 0, row
+            _, fixed_ids, fixed_probs = selector.select(
+                hidden[:, row + 1:row + 2], masked,
+                torch.tensor([predecessor], device=device), float(meta["temperature"]))
+            fixed = dict(zip(fixed_ids[0, 0].cpu().tolist(), fixed_probs[0, 0].cpu().tolist()))
+            fixed_distance = float(sum(abs(fixed.get(token, 0) - actual.get(token, 0))
+                                       for token in fixed.keys() | actual.keys()) * .5)
+            fixed_variation.append(fixed_distance)
+            changed = []
+            for token in sorted(actual.keys() ^ expected.keys()):
+                baseline = observed_logits[0, row]
+                alternative = logits[0, row]
+                changed.append(dict(token=int(token),
+                    baseline_rank=int((baseline > baseline[int(token)]).sum()) + 1,
+                    alternative_rank=int((alternative > alternative[int(token)]).sum()) + 1,
+                    baseline_logit=float(baseline[int(token)]),
+                    alternative_logit=float(alternative[int(token)]),
+                    baseline_q=float(actual.get(token, 0)),
+                    alternative_q=float(expected.get(token, 0))))
+            details.append(dict(row=row, predecessor=predecessor,
+                total_variation=distance, fixed_candidate_total_variation=fixed_distance,
+                changed_members=changed))
+            if target_rows:
+                target_p = target_rows[row]
+                details[-1]["conditional_expected_acceptance"] = {
+                    "baseline": float(sum(min(float(target_p[int(token)]), float(q))
+                                          for token, q in actual.items())),
+                    "alternative": float(sum(min(float(target_p[int(token)]), float(q))
+                                             for token, q in expected.items())),
+                    "fixed_candidates_alternative": float(sum(min(float(target_p[int(token)]), float(q))
+                                             for token, q in fixed.items())),
+                }
+                for member in changed:
+                    member["target_p"] = float(target_p[member["token"]])
+        return dict(same_candidate_sets=sets, rows=block - 1,
+                    max_total_variation=max(variation),
+                    mean_total_variation=float(np.mean(variation)),
+                    fixed_candidate_max_total_variation=max(fixed_variation),
+                    conditional_rows=details, stages=records[mode])
+
+    if args.bf16_diagnostic or args.alternative_draft:
+        selector.hidden_projection = original_hidden_projection
+        upstream._sample_probs = lambda q: torch.argmax(q, dim=-1)
+    if args.bf16_diagnostic:
+        # Deliberately diagnostic: these modes change the precision contract,
+        # not the strict FP32 comparison or its pre-existing pass thresholds.
+        # Keep RoPE frequencies in F32 as initialized by the author model.
+        diagnostic = {}
+        for mode in ("bf16_weights", "bf16_execution"):
+            model.to(dtype=torch.bfloat16)
+            head.to(dtype=torch.bfloat16)
+            if mode == "bf16_weights":
+                model.float()
+                head.float()
+            model.rotary_emb = upstream.Qwen3RotaryEmbedding(config, device=device)
+            dtype = torch.float32 if mode == "bf16_weights" else torch.bfloat16
+            hidden = model(
+                position_ids=torch.arange(position + block, device=device)[None],
+                noise_embedding=embedding.to(dtype), target_hidden=features.to(dtype),
+                use_cache=False,
+            )
+            logits = model.compute_logits(hidden[:, 1:], head)
+            record("logits", logits)
+            diagnostic[mode] = conditional_delta(hidden, logits)
+        report["precision_diagnostic"] = diagnostic
+    if args.alternative_draft:
+        mode = "alternative_draft_weights"
+        alternative = Weights(args.alternative_draft, codec, device, include_tokenizer=True)
+        original_metadata = {**weights.state["metadata"], **weights.state["user_kv"]}
+        alternative_metadata = {**alternative.state["metadata"], **alternative.state["user_kv"]}
+        config_keys = {key for key in original_metadata.keys() | alternative_metadata.keys()
+                       if not key.startswith("general.") or key == "general.architecture"}
+        mismatched = [key for key in config_keys
+                      if original_metadata.get(key) != alternative_metadata.get(key)]
+        if mismatched:
+            raise ValueError(f"alternative draft changes configuration: {sorted(mismatched)}")
+        model.float()
+        state = {}
+        for name, parameter in model.state_dict().items():
+            original = weight_name(name)
+            value = alternative.read(original).reshape(parameter.shape)
+            if packed_bf16(name, alternative.tensors[original]["type"]):
+                value = value.bfloat16().float()
+            state[name] = value
+        model.load_state_dict(state, strict=True, assign=True)
+        model.rotary_emb = upstream.Qwen3RotaryEmbedding(config, device=device)
+        head.weight = torch.nn.Parameter(target.read("output.weight"))
+        hidden = model(position_ids=torch.arange(position + block, device=device)[None],
+                       noise_embedding=embedding, target_hidden=features, use_cache=False)
+        logits = model.compute_logits(hidden[:, 1:], head)
+        record("logits", logits)
+        report["draft_quantization_diagnostic"] = {
+            "alternative_draft": str(args.alternative_draft),
+            "contract": "alternative converted draft weights; same supplied features, donor tables and FP32 execution",
+            **conditional_delta(hidden, logits),
+        }
+        if args.alternative_draft.resolve() == args.draft.resolve():
+            diagnostic = report["draft_quantization_diagnostic"]
+            diagnostic["same_weight_control_passed"] = (
+                diagnostic["same_candidate_sets"] == block - 1
+                and diagnostic["max_total_variation"] <= 1e-4)
+            if not diagnostic["same_weight_control_passed"]:
+                raise ValueError("identical-weight reload control exceeded strict q tolerances")
+        if target_rows:
+            report["draft_quantization_diagnostic"]["target_sampling"] = meta["target_sampling"]
+            report["draft_quantization_diagnostic"]["target_comparison_scope"] = (
+                "sum min(p,q) at identical observed prefixes, not a trajectory-averaged acceptance rate")
     return report
 
 
@@ -343,8 +542,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("upstream", "config", "target", "draft", "trace", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
+    parser.add_argument("--device", choices=("cuda", "cpu"), default="cuda")
+    parser.add_argument("--external-env", action="store_true",
+                        help="Explicitly use a recorded environment outside nix develop")
+    parser.add_argument("--bf16-diagnostic", action="store_true",
+                        help="Also measure weight-only and full BF16 drift without changing FP32 pass criteria")
+    parser.add_argument("--alternative-draft", type=Path,
+                        help="Diagnose alternative GGUF draft weights while holding features, donor tables and FP32 execution fixed")
     args = parser.parse_args()
-    if not os.environ.get("IN_NIX_SHELL"):
+    if not os.environ.get("IN_NIX_SHELL") and not args.external_env:
         parser.error("run inside nix develop")
     torch.set_num_threads(8)
     torch.set_float32_matmul_precision("highest")
@@ -352,6 +558,10 @@ def main() -> None:
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report["selector"]))
     print(json.dumps(report["full_forward"]))
+    if "precision_diagnostic" in report:
+        print("precision_diagnostic", json.dumps({
+            mode: {key: value for key, value in result.items() if key != "stages"}
+            for mode, result in report["precision_diagnostic"].items()}))
     for mode, stages in report["stages"].items():
         worst = sorted(stages.items(), key=lambda row: row[1]["relative_rmse"], reverse=True)[:8]
         print(mode, json.dumps(dict(worst)))

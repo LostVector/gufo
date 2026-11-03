@@ -6,10 +6,10 @@ RDMA path. It reuses the shared Qwen DFlash implementation while capturing
 Flash Next's hyper-connection features for the draft.
 
 This is a draft implementation. Correct target output and cache replay have
-been tested, but draft logits/features have not been independently matched
-against the author's implementation. Rejection sampling can preserve target
-output even when draft quality is wrong. The current results therefore do not
-establish reference-equivalent draft fidelity or acceptance.
+been tested. Independent author-operator comparisons now qualify the covered
+draft execution cases using identical supplied features and converted weights;
+see below. This does not establish equivalence to the original FP8 target,
+unquantized BF16 draft checkpoint or published acceptance benchmarks.
 
 ## Checkpoint and launch
 
@@ -121,11 +121,136 @@ feature/logit/selector parity remains unverified. Compare independent execution
 with identical captured features, dequantized weights and donor tables before
 attributing remaining differences to quantization or the model itself.
 
+## Independent operator parity
+
+The trace probe and shared oracle compare actual captured Flash Next features
+and the same Q8 GGUF/donor weights with unmodified
+[pinned DFlash2 operators](https://github.com/z-lab/dflash/blob/07ebd93db9f472af339b644bb70221ad8428328a/dflash/model.py).
+The reference is PyTorch 2.15.0+cpu / Transformers 5.12.1, eight CPU threads.
+Weight decoding is independent of Gufo's GPU upload path. Production kernels
+and sampling checks are unchanged.
+
+| Captured state | Prefix tokens | Draft positions | Matching candidate sets | Max full-forward q total variation |
+|---|---:|---:|---:|---:|
+| Short prefix | 24 | 3 | 3/3 | 2.04e-6 |
+| Sliding window and KV ring wrap | 2,064 | 7 | 7/7 | 1.20e-7 |
+| After forced rejection and one-row committed injection | 2,065 | 7 | 7/7 | 5.98e-8 |
+| After persistent draft restore | 2,065 | 7 | 7/7 | 5.98e-8 |
+| Presence 1.5, including earlier proposed tokens | 24 | 7 | 7/7 | 1.15e-6 |
+
+All 31 conditional candidate sets match. Worst stage relative RMSE is 2.25e-5;
+worst full-logit maximum error is 1.82e-5. The original strict limits remain
+1e-4 stage relative RMSE, 1e-3 logit maximum error and 1e-4 q total variation,
+with exact candidate membership. The presence row independently extends the
+author's scores with Gufo's requested penalty policy; it is not a claim that
+the original author model implements that API policy. State restoration also
+preserves Gufo's proposal tokens and probabilities bit-for-bit.
+
+Separate diagnostics round the same converted weights to BF16, then also run
+BF16 activations. On the short trace, weight-only rounding changes q by up to
+0.00216 total variation; full BF16 execution changes it by up to 0.0232 and
+changes one of three candidate sets. These diagnostics are excluded from the
+strict FP32 pass decision. They compare precision contracts over already
+quantized weights, not the original unquantized checkpoint, and do not establish
+whether BF16 would improve live acceptance.
+
+### Independent target-feature diagnostic
+
+A one-token run also compared the five GPU-captured raw HC stream means with
+Gufo's separate scalar target implementation, using the same Q4 target weights.
+Against scalar FP32 formulas, relative error was 0.12–0.43%, cosine similarity
+was at least 0.9999909 and norm ratios were 0.999986–1.000584. Against its decode
+storage emulation, relative error was 1.06–2.86%. These are diagnostics without a
+predeclared pass threshold, not bitwise or original FP8-target equivalence.
+They argue against a gross tap, normalization or stream-layout error for this
+first token; they do not qualify later-token attention/cache behavior.
+
+### Draft quantization check
+
+The official BF16 GGUF from the same pinned repository was downloaded and its
+LFS SHA256 verified:
+`fa63c62374607095cfb07441abfe8c18982ae99d130472e2ea0da35c61d98b20`.
+Full header comparison, including tokenizer/mask metadata, differs only in
+`general.file_type`. Holding supplied features, Q8 donor tables and FP32
+execution fixed isolates the change in draft checkpoint weights.
+
+On one presence-policy row, a token moves from unary rank 16 to 17, removing
+its 0.280938 proposal probability. The conditional Q8-versus-BF16 distribution
+distance is 0.280938. Retaining the Q8 candidate membership while keeping BF16
+draft scores/hidden/codebooks reduces that distance to 0.028525. This is a
+counterfactual diagnostic of the hard top-16 gate, not a proposed new selector.
+
+The native target distribution at that same forced prefix gives both proposal
+distributions zero expected acceptance after top-k/top-p filtering. Thus this
+large distribution change does not demonstrate an acceptance loss there. The
+conditional metric is `sum(min(p, q))`; it does not integrate over alternative
+generated histories or establish a whole-request acceptance rate.
+
+Four matched-setting single-node chat requests observed 777/1279 accepted
+proposals with Q8 (60.8%) and 818/1281 with BF16 draft weights (63.9%). Output
+tokens per reported speculative cycle were 2.82 and 2.92 respectively. Both use
+Gufo's FP32 arithmetic and the same Q4 target. Sampled trajectories differ and
+some reasoning was capped; these four requests do not establish statistical
+significance, a speedup, or parity with the original FP8-target evaluation.
+
+The same-Q8 weight reload control passes the strict distribution tolerance.
+A negative-control oracle that deliberately omits earlier draft-token presence
+penalties fails with a selector-probability mismatch. Independent harness review
+caught and verified fixes for that prefix accounting and for separating BF16
+diagnostics from strict FP32 results. No strict numerical tolerance was relaxed.
+
+These tests support draft execution parity for the covered inputs and state
+paths. They do not validate the GGUF converter, the original target's hidden
+features, full 64K behavior, TP2 numerical parity or published acceptance scores.
+The CPU oracle and single-node probes do not require changing the RDMA driver.
+
+### Reproduction
+
+Build `qwen38_flash_next_dflash_trace` explicitly in the HIP test build. It is
+excluded from normal builds and is not an automatic model CI test:
+
+```sh
+qwen38_flash_next_dflash_trace TARGET_FIRST_SHARD DRAFT_GGUF NEW_TRACE_DIR
+qwen38_flash_next_dflash_trace TARGET_FIRST_SHARD DRAFT_GGUF NEW_FEATURE_DIR 1 3 features
+qwen38_flash_next_dflash_trace TARGET_FIRST_SHARD DRAFT_GGUF NEW_RING_DIR 2064 7 rejection
+qwen38_flash_next_dflash_trace TARGET_FIRST_SHARD DRAFT_GGUF NEW_POLICY_DIR 24 7 presence
+```
+
+The `features` scenario exports GPU means and independent scalar FP32/decode
+storage means for one token; compare its `target_features*.f32` arrays as five
+contiguous 2560-element vectors. The scalar observer runs after each completed
+transformer layer and averages its raw wide residual across HC streams.
+
+The rejection scenario also exports `after-rejection`, `after-restore` and
+`with-presence-penalty` subdirectories. Run the oracle on each desired trace:
+
+```sh
+python tools/qwen27b/dflash_reference.py \
+  --upstream PINNED_AUTHOR_MODEL_PY --config PINNED_DRAFT_CONFIG_JSON \
+  --target DONOR_TABLE_SHARD --draft DRAFT_GGUF \
+  --trace TRACE_DIR --output REPORT_JSON \
+  --device cpu --external-env --bf16-diagnostic
+```
+
+Use `--alternative-draft BF16_DRAFT_GGUF` to measure draft-weight changes with
+the supplied features/donor tables fixed. The report's `passed` field describes
+the baseline strict execution check; alternative weights are diagnostics, not
+an additional pass criterion. An identical-file reload is explicitly checked
+as a control. The `presence` trace scenario also exports native target AR logits
+for conditional overlap calculations; it uses synthetic generated-token history
+to exercise policy, not a published benchmark conversation.
+
+`DONOR_TABLE_SHARD` must contain the embedding and output tensors: shard 2 in
+the tested split target. The oracle verifies the pinned author source hash.
+`--external-env` explicitly records an environment outside Nix; the default
+CUDA/Nix behavior is retained. Use fresh trace/output paths to preserve prior
+results. Machine-readable retained results are in [dflash-parity-v1.json](dflash-parity-v1.json).
+
 ## Known limitations and review priorities
 
-1. Independently compare captured features, draft logits and selector
-   probabilities with the pinned author implementation. Target verification
-   tests do not replace this check.
+1. Extend the same-input oracle to more representative histories, deeper
+   positions and TP2. Original FP8-target features and unquantized-checkpoint
+   equivalence remain separate questions from the execution parity above.
 2. Capture sessions currently disable paired TP prefill and use blocking feature
    downloads/reuploads. Their contributions have not been separately profiled.
 3. The adaptive cost calibration is inherited from 27B, not measured Flash Next
