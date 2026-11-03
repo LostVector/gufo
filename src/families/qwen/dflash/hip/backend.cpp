@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "src/families/qwen/control_tokens/control_tokens.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
+#include "src/families/qwen/dflash/hip/executor.hpp"
 
 namespace gufo::hip {
 namespace {
@@ -229,11 +229,12 @@ std::unique_ptr<QwenDFlashGpuDraftBackend> QwenDFlashGpuDraftBackend::Create(
 }
 
 std::unique_ptr<QwenDFlashGpuDraftBackend>
-QwenDFlashGpuDraftBackend::CreateFromGguf(
-    std::string_view dflash_model_path,
-    std::shared_ptr<const QwenGpuModel> target_model,
-    QwenDFlashGpuDraftConfig config, std::string* error_msg) {
-  if (dflash_model_path.empty() || target_model == nullptr) {
+QwenDFlashGpuDraftBackend::CreateFromGguf(std::string_view dflash_model_path,
+                                          DFlashTarget target,
+                                          QwenDFlashGpuDraftConfig config,
+                                          std::string* error_msg) {
+  if (dflash_model_path.empty() || !target.owner ||
+      target.tokenizer == nullptr) {
     if (error_msg != nullptr) {
       *error_msg = "DFlash GGUF path and target GPU model are required";
     }
@@ -245,8 +246,8 @@ QwenDFlashGpuDraftBackend::CreateFromGguf(
     return nullptr;
   }
   std::shared_ptr<const core::GgufReader> reader(std::move(reader_owner));
-  auto model = QwenDFlashGpuModel::Create(std::move(reader),
-                                          std::move(target_model), error_msg);
+  auto model = QwenDFlashGpuModel::Create(std::move(reader), std::move(target),
+                                          error_msg);
   if (model == nullptr) {
     return nullptr;
   }

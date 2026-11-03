@@ -88,6 +88,7 @@ gufo_extension_target(
     provider.cpp
   LINK_LIBRARIES
     gufo_qwen38_flash_next
+    gufo_qwen_dflash
     gufo_qwen_vision
     gufo_cache_hip
     gufo_qwen_vision
@@ -103,6 +104,7 @@ if(TARGET gufo_qwen38_flash_next_hip)
   gufo_extension_hip_sources(gufo_qwen38_flash_next_hip
     SOURCES
       kernels/rocm/kernels.hip.cpp
+      kernels/rocm/dflash_features.hip.cpp
       kernels/rocm/ple_owner.hip.cpp
       kernels/rocm/w8a8_wave64.hip
   )

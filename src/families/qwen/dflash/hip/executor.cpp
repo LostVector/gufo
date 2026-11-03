@@ -1,4 +1,6 @@
 #if defined(ENGINE_ENABLE_HIP)
+#include "src/families/qwen/dflash/hip/executor.hpp"
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -14,12 +16,11 @@
 #include <utility>
 #include <vector>
 
+#include "src/families/qwen/dflash/weights.hpp"
+#include "src/families/qwen/hip_common/device_allocation.hpp"
 #include "src/families/qwen/kernels/dflash_kernels.hpp"
 #include "src/families/qwen/kernels/ops.hpp"
 #include "src/families/qwen/kernels/verify_gemm_27b.hpp"
-#include "src/models/qwen/dflash_weights.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
-#include "src/models/qwen/hip/mtp/detail/allocation.hpp"
 
 namespace gufo::hip {
 namespace {
@@ -611,6 +612,24 @@ QwenGpuMemoryUsage QwenDFlashGpuExecutor::EstimateMemoryUsage(
   return usage;
 }
 
+std::size_t QwenDFlashGpuExecutor::PersistentSnapshotCapacity(
+    const QwenDFlashGpuModel& model, std::uint32_t context) {
+  if (context > model.GetConfig().context_length)
+    throw std::invalid_argument("DFlash snapshot context exceeds model limit");
+  const auto& cfg = model.GetConfig();
+  const auto& draft = model.GetDFlashConfig();
+  return kDFlashGpuPersistentHeaderBytes +
+         2ULL * draft.num_layers * std::min(context, draft.sliding_window) *
+             cfg.num_key_value_heads * cfg.head_dim * sizeof(float);
+}
+std::size_t QwenDFlashGpuExecutor::PersistentSnapshotBytes(
+    std::uint32_t position) const {
+  if (position > max_context_)
+    throw std::invalid_argument("DFlash snapshot position exceeds context");
+  return PersistentSnapshotCapacity(*model_,
+                                    std::min(position, history_capacity_));
+}
+
 std::size_t QwenDFlashGpuExecutor::SnapshotPayloadBytes() const noexcept {
   const std::size_t kv_width =
       static_cast<std::size_t>(model_->GetConfig().num_key_value_heads) *
@@ -704,9 +723,8 @@ void QwenDFlashGpuExecutor::RestoreSnapshot(
   injected_context_len_ = snapshot.valid_context_;
 }
 
-void QwenDFlashGpuExecutor::RestorePersistentSnapshot(
-    std::span<const std::uint8_t> payload) {
-  CheckContinuation();
+std::uint32_t QwenDFlashGpuExecutor::ValidatePersistentSnapshot(
+    std::span<const std::uint8_t> payload) const {
   if (payload.size() < kDFlashGpuPersistentHeaderBytes ||
       !std::equal(kDFlashGpuPersistentMagic.begin(),
                   kDFlashGpuPersistentMagic.end(), payload.begin()) ||
@@ -764,6 +782,19 @@ void QwenDFlashGpuExecutor::RestorePersistentSnapshot(
         "DFlash GPU persistent payload size is invalid");
   }
 
+  return valid_context;
+}
+
+void QwenDFlashGpuExecutor::RestorePersistentSnapshot(
+    std::span<const std::uint8_t> payload) {
+  CheckContinuation();
+  const auto valid_context = ValidatePersistentSnapshot(payload);
+  const auto num_layers = model_->GetDFlashConfig().num_layers;
+  const auto& cfg = model_->GetConfig();
+  const std::size_t elements_per_layer =
+      std::size_t{std::min(valid_context, history_capacity_)} *
+      cfg.num_key_value_heads * cfg.head_dim;
+  const auto bytes_per_kind = elements_per_layer * num_layers * sizeof(float);
   for (std::size_t layer = 0; layer < num_layers; ++layer) {
     if (elements_per_layer == 0) {
       continue;

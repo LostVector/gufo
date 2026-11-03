@@ -1,4 +1,4 @@
-#include "src/models/qwen/dflash_weights.hpp"
+#include "src/families/qwen/dflash/weights.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -150,6 +150,14 @@ std::optional<QwenDFlashWeights> QwenDFlashWeights::LoadFromGguf(
   const auto head_dim =
       RequiredUint32(reader, prefix + "attention.key_length", error_msg);
   auto rotary_dim = reader.GetMetadataUint32(prefix + "rope.dimension_count");
+  // Ordinary one-dimensional RoPE defaults to the full key head. The
+  // official Flash-Next DFlash2 GGUF omits both rotary-layout overrides.
+  // A malformed or unsupported explicit layout must still fail validation.
+  if (!rotary_dim &&
+      reader.FindMetadata(prefix + "rope.dimension_count") == nullptr &&
+      reader.FindMetadata(prefix + "rope.dimension_sections") == nullptr) {
+    rotary_dim = head_dim;
+  }
   if (!rotary_dim.has_value()) {
     const auto sections =
         GetNonnegativeIntegerArray(reader, prefix + "rope.dimension_sections");

@@ -709,9 +709,46 @@ int main() {
             "TP control names the " + what + " mismatch: " + server_error +
                 " / " + client_error);
   };
+  const auto accepts_dflash = [&](bool adaptive) {
+    const auto port = FreePort();
+    std::shared_ptr<TpControlChannel> peer;
+    std::thread connect([&] {
+      peer = TpControlChannel::Connect("127.0.0.1", port, &client_error);
+    });
+    auto head = TpControlChannel::Listen(port, &server_error);
+    connect.join();
+    Require(head != nullptr && peer != nullptr, "DFlash TP pair connects");
+    auto a = rank0, b = rank1;
+    a.use_mtp = b.use_mtp = false;
+    a.use_dflash = b.use_dflash = true;
+    a.dflash_adaptive = b.dflash_adaptive = adaptive;
+    bool ok0 = false, ok1 = false;
+    std::thread h0([&] { ok0 = head->Handshake(a, &server_error); });
+    std::thread h1([&] { ok1 = peer->Handshake(b, &client_error); });
+    h0.join();
+    h1.join();
+    Require(ok0 && ok1, "DFlash fixed/adaptive handshake accepted: " +
+                            server_error + " / " + client_error);
+    Require(head->snapshot_budget_bytes() == 4096 &&
+                peer->snapshot_budget_bytes() == 4096,
+            "DFlash negotiates the smaller cache budget");
+  };
+  accepts_dflash(false);
+  accepts_dflash(true);
+  refuses_mismatch("draft backend/policy", [](TpControlConfig& config) {
+    config.use_mtp = false;
+    config.use_dflash = true;
+  });
   refuses_mismatch("draft tokens", [](TpControlConfig& config) {
     config.max_draft_tokens = 3;
   });
+  rank0.use_mtp = rank1.use_mtp = false;
+  rank0.use_dflash = rank1.use_dflash = true;
+  refuses_mismatch("draft backend/policy", [](TpControlConfig& config) {
+    config.dflash_adaptive = true;
+  });
+  rank0.use_mtp = rank1.use_mtp = true;
+  rank0.use_dflash = rank1.use_dflash = false;
   refuses_mismatch("sessions",
                    [](TpControlConfig& config) { config.sessions = 4; });
   refuses_mismatch("vision",
