@@ -85,6 +85,42 @@ include rejected proposal tails. The author reports output tokens per
 verification step under different target quantization, widths and workloads;
 these ratios cannot establish agreement with that reference.
 
+The fixed-length prose run continued past `<|im_end|>` into another assistant
+turn and thinking text. It is useful as a retained fixed-work timing probe,
+but is not an ordinary completed chat or a representative draft-quality test.
+Also, `draft_rounds` counts speculative cycles and excludes AR-only forwards;
+it is not generally an exact count of every target call.
+
+### Bounded chat acceptance follow-up
+
+A follow-up used one Strix Halo GPU, 8K context, the same Q4 target/Q8 draft,
+fixed three-token drafts, temperature 1.0/top-p 0.95/top-k 20, `xhigh` reasoning,
+neutral repetition/frequency/presence penalties and normal EOS stopping. Prompt
+caching/persistence was disabled. Native RDMA devices were absent, so this is
+not a new TP2 performance comparison. These are two hand-written prompts with
+two seeds, not a reproduction of the author's benchmark datasets.
+
+| Task / seed | Output tokens | Accepted / proposed | Ratio | Output / speculative cycle | Finish |
+|---|---:|---:|---:|---:|---|
+| Arithmetic / 43 | 120 | 76/132 | 57.6% | 2.73 | stop |
+| Python / 43 | 476 | 314/486 | 64.6% | 2.94 | stop |
+| Arithmetic / 44 | 96 | 61/105 | 58.1% | 2.74 | stop |
+| Python / 44 | 512 | 326/556 | 58.6% | 2.75 | length; reasoning censored |
+
+The measured target's two donor tables are Q8_0, so rejecting F16 changes none
+of this path's numerical operations. The higher ratios do not demonstrate a
+numerical fix or isolate one cause: width, framing, stopping, sampling and TP
+configuration differ from the earlier probe. They do show that 31% was not a
+general property of the checkpoint. Proposed-token ratios also include suffixes
+never tested after an earlier rejection, so they depend strongly on block width.
+
+For these four rows, output minus accepted proposals equals the reported
+speculative cycles; that is a useful cross-check, not a reason to reinterpret
+the counter for modes that also perform uncounted AR-only forwards. Author
+feature/logit/selector parity remains unverified. Compare independent execution
+with identical captured features, dequantized weights and donor tables before
+attributing remaining differences to quantization or the model itself.
+
 ## Known limitations and review priorities
 
 1. Independently compare captured features, draft logits and selector
