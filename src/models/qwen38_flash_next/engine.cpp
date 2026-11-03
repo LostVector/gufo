@@ -236,6 +236,13 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
       exec.target_head_gather =
           rocm::Executor::TwoRankTargetHeadGather(options.communicator);
     }
+    if (m->draft_subset_ && options.communicator->SupportsDraftHeadGather() &&
+        ((std::size_t{m->device_->draft_output().rows} + kMtpDraftExtraRows) /
+         2) * sizeof(float) <=
+            options.communicator->MaxPartialBytes()) {
+      exec.draft_head_gather =
+          rocm::Executor::TwoRankTargetHeadGather(options.communicator);
+    }
     exec.split_reduce =
         rocm::Executor::TwoRankSplitReduce(options.communicator, c.hidden_size);
     if (c.ple_layer >= 0 && options.communicator->SupportsPleOwner()) {

@@ -3371,8 +3371,45 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
                        hipMemcpyDeviceToHost, stream_),
         "draft token download", error_msg);
   }
-  if (!(draft != nullptr ? DraftLogits(*draft, s_.mixed, s_.logits, error_msg)
-                         : Dense(output, s_.mixed, s_.logits, 1, error_msg))) {
+  // Restore the original complete subset logits before selection. Copying
+  // the two halves retains the ordinary confidence reduction order and bits;
+  // exchanging only local softmax totals would change rounding at policy gates.
+  const std::uint32_t subset_half = rows / 2;
+  const bool gather_subset =
+      draft != nullptr && token && !candidates && options_.draft_head_gather &&
+      model_->tp_world_size() == 2 && output.type == GgmlType::kQ8_0 &&
+      model_->draft_output().type == output.type &&
+      model_->draft_output().cols == output.cols && output.cols % 32 == 0 &&
+      rows % 2 == 0 && prefix > subset_half;
+  if (gather_subset) {
+    const std::uint32_t rank = model_->tp_rank();
+    if (rank > 1) {
+      AssignError(error_msg, "draft head gather rank out of range");
+      return false;
+    }
+    DeviceTensor part = model_->draft_output();
+    const std::uint32_t first = rank * subset_half;
+    part.rows = std::min(subset_half, prefix - first);
+    part.data = static_cast<std::uint8_t*>(part.data) +
+                std::size_t{first} * (part.cols / 32) * 34;
+    if (!Dense(part, s_.mixed, s_.logits, 1, error_msg)) {
+      return false;
+    }
+    if (rank == 1) {
+      if (!Dense(DraftTable(*draft), s_.mixed, s_.logits + part.rows, 1,
+                 error_msg)) {
+        return false;
+      }
+      MaskDraftLogits(s_.logits + part.rows, draft->mtp_.draft_ids,
+                      kMtpDraftExtraRows, stream_);
+    }
+    if (!options_.draft_head_gather(s_.logits, subset_half, 1, stream_,
+                                    error_msg)) {
+      return false;
+    }
+  } else if (!(draft != nullptr
+                   ? DraftLogits(*draft, s_.mixed, s_.logits, error_msg)
+                   : Dense(output, s_.mixed, s_.logits, 1, error_msg))) {
     return false;
   }
   const auto count = std::min<std::uint32_t>(rows, kMtpCandidates);

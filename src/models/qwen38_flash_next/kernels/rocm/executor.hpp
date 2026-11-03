@@ -289,6 +289,11 @@ public:
     std::function<bool(float*, std::size_t, std::uint32_t, hipStream_t,
                        std::string*)>
         target_head_gather;
+    /// Negotiated scalar draft-logit gather. Complete original logits before
+    /// the unchanged argmax/confidence kernels; no split-softmax rounding.
+    std::function<bool(float*, std::size_t, std::uint32_t, hipStream_t,
+                       std::string*)>
+        draft_head_gather;
     /// Called once the stream has drained after sums were queued: false with
     /// the first failure among them. Required with all_reduce under TP.
     std::function<bool(std::string*)> reduce_status;

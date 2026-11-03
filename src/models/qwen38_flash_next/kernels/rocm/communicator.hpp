@@ -91,6 +91,11 @@ public:
   [[nodiscard]] virtual bool SupportsTargetHeadGather() const noexcept {
     return false;
   }
+  /// Both peers agreed to exact scalar request-vocabulary draft-logit gathers.
+  /// Unsupported communicators retain replicated scoring/collective order.
+  [[nodiscard]] virtual bool SupportsDraftHeadGather() const noexcept {
+    return false;
+  }
   /// Both peers agreed to the extra ordered PLE owner-read exchange.
   [[nodiscard]] virtual bool SupportsPleOwner() const noexcept { return false; }
   /// Terminates this communicator after local GPU execution failed. Native

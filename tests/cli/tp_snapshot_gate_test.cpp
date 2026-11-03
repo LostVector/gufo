@@ -15,6 +15,40 @@ using gufo::server::TpSnapshotGate;
 using namespace std::chrono_literals;
 
 int main() {
+  // A queued snapshot must be visible even before its worker starts. Holding
+  // its future without consuming it must not retain the completed reservation.
+  for (bool fail : {false, true}) {
+    TpSnapshotGate gate;
+    std::latch start_worker(1), worker_started(1), decoder_started(1);
+    auto reservation = std::make_unique<TpSnapshotGate::Pending>(gate);
+    auto snapshot =
+        std::async(std::launch::async,
+                   [&, reservation = std::move(reservation)]() mutable {
+                     start_worker.wait();
+                     auto active_reservation = std::move(reservation);
+                     worker_started.count_down();
+                     if (fail)
+                       throw std::runtime_error("capture failure");
+                   });
+    auto decoder = std::async(std::launch::async, [&] {
+      decoder_started.count_down();
+      TpSnapshotGate::Turn turn(gate);
+    });
+    decoder_started.wait();
+    assert(decoder.wait_for(20ms) == std::future_status::timeout);
+    start_worker.count_down();
+    worker_started.wait();
+    assert(decoder.wait_for(2s) == std::future_status::ready);
+    decoder.get();
+    assert(snapshot.wait_for(2s) == std::future_status::ready);
+    bool threw = false;
+    try {
+      snapshot.get();
+    } catch (const std::runtime_error&) {
+      threw = true;
+    }
+    assert(threw == fail);
+  }
   // Pending captures hold decode at the boundary until every reservation
   // clears.
   for (bool abandon : {false, true}) {

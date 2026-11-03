@@ -210,6 +210,10 @@ public:
   [[nodiscard]] TextRunnerNgramRows NgramRows(
       const TextRunnerState& state) const override;
   void PrepareBatchExecution(TextRunnerState& state) const override;
+  // Advertise native async captures before their worker is scheduled.
+  // Release the guard on the executing stack before future consumption.
+  [[nodiscard]] std::unique_ptr<TpSnapshotGate::Pending> ReserveAsyncSnapshot()
+      const;
   [[nodiscard]] TextPrefillStep Prefill(
       TextRunnerState& state, std::span<const TextRunnerToken> prompt,
       std::size_t offset, std::size_t max_input_tokens) const override;
