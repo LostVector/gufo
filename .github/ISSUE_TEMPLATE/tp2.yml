@@ -24,7 +24,7 @@ body:
       options:
         - InfiniBand
         - RoCE v2
-        - USB4/Thunderbolt (thunderbolt-ibverbs)
+        - USB4/Thunderbolt (donnerkeule)
     validations:
       required: true
   - type: textarea
