@@ -75,9 +75,11 @@ launch. Natural-stop behavior was tested separately.
 | Prose continuation, 22 prompt tokens, sampled | 38.52 | 57.33 | 43.18 |
 
 Code-prefill medians were 1,903.69 / 1,826.67 / 1,355.92 tok/s respectively.
-Native MTP accepted 148 prompt-lookup tokens per retained code request; DFlash
-does not yet compose its drafts with that lookup path. These are configured-mode
-measurements, not isolated neural-drafter comparisons or confidence estimates.
+These initial measurements predate Flash Next DFlash prompt lookup. Native MTP
+accepted 148 copied tokens per retained code request; DFlash then had no lookup
+composition. They are configured-mode measurements, not isolated neural-drafter
+comparisons or confidence estimates. See the newer single-node lookup screen
+below; its settings and hardware count differ from this historical TP2 table.
 
 The sampled prose request accepted 134 of 432 proposals (31.0%), while the code
 request accepted 215 of 267 (80.5%). These ratios are workload-specific and
@@ -120,6 +122,68 @@ the counter for modes that also perform uncounted AR-only forwards. Author
 feature/logit/selector parity remains unverified. Compare independent execution
 with identical captured features, dequantized weights and donor tables before
 attributing remaining differences to quantization or the model itself.
+
+## Prompt lookup
+
+Flash Next DFlash now composes the native prompt-lookup policy with its neural
+drafts automatically. A sufficiently strong match can bypass the neural model;
+otherwise a retained neural prefix may establish a copied suffix. No neural q
+row follows a replaced token. Sampled copies use exact point-mass q rows and
+ordinary target p/q verification/residual correction, with constraints and EOS
+preserved. The first request step copies nothing, and sampled requests retain
+the native longer-match and successful-copy resume gates.
+
+Copies can fill the reserved target verification budget beyond the current
+neural width, within request/context/model limits. Target features for every
+committed copied token are still injected into draft KV. Existing metadata
+already persists the lookup cursor/request boundary; no snapshot format or
+public flag changed. The DFlash controller observes the retained neural prefix,
+excluding copy successes/failures. Existing `lookup_n`/`lookup_n_accepted` metrics
+now report copied proposals separately from total draft/accepted counts.
+
+### Matched single-node screen
+
+Same Release toolchain, Q4XL target/Q8 draft, context capacity 8K, one session,
+chunk 512, cache/persistence off. Frozen code (1,917 tokens) and prose (22 tokens) prompts; 256 generated tokens,
+EOS ignored for timing, one warmup plus three repeats within each launch.
+Code is greedy; prose uses temperature 0.8, top-k 40, top-p 0.95 and seed 513. Omitted
+penalties retain server defaults. These differ from the neutral chat probes.
+
+| Workload | DFlash before / after controls | DFlash + lookup | Native MTP |
+|---|---:|---:|---:|
+| Code decode tok/s | 86.21 / 86.43 | 94.68 | 89.91 |
+| Prose decode tok/s | 40.87 / 40.90 | 40.83 | 43.32 |
+
+DFlash accepted 136 of 147 proposed lookup tokens per retained code request; native
+MTP accepted 143 of 155. All modes' greedy code text matches exactly. DFlash's no-copy
+prose text and draft counts also match both controls exactly. The observed code
+gain is 9.5–9.8% over DFlash controls and 5.3% over native MTP on this fixture.
+These are descriptive results, not a process-pair confidence study or a general
+MTP/TP2 advantage. Repeated requests in one launch are not independent starts.
+
+CPU q tests cover pure/mixed/extended rows, unchanged neural conditioning,
+point-mass rejection identity and malformed input. Real target tests cover
+active lookup beyond a one-token neural plan, object/serialized replay with
+complete unmasked target-logit bits, new-request/EOS gates and 52 certain sampled
+copy acceptances. Six sampled modes compare real verification with a scalar
+target teacher. Existing owned/adaptive/component tests pass, including the
+5,009-token boundary and failed-restore recovery.
+
+All 11 HTTP long-context/cache/cancellation/disk-restart case reports pass on
+the final source, with no quality/coverage changes. Its timing comparison also
+passes the unchanged 5% and 10 ms limits. An earlier candidate run was
+**inconclusive** because startup/restart were 25.8/25.7 s versus 27.9/27.9 s;
+those flags remain recorded. A focused startup-only control measured unchanged
+baseline 25.7 s, candidate 27.5 s, unchanged baseline 31.2 s. This demonstrates
+baseline variation, not startup equivalence. Final review also restored the
+original context-full stop sentinel, with an explicit GPU boundary regression;
+the final Release binary was rechecked against the same frozen request hashes
+and in the HTTP suites. Earlier B/C/B and native-MTP controls are retained.
+No fresh two-node lookup test was possible with native RDMA devices absent.
+No driver/runtime/system setting was changed.
+
+[Machine-readable lookup results](dflash-lookup-v1.json) retain per-request
+throughputs, copied-token counts, source/binary hashes and timing flags.
 
 ## Independent operator parity
 

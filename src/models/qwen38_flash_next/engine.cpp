@@ -523,11 +523,13 @@ bool Session::DecodeDFlashStep(std::size_t max_tokens,
               : cap;
   const auto before = stats_;
   const bool ok = DecodeDFlashStep(
-      *dflash_->executor, max_tokens == 0 ? 0 : std::max<std::size_t>(1, width),
-      sampler, result, error_msg, stop_at_eos);
+      *dflash_->executor, max_tokens == 0 ? 0 : std::max<std::size_t>(1, cap),
+      sampler, result, error_msg, stop_at_eos, width > 0 ? width - 1 : 0);
   if (ok)
-    dflash_->controller.Observe(stats_.accepted - before.accepted,
-                                stats_.drafted - before.drafted);
+    dflash_->controller.Observe(
+        stats_.accepted - before.accepted -
+            (stats_.lookup_accepted - before.lookup_accepted),
+        stats_.drafted - before.drafted - (stats_.lookup - before.lookup));
   return ok;
 }
 
@@ -2100,7 +2102,8 @@ bool Session::DecodeDFlashStep(hip::QwenDFlashGpuExecutor& draft,
                                std::size_t max_tokens,
                                sampling::SamplerState& sampler,
                                DecodeResult* result, std::string* error_msg,
-                               bool stop_at_eos) {
+                               bool stop_at_eos,
+                               std::optional<std::uint32_t> neural_drafts) {
   if (continuation_hooks_)
     continuation_hooks_->BeforeExecution();
   if (!valid_ || tokens_.empty() || !result || max_tokens == 0 ||
@@ -2119,6 +2122,8 @@ bool Session::DecodeDFlashStep(hip::QwenDFlashGpuExecutor& draft,
     result->stop = true;
     return true;
   }
+  const auto draft_count = std::min<std::size_t>(
+      cap - 1, neural_drafts.value_or(static_cast<std::uint32_t>(cap - 1)));
   auto working = sampler;
   auto selected = working;
   const auto anchor = selected.Sample(logits_);
@@ -2132,7 +2137,7 @@ bool Session::DecodeDFlashStep(hip::QwenDFlashGpuExecutor& draft,
   const bool sampled = sampler.config().uses_random_sampling();
   if (sampled)
     working = selected;
-  std::vector<float> uniforms(cap - 1);
+  std::vector<float> uniforms(draft_count);
   if (sampled && !uniforms.empty()) {
     auto rng = sampling::NextRandom(working.mutable_rng_state());
     for (auto& draw : uniforms)
@@ -2144,18 +2149,44 @@ bool Session::DecodeDFlashStep(hip::QwenDFlashGpuExecutor& draft,
   proposal.start_pos = Position();
   proposal.candidates_per_token =
       draft.GetModel().GetDFlashConfig().selector_top_k;
+  PendingDecode lookup;
+  lookup.chain = {static_cast<std::int32_t>(anchor)};
+  lookup.sampled = sampled;
+  lookup.lookup_cap = draft_count && lookup_.Step(Position()) ? cap : 0;
+  if (lookup.lookup_cap)
+    lookup_.Extend(tokens_, sampled);
   try {
-    proposal.tokens = draft.ForwardBlock(
-        anchor, Position(), cap - 1,
-        sampled ? sampler.config().temperature : 0.0F, uniforms, nullptr,
-        sampled ? &proposal.candidate_ids : nullptr,
-        sampled ? &proposal.candidate_probabilities : nullptr, {},
-        &proposal_sampler);
+    // Match the native policy: a sampled copy may bypass the neural head only
+    // after a previous accepted copy established a source and a full match.
+    if (!AppendLookup(lookup, stop_at_eos, 3, sampled)) {
+      proposal.tokens = draft.ForwardBlock(
+          anchor, Position(), draft_count,
+          sampled ? sampler.config().temperature : 0.0F, uniforms, nullptr,
+          sampled ? &proposal.candidate_ids : nullptr,
+          sampled ? &proposal.candidate_probabilities : nullptr, {},
+          &proposal_sampler);
+      // A copy can establish its source after a retained neural prefix. No
+      // neural proposal is kept after the first copied token: those q rows
+      // would have been conditioned on a different predecessor history.
+      for (std::size_t count = 1;
+           count <= proposal.tokens.size() && count + 1 < cap; ++count) {
+        if (stop_at_eos && model_->IsStopToken(proposal.tokens[count - 1]))
+          break;
+        lookup.chain.resize(1);
+        lookup.chain.insert(lookup.chain.end(), proposal.tokens.begin(),
+                            proposal.tokens.begin() + count);
+        if (AppendLookup(lookup, stop_at_eos))
+          break;
+      }
+    }
+    if (lookup.lookup)
+      ApplyDFlashLookup(proposal, lookup.chain, lookup.lookup, sampled);
   } catch (const std::exception& error) {
     valid_ = false;
     AssignError(error_msg, error.what());
     return false;
   }
+  const auto accepted_before = stats_.accepted;
   bool ok;
   if (sampled) {
     ok = VerifySampledDraft(anchor, proposal, working, result, error_msg,
@@ -2165,8 +2196,17 @@ bool Session::DecodeDFlashStep(hip::QwenDFlashGpuExecutor& draft,
     chain.insert(chain.end(), proposal.tokens.begin(), proposal.tokens.end());
     ok = VerifyGreedyDraft(chain, working, result, error_msg, stop_at_eos);
   }
-  if (ok)
+  if (ok) {
+    if (lookup.lookup) {
+      const auto neural = proposal.tokens.size() - lookup.lookup;
+      const auto accepted = stats_.accepted - accepted_before;
+      const auto copied = accepted > neural ? accepted - neural : 0;
+      stats_.lookup += lookup.lookup;
+      stats_.lookup_accepted += copied;
+      lookup_.Observe(lookup.lookup_start, lookup.lookup, copied);
+    }
     sampler = std::move(working);
+  }
   return ok;
 }
 

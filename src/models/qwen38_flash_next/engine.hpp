@@ -264,12 +264,11 @@ public:
       std::string* error_msg = nullptr, bool stop_at_eos = true);
   /// Native DFlash cycle: select anchor, generate bounded proposals, verify,
   /// roll back rejected target rows and inject only committed features.
-  [[nodiscard]] bool DecodeDFlashStep(hip::QwenDFlashGpuExecutor& draft,
-                                      std::size_t max_tokens,
-                                      sampling::SamplerState& sampler,
-                                      DecodeResult* result,
-                                      std::string* error_msg = nullptr,
-                                      bool stop_at_eos = true);
+  [[nodiscard]] bool DecodeDFlashStep(
+      hip::QwenDFlashGpuExecutor& draft, std::size_t max_tokens,
+      sampling::SamplerState& sampler, DecodeResult* result,
+      std::string* error_msg = nullptr, bool stop_at_eos = true,
+      std::optional<std::uint32_t> neural_drafts = {});
   /// Greedy decoding verifies deterministic drafts. Sampled decoding draws
   /// compact MTP proposals and uses target/draft rejection with a residual
   /// correction. Prompt lookup appends copied tokens to the chain as
@@ -479,7 +478,7 @@ private:
   std::vector<float> verify_logits_;
   std::uint32_t hidden_base_{0};  ///< first position whose hidden row is kept
   MtpLengthController draft_length_;
-  /// Index of tokens_ for prompt lookup (single-session MTP drafts).
+  /// Index of tokens_ for native MTP and DFlash prompt lookup.
   speculative::PromptLookup<> lookup_;
   SpeculativeStats stats_;
   std::shared_ptr<const qwen::vision::Prompt> image_prompt_;

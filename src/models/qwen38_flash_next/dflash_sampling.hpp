@@ -16,6 +16,64 @@ struct DFlashProbabilityRow {
   double selected_probability;
 };
 
+// Lookup replaces only a trailing suffix. Retained neural rows therefore keep
+// the exact predecessor history under which their q probabilities were drawn.
+inline void ApplyDFlashLookup(speculative::DraftProposal& proposal,
+                              std::span<const std::int32_t> chain,
+                              std::size_t copied, bool sampled) {
+  if (copied == 0 || chain.size() <= copied ||
+      std::ranges::any_of(chain, [](auto token) { return token < 0; }))
+    throw std::invalid_argument("invalid DFlash lookup chain");
+  const auto neural = chain.size() - 1 - copied;
+  if (neural > proposal.tokens.size() ||
+      !std::equal(chain.begin() + 1, chain.begin() + 1 + neural,
+                  proposal.tokens.begin()))
+    throw std::invalid_argument("DFlash lookup changed a neural prefix");
+  const auto count = chain.size() - 1;
+  const auto width = proposal.candidates_per_token;
+  if (neural && sampled &&
+      (width == 0 ||
+       proposal.tokens.size() > proposal.candidate_ids.size() / width ||
+       proposal.tokens.size() * width != proposal.candidate_ids.size() ||
+       proposal.candidate_ids.size() !=
+           proposal.candidate_probabilities.size() ||
+       count > proposal.candidate_ids.max_size() / width ||
+       count > proposal.candidate_probabilities.max_size() / width))
+    throw std::invalid_argument("DFlash lookup candidate rows are incomplete");
+  const auto old_count = proposal.tokens.size();
+  proposal.tokens.assign(chain.begin() + 1, chain.end());
+  proposal.from_lookup = neural == 0;
+  if (!sampled) {
+    proposal.candidates_per_token = 0;
+    proposal.candidate_ids.clear();
+    proposal.candidate_probabilities.clear();
+  } else if (neural == 0) {
+    proposal.candidates_per_token = 1;
+    proposal.candidate_ids = proposal.tokens;
+    proposal.candidate_probabilities.assign(count, 1.0F);
+  } else {
+    proposal.candidate_ids.resize(count * width);
+    proposal.candidate_probabilities.resize(count * width);
+    // Copies can fill the target budget beyond the neural block. Reuse a
+    // valid ID set to pad those rows; only the copied token has nonzero q.
+    for (auto row = old_count; row < count; ++row)
+      std::copy_n(proposal.candidate_ids.begin(), width,
+                  proposal.candidate_ids.begin() + row * width);
+    for (auto row = neural; row < count; ++row) {
+      auto ids = std::span(proposal.candidate_ids).subspan(row * width, width);
+      auto probabilities = std::span(proposal.candidate_probabilities)
+                               .subspan(row * width, width);
+      auto found = std::find(ids.begin(), ids.end(), proposal.tokens[row]);
+      if (found == ids.end()) {
+        found = ids.begin();
+        *found = proposal.tokens[row];
+      }
+      std::fill(probabilities.begin(), probabilities.end(), 0.0F);
+      probabilities[found - ids.begin()] = 1.0F;
+    }
+  }
+}
+
 // Match the existing generic DFlash verifier's F32-selector contract. Unlike
 // native MTP's integer-mass proposal, these probabilities are rounded F32.
 // Validate every row before executing or mutating the target, including the

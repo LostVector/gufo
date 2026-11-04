@@ -41,6 +41,7 @@ add_qwen38_flash_next_test(rope_scaling_oracle
 add_qwen38_flash_next_test(draft_vocab gufo_core "cpu")
 add_qwen38_flash_next_test(prompt_lookup gufo_core "cpu")
 add_qwen38_flash_next_test(dflash_donor gufo_qwen_dflash "cpu;dflash2;correctness")
+add_qwen38_flash_next_test(dflash_lookup gufo_core "cpu;dflash2;correctness")
 
 add_executable(qwen38_flash_next_reference_probe EXCLUDE_FROM_ALL reference_probe.cpp)
 target_link_libraries(qwen38_flash_next_reference_probe PRIVATE
@@ -62,6 +63,12 @@ if (ENGINE_ENABLE_HIP)
   set_target_properties(qwen38_flash_next_dflash_sampled_test PROPERTIES
     EXCLUDE_FROM_ALL TRUE)
   set_tests_properties(qwen38_flash_next.dflash_sampled PROPERTIES
+    SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_lookup_model gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;correctness")
+  set_target_properties(qwen38_flash_next_dflash_lookup_model_test PROPERTIES
+    EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_lookup_model PROPERTIES
     SKIP_RETURN_CODE 77)
   add_qwen38_flash_next_test(dflash_owned gufo_qwen38_flash_next_hip
     "gpu;hip;dflash2;external-model;correctness")

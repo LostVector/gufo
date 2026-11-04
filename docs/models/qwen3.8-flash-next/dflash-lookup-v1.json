@@ -1,0 +1,292 @@
+{
+  "schema": 1,
+  "date": "2026-11-04",
+  "scope": "TP1,C1,UD-Q4_K_XL target/shared-Q8_0 donor tables,Q8_0 DFlash;8192 context capacity,512 chunk,1session; frozen1917-token greedycode/22-token sampledprose,fixedTG256/EOSignored,cacheoff. One warmup and3retained repeats per workload per launch; B/C/B plus nativeMTP. Descriptive, no confidence interval or freshTP2 claim. Omitted penalties use unchanged server defaults.",
+  "baseline": {
+    "source_revision": "fbaae5b81e6346bc490b14d3721cc92b3ba32346",
+    "binary_sha256": "0e0bb851ef075b44ac3b471a7e249bff391c97a8acead88bbf1d99888fe2a8c0",
+    "scope": "Preserved unmodified Release baseline before prompt-lookup changes; same Q4 target/Q8 draft."
+  },
+  "candidate_binary": {
+    "sha256": "17db8b0de7a9b81c1f8a4cfbf1c2d190b44a34067c1691f8cf6b2a3888dda943"
+  },
+  "benchmarks": {
+    "baseline-before": {
+      "code": {
+        "median_tps": 86.20927337413757,
+        "per_request_tps": [
+          86.34308276072446,
+          86.17828542480748,
+          86.20927337413757
+        ],
+        "lookup_proposed": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ]
+      },
+      "prose": {
+        "median_tps": 40.868776079084405,
+        "per_request_tps": [
+          40.890378504080715,
+          40.846019776531655,
+          40.868776079084405
+        ],
+        "lookup_proposed": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "lookup": {
+      "code": {
+        "median_tps": 94.7880624990822,
+        "per_request_tps": [
+          94.86462914509015,
+          94.7880624990822,
+          94.69306485503822
+        ],
+        "lookup_proposed": [
+          147,
+          147,
+          147
+        ],
+        "lookup_accepted": [
+          136,
+          136,
+          136
+        ]
+      },
+      "prose": {
+        "median_tps": 40.83903797130956,
+        "per_request_tps": [
+          40.87552454161538,
+          40.83903797130956,
+          40.82370877455641
+        ],
+        "lookup_proposed": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "baseline-after": {
+      "code": {
+        "median_tps": 86.4321193694013,
+        "per_request_tps": [
+          86.23562666976659,
+          86.4321193694013,
+          86.4460110038978
+        ],
+        "lookup_proposed": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ]
+      },
+      "prose": {
+        "median_tps": 40.89642054012128,
+        "per_request_tps": [
+          40.855170821911855,
+          40.94254088211784,
+          40.89642054012128
+        ],
+        "lookup_proposed": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "native-mtp": {
+      "code": {
+        "median_tps": 89.91344453461474,
+        "per_request_tps": [
+          89.78879399016554,
+          90.05377163470192,
+          89.91344453461474
+        ],
+        "lookup_proposed": [
+          155,
+          155,
+          155
+        ],
+        "lookup_accepted": [
+          143,
+          143,
+          143
+        ]
+      },
+      "prose": {
+        "median_tps": 43.32089959266972,
+        "per_request_tps": [
+          43.40412574556844,
+          43.32089959266972,
+          43.27910460905934
+        ],
+        "lookup_proposed": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "correctness": {
+    "cpu_only_q_tests": "pass, pure/mixed/extended rows, independent point-mass rejection identity, malformed inputs",
+    "active_gpu_lookup": "pass,60exact constrained tokens, copy budget beyond one-neural-token plan, object/serialized restore with bit-exact complete unmasked continuation logits, EOS/new-request gates",
+    "sampled_positive_point_masses_accepted": 52,
+    "scalar_target_teacher": "pass,6modes: neural/mixed/pointmass x compact/full vocabulary; residual/RNG/replay",
+    "owned_and_adaptive": "pass,greedyAR parity,ownership,raw/object snapshot replay",
+    "component_cache": "pass,5009-token boundary,reverse/private-piece restore,corrupt/partial recovery",
+    "http_case_reports": 11,
+    "http_functional_status": "passed",
+    "http_comparison": "passed",
+    "http_quality_or_coverage_changes": [],
+    "http_measurements": 679,
+    "http_flags": [],
+    "context_full_stop": "pass,normal stop with unchanged RNG at512-token capacity",
+    "http_final_startup_ms": 25641.660759982187,
+    "http_final_restart_ms": 25736.40901100589
+  },
+  "startup_control": [
+    {
+      "arm": "baseline-a",
+      "health_ready_ms": 25672.912556037772,
+      "loader_ms": 25557
+    },
+    {
+      "arm": "candidate",
+      "health_ready_ms": 27495.06060301792,
+      "loader_ms": 27297
+    },
+    {
+      "arm": "baseline-b",
+      "health_ready_ms": 31233.351381029934,
+      "loader_ms": 31038
+    }
+  ],
+  "startup_interpretation": "Candidate27.5s lies between unchanged-baseline25.7/31.2s; original startup/restart flags retained. No startup equivalence or source-attribution claim. Decode-only code changed.",
+  "limits": [
+    "No freshTP2 lookup qualification: native RDMA devices absent; no transport/settings change.",
+    "Timing screen uses one candidate process; repeated requests are not independent process-pair confidence evidence.",
+    "Fixed-length continuation is not a coding-quality/agent-throughput benchmark.",
+    "Initial startup/restart flags retained; final exact-source comparison passes thresholds, not a statistical startup-equivalence claim."
+  ],
+  "source_sha256": {
+    "src/models/qwen38_flash_next/engine.cpp": "6ef6dee0ff49668e392a6912c27698c172f80e86afbc4d7b245247fc5480afb0",
+    "src/models/qwen38_flash_next/engine.hpp": "3a6a0e600b13065501633017db86a670787481bcf177741304b3c231c7aa3715",
+    "src/models/qwen38_flash_next/dflash_sampling.hpp": "7c8746063dad54259c171df00628de99a41905fe7227e94efba97eacd7e6215d",
+    "tests/models/qwen38_flash_next/dflash_lookup_test.cpp": "e90a4298893b5a1e0b1fbd5ce52d49e0ddf925d7174e0a14363e111b9341a451",
+    "tests/models/qwen38_flash_next/dflash_lookup_model_test.cpp": "8fae2595f5e8ffab7e2bab838b54db8d00a6a92da7e57b2ca1ad846e2bc71268",
+    "tests/models/qwen38_flash_next/dflash_sampled_test.cpp": "1d99bf00ad564a0648007c35d592556082f244b72567c25bb3c431c7c0fab063"
+  },
+  "initial_http_comparison": {
+    "status": "inconclusive",
+    "flags": [
+      {
+        "case": "server",
+        "request_key": [
+          "server"
+        ],
+        "metric": "startup_ms",
+        "baseline": 25832.529240986332,
+        "candidate": 27861.116925952956,
+        "noise_floor": 10,
+        "change_percent": 7.852841918971021,
+        "exceeds_margin": true,
+        "status": "inconclusive"
+      },
+      {
+        "case": "server",
+        "request_key": [
+          "server"
+        ],
+        "metric": "restart_ms",
+        "baseline": 25742.871047987137,
+        "candidate": 27851.71195602743,
+        "noise_floor": 10,
+        "change_percent": 8.191941388779878,
+        "exceeds_margin": true,
+        "status": "inconclusive"
+      }
+    ]
+  },
+  "candidate_final_binary": {
+    "sha256": "d697d9bba14225edf87aa3736db2fe347502f616c83c56eb0bc9ddb3d171bb54",
+    "scope": "Final source restores original full-context stop sentinel; normal nonfull paths have unchanged cap. Explicit context-full GPU regression added."
+  },
+  "final_benchmarks": {
+    "lookup-final": {
+      "code": {
+        "median_tps": 94.67688178395386,
+        "per_request_tps": [
+          94.67688178395386,
+          94.46620014359064,
+          94.70126396574754
+        ],
+        "lookup_proposed": [
+          147,
+          147,
+          147
+        ],
+        "lookup_accepted": [
+          136,
+          136,
+          136
+        ]
+      },
+      "prose": {
+        "median_tps": 40.82879506005316,
+        "per_request_tps": [
+          40.82879506005316,
+          40.87316646198405,
+          40.7764623375979
+        ],
+        "lookup_proposed": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "final_revision_note": "Final source repairs the owned wrapper context-full stop sentinel after budget separation. Explicit boundary GPU test and matched candidate confirmation plus HTTP suites rerun on final Release binary. Earlier candidate/artifacts/flags preserved."
+}

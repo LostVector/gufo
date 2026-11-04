@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "src/families/qwen/dflash/hip/executor.hpp"
+#include "src/models/qwen38_flash_next/dflash_sampling.hpp"
 #include "src/models/qwen38_flash_next/engine.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/dflash_features.hpp"
 
@@ -61,9 +62,9 @@ int main(int argc, char** argv) {
     const auto hidden = draft_model->GetConfig().hidden_size;
     const auto width = config.target_layer_ids.size() * hidden;
     std::size_t accepted = 0, rejected = 0;
-    for (unsigned mode = 0; mode < 2; ++mode) {
+    for (unsigned mode = 0; mode < 6; ++mode) {
       Replay first;
-      for (unsigned repeat = 0; repeat < 3; ++repeat) {
+      for (unsigned repeat = 0; repeat < (mode < 2 ? 3U : 2U); ++repeat) {
         Buffer features(model->PrefillThroughCapacity() * width);
         auto ar = model->CreateSession(gufo::core::SessionMode::kAutoregressive,
                                        context, &error);
@@ -103,7 +104,7 @@ int main(int argc, char** argv) {
                 error);
         sampling::SamplingConfig cfg;
         cfg.temperature = 0.8F;
-        cfg.top_k = mode == 0 ? 40 : 0;
+        cfg.top_k = mode % 2 == 0 ? 40 : 0;
         cfg.top_p = 0.95F;
         cfg.repeat_penalty = 1.1F;
         cfg.frequency_penalty = 0.03F;
@@ -198,6 +199,19 @@ int main(int argc, char** argv) {
                     "orphaned candidates changed target or sampler");
             error.clear();
           }
+          if (mode >= 2 && count) {
+            // Exercise copied point masses in the real target verifier,
+            // independently of whether the heuristic finds a natural match.
+            // Retained neural rows precede the copy, so their conditioning
+            // remains the original chain. The scalar teacher below sees the
+            // actual q rows, including the residual after a rejected copy.
+            const auto neural = mode < 4 && count > 1 ? 1U : 0U;
+            std::vector<std::int32_t> chain{static_cast<std::int32_t>(anchor)};
+            for (std::size_t row = 0; row < count; ++row)
+              chain.push_back(row < neural ? proposal.tokens[row]
+                                           : prompt[row % prompt.size()]);
+            qfn::ApplyDFlashLookup(proposal, chain, count - neural, true);
+          }
           qfn::Session::DecodeResult step;
           Require(target->VerifySampledDraft(anchor, proposal, sampler, &step,
                                              &error, false),
@@ -207,11 +221,11 @@ int main(int argc, char** argv) {
           Require(ar->Evaluate(anchor, &error), error);
           for (std::size_t row = 0; row < proposal.tokens.size(); ++row) {
             const auto ids = std::span(proposal.candidate_ids)
-                                 .subspan(row * config.selector_top_k,
-                                          config.selector_top_k);
+                                 .subspan(row * proposal.candidates_per_token,
+                                          proposal.candidates_per_token);
             const auto q = std::span(proposal.candidate_probabilities)
-                               .subspan(row * config.selector_top_k,
-                                        config.selector_top_k);
+                               .subspan(row * proposal.candidates_per_token,
+                                        proposal.candidates_per_token);
             double selected = 0;
             for (std::size_t i = 0; i < ids.size(); ++i)
               if (ids[i] == proposal.tokens[row])
