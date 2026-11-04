@@ -694,6 +694,12 @@ if (BUILD_TESTING)
   add_test(NAME tp_executor_test COMMAND tp_executor_test)
   set_tests_properties(tp_executor_test PROPERTIES LABELS "cpu;tp2" TIMEOUT 60)
 
+  add_executable(tp_snapshot_gate_test tests/cli/tp_snapshot_gate_test.cpp)
+  target_link_libraries(tp_snapshot_gate_test PRIVATE Threads::Threads)
+  add_test(NAME tp_snapshot_gate_test COMMAND tp_snapshot_gate_test)
+  set_tests_properties(tp_snapshot_gate_test PROPERTIES
+    LABELS "cpu;tp2" TIMEOUT 20)
+
   endif()
 
   add_executable(json_constraint_test tests/core/json_constraint_test.cpp)

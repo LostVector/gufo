@@ -40,7 +40,8 @@ set(gufo_pr_targets
   # END GENERATED MODEL PR TARGETS
 )
 if(NOT WIN32)
-  list(APPEND gufo_pr_targets tp_control_test tp_disk_store_test tp_executor_test)
+  list(APPEND gufo_pr_targets tp_control_test tp_disk_store_test tp_executor_test
+    tp_snapshot_gate_test)
 endif()
 set(gufo_pr_tests ${gufo_pr_targets})
 if(NOT WIN32)
