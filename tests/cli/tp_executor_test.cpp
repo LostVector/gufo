@@ -1761,7 +1761,9 @@ int main() {
   }
 
   // A prompt whose snapshot exceeds the RAM budget still reaches the disk on
-  // both ranks, and a repeat restores it.
+  // both ranks, and a restart of both restores it. The restart, as in the
+  // disk cases above, waits for rank 0's write: a repeat on the same pair can
+  // arrive before rank 0 publishes its half, which is only a cache miss.
   {
     const auto root = std::filesystem::temp_directory_path() /
                       ("tp2-disk-budget-test-" + std::to_string(::getpid()));
@@ -1772,18 +1774,25 @@ int main() {
     for (TextRunnerToken token = 0; token < 120; ++token)
       large.push_back(10 + token);
     const std::size_t stable = large.size() - 7;
-    Pair pair(persist, persist, 1, root / "rank0", root / "rank1", 400);
-    const auto cold = pair.Run(large, 3, {}, {}, {}, true, stable);
-    Require(cold.worker_error.empty(), "large prompt: " + cold.worker_error);
-    pair.WaitForRank1Disk(1);
-    const auto repeat = pair.Run(large, 3, {}, {}, {}, true, stable);
-    Require(repeat.worker_error.empty(),
-            "large repeat: " + repeat.worker_error);
-    Require(repeat.result.tokens == cold.result.tokens &&
-                repeat.result.cache_disk_hit &&
-                repeat.result.cached_prompt_tokens == stable,
-            "a snapshot beyond the RAM budget restores from disk");
-    pair.RequireSameCalls("large disk cache");
+    std::vector<TextRunnerToken> first;
+    {
+      Pair pair(persist, persist, 1, root / "rank0", root / "rank1", 400);
+      const auto cold = pair.Run(large, 3, {}, {}, {}, true, stable);
+      Require(cold.worker_error.empty(), "large prompt: " + cold.worker_error);
+      first = cold.result.tokens;
+      pair.WaitForRank1Disk(1);
+      pair.RequireSameCalls("large disk cache save");
+    }
+    {
+      Pair pair(persist, persist, 1, root / "rank0", root / "rank1", 400);
+      const auto repeat = pair.Run(large, 3, {}, {}, {}, true, stable);
+      Require(repeat.worker_error.empty(),
+              "large repeat: " + repeat.worker_error);
+      Require(repeat.result.tokens == first && repeat.result.cache_disk_hit &&
+                  repeat.result.cached_prompt_tokens == stable,
+              "a snapshot beyond the RAM budget restores from disk");
+      pair.RequireSameCalls("large disk cache restore");
+    }
     std::filesystem::remove_all(root);
   }
 
