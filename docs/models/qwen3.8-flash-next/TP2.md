@@ -52,7 +52,7 @@ candidates. Both ranks must use the same link layer. Each rank logs its choice a
 ### USB4
 
 Two Strix Halo hosts linked by USB4 cables can run TP2 without network cards:
-[thunderbolt-ibverbs](https://github.com/neuhaus/donnerkeule/tree/feat/write-striping)
+[thunderbolt-ibverbs](https://github.com/neuhaus/donnerkeule) (`main`)
 turns each cable's DMA rings into RoCE v2 RDMA devices. Its write striping
 spreads Gufo's single QP over every ring of every cable to the other host;
 without it a QP stays on one ring (about 10 Gbit/s). With two 40 Gb/s cables
@@ -63,24 +63,45 @@ it reaches 44 Gbit/s one way. Load it with an IPv4 address on its
 sudo ip link add tbv0 type dummy
 sudo ip addr add 10.77.0.1/24 dev tbv0 && sudo ip link set tbv0 up   # .2 on rank 1
 sudo modprobe thunderbolt_ibverbs profile=linux_perf tbnet=prefer_rdma \
-  lanes=2 register_verbs=1 roce_netdev=tbv0 native_write_striping=1
+  bind_services=1 allocate_rings=1 start_rings=1 negotiate_native=1 \
+  enable_tunnels=1 lanes=2 register_verbs=1 roce_netdev=tbv0 \
+  native_write_striping=1
 ibv_devices                        # usb4_rdma0 .. usb4_rdma3 with two cables
 build/gpu-tp2/gufo serve llm ... --tp-rdma-device usb4_rdma0
 ```
 
+Without `bind_services=1 allocate_rings=1 start_rings=1 negotiate_native=1
+enable_tunnels=1` the driver logs "service binding disabled" and registers no
+devices. To load it at boot, put the options in
+`/etc/modprobe.d/thunderbolt-ibverbs.conf`.
+
+Memory registration pins host memory, so `ibv_reg_mr` fails under a typical
+8 MiB `memlock` limit. Run each rank with an unlimited limit:
+`--ulimit memlock=-1` in a container (the
+[user units](../../../tools/systemd-user-service/) set it), or
+`systemd-run --user --scope -p LimitMEMLOCK=infinity` (or `ulimit -l unlimited`
+as root) on the host.
+
 Both ranks produce output identical to InfiniBand. Against FDR InfiniBand
 (ConnectX-3, PCIe 3.0 x4), Q4 with a 25.8k-token prompt prefilled at 1824
 against 1892 tok/s and decoded at 32.6 against 34.5 tok/s; USB4 costs more
-CPU (several cores in kernel workers) and latency per exchange. The links
-must train at 2 × 20 Gb/s; check `rx_speed` and `rx_lanes` in
-`/sys/bus/thunderbolt/devices/*/` after plugging.
+CPU (several cores in kernel workers) and latency per exchange. Check
+`rx_speed` and `rx_lanes` in `/sys/bus/thunderbolt/devices/*/` after
+plugging. On Strix Halo the links often train at 2 × 10 Gb/s (Gen2) from boot
+and at 2 × 20 Gb/s (Gen3) after a replug. Gen3 is preferred, but the
+driver's limit is about 10 Gbit/s per DMA ring, so Gen2 costs little
+bandwidth: another Bosgame M5 pair reported 37.4 Gbit/s `ib_write_bw` at Gen2
+on both cables.
 
 #### Device windows over USB4
 
-The speedup needs the experimental driver mode of thunderbolt-ibverbs
-(branch `codex/gpu-verbs-checkpoint`, not the default), loaded on both hosts
-with `dmabuf_verbs=1 dmabuf_push_done=1 dmabuf_credits=1` (direct post is on by
-default there). With it a GPU window registers as a DMA-BUF, the receiver's
+Device windows need the DMA-BUF verbs mode of thunderbolt-ibverbs `main`
+(not its default), loaded on both hosts with
+`dmabuf_verbs=1 dmabuf_push_done=1 dmabuf_credits=1` plus the Strix Halo
+options in its `docs/STRIX_HALO_BOARDS.md`. It was first developed on the
+`codex/gpu-verbs-checkpoint` branch. The driver rejects any DMA-BUF above
+256 MiB, so Gufo exports each exchange window as its own DMA-BUF and memory
+region. With it a GPU window registers as a DMA-BUF, the receiver's
 posted windows arm SEND credits, and the sender skips the per-exchange PREPARE
 round trip. The stock driver refuses `ibv_reg_dmabuf_mr`, so Gufo logs
 `windows=host_write (ibv_reg_dmabuf_mr: Operation not supported)` and runs as
@@ -113,6 +134,11 @@ noise (for example 12k tokens: 8.47 to 8.76 s against 8.40 to 8.59 s, one base
 start 13.3 s). The deferred send completion and the yielding spins therefore
 cost nothing measurable on the host path.
 
+The probe's lower exchange latency need not show up end to end. On another
+Bosgame M5 pair (donnerkeule `main` e03d836, Q4 MTP, one server start each),
+device windows gave 52.9 tok/s greedy decode and 2,232 tok/s prefill against
+54.5 and 2,165 with host windows, which is no clear difference.
+
 Three things that broke a boot-time setup (Ubuntu 26.04, rdma-core 61.0):
 
 - `insmod` of a built `thunderbolt_ibverbs.ko` fails with "Unknown symbol"
@@ -128,7 +154,8 @@ Three things that broke a boot-time setup (Ubuntu 26.04, rdma-core 61.0):
   and let the supervised ranks keep retrying.
 
 On a kernel that does not export `tb_ring_throttling()` (Ubuntu 26.04's
-7.0.0-38 does not), the driver logs "optional tb_ring_throttling() helper
+7.0.0-38 does not; mainline 7.2.15 does, so it needs no rebuilt
+`thunderbolt` module), the driver logs "optional tb_ring_throttling() helper
 unavailable; using stock NHI interrupt throttling" and ignores
 `nhi_interrupt_throttle_ns`, so the rings keep the stock 128 µs interrupt
 throttling and decode is bound by the exchange latency. There, `ib_write_lat`
@@ -377,6 +404,10 @@ device windows are ([Design](#design)).
   overlay in `bench.json` (`remote_host`, `bootstrap_host`, ports, token,
   container and binary); it runs the single-user and users tables, with the
   container `gpu-tp2` build over USB4 (the Nix build lacks its RDMA provider).
+  Without a container, a `.#tp2-rdma` build also runs over USB4 with
+  `LD_LIBRARY_PATH` pointing at the host's `libibverbs.so.1`, `libnl-3` and
+  `libnl-route-3`, so that the host's libibverbs loads its matching USB4
+  provider. This was reported on rdma-core 61.
 
 ## Qualifying a change
 
