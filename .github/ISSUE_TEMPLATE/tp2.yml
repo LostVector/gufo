@@ -1,0 +1,36 @@
+name: TP2 cluster problem
+description: Problems running Gufo across two hosts (tensor parallelism 2 over RDMA)
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This fork only adds two-host clustering to Gufo: tensor parallelism 2
+        over RDMA via InfiniBand, RoCE v2 or USB4/Thunderbolt. Please report
+        only problems with that here. Anything that also happens on a single
+        host belongs [upstream](https://github.com/gufo-org/gufo/issues).
+
+        Setup notes are in [TP2.md](https://github.com/neuhaus/gufo/blob/rdma/docs/models/qwen3.8-flash-next/TP2.md).
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: This happens with TP2 across two hosts, not on a single host.
+          required: true
+  - type: dropdown
+    id: transport
+    attributes:
+      label: RDMA transport
+      options:
+        - InfiniBand
+        - RoCE v2
+        - USB4/Thunderbolt (thunderbolt-ibverbs)
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: Gufo commit, commands on both ranks, and the relevant logs from both ranks.
+    validations:
+      required: true
