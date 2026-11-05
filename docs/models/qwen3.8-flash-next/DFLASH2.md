@@ -179,11 +179,57 @@ baseline variation, not startup equivalence. Final review also restored the
 original context-full stop sentinel, with an explicit GPU boundary regression;
 the final Release binary was rechecked against the same frozen request hashes
 and in the HTTP suites. Earlier B/C/B and native-MTP controls are retained.
-No fresh two-node lookup test was possible with native RDMA devices absent.
-No driver/runtime/system setting was changed.
+At the November 4 checkpoint, native RDMA devices were absent, so that screen
+had no fresh TP2 lookup qualification or driver/runtime/system changes. The
+November 5 isolated-link qualification below supersedes that availability limit.
 
 [Machine-readable lookup results](dflash-lookup-v1.json) retain per-request
 throughputs, copied-token counts, source/binary hashes and timing flags.
+
+## November 5: prompt lookup on TP2
+
+A matched one-connection TP2/C1 screen used the same Q4XL target, shared-Q8 donor,
+Q8 DFlash, 8,192 context capacity, two session slots, chunk 512, frozen 1,917-token
+code / 22-token prose prompts and fixed TG256. Cache/persistence were disabled
+for timing. Each process pair ran one warmup and three retained repeats per
+workload, in baseline/candidate/baseline order. Source revisions were `fbaae5b8`
+and `aa561cbd`; the candidate binary SHA256 is unchanged from the final TP1 test.
+
+| Workload | DFlash control before / after | DFlash + lookup |
+|---|---:|---:|
+| Code decode tok/s | 99.02 / 98.86 | 123.20 |
+| Prose decode tok/s | 42.70 / 42.64 | 42.95 |
+
+Code improved 24.4–24.6% descriptively, accepting 148 of 156 lookup proposals per
+256-token response. Complete code and seeded prose outputs match across all
+arms/repeats. No matched request-phase regression exceeds both 5% and 10 ms.
+This is one B/C/B screen, not an independent process-pair confidence study or a
+general advantage over native MTP; native MTP was not remeasured in this screen.
+
+Greedy short cases, sampled replay and RAM reuse pass on the actual TP2 path.
+A separate sampled JSON-constant fixture executes real target/draft kernels,
+accepts 321/323 copied proposals on each of two identical seeded responses and
+returns the exact required object. It checks constrained sampling mechanics,
+not model quality. All 11 selected long-context/cache/cancellation/restart case
+reports pass with actual drafts. The aggregate HTTP controller remains **failed**:
+its legacy log-spacing fallback combines checkpoints from unrelated histories
+(`[2447,2828,6278]`). The isolated original spacing fixture/assertions pass after
+restarting both ranks: stores `[2447,6278]`, 16 minimum-step skips and learned
+boundary 3043. No assertion or tolerance was relaxed.
+
+**Transport qualification:** the initial dual-cable candidate run failed during
+a later prefill, with truncated RX frames and retry exhaustion on the slower
+path. Its partial 125 tok/s result is unqualified and retained as a failure.
+Both cables were attached (20 / 10 Gb/s per lane, two lanes each); cycling both
+Thunderbolt controller drivers did not improve the slower negotiation. The
+completed screen and functional checks temporarily isolate EVO domain0/Corsair
+domain1, the 20 Gb/s-per-lane physical connection, using masks 1/2. Native driver
+sourceversion is `81C6FF2FBAC473C7AB21844`, kernel `7.3.0-strix-test`, host-write
+staging (DMA-BUF unsupported). These results do not establish dual-cable
+reliability or performance. Approved native baseline settings were restored on
+both hosts; no kernel/boot changes or maintained/default deployment.
+
+[Machine-readable TP2 results and retained failure details](dflash-lookup-tp2-v1.json).
 
 ## Independent operator parity
 
