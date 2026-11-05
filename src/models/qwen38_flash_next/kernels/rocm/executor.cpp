@@ -1260,7 +1260,9 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
   e->wide_mixer_ = c.hc_count == 4 && c.hidden_size % 32 == 0 &&
                    !model.layers().empty() &&
                    model.layers()[0].hc_ffn.down.type == GgmlType::kQ8_0;
-  if (model.has_mtp()) {
+  // External drafters also use the target's multirow verification selector.
+  // Its scratch must not depend on loading the native MTP predictor weights.
+  if (model.has_mtp() || e->options_.max_speculative > 1) {
     // The trunk's kept rows are session-owned. Its transient residual and
     // mixer buffers are free while MTP constructs its input. The split
     // projections consume h/embd before the first mixer rewrites xn/mixed.
@@ -3371,8 +3373,45 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
                        hipMemcpyDeviceToHost, stream_),
         "draft token download", error_msg);
   }
-  if (!(draft != nullptr ? DraftLogits(*draft, s_.mixed, s_.logits, error_msg)
-                         : Dense(output, s_.mixed, s_.logits, 1, error_msg))) {
+  // Restore the original complete subset logits before selection. Copying
+  // the two halves retains the ordinary confidence reduction order and bits;
+  // exchanging only local softmax totals would change rounding at policy gates.
+  const std::uint32_t subset_half = rows / 2;
+  const bool gather_subset =
+      draft != nullptr && token && !candidates && options_.draft_head_gather &&
+      model_->tp_world_size() == 2 && output.type == GgmlType::kQ8_0 &&
+      model_->draft_output().type == output.type &&
+      model_->draft_output().cols == output.cols && output.cols % 32 == 0 &&
+      rows % 2 == 0 && prefix > subset_half;
+  if (gather_subset) {
+    const std::uint32_t rank = model_->tp_rank();
+    if (rank > 1) {
+      AssignError(error_msg, "draft head gather rank out of range");
+      return false;
+    }
+    DeviceTensor part = model_->draft_output();
+    const std::uint32_t first = rank * subset_half;
+    part.rows = std::min(subset_half, prefix - first);
+    part.data = static_cast<std::uint8_t*>(part.data) +
+                std::size_t{first} * (part.cols / 32) * 34;
+    if (!Dense(part, s_.mixed, s_.logits, 1, error_msg)) {
+      return false;
+    }
+    if (rank == 1) {
+      if (!Dense(DraftTable(*draft), s_.mixed, s_.logits + part.rows, 1,
+                 error_msg)) {
+        return false;
+      }
+      MaskDraftLogits(s_.logits + part.rows, draft->mtp_.draft_ids,
+                      kMtpDraftExtraRows, stream_);
+    }
+    if (!options_.draft_head_gather(s_.logits, subset_half, 1, stream_,
+                                    error_msg)) {
+      return false;
+    }
+  } else if (!(draft != nullptr
+                   ? DraftLogits(*draft, s_.mixed, s_.logits, error_msg)
+                   : Dense(output, s_.mixed, s_.logits, 1, error_msg))) {
     return false;
   }
   const auto count = std::min<std::uint32_t>(rows, kMtpCandidates);
@@ -3513,7 +3552,10 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
   const Config& c = config();
   const auto n = static_cast<std::uint32_t>(tokens.size());
   const bool prefill = mode == ForwardMode::kPrefill;
-  const std::uint32_t lead = prefill ? PairLead(n) : 0;
+  // A capture currently owns one pass's feature buffer. Paired TP prefill
+  // needs distinct lane offsets before it can use the same callback.
+  const std::uint32_t lead =
+      prefill && !session.target_feature_capture_ ? PairLead(n) : 0;
   const bool pair = lead != 0;
   if (checkpoint && (mode != ForwardMode::kPrefill ||
                      checkpoint->source != &session || checkpoint->tokens > n ||
@@ -3526,7 +3568,9 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
     AssignError(error_msg, "a paired prefill chunk takes no checkpoint");
     return false;
   }
-  if (n == 0 || n > (prefill ? PrefillChunk() : options_.max_batch) ||
+  const auto prefill_limit =
+      session.target_feature_capture_ ? options_.max_batch : PrefillChunk();
+  if (n == 0 || n > (prefill ? prefill_limit : options_.max_batch) ||
       (speculative && n > options_.max_speculative)) {
     AssignError(error_msg, "token batch is empty or exceeds the batch limit");
     return false;
@@ -3816,6 +3860,8 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
         return false;
       }
       normed = next_norm != nullptr;
+      if (session.target_feature_capture_)
+        session.target_feature_capture_(il, s_.res, n, stream_);
       continue;
     }
     if (!session.CheckCancellation(error_msg)) {
@@ -3860,6 +3906,8 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
       }
       normed = LayerBack(il, n);
     }
+    if (session.target_feature_capture_)
+      session.target_feature_capture_(il, s_.res, n, stream_);
   }
   if (end_layer < c.num_layers) {
     return true;

@@ -11,10 +11,10 @@
 #include <utility>
 #include <vector>
 
+#include "src/families/qwen/dflash/hip/executor.hpp"
+#include "src/families/qwen/hip_common/device_allocation.hpp"
 #include "src/families/qwen/kernels/dflash_kernels.hpp"
 #include "src/families/qwen/kernels/ops.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
-#include "src/models/qwen/hip/mtp/detail/allocation.hpp"
 
 namespace gufo::hip {
 namespace {
@@ -108,9 +108,11 @@ void ProjectBlock(const models::QwenTensorRef& weight, const float* input,
              detail::IsNativeWmmaQuant(weight.type)) {
     LaunchBatchedQuantGEMMFp32(weight.type, weight.data, input, output, rows,
                                output_size, input_size, stream);
-  } else {
+  } else if (weight.type == core::GgmlType::kF32) {
     LaunchBatchedGEMM(weight.data, false, input, output, rows, output_size,
                       input_size, stream);
+  } else {
+    throw std::invalid_argument("unsupported DFlash batch matrix format");
   }
 }
 

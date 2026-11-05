@@ -276,13 +276,14 @@ class Reader:
             raise ValueError("value overruns buffer")
 
 
-def parse_gguf(path):
+def parse_gguf(path, *, include_tokenizer=False):
+    """Read headers; opt into tokenizer/mask metadata for configuration comparisons."""
     with Path(path).open("rb") as source:
         with mmap.mmap(source.fileno(), 0, access=mmap.ACCESS_READ) as data:
-            return _parse_gguf_data(data)
+            return _parse_gguf_data(data, include_tokenizer=include_tokenizer)
 
 
-def _parse_gguf_data(data):
+def _parse_gguf_data(data, *, include_tokenizer=False):
     assert data[0:4] == b"GGUF", "not a GGUF file"
     r = Reader(data)
     r.pos = 4
@@ -295,7 +296,7 @@ def _parse_gguf_data(data):
     for _ in range(n_kv):
         key = r.string()
         tag = r.u32()
-        if key.startswith("tokenizer."):
+        if key.startswith("tokenizer.") and not include_tokenizer:
             # vocab arrays are huge and unneeded for inspection; skip without storing.
             r.skip_value(tag)
             continue

@@ -12,9 +12,10 @@
 #include <utility>
 #include <vector>
 
+#include "src/families/qwen/dflash/donor.hpp"
+#include "src/families/qwen/dflash/hip/executor.hpp"
+#include "src/families/qwen/hip_common/device_allocation.hpp"
 #include "src/families/qwen/kernels/dflash_kernels.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
-#include "src/models/qwen/hip/mtp/detail/allocation.hpp"
 
 namespace gufo::hip {
 namespace {
@@ -291,12 +292,11 @@ void PackDFlashWeights(speculative::QwenDFlashWeights& weights,
 }  // namespace
 
 QwenDFlashGpuModel::QwenDFlashGpuModel(
-    std::shared_ptr<const core::GgufReader> dflash_reader,
-    std::shared_ptr<const QwenGpuModel> target_model,
+    std::shared_ptr<const core::GgufReader> dflash_reader, DFlashTarget target,
     speculative::QwenDFlashWeights weights, std::vector<void*> allocations,
     std::size_t packed_weight_bytes)
     : dflash_reader_(std::move(dflash_reader)),
-      target_model_(std::move(target_model)),
+      target_(std::move(target)),
       weights_(std::move(weights)),
       allocations_(std::move(allocations)),
       packed_weight_bytes_(packed_weight_bytes) {}
@@ -310,13 +310,26 @@ QwenDFlashGpuModel::~QwenDFlashGpuModel() {
 }
 
 std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
-    std::shared_ptr<const core::GgufReader> dflash_reader,
-    std::shared_ptr<const QwenGpuModel> target_model, std::string* error_msg) {
-  if (dflash_reader == nullptr || target_model == nullptr) {
+    std::shared_ptr<const core::GgufReader> dflash_reader, DFlashTarget target,
+    std::string* error_msg) {
+  if (dflash_reader == nullptr || !target.owner ||
+      target.tokenizer == nullptr) {
     if (error_msg != nullptr) {
       *error_msg = "DFlash reader and target GPU model are required";
     }
     return nullptr;
+  }
+
+  for (const auto& [table, role] :
+       {std::pair{target.token_embedding, "token embedding"},
+        std::pair{target.output, "output"}}) {
+    const auto error = speculative::DFlashDonorError(
+        table, target.config.hidden_size, target.config.vocab_size, role);
+    if (!error.empty()) {
+      if (error_msg != nullptr)
+        *error_msg = error;
+      return nullptr;
+    }
   }
 
   auto raw_weights =
@@ -325,7 +338,7 @@ std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
     return nullptr;
   }
 
-  const auto& target_config = target_model->GetConfig();
+  const auto& target_config = target.config;
   const auto& draft_config = raw_weights->config;
   if (target_config.hidden_size != draft_config.hidden_size ||
       target_config.vocab_size != draft_config.vocab_size) {
@@ -358,8 +371,8 @@ std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
 
     // Unconditionally bind GPU device pointers from the target model for tied
     // weights
-    weights.token_embedding = target_model->GetWeights().token_embd;
-    weights.output = target_model->GetWeights().output;
+    weights.token_embedding = target.token_embedding;
+    weights.output = target.output;
     if (weights.output.type == core::GgmlType::kBF16 &&
         weights.output.num_elements %
                 quant::QuantizedBlockElements(core::GgmlType::kQ8_0) ==
@@ -369,7 +382,7 @@ std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
     }
 
     return std::shared_ptr<const QwenDFlashGpuModel>(new QwenDFlashGpuModel(
-        std::move(dflash_reader), std::move(target_model), std::move(weights),
+        std::move(dflash_reader), std::move(target), std::move(weights),
         std::move(allocations), packed_bytes));
   } catch (const std::exception& ex) {
     for (void* ptr : allocations) {

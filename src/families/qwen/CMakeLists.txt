@@ -23,3 +23,5 @@ if (ENGINE_ENABLE_HIP)
   add_subdirectory(kernels)
 endif()
 add_subdirectory(vision)
+
+add_subdirectory(dflash)
