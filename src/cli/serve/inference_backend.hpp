@@ -24,6 +24,8 @@ struct TextTpConfig {
   std::shared_ptr<TpControlChannel> control;
   std::string auth_token;
   std::uint32_t max_draft_tokens{7};
+  bool use_dflash{false};
+  bool dflash_adaptive{false};
 };
 
 using TextSpeculativeBackend = ext::TextSpeculativeBackend;

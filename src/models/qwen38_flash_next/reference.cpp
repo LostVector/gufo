@@ -562,7 +562,8 @@ void ReferenceModel::Moe(const LayerWeights& l, std::span<const float> x,
 }
 
 bool ReferenceModel::Step(std::int32_t token, std::span<float> logits,
-                          std::span<float> hc_out, std::string* error_msg) {
+                          std::span<float> hc_out, std::string* error_msg,
+                          const LayerObserver& observer) {
   if (position_ >= max_context_) {
     if (error_msg != nullptr) {
       *error_msg = "reference context is full";
@@ -607,6 +608,8 @@ bool ReferenceModel::Step(std::int32_t token, std::span<float> logits,
     HcMix(l.hc_ffn, res, mixed, inject);
     Moe(l, mixed, block_out);
     HcCombine(res, block_out, inject);
+    if (observer)
+      observer(il, res);
   }
   if (!hc_out.empty()) {
     std::copy(res.begin(), res.end(), hc_out.begin());

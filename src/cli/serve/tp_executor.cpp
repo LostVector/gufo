@@ -856,6 +856,11 @@ TextRunnerNgramRows TpMirroredRunner::NgramRows(
   return inner_->NgramRows(Mirrored(state).inner());
 }
 
+std::unique_ptr<TpSnapshotGate::Pending>
+TpMirroredRunner::ReserveAsyncSnapshot() const {
+  return std::make_unique<TpSnapshotGate::Pending>(snapshot_gate_);
+}
+
 void TpMirroredRunner::PrepareBatchExecution(TextRunnerState& state) const {
   inner_->PrepareBatchExecution(Mirrored(state).inner());
 }

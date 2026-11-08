@@ -39,13 +39,15 @@ namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
 
 constexpr std::uint32_t kWireMagic = 0x47554654U;  // "GUFT"
-// Version22 adds ordered PLE owner-read exchanges. Mixed versions fail closed.
-constexpr std::uint32_t kWireVersion = 22;
+// Version23 adds scalar draft-logit gathers. Mixed versions fail closed.
+constexpr std::uint32_t kWireVersion = 23;
 constexpr std::uint32_t kPlacementGpuWindows = 1U;
 constexpr std::uint32_t kPlacementTargetHeadGather = 8U;
 constexpr std::uint32_t kPlacementPleOwner = 16U;
+constexpr std::uint32_t kPlacementDraftHeadGather = 32U;
 constexpr std::uint32_t kPlacementKnownFlags =
-    kPlacementGpuWindows | kPlacementTargetHeadGather | kPlacementPleOwner;
+    kPlacementGpuWindows | kPlacementTargetHeadGather | kPlacementPleOwner |
+    kPlacementDraftHeadGather;
 constexpr std::uint32_t kPlacementMagic = 0x4755504CU;   // "GUPL"
 constexpr std::uint32_t kCollectiveMagic = 0x47554348U;  // "GUCH"
 constexpr std::uint32_t kCollectiveVersion = 5;
@@ -578,7 +580,8 @@ public:
     }
     const Placement local_placement{
         .flags = (local_gpu ? kPlacementGpuWindows : 0U) |
-                 kPlacementTargetHeadGather | kPlacementPleOwner};
+                 kPlacementTargetHeadGather | kPlacementPleOwner |
+                 kPlacementDraftHeadGather};
     Placement remote_placement{};
     if (!control.SendAll(&local_placement, sizeof(local_placement), error) ||
         !control.RecvAll(&remote_placement, sizeof(remote_placement), error)) {
@@ -594,6 +597,8 @@ public:
         local_gpu && (remote_placement.flags & kPlacementGpuWindows) != 0;
     target_head_gather_ = (local_placement.flags & remote_placement.flags &
                            kPlacementTargetHeadGather) != 0;
+    draft_head_gather_ = (local_placement.flags & remote_placement.flags &
+                          kPlacementDraftHeadGather) != 0;
     ple_owner_ = (local_placement.flags & remote_placement.flags &
                   kPlacementPleOwner) != 0;
     if (local_gpu && !gpu_windows_) {
@@ -759,6 +764,9 @@ public:
   }
   [[nodiscard]] bool SupportsTargetHeadGather() const noexcept override {
     return target_head_gather_;
+  }
+  [[nodiscard]] bool SupportsDraftHeadGather() const noexcept override {
+    return draft_head_gather_;
   }
   [[nodiscard]] bool SupportsPleOwner() const noexcept override {
     return ple_owner_;
@@ -1798,6 +1806,7 @@ private:
   GpuWindows recv_gpu_;
   bool gpu_windows_{false};
   bool target_head_gather_{false};
+  bool draft_head_gather_{false};
   bool ple_owner_{false};
   std::string gpu_unavailable_;
   std::size_t data_offset_{kDataOffset};

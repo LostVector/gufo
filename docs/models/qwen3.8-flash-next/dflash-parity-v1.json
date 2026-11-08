@@ -1,0 +1,271 @@
+{
+  "schema": 1,
+  "date": "2026-11-03",
+  "strict_scope": "Pinned author operators; identical supplied target features, packed/dequantized weights and donor tables; FP32 execution. Not original target or checkpoint equivalence.",
+  "reference": {
+    "repository": "z-lab/dflash",
+    "revision": "07ebd93db9f472af339b644bb70221ad8428328a",
+    "source_sha256": "f55b7fe0a4c0b3073e0f9cdce547cce29f4b8e2168c4d2818760007c43b7651e",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.12.1",
+    "device": "cpu",
+    "threads": 8
+  },
+  "model": {
+    "target_quant": "UD-Q4_K_XL",
+    "donor_embedding_and_head": "Q8_0",
+    "draft_repository": "incoai/Qwen3.8-Flash-Next-DFlash2-GGUF",
+    "revision": "4f5a39be8f0a9e9a573ac9824251830a8f4096d9",
+    "draft_q8_sha256": "541f4d6ee230747a34d4a2c6890e6e08cc8b19c461226dc1829701a544e46e8a",
+    "draft_bf16_sha256": "fa63c62374607095cfb07441abfe8c18982ae99d130472e2ea0da35c61d98b20"
+  },
+  "criteria": {
+    "stage_relative_rmse": 0.0001,
+    "logit_max_abs": 0.001,
+    "q_total_variation": 0.0001,
+    "exact_candidate_membership": true
+  },
+  "strict_cases": [
+    {
+      "case": "short",
+      "prefix_tokens": 24,
+      "rows": 3,
+      "matching_candidate_sets": 3,
+      "max_q_total_variation": 2.0374318410176784e-06,
+      "max_selector_probability_error": 3.2782554626464844e-07,
+      "max_stage_relative_rmse": 1.8125414354679347e-06,
+      "max_logit_absolute_error": 1.52587890625e-05,
+      "report": "reference-short-v3.json",
+      "report_sha256": "2ca6b0ee34b1156eb34af9cc3d5103b6733b1b09cac91b90d65086423829c94c"
+    },
+    {
+      "case": "ring",
+      "prefix_tokens": 2064,
+      "rows": 7,
+      "matching_candidate_sets": 7,
+      "max_q_total_variation": 1.193352545669768e-07,
+      "max_selector_probability_error": 2.384185791015625e-07,
+      "max_stage_relative_rmse": 2.2097814251868488e-05,
+      "max_logit_absolute_error": 1.811981201171875e-05,
+      "report": "reference-ring-v2.json",
+      "report_sha256": "d5a2aee8a6c266ded8e4f01d8c2e0bbc2ee7206a97e9f6b6dce23f8235542bcc"
+    },
+    {
+      "case": "rejection",
+      "prefix_tokens": 2065,
+      "rows": 7,
+      "matching_candidate_sets": 7,
+      "max_q_total_variation": 5.974084160698112e-08,
+      "max_selector_probability_error": 1.1920928955078125e-07,
+      "max_stage_relative_rmse": 2.2436117310879388e-05,
+      "max_logit_absolute_error": 1.4662742614746094e-05,
+      "report": "reference-rejection-v2.json",
+      "report_sha256": "f07ee85014f2674b8bcb89169c55aaeea241f5a5cca80cad2c75dcca53ff9ee3"
+    },
+    {
+      "case": "restore",
+      "prefix_tokens": 2065,
+      "rows": 7,
+      "matching_candidate_sets": 7,
+      "max_q_total_variation": 5.974084160698112e-08,
+      "max_selector_probability_error": 1.1920928955078125e-07,
+      "max_stage_relative_rmse": 2.2436117310879388e-05,
+      "max_logit_absolute_error": 1.4662742614746094e-05,
+      "report": "reference-restore-v2.json",
+      "report_sha256": "59f03ce53e8d93742127d7c1a6bea07dcddcb65ba095a9846abfd528b1713e71"
+    },
+    {
+      "case": "presence",
+      "prefix_tokens": 24,
+      "rows": 7,
+      "matching_candidate_sets": 7,
+      "max_q_total_variation": 1.1422962415963411e-06,
+      "max_selector_probability_error": 3.129243850708008e-07,
+      "max_stage_relative_rmse": 2.242474350355606e-06,
+      "max_logit_absolute_error": 1.1444091796875e-05,
+      "report": "reference-presence-v1.json",
+      "report_sha256": "ec6fc8cdf11d0c1d8aef2124fd2558065b0948bf10aacb18086dc0fc7c5b30a0"
+    }
+  ],
+  "precision_diagnostic": {
+    "bf16_weights": {
+      "same_candidate_sets": 3,
+      "rows": 3,
+      "max_total_variation": 0.0021562534384429455,
+      "mean_total_variation": 0.0013712672630390443
+    },
+    "bf16_execution": {
+      "same_candidate_sets": 2,
+      "rows": 3,
+      "max_total_variation": 0.02314811572432518,
+      "mean_total_variation": 0.011473606406070758
+    }
+  },
+  "draft_quantization_diagnostic": {
+    "alternative": "BF16 checkpoint weights",
+    "same_nonquantization_metadata": true,
+    "tokenizer_metadata_compared": true,
+    "max_q_total_variation": 0.28093820810317993,
+    "fixed_candidate_max_q_total_variation": 0.028525158762931824,
+    "changed_cutoff_case": {
+      "row": 1,
+      "predecessor": 1536,
+      "total_variation": 0.28093820810317993,
+      "fixed_candidate_total_variation": 0.028525158762931824,
+      "changed_members": [
+        {
+          "token": 628,
+          "baseline_rank": 18,
+          "alternative_rank": 16,
+          "baseline_logit": 12.569246292114258,
+          "alternative_logit": 12.636130332946777,
+          "baseline_q": 0.0,
+          "alternative_q": 0.008410248905420303,
+          "target_p": 0.0
+        },
+        {
+          "token": 6602,
+          "baseline_rank": 16,
+          "alternative_rank": 17,
+          "baseline_logit": 12.63038158416748,
+          "alternative_logit": 12.625041007995605,
+          "baseline_q": 0.28093814849853516,
+          "alternative_q": 0.0,
+          "target_p": 0.0
+        }
+      ],
+      "conditional_expected_acceptance": {
+        "baseline": 0.0,
+        "alternative": 0.0,
+        "fixed_candidates_alternative": 0.0
+      }
+    },
+    "same_weight_control_passed": true,
+    "live": {
+      "Q8_0": {
+        "requests": 4,
+        "accepted": 777,
+        "proposed": 1279,
+        "accepted_over_proposed": 0.6075058639562158,
+        "output_tokens": 1204,
+        "speculative_cycles": 427,
+        "output_over_cycles": 2.819672131147541,
+        "natural_stops": 3,
+        "length_capped": 1
+      },
+      "BF16_weights": {
+        "requests": 4,
+        "accepted": 818,
+        "proposed": 1281,
+        "accepted_over_proposed": 0.6385636221701796,
+        "output_tokens": 1247,
+        "speculative_cycles": 427,
+        "output_over_cycles": 2.920374707259953,
+        "natural_stops": 2,
+        "length_capped": 2
+      }
+    },
+    "live_scope": "Same Q4 target, Gufo FP32 arithmetic, fixed3, neutral-penalty chat/xhigh; 4 requests each. Stochastic trajectories differ; no confidence claim. Some requests capped."
+  },
+  "negative_control": {
+    "exit": 1,
+    "expected_failure": true,
+    "ended_ns": 1793731710666607276
+  },
+  "limits": [
+    "Supplied feature values do not validate original FP8-target execution.",
+    "GGUF converter and original unquantized checkpoint equivalence are not established.",
+    "CPU BF16 arithmetic diagnostic is separate from strict FP32 parity.",
+    "No current TP2 numerical oracle because native RDMA devices absent.",
+    "Conditional p/q overlaps at forced observed prefixes are not trajectory acceptance rates.",
+    "Full64K and additional workloads remain unqualified."
+  ],
+  "reproduction_source_sha256": {
+    "tests/models/qwen38_flash_next/dflash_trace.cpp": "1cdd6701e7c704ddadb4c6c56f15a18e2ecd1f0283ecee99f004be7a81360987",
+    "tools/qwen27b/dflash_reference.py": "d74f2ca26e5ae82e32458a32b52b103ab5b10f5a76ef6bd73cb270607070610e",
+    "tools/gufo/gguf.py": "6db851242c2d3d593fd16ee538f436c566823b96fc1e556df7398feea3c9dc67",
+    "src/models/qwen38_flash_next/reference.hpp": "ece1007c8f93142e966c372c1b72fd7b58145788140b94d54a5def946426c083",
+    "src/models/qwen38_flash_next/reference.cpp": "d6c4558dcc66d388a78e803f1e3d93ebc2e996f64332aa0510c3c59cd6a656b9"
+  },
+  "target_feature_diagnostic": {
+    "tokens": 1,
+    "target": "same UD-Q4_K_XL weights",
+    "comparison": {
+      "scalar_f32": [
+        {
+          "tap": 5,
+          "relative_rmse": 0.0011888001637296542,
+          "cosine": 0.9999993118246985,
+          "norm_ratio": 1.0001913943663767,
+          "max_abs": 0.0004868479445576668
+        },
+        {
+          "tap": 15,
+          "relative_rmse": 0.002686011931107021,
+          "cosine": 0.9999964226291621,
+          "norm_ratio": 1.0002412311544815,
+          "max_abs": 0.0005869269371032715
+        },
+        {
+          "tap": 25,
+          "relative_rmse": 0.002488642489219634,
+          "cosine": 0.9999969033864717,
+          "norm_ratio": 0.9999857691569256,
+          "max_abs": 0.000628957524895668
+        },
+        {
+          "tap": 35,
+          "relative_rmse": 0.004294872529937576,
+          "cosine": 0.9999909527775775,
+          "norm_ratio": 1.0005838836832992,
+          "max_abs": 0.001148877665400505
+        },
+        {
+          "tap": 45,
+          "relative_rmse": 0.003725793330144459,
+          "cosine": 0.9999930709461103,
+          "norm_ratio": 1.0001462903115492,
+          "max_abs": 0.0038106441497802734
+        }
+      ],
+      "scalar_decode": [
+        {
+          "tap": 5,
+          "relative_rmse": 0.010613936529107608,
+          "cosine": 0.9999550731998378,
+          "norm_ratio": 1.0047304335783211,
+          "max_abs": 0.0026550889015197754
+        },
+        {
+          "tap": 15,
+          "relative_rmse": 0.015991765482731665,
+          "cosine": 0.9998859958101977,
+          "norm_ratio": 1.0051529855206873,
+          "max_abs": 0.002778463065624237
+        },
+        {
+          "tap": 25,
+          "relative_rmse": 0.014852396025993834,
+          "cosine": 0.9999169449508285,
+          "norm_ratio": 1.0072987108313576,
+          "max_abs": 0.007814168930053711
+        },
+        {
+          "tap": 35,
+          "relative_rmse": 0.024726803357731118,
+          "cosine": 0.9997315555300065,
+          "norm_ratio": 1.008368564662014,
+          "max_abs": 0.014650821685791016
+        },
+        {
+          "tap": 45,
+          "relative_rmse": 0.028597440991481576,
+          "cosine": 0.999591057415364,
+          "norm_ratio": 0.9999004051660233,
+          "max_abs": 0.028996825218200684
+        }
+      ]
+    },
+    "scope": "Diagnostic without predeclared pass threshold. Separate scalar target formulas/storage emulation; not original FP8 target or later-token qualification."
+  }
+}

@@ -23,6 +23,13 @@
 namespace gufo::server {
 namespace {
 
+// Preserve existing hello encodings 0=off and 1=MTP. Older peers reject
+// DFlash2 encodings as a mismatch before executing any model instruction.
+std::uint32_t DraftMode(const TpControlConfig& config) {
+  return config.use_dflash ? (config.dflash_adaptive ? 3U : 2U)
+                           : (config.use_mtp ? 1U : 0U);
+}
+
 constexpr std::uint32_t kMagic = 0x54504331U;  // "TPC1"
 constexpr std::uint16_t kVersion = 21;         // reasoning budgets, prefill
                                                // lookahead, the control token
@@ -661,7 +668,9 @@ bool TpControlChannel::Handshake(const TpControlConfig& config,
       config.max_context == 0 || config.prefill_chunk_tokens == 0 ||
       config.sessions == 0 || config.auth_token.empty() ||
       config.auth_token.size() > kMaxAuthTokenBytes || handshaken_ ||
-      (config.use_mtp && config.max_draft_tokens == 0)) {
+      ((config.use_mtp || config.use_dflash) && config.max_draft_tokens == 0) ||
+      (config.use_mtp && config.use_dflash) ||
+      (!config.use_dflash && config.dflash_adaptive)) {
     SetError(error, "TP control configuration is invalid");
     return false;
   }
@@ -676,7 +685,7 @@ bool TpControlChannel::Handshake(const TpControlConfig& config,
   AppendU32(&payload, config.max_context);
   AppendU32(&payload, config.prefill_chunk_tokens);
   AppendU32(&payload, config.max_draft_tokens);
-  AppendU32(&payload, config.use_mtp ? 1U : 0U);
+  AppendU32(&payload, DraftMode(config));
   AppendU32(&payload, config.sessions);
   AppendU32(&payload, config.vision ? 1U : 0U);
   AppendU32(&payload, config.disk_cache ? 1U : 0U);
@@ -746,7 +755,7 @@ bool TpControlChannel::Handshake(const TpControlConfig& config,
           context);
   differs(prefill_chunk != config.prefill_chunk_tokens, "prefill chunk",
           config.prefill_chunk_tokens, prefill_chunk);
-  differs(mtp != (config.use_mtp ? 1U : 0U), "MTP", config.use_mtp ? 1U : 0U,
+  differs(mtp != DraftMode(config), "draft backend/policy", DraftMode(config),
           mtp);
   differs(draft != config.max_draft_tokens, "draft tokens",
           config.max_draft_tokens, draft);

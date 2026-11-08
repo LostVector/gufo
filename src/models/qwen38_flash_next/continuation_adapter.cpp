@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "src/families/qwen/dflash/hip/executor.hpp"
 #include "src/models/qwen38_flash_next/continuation_hooks.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/executor.hpp"
 
@@ -62,6 +63,7 @@ public:
   State(ContinuationAdapter& adapter, cache::MutationGuard& guard,
         std::unique_ptr<Session> session)
       : adapter(adapter), guard(guard), session(std::move(session)) {
+    external_state.resize(adapter.external_snapshot_bytes_);
     this->session->continuation_hooks_ = this;
     this->session->session_->continuation_hooks_ = this;
   }
@@ -113,6 +115,7 @@ public:
   void BeforeExecution() override {
     if (!IsValid() || pending || at_boundary)
       throw std::logic_error("Flash-Next slot is not ready for execution");
+    external_capture_ready = false;
   }
   void BeforeWrite(bool draft, std::uint32_t first, std::uint32_t end,
                    std::uint32_t first_block,
@@ -132,6 +135,10 @@ public:
       if (a < b)
         guard.BeforeOverwrite(component.descriptor.id, a, b);
     }
+    // One Sync may capture a boundary and then execute its tail without a
+    // second outer BeforeExecution call. Any write invalidates frozen draft
+    // staging after preserving the old context for existing readers.
+    external_capture_ready = false;
   }
   void BeforeReset() override {
     if (invalidating)
@@ -194,6 +201,8 @@ public:
   std::vector<cache::ComponentPosition> expected;
   std::vector<Coverage> coverage;
   std::array<std::byte, kContinuationMetadataBytes> metadata{};
+  std::vector<std::byte> external_state;
+  bool external_capture_ready{false};
 };
 
 struct ContinuationAdapter::Region {
@@ -205,27 +214,40 @@ struct ContinuationAdapter::Region {
   std::vector<Piece> pieces;
 };
 
-ContinuationAdapter::ContinuationAdapter(std::shared_ptr<Model> model,
-                                         core::SessionMode mode,
-                                         std::uint32_t context,
-                                         cache::Identity identity)
+ContinuationAdapter::ContinuationAdapter(
+    std::shared_ptr<Model> model, core::SessionMode mode, std::uint32_t context,
+    cache::Identity identity,
+    std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model)
     : model_(std::move(model)),
+      draft_model_(std::move(draft_model)),
+      external_snapshot_bytes_(
+          draft_model_
+              ? sizeof(std::uint64_t) +
+                    Session::DFlashSnapshotCapacity(*draft_model_, context)
+              : 0),
       mode_(mode),
       context_(context),
       layout_(model_ ? model_->config() : Config{},
               mode == core::SessionMode::kSpeculative, context,
-              model_ ? model_->executor_->max_speculative() : 0),
+              model_ ? model_->executor_->max_speculative() : 0,
+              external_snapshot_bytes_),
       identity_(std::move(identity)) {
   if ((mode != core::SessionMode::kAutoregressive &&
        mode != core::SessionMode::kSpeculative) ||
       identity_.empty() || context > model_->MaxContext() ||
-      (mode == core::SessionMode::kSpeculative && !model_->HasMtp()))
+      (mode == core::SessionMode::kSpeculative &&
+       (!model_->HasMtp() || draft_model_)) ||
+      (draft_model_ && draft_model_->TargetOwnerIdentity() != model_.get()))
     throw std::invalid_argument("invalid Flash-Next adapter configuration");
   const auto put = [&](std::uint32_t value) {
     for (unsigned i = 0; i < 4; ++i)
       identity_.push_back(static_cast<std::uint8_t>(value >> (8 * i)));
   };
-  put(2);  // Private components attest the target checkpoint boundary.
+  put(draft_model_
+          ? 3
+          : 2);  // Private components attest the target checkpoint boundary.
+  if (draft_model_)
+    put(static_cast<std::uint32_t>(external_snapshot_bytes_));
   put(Session::kSnapshotPayloadVersion);
   put(context);
   put(mode == core::SessionMode::kSpeculative);
@@ -302,7 +324,7 @@ cache::Identity ContinuationAdapter::CompatibilityIdentity() const {
 std::unique_ptr<cache::Slot> ContinuationAdapter::CreateSlot(
     cache::MutationGuard& guard) {
   std::string error;
-  auto session = model_->CreateSession(mode_, context_, &error);
+  auto session = model_->CreateSession(mode_, context_, &error, draft_model_);
   if (!session)
     throw std::runtime_error(error);
   return std::make_unique<State>(*this, guard, std::move(session));
@@ -425,6 +447,7 @@ void ContinuationAdapter::BeginRestore(
   state.expected = std::move(ordered);
   state.coverage = std::move(coverage);
   state.metadata.fill(std::byte{});
+  state.external_capture_ready = false;
   state.restoring = true;
   state.session->valid_ = false;
   // The restore rewrites the tokens in place, not through RestoreSnapshot.
@@ -475,6 +498,13 @@ ContinuationAdapter::Region ContinuationAdapter::PrivateRegion(
   };
   const auto bytes = component.descriptor.state_bytes;
   switch (component.part) {
+    case ContinuationPart::kExternalDraft:
+      if (!loading && !state.external_capture_ready) {
+        session.SerializeDFlashState(state.external_state);
+        state.external_capture_ready = true;
+      }
+      add(state.external_state.data(), bytes, true);
+      break;
     case ContinuationPart::kLogits:
       add(state.checkpoint ? const_cast<float*>(state.checkpoint->logits.data())
                            : session.logits_.data(),
@@ -825,6 +855,9 @@ bool ContinuationAdapter::Validate(
       session.image_prompt_.reset();
     }
     Check(hipStreamSynchronize(model_->executor_->stream()));
+    if (draft_model_ && !session.RestoreDFlashState(state.external_state,
+                                                    metadata.target, nullptr))
+      return refuse();
   } catch (...) {
     return refuse();
   }

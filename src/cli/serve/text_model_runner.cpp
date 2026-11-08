@@ -14,6 +14,7 @@
 #include "src/cli/serve/component_text_cache.hpp"
 #include "src/cli/serve/continuation_disk_store.hpp"
 #include "src/cli/serve/logging.hpp"
+#include "src/cli/serve/tp_executor.hpp"
 #include "src/core/json.hpp"
 
 namespace gufo::server {
@@ -787,12 +788,26 @@ struct TextRunnerPool::Request::Impl {
 
     snapshot_start = std::chrono::steady_clock::now();
     try {
+      std::unique_ptr<TpSnapshotGate::Pending> reservation;
+      // Deferred work starts only when its future is consumed. Reserving it
+      // here could park that same consumer forever. Component captures retain
+      // their own scheduling path; only native TP snapshots use this gate.
+      if (!wait && !lease.component()) {
+        if (const auto* tp =
+                dynamic_cast<const TpMirroredRunner*>(runner.get()))
+          reservation = tp->ReserveAsyncSnapshot();
+      }
       // A warm prefill must await its fallback before mutating recurrent
       // state. Run that copy on this worker instead of starting a thread
       // only to join it. Post-token captures remain asynchronous.
       snapshot_future =
           std::async(wait ? std::launch::deferred : std::launch::async,
-                     [this, owner = runner, state, persist = bool(disk_store)] {
+                     [this, owner = runner, state, persist = bool(disk_store),
+                      reservation = std::move(reservation)]() mutable {
+                       // std::async may retain its callable until future.get().
+                       // Keep the guard on the executing stack so completion
+                       // releases the gate even before that future is consumed.
+                       auto active_reservation = std::move(reservation);
                        if (lease.component())
                          return lease.Capture();
                        return persist ? owner->SnapshotForPersistence(*state)
