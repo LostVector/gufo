@@ -136,3 +136,14 @@ were used, without rerunning measurements or relaxing assertions/tolerances.
 This fork evidence is TP2-specific. A common canonical port is prepared but has
 not received independent canonical TP1 qualification. The separate Q8-reuse PR
 is not included. Maintained `tp2` remains unchanged pending review and evidence.
+
+## November 8 current-base follow-up
+
+[Fresh production comparison and source traces](hc-c2-followup-2026-11-08.md)
+use merged PR16 base59855a97 and current B6 driver, with each HC candidate built
+separately. All 168 production request identities match; timing remains
+inconclusive/confounded, and all flags are retained. Valid source observations
+identify serial first native-MTP calls behind the common initial C2 gap;
+recovered transport errors also occur in a diagnostic baseline. This evidence
+addition changes no production code and does not qualify adoption or clear the
+historical latency flags. The PR remains a draft.
