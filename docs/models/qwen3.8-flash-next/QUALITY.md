@@ -1,5 +1,18 @@
 # Qwen3.8 Flash-Next quality
 
+## Independent review and native-mode controls, November 7, 2026
+
+Independent review identified one direct core include, now fixed and verified
+through the extension facade. The strict model/core boundary and CPU checks
+pass. Matched release-preset AR/MTP controls retain all CLI samples and pass
+all compared HTTP outputs/cache work with zero per-request timing flags.
+Original aggregate HTTP comparisons remain inconclusive for lifecycle loading:
+AR startup/restart and MTP startup exceeded the unchanged gate. Alternating
+startup-only probes slowed across both binaries; no stable candidate-only
+penalty was established. Those flags remain recorded and unqualified.
+See [review](DFLASH2-REVIEW.md) and
+[native-mode controls, raw values and limits](DFLASH2-NATIVE-CONTROLS.md).
+
 ## Single-node DFlash2 port, November 7, 2026
 
 Current upstream base `0fb50ce4`, private ROCm 7.14.1, gfx1151,

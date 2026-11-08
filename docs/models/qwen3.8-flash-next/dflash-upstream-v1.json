@@ -90,11 +90,19 @@
     "No new shared-head end-to-end performance claim.",
     "No full 64K/262K sequence or batched Flash Next DFlash qualification.",
     "Scalar p/q teacher checks the external full-head path; owned sessions separately exercise the smaller head and seeded replay.",
-    "Fresh independent code review and matched existing-mode timing controls remain before upstream submission."
+    "Initial-run limitation; see followup below: Fresh independent code review and matched existing-mode timing controls remain before upstream submission."
   ],
   "retained_failures": [
     "Initial unsupported-donor ordering assertion; fixed before successful model qualification.",
     "Initial trial restart probe rejected TIME_WAIT; fixed and later restoration passed.",
     "gpu-v2 controller exited with shell parse error after all six child tests passed because its script was edited while running; restoration succeeded. Immutable extra controller completed successfully."
-  ]
+  ],
+  "followup": {
+    "review": "DFLASH2-REVIEW.md",
+    "review_finding": "P2 direct core include fixed and independently verified at 4e78ff2f",
+    "native_controls": "dflash-native-controls-v1.json",
+    "native_functional": "AR and MTP pass all selected histories; no output/cache-work differences",
+    "native_request_timing": "No per-request flags in either mode",
+    "native_lifecycle_timing": "Original startup/restart comparisons remain inconclusive; isolated probes show progressively slower loading on both binaries"
+  }
 }

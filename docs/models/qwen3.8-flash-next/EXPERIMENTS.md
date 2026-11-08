@@ -1,5 +1,17 @@
 # Qwen3.8 Flash-Next experiments
 
+## Single-node DFlash2 upstream port (November 7, 2026)
+
+Retained for review: reuse upstream's prefix-plus-request-table DFlash head
+and component-cache interfaces for Flash Next. Independent review's facade
+include finding is fixed. GPU/model correctness, legacy Qwen27B, checkpoint
+and lookup checks pass; native AR/MTP release controls have no per-request
+flag or output/cache-work difference. Initial lifecycle timing flags remain
+inconclusive after startup-only probes showed rising load times on both
+binaries. No full-head/small-head or native-MTP advantage is claimed for
+DFlash; natural prose/coding performance characterization remains future work.
+See [scope and retained evidence](DFLASH2-NATIVE-CONTROLS.md).
+
 ## Raw completion fallback (November 4, 2026)
 
 Retained: capture the aligned prompt tail in-pass before retaining the exact

@@ -45,6 +45,11 @@ single-stream prose comparisons favored MTP. A shared-head projection reduction
 alone does not establish an end-to-end gain; compare matched prompts, model
 quantization, context depth, sampling, stopping and concurrency.
 
+The completed independent review and matched native AR/MTP controls are in
+[DFLASH2-REVIEW.md](DFLASH2-REVIEW.md) and
+[DFLASH2-NATIVE-CONTROLS.md](DFLASH2-NATIVE-CONTROLS.md). Lifecycle timing
+flags remain inconclusive; no per-request regression flag was observed.
+
 ## Focused qualification
 
 Configure a HIP test build for `gfx1151`, then build these targets:
