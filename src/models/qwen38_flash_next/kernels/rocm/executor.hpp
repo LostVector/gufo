@@ -14,9 +14,11 @@
 #include <memory>
 #include <mutex>
 #include <span>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 #include "src/families/qwen/kernels/ops/token.hpp"
@@ -107,6 +109,17 @@ public:
   Session& operator=(const Session&) = delete;
 
   [[nodiscard]] bool mtp_enabled() const noexcept { return mtp_enabled_; }
+  using TargetFeatureCapture = std::function<void(std::uint32_t, const float*,
+                                                  std::uint32_t, hipStream_t)>;
+  // Install once before the session runs. The callback enqueues device work;
+  // its buffer addresses must remain stable through graph replay and teardown.
+  void SetTargetFeatureCapture(TargetFeatureCapture capture) {
+    if (!capture || target_feature_capture_ || position_ != 0 ||
+        !graphs_.empty() || !warmed_.empty()) {
+      throw std::logic_error("target feature capture requires a fresh session");
+    }
+    target_feature_capture_ = std::move(capture);
+  }
   [[nodiscard]] std::uint32_t position() const noexcept { return position_; }
   [[nodiscard]] std::uint32_t max_context() const noexcept {
     return max_context_;
@@ -191,6 +204,7 @@ private:
   qwen::vision::DeviceInput vision_input_;
   std::uint32_t max_context_{0};
   bool mtp_enabled_{false};
+  TargetFeatureCapture target_feature_capture_;
   std::uint32_t index_capacity_{0};  ///< power-of-two raw indexer ring rows
   std::uint32_t position_{0};
   /// Dynamic YaRN: the factor this session's cached keys are rotated with,

@@ -15,8 +15,13 @@ namespace gufo::models::qwen38_flash_next {
 // serving.
 class ContinuationAdapter final : public cache::Adapter {
 public:
-  ContinuationAdapter(std::shared_ptr<Model>, core::SessionMode,
-                      std::uint32_t context, cache::Identity);
+  ContinuationAdapter(
+      std::shared_ptr<Model>, core::SessionMode, std::uint32_t context,
+      cache::Identity,
+      std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model = {});
+  [[nodiscard]] std::size_t PrivateScratchBytes() const noexcept {
+    return external_snapshot_bytes_;
+  }
   ~ContinuationAdapter() override;
   [[nodiscard]] Session& GetSession(cache::Slot&);
   // Capture synchronously while the coherent boundary is exposed; settle
@@ -92,6 +97,8 @@ private:
       State&, bool load, cache::Stream&,
       const std::function<void(gufo::hip::TransferStream&)>&);
   std::shared_ptr<Model> model_;
+  std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model_;
+  std::size_t external_snapshot_bytes_{0};
   core::SessionMode mode_;
   std::uint32_t context_;
   ContinuationLayout layout_;

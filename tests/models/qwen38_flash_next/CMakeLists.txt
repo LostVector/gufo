@@ -35,6 +35,8 @@ add_qwen38_flash_next_test(rope_scaling gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(rope_scaling_oracle
   gufo_qwen38_flash_next_reference "cpu")
 add_qwen38_flash_next_test(prompt_lookup gufo_core "cpu")
+add_qwen38_flash_next_test(dflash_donor gufo_qwen_dflash "cpu;dflash2;correctness")
+add_qwen38_flash_next_test(dflash_lookup gufo_core "cpu;dflash2;correctness")
 
 add_executable(qwen38_flash_next_reference_probe EXCLUDE_FROM_ALL reference_probe.cpp)
 target_link_libraries(qwen38_flash_next_reference_probe PRIVATE
@@ -42,6 +44,41 @@ target_link_libraries(qwen38_flash_next_reference_probe PRIVATE
 set_source_files_properties(reference_probe.cpp PROPERTIES COMPILE_OPTIONS "-O2")
 
 if (ENGINE_ENABLE_HIP)
+  add_executable(qwen38_flash_next_dflash_trace EXCLUDE_FROM_ALL dflash_trace.cpp)
+  target_link_libraries(qwen38_flash_next_dflash_trace PRIVATE
+    gufo_qwen38_flash_next_hip gufo_qwen38_flash_next_reference hip::host gufo_core)
+  add_qwen38_flash_next_test(dflash_prototype gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;correctness")
+  set_target_properties(qwen38_flash_next_dflash_prototype_test PROPERTIES
+    EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_prototype PROPERTIES
+    SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_sampled gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;correctness")
+  set_target_properties(qwen38_flash_next_dflash_sampled_test PROPERTIES
+    EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_sampled PROPERTIES
+    SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_lookup_model gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;correctness")
+  set_target_properties(qwen38_flash_next_dflash_lookup_model_test PROPERTIES
+    EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_lookup_model PROPERTIES
+    SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_owned gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;correctness")
+  set_target_properties(qwen38_flash_next_dflash_owned_test PROPERTIES EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_owned PROPERTIES SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_component gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;cache;correctness")
+  set_target_properties(qwen38_flash_next_dflash_component_test PROPERTIES EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_component PROPERTIES SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_features gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;correctness")
+  foreach(name IN ITEMS prototype sampled lookup_model owned component features)
+    target_link_libraries(qwen38_flash_next_dflash_${name}_test PRIVATE
+      gufo_qwen_dflash hip::host)
+  endforeach()
   add_library(qwen38_flash_next_test_hip INTERFACE)
   target_link_libraries(qwen38_flash_next_test_hip INTERFACE
     gufo_qwen38_flash_next_hip gufo_qwen38_flash_next_mmq hip::host)

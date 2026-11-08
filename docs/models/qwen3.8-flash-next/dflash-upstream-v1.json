@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "upstream_base": "0fb50ce4",
+  "hardware": "Ryzen AI Max+ 395 / gfx1151 / 128GB UMA",
+  "rocm": "private 7.14.1",
+  "build_type": "RelWithDebInfo; BUILD_TESTING=ON; native gufo target",
+  "target_quant": "UD-Q4_K_XL; borrowed embedding/head Q8_0",
+  "draft_quant": "Q8_0",
+  "binary_sha256": "2ca7037a639cb32de234b8e6ba12610600b02a0d0139ae42e12211787a3c18d9",
+  "cpu_only_tests": [
+    "donor",
+    "lookup"
+  ],
+  "hip_feature_capture": "passed (including HIP Graph replay)",
+  "gpu_cases": [
+    {
+      "case": "owned",
+      "exit_code": 0,
+      "seconds": 47.28471030399669
+    },
+    {
+      "case": "owned-adaptive",
+      "exit_code": 0,
+      "seconds": 47.20293425396085
+    },
+    {
+      "case": "component",
+      "exit_code": 0,
+      "seconds": 42.97691930399742
+    },
+    {
+      "case": "component-adaptive",
+      "exit_code": 0,
+      "seconds": 41.483887340989895
+    },
+    {
+      "case": "sampled",
+      "exit_code": 0,
+      "seconds": 60.33628585701808
+    },
+    {
+      "case": "lookup_model",
+      "exit_code": 0,
+      "seconds": 28.20527565595694
+    },
+    {
+      "case": "multi-component",
+      "exit_code": 0,
+      "seconds": 45.83836767799221
+    },
+    {
+      "case": "multi-component-adaptive",
+      "exit_code": 0,
+      "seconds": 43.94810244394466
+    },
+    {
+      "case": "legacy-qwen27",
+      "exit_code": 0,
+      "seconds": 20.595690127112903
+    }
+  ],
+  "scalar_checks": {
+    "accepted": 118,
+    "rejected": 262
+  },
+  "legacy_shared_small_head_blocks": 114,
+  "http": {
+    "status": "passed",
+    "context_capacity": 8192,
+    "sessions": 2,
+    "ram_cache_bytes": 2147483648,
+    "suites": {
+      "long-context": "passed",
+      "state-edges": "passed",
+      "text-cancel": "passed",
+      "thinking-tool-cancel": "passed",
+      "legacy-tool-cancel": "passed",
+      "disk-spacing": "passed",
+      "cache-persist": "passed",
+      "text-cancel-disk": "passed",
+      "thinking-tool-cancel-disk": "passed",
+      "legacy-tool-cancel-disk": "passed",
+      "cache-persist-disk": "passed",
+      "disk-spacing-disk": "passed"
+    }
+  },
+  "limitations": [
+    "No TP/RDMA in this upstream port; the live TP2 trial retains the original fork binary.",
+    "HTTP --record-baseline is candidate correctness/reference capture, not matched regression timing qualification.",
+    "No new shared-head end-to-end performance claim.",
+    "No full 64K/262K sequence or batched Flash Next DFlash qualification.",
+    "Scalar p/q teacher checks the external full-head path; owned sessions separately exercise the smaller head and seeded replay.",
+    "Fresh independent code review and matched existing-mode timing controls remain before upstream submission."
+  ],
+  "retained_failures": [
+    "Initial unsupported-donor ordering assertion; fixed before successful model qualification.",
+    "Initial trial restart probe rejected TIME_WAIT; fixed and later restoration passed.",
+    "gpu-v2 controller exited with shell parse error after all six child tests passed because its script was edited while running; restoration succeeded. Immutable extra controller completed successfully."
+  ]
+}

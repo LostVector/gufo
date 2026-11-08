@@ -81,6 +81,7 @@ gufo_extension_target(
     provider.cpp
   LINK_LIBRARIES
     gufo_qwen38_flash_next
+    gufo_qwen_dflash
     gufo_cache_hip
     gufo_qwen_vision
     gufo_qwen_draft_vocab
@@ -96,6 +97,7 @@ if(TARGET gufo_qwen38_flash_next_hip)
   gufo_extension_hip_sources(gufo_qwen38_flash_next_hip
     SOURCES
       kernels/rocm/kernels.hip.cpp
+      kernels/rocm/dflash_features.hip.cpp
       kernels/rocm/w8a8_wave64.hip
   )
   set_source_files_properties(${QFN_ROCM_DIR}/w8a8_wave64.hip

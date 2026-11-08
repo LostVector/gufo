@@ -16,6 +16,7 @@
 #   text             tokenizer + chat template
 #   kernels          shared HIP operators (ENGINE_ENABLE_HIP only)
 #   vision           vision encoder, image prompt, image cache
+#   dflash           shared block drafter, GGUF weights and policy
 add_subdirectory(control_tokens)
 add_subdirectory(draft_vocab)
 add_subdirectory(hip_common)
@@ -25,3 +26,5 @@ if (ENGINE_ENABLE_HIP)
   add_subdirectory(kernels)
 endif()
 add_subdirectory(vision)
+
+add_subdirectory(dflash)

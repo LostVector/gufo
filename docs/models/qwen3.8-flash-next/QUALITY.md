@@ -1,5 +1,21 @@
 # Qwen3.8 Flash-Next quality
 
+## Single-node DFlash2 port, November 7, 2026
+
+Current upstream base `0fb50ce4`, private ROCm 7.14.1, gfx1151,
+UD-Q4_K_XL target/shared Q8_0 donors and Q8_0 DFlash2 sidecar.
+CPU-only donor/lookup checks, HIP feature capture with graph replay, owned fixed
+and adaptive sessions, sampled scalar verification (118 accepted / 262 rejected),
+lookup/EOS/context-limit tests, two-boundary component restoration and the
+existing Qwen27B DFlash suite pass. The latter exercises 114 shared small-head
+blocks. Twelve HTTP long-context/cache/cancellation report groups pass at 8K
+capacity and two sessions, including restarted disk restoration.
+
+This is correctness qualification; the HTTP run records a candidate reference,
+not a matched timing-regression pass. Original failed checks remain recorded.
+See [implementation and scope](DFLASH2.md) and
+[qualification details and limits](dflash-upstream-v1.json).
+
 ## Raw-completion follow-up, November 4, 2026
 
 GitHub exposed a case missing from the first qualification: a raw completion
