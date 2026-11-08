@@ -1,0 +1,470 @@
+{
+  "schema": 1,
+  "baseline": "0fb50ce4",
+  "candidate": "4e78ff2f7824432aefbc540e292d41f55f5e8b5f",
+  "binary_sha256": {
+    "baseline": "1cb73c4b1212e68a9a5fc493b618e1df5228886b260de4a5d2a184e975b04096",
+    "candidate": "d19a70625cac03c1a9d53f7fd7a9bf2e6e1cf4522b5b6a4e01abe25d4b7c1480"
+  },
+  "build": "release preset; RelWithDebInfo; BUILD_TESTING=OFF; qwen+qwen38_flash_next; private ROCm 7.14.1",
+  "host": "rk-evo-x2",
+  "kernel": "7.3.0-strix-test",
+  "cmdline": "BOOT_IMAGE=/boot/vmlinuz-7.3.0-strix-test root=UUID=c43af9f2-66df-414f-9c5e-a58eaf768c01 ro quiet splash ttm.pages_limit=32505856 amd_iommu=off crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M",
+  "model": "Flash Next UD-Q4_K_XL, shared Q8_0 MTP sidecar",
+  "cli_scope": {
+    "order": [
+      "baseline",
+      "candidate",
+      "candidate",
+      "baseline"
+    ],
+    "samples_per_variant_per_shape": 2,
+    "prompt": 2048,
+    "generation": 128,
+    "depths": [
+      0,
+      4096
+    ],
+    "context_capacity": 6145,
+    "shallow_generation_seed_prefix": 16,
+    "sampling": "greedy",
+    "concurrency": 1
+  },
+  "cli_measurements": [
+    {
+      "block": 0,
+      "variant": "baseline",
+      "mode": "off",
+      "test": "pp2048",
+      "tps": 1827.02,
+      "ms": 1120.951056912349,
+      "log": "bench-0-baseline-off.log"
+    },
+    {
+      "block": 0,
+      "variant": "baseline",
+      "mode": "off",
+      "test": "tg128",
+      "tps": 30.15,
+      "ms": 4245.439469320067,
+      "log": "bench-0-baseline-off.log"
+    },
+    {
+      "block": 0,
+      "variant": "baseline",
+      "mode": "off",
+      "test": "pp2048 @ d4096",
+      "tps": 1679.51,
+      "ms": 1219.403278337134,
+      "log": "bench-0-baseline-off.log"
+    },
+    {
+      "block": 0,
+      "variant": "baseline",
+      "mode": "off",
+      "test": "tg128 @ d4096",
+      "tps": 29.53,
+      "ms": 4334.575008465967,
+      "log": "bench-0-baseline-off.log"
+    },
+    {
+      "block": 0,
+      "variant": "baseline",
+      "mode": "mtp",
+      "test": "pp2048",
+      "tps": 1775.87,
+      "ms": 1153.23756806523,
+      "log": "bench-0-baseline-mtp.log"
+    },
+    {
+      "block": 0,
+      "variant": "baseline",
+      "mode": "mtp",
+      "test": "tg128",
+      "tps": 44.61,
+      "ms": 2869.311813494732,
+      "log": "bench-0-baseline-mtp.log"
+    },
+    {
+      "block": 0,
+      "variant": "baseline",
+      "mode": "mtp",
+      "test": "pp2048 @ d4096",
+      "tps": 1615.66,
+      "ms": 1267.5934293106222,
+      "log": "bench-0-baseline-mtp.log"
+    },
+    {
+      "block": 0,
+      "variant": "baseline",
+      "mode": "mtp",
+      "test": "tg128 @ d4096",
+      "tps": 52.83,
+      "ms": 2422.865795949271,
+      "log": "bench-0-baseline-mtp.log"
+    },
+    {
+      "block": 1,
+      "variant": "candidate",
+      "mode": "off",
+      "test": "pp2048",
+      "tps": 1834.06,
+      "ms": 1116.6483103060968,
+      "log": "bench-1-candidate-off.log"
+    },
+    {
+      "block": 1,
+      "variant": "candidate",
+      "mode": "off",
+      "test": "tg128",
+      "tps": 30.14,
+      "ms": 4246.84804246848,
+      "log": "bench-1-candidate-off.log"
+    },
+    {
+      "block": 1,
+      "variant": "candidate",
+      "mode": "off",
+      "test": "pp2048 @ d4096",
+      "tps": 1677.36,
+      "ms": 1220.9662803453045,
+      "log": "bench-1-candidate-off.log"
+    },
+    {
+      "block": 1,
+      "variant": "candidate",
+      "mode": "off",
+      "test": "tg128 @ d4096",
+      "tps": 29.52,
+      "ms": 4336.043360433605,
+      "log": "bench-1-candidate-off.log"
+    },
+    {
+      "block": 1,
+      "variant": "candidate",
+      "mode": "mtp",
+      "test": "pp2048",
+      "tps": 1775.92,
+      "ms": 1153.2050993287985,
+      "log": "bench-1-candidate-mtp.log"
+    },
+    {
+      "block": 1,
+      "variant": "candidate",
+      "mode": "mtp",
+      "test": "tg128",
+      "tps": 44.79,
+      "ms": 2857.7807546327303,
+      "log": "bench-1-candidate-mtp.log"
+    },
+    {
+      "block": 1,
+      "variant": "candidate",
+      "mode": "mtp",
+      "test": "pp2048 @ d4096",
+      "tps": 1620.96,
+      "ms": 1263.4488204520778,
+      "log": "bench-1-candidate-mtp.log"
+    },
+    {
+      "block": 1,
+      "variant": "candidate",
+      "mode": "mtp",
+      "test": "tg128 @ d4096",
+      "tps": 52.81,
+      "ms": 2423.7833743609162,
+      "log": "bench-1-candidate-mtp.log"
+    },
+    {
+      "block": 2,
+      "variant": "candidate",
+      "mode": "off",
+      "test": "pp2048",
+      "tps": 1831.13,
+      "ms": 1118.4350646868327,
+      "log": "bench-2-candidate-off.log"
+    },
+    {
+      "block": 2,
+      "variant": "candidate",
+      "mode": "off",
+      "test": "tg128",
+      "tps": 30.12,
+      "ms": 4249.667994687915,
+      "log": "bench-2-candidate-off.log"
+    },
+    {
+      "block": 2,
+      "variant": "candidate",
+      "mode": "off",
+      "test": "pp2048 @ d4096",
+      "tps": 1677.87,
+      "ms": 1220.5951593389238,
+      "log": "bench-2-candidate-off.log"
+    },
+    {
+      "block": 2,
+      "variant": "candidate",
+      "mode": "off",
+      "test": "tg128 @ d4096",
+      "tps": 29.49,
+      "ms": 4340.454391319091,
+      "log": "bench-2-candidate-off.log"
+    },
+    {
+      "block": 2,
+      "variant": "candidate",
+      "mode": "mtp",
+      "test": "pp2048",
+      "tps": 1771.22,
+      "ms": 1156.2651731574847,
+      "log": "bench-2-candidate-mtp.log"
+    },
+    {
+      "block": 2,
+      "variant": "candidate",
+      "mode": "mtp",
+      "test": "tg128",
+      "tps": 44.77,
+      "ms": 2859.0574045119497,
+      "log": "bench-2-candidate-mtp.log"
+    },
+    {
+      "block": 2,
+      "variant": "candidate",
+      "mode": "mtp",
+      "test": "pp2048 @ d4096",
+      "tps": 1620.08,
+      "ms": 1264.135104439287,
+      "log": "bench-2-candidate-mtp.log"
+    },
+    {
+      "block": 2,
+      "variant": "candidate",
+      "mode": "mtp",
+      "test": "tg128 @ d4096",
+      "tps": 52.69,
+      "ms": 2429.3034731448097,
+      "log": "bench-2-candidate-mtp.log"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "mode": "off",
+      "test": "pp2048",
+      "tps": 1829.53,
+      "ms": 1119.413182620673,
+      "log": "bench-3-baseline-off.log"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "mode": "off",
+      "test": "tg128",
+      "tps": 30.1,
+      "ms": 4252.491694352158,
+      "log": "bench-3-baseline-off.log"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "mode": "off",
+      "test": "pp2048 @ d4096",
+      "tps": 1670.99,
+      "ms": 1225.6207398009562,
+      "log": "bench-3-baseline-off.log"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "mode": "off",
+      "test": "tg128 @ d4096",
+      "tps": 26.21,
+      "ms": 4883.632201449828,
+      "log": "bench-3-baseline-off.log"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "mode": "mtp",
+      "test": "pp2048",
+      "tps": 1770.78,
+      "ms": 1156.552479698212,
+      "log": "bench-3-baseline-mtp.log"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "mode": "mtp",
+      "test": "tg128",
+      "tps": 44.7,
+      "ms": 2863.534675615212,
+      "log": "bench-3-baseline-mtp.log"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "mode": "mtp",
+      "test": "pp2048 @ d4096",
+      "tps": 1618.85,
+      "ms": 1265.0955925502672,
+      "log": "bench-3-baseline-mtp.log"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "mode": "mtp",
+      "test": "tg128 @ d4096",
+      "tps": 46.69,
+      "ms": 2741.4863996573145,
+      "log": "bench-3-baseline-mtp.log"
+    }
+  ],
+  "http_scope": {
+    "context_capacity": 8192,
+    "sessions": 2,
+    "cache_ram_bytes": 2147483648,
+    "suites": [
+      "long-context",
+      "cache"
+    ],
+    "timing_gate": "5% AND 10ms; unchanged"
+  },
+  "http": {
+    "off": {
+      "functional_status": "passed",
+      "comparison_status": "inconclusive",
+      "suite_statuses": {
+        "long-context": "passed",
+        "text-cancel": "passed",
+        "thinking-tool-cancel": "passed",
+        "legacy-tool-cancel": "passed",
+        "disk-spacing": "passed",
+        "cache-persist": "passed",
+        "text-cancel-disk": "passed",
+        "thinking-tool-cancel-disk": "passed",
+        "legacy-tool-cancel-disk": "passed",
+        "cache-persist-disk": "passed",
+        "disk-spacing-disk": "passed"
+      },
+      "quality_or_coverage_changes": [],
+      "measurements": 637,
+      "request_measurements": 635,
+      "request_timing_flags": 0,
+      "flags": [
+        {
+          "case": "server",
+          "request_key": [
+            "server"
+          ],
+          "metric": "startup_ms",
+          "baseline": 25125.20918401424,
+          "candidate": 28657.73926198017,
+          "noise_floor": 10,
+          "change_percent": 14.05970414850708,
+          "exceeds_margin": true,
+          "status": "inconclusive"
+        },
+        {
+          "case": "server",
+          "request_key": [
+            "server"
+          ],
+          "metric": "restart_ms",
+          "baseline": 25826.850909972563,
+          "candidate": 27444.31384105701,
+          "noise_floor": 10,
+          "change_percent": 6.26271834968426,
+          "exceeds_margin": true,
+          "status": "inconclusive"
+        }
+      ],
+      "execution_coverage": {
+        "loaded_mode": "off",
+        "draft_tokens": 0,
+        "draft_tokens_accepted": 0,
+        "draft_execution_observed": false
+      }
+    },
+    "mtp": {
+      "functional_status": "passed",
+      "comparison_status": "inconclusive",
+      "suite_statuses": {
+        "long-context": "passed",
+        "text-cancel": "passed",
+        "thinking-tool-cancel": "passed",
+        "legacy-tool-cancel": "passed",
+        "disk-spacing": "passed",
+        "cache-persist": "passed",
+        "text-cancel-disk": "passed",
+        "thinking-tool-cancel-disk": "passed",
+        "legacy-tool-cancel-disk": "passed",
+        "cache-persist-disk": "passed",
+        "disk-spacing-disk": "passed"
+      },
+      "quality_or_coverage_changes": [],
+      "measurements": 637,
+      "request_measurements": 635,
+      "request_timing_flags": 0,
+      "flags": [
+        {
+          "case": "server",
+          "request_key": [
+            "server"
+          ],
+          "metric": "startup_ms",
+          "baseline": 26638.36107798852,
+          "candidate": 29463.3006779477,
+          "noise_floor": 10,
+          "change_percent": 10.604780045171204,
+          "exceeds_margin": true,
+          "status": "inconclusive"
+        }
+      ],
+      "execution_coverage": {
+        "loaded_mode": "mtp",
+        "draft_tokens": 379,
+        "draft_tokens_accepted": 285,
+        "draft_execution_observed": true
+      }
+    }
+  },
+  "startup_only_controls": [
+    {
+      "case": "load-0-candidate",
+      "variant": "candidate",
+      "ready_ms": 29675.07818597369,
+      "loader_ms": 29481.0
+    },
+    {
+      "case": "load-1-baseline",
+      "variant": "baseline",
+      "ready_ms": 32798.59659296926,
+      "loader_ms": 32610.0
+    },
+    {
+      "case": "load-2-candidate",
+      "variant": "candidate",
+      "ready_ms": 35013.82544497028,
+      "loader_ms": 34826.0
+    },
+    {
+      "case": "load-3-baseline",
+      "variant": "baseline",
+      "ready_ms": 36316.647258005105,
+      "loader_ms": 36126.0
+    }
+  ],
+  "interpretation": {
+    "independent_review": "One P2 direct-core include finding fixed and independently verified at 4e78ff2f. No further concrete defect established in inspected paths.",
+    "inference": "No native AR/MTP per-request regression flag or output/cache-work difference in these histories.",
+    "lifecycle": "Original AR startup/restart and MTP startup flags remain inconclusive. Startup-only probes became progressively slower across both binaries; no stable candidate-only penalty established. No thermal/storage/driver cause was traced.",
+    "performance_claim": "No DFlash speedup claim. No statistical superiority claim from two CLI observations per shape.",
+    "limits": [
+      "CLI baseline repeated deep decode also slowed in both modes; all raw samples retained.",
+      "No 64K/262K full-sequence, TP2 or new Flash Next DFlash concurrency throughput qualification.",
+      "Empty-disk startup controls isolate initial loading; they do not reproduce the full persisted restart history.",
+      "Original aggregate HTTP comparisons remain inconclusive rather than relabeled as passes."
+    ]
+  }
+}

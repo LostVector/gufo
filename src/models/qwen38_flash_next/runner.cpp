@@ -19,6 +19,7 @@
 #include "gufo/ext/gguf_identity.hpp"
 #include "gufo/ext/host_budget.hpp"
 #include "src/families/qwen/control_tokens/control_tokens.hpp"
+#include "src/families/qwen/dflash/hip/executor.hpp"
 #include "src/families/qwen/text/chat_template.hpp"
 #include "src/families/qwen/text/tokenizer.hpp"
 #include "src/families/qwen/vision/encoder.hpp"
@@ -177,7 +178,9 @@ public:
   }
   [[nodiscard]] TextRunnerMeasuredResources MeasuredResources()
       const noexcept override {
-    return {.per_request_state_bytes = session_->AllocatedBytes(),
+    return {.per_request_state_bytes =
+                session_->AllocatedBytes() +
+                (adapter_ ? adapter().PrivateScratchBytes() : 0),
             .temporary_scratch_bytes = 0};
   }
 
@@ -221,12 +224,13 @@ public:
   sampling::JsonConstraint::ToolFormat ToolFormat() const override {
     return sampling::JsonConstraint::ToolFormat::kQwen;
   }
-  QwenFlashNextTextRunner(std::shared_ptr<QwenFlashNextModel> model,
-                          std::uint32_t max_context, bool use_mtp,
-                          std::uint32_t max_draft_tokens,
-                          std::string artifact_fingerprint = {},
-                          std::string mtp_fingerprint = {})
+  QwenFlashNextTextRunner(
+      std::shared_ptr<QwenFlashNextModel> model, std::uint32_t max_context,
+      bool use_mtp, std::uint32_t max_draft_tokens,
+      std::string artifact_fingerprint = {}, std::string mtp_fingerprint = {},
+      std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model = {})
       : model_(std::move(model)),
+        draft_model_(std::move(draft_model)),
         max_context_(max_context),
         use_mtp_(use_mtp),
         max_draft_tokens_(max_draft_tokens) {
@@ -246,6 +250,18 @@ public:
           model_.get(), max_context_, use_mtp_, max_draft_tokens_,
           model_->DecodeConcurrency());
     }
+    if (draft_model_) {
+      std::string identity = "\ndflash2-v1\n" +
+                             std::string(speculative::DFlashDraftPolicyName(
+                                 model_->DFlashPolicy())) +
+                             "\n" + mtp_fingerprint;
+      if (mtp_fingerprint.empty())
+        identity += "\nprocess=" +
+                    std::to_string(
+                        reinterpret_cast<std::uintptr_t>(draft_model_.get()));
+      component_identity_.insert(component_identity_.end(), identity.begin(),
+                                 identity.end());
+    }
   }
 
   [[nodiscard]] std::unique_ptr<ComponentCacheResources>
@@ -257,7 +273,7 @@ public:
             model_,
             use_mtp_ ? core::SessionMode::kSpeculative
                      : core::SessionMode::kAutoregressive,
-            max_context_, component_identity_),
+            max_context_, component_identity_, draft_model_),
         ledger, HipComponentCacheHooks());
   }
   [[nodiscard]] std::unique_ptr<TextRunnerState> BindComponentState(
@@ -275,7 +291,8 @@ public:
   [[nodiscard]] TextRunnerDescriptor Descriptor() const override {
     return {
         .model_id = model_->ModelName(),
-        .state_abi = std::string(kQwenFlashNextStateAbi),
+        .state_abi = draft_model_ ? "qwen38-flash-next-dflash2-rocm-session-v1"
+                                  : std::string(kQwenFlashNextStateAbi),
         .max_context = max_context_,
         .capabilities =
             TextRunnerCapabilities{
@@ -283,7 +300,7 @@ public:
                 .incremental_prefill = true,
                 .final_token_advance_required = false,
                 .incremental_text_is_exact = true,
-                .multi_token_decode = use_mtp_,
+                .multi_token_decode = use_mtp_ || bool(draft_model_),
                 .batched_multi_token_decode = use_mtp_,
                 .batched_multi_token_decode_max_width = use_mtp_ ? 8u : 0u,
                 .prefix_reuse = true,
@@ -310,12 +327,20 @@ public:
     // Admission charges complete snapshot payloads. Flash-Next can retain
     // mutable state and protected K/V rows in private device storage.
     return {
-        .resident_weights_bytes = model_->ResidentBytes(),
+        .resident_weights_bytes =
+            model_->ResidentBytes() +
+            (draft_model_ ? draft_model_->GetPackedWeightBytes() : 0),
         .state_capacity_bytes = capacity,
-        .per_request_state_bytes = model_->SessionBytes(
-            use_mtp_ ? gufo::core::SessionMode::kSpeculative
-                     : gufo::core::SessionMode::kAutoregressive,
-            max_context_),
+        .per_request_state_bytes =
+            draft_model_
+                ? model_->DFlashSessionBytes(*draft_model_, max_context_) +
+                      sizeof(std::uint64_t) +
+                      Session::DFlashSnapshotCapacity(*draft_model_,
+                                                      max_context_)
+                : model_->SessionBytes(
+                      use_mtp_ ? gufo::core::SessionMode::kSpeculative
+                               : gufo::core::SessionMode::kAutoregressive,
+                      max_context_),
         // Runtime scratch is shared and already allocated at model load;
         // reserve its remaining lazy buffers once from aggregate capacity.
         .temporary_scratch_bytes = 0,
@@ -328,6 +353,8 @@ public:
   [[nodiscard]] std::vector<TextExecutionPlan> SupportedPlans() const override {
     std::vector<TextExecutionPlan> plans{
         {.kind = TextExecutionPlanKind::kSerial, .physical_width = 1}};
+    if (draft_model_)
+      return plans;
     for (std::size_t width = 2; width <= 8; ++width) {
       plans.push_back(
           {.kind = TextExecutionPlanKind::kBatched, .physical_width = width});
@@ -585,7 +612,7 @@ public:
   [[nodiscard]] TextDecodeStep DecodeStep(
       TextRunnerState& state, std::size_t max_tokens,
       sampling::SamplerState& sampler) const override {
-    if (!use_mtp_ || max_tokens == 1) {
+    if ((!use_mtp_ && !draft_model_) || max_tokens == 1) {
       return TextModelRunner::DecodeStep(state, max_tokens, sampler);
     }
     if (max_tokens == 0) {
@@ -603,10 +630,17 @@ public:
     // Use the same request policy as SelectNext and the batched MTP path.
     // The engine bounds the physical block and stops at EOS. Preserve the
     // remaining request budget so its policy can recognize a short tail.
-    if (!qfn.session().DecodeStep(max_tokens, working_sampler, &decoded, &error,
-                                  qfn.stop_at_eos())) {
-      throw std::runtime_error("Qwen3.8-Flash-Next MTP decode failed: " +
-                               error);
+    const bool ok =
+        draft_model_
+            ? qfn.session().DecodeDFlashStep(
+                  std::min<std::size_t>(max_tokens,
+                                        std::uint64_t{max_draft_tokens_} + 1),
+                  working_sampler, &decoded, &error, qfn.stop_at_eos())
+            : qfn.session().DecodeStep(max_tokens, working_sampler, &decoded,
+                                       &error, qfn.stop_at_eos());
+    if (!ok) {
+      throw std::runtime_error(
+          "Qwen3.8-Flash-Next speculative decode failed: " + error);
     }
     // The pool accepts the returned tokens once. Publish the RNG and residual
     // draw so the next batch retains the rejection-conditioned distribution.
@@ -626,6 +660,8 @@ public:
 
   void AdvanceBatch(
       std::span<const TextRunnerAdvance> advances) const override {
+    if (draft_model_)
+      return TextModelRunner::AdvanceBatch(advances);
     if (advances.size() < 2) {
       return TextModelRunner::AdvanceBatch(advances);
     }
@@ -749,6 +785,7 @@ private:
 
   mutable models::qwen::vision::ImageCache image_cache_;
   std::shared_ptr<QwenFlashNextModel> model_;
+  std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model_;
   std::uint32_t max_context_;
   bool use_mtp_;
   std::uint32_t max_draft_tokens_;
@@ -761,12 +798,57 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
     std::shared_ptr<Model> model, std::uint32_t max_context,
     const ext::TextSpeculativeConfig& speculative_config,
     std::string artifact_fingerprint, std::string draft_artifact_fingerprint) {
+  if (!model)
+    throw std::invalid_argument("Flash-Next model must not be null");
+  if (max_context == 0)
+    max_context = model->MaxContext();
+  if (max_context == 0 || max_context > model->MaxContext())
+    throw std::invalid_argument(
+        "Flash-Next runner context exceeds its model context");
   const bool use_mtp =
       speculative_config.backend == ext::TextSpeculativeBackend::kMtp;
+  const bool use_dflash =
+      speculative_config.backend == ext::TextSpeculativeBackend::kDFlash;
+  if (speculative_config.backend != ext::TextSpeculativeBackend::kDisabled &&
+      !use_mtp && !use_dflash)
+    throw std::invalid_argument("unsupported Flash-Next speculative backend");
+  if (use_mtp && !model->HasMtp())
+    throw std::invalid_argument(
+        "Flash-Next MTP requires a model loaded with its draft sidecar");
+  if ((use_mtp || use_dflash) && (speculative_config.max_draft_tokens == 0 ||
+                                  speculative_config.max_draft_tokens > 7 ||
+                                  speculative_config.min_draft_tokens != 1))
+    throw std::invalid_argument(
+        "Flash-Next speculation requires 1-7 draft tokens and "
+        "--min-draft-tokens 1");
+  std::shared_ptr<const hip::QwenDFlashGpuModel> draft;
+  if (use_dflash) {
+    const auto policy =
+        speculative_config.dflash_policy == ext::TextDFlashDraftPolicy::kFixed
+            ? speculative::DFlashDraftPolicy::kFixed
+            : speculative::DFlashDraftPolicy::kAdaptive;
+    if (speculative_config.draft_model_path.empty() ||
+        model->DFlashPolicy() != policy ||
+        speculative_config.max_draft_tokens > model->DFlashDraftLimit())
+      throw std::invalid_argument(
+          "Flash-Next DFlash2 model must reserve matching draft "
+          "policy/capacity");
+    std::string error;
+    draft = model->LoadDFlashDraft(speculative_config.draft_model_path, &error);
+    if (!draft)
+      throw std::runtime_error("Flash-Next DFlash2 load failed: " + error);
+    if (!artifact_fingerprint.empty() && draft_artifact_fingerprint.empty()) {
+      auto reader = core::GgufReader::OpenFile(
+          speculative_config.draft_model_path, &error);
+      if (!reader)
+        throw std::runtime_error(error);
+      draft_artifact_fingerprint = core::GgufIdentityHex(*reader);
+    }
+  }
   return std::make_shared<QwenFlashNextTextRunner>(
       std::move(model), max_context, use_mtp,
       speculative_config.max_draft_tokens, std::move(artifact_fingerprint),
-      std::move(draft_artifact_fingerprint));
+      std::move(draft_artifact_fingerprint), std::move(draft));
 }
 
 std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
@@ -808,17 +890,22 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
   }
   const bool use_mtp =
       options.speculative.backend == ext::TextSpeculativeBackend::kMtp;
+  const bool use_dflash =
+      options.speculative.backend == ext::TextSpeculativeBackend::kDFlash;
   if (options.speculative.backend != ext::TextSpeculativeBackend::kDisabled &&
-      !use_mtp) {
+      !use_mtp && !use_dflash) {
     if (error)
-      *error =
-          "Qwen3.8-Flash-Next HTTP models support only MTP speculative "
-          "decoding";
+      *error = "Unsupported Qwen3.8-Flash-Next speculative backend";
     return nullptr;
   }
   if (use_mtp && options.speculative.draft_model_path.empty()) {
     if (error)
       *error = "Qwen3.8-Flash-Next MTP HTTP decoding requires --mtp-model";
+    return nullptr;
+  }
+  if (use_dflash && options.speculative.draft_model_path.empty()) {
+    if (error)
+      *error = "Flash-Next DFlash2 requires --dflash-model";
     return nullptr;
   }
   std::string load_error;
@@ -828,6 +915,13 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
           .max_context = max_context,
           .mtp_model_path =
               use_mtp ? options.speculative.draft_model_path : std::string{},
+          .dflash_model_path =
+              use_dflash ? options.speculative.draft_model_path : std::string{},
+          .max_draft_tokens = options.speculative.max_draft_tokens,
+          .dflash_policy = options.speculative.dflash_policy ==
+                                   ext::TextDFlashDraftPolicy::kFixed
+                               ? speculative::DFlashDraftPolicy::kFixed
+                               : speculative::DFlashDraftPolicy::kAdaptive,
           .vision_model_path = options.vision_model_path,
           .decode_concurrency =
               DecodeConcurrencyForSessions(options.session_count),

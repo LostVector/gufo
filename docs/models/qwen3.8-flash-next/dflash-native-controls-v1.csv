@@ -1,0 +1,33 @@
+block,variant,mode,test,tps,ms,log
+0,baseline,off,pp2048,1827.02,1120.951056912349,bench-0-baseline-off.log
+0,baseline,off,tg128,30.15,4245.439469320067,bench-0-baseline-off.log
+0,baseline,off,pp2048 @ d4096,1679.51,1219.403278337134,bench-0-baseline-off.log
+0,baseline,off,tg128 @ d4096,29.53,4334.575008465967,bench-0-baseline-off.log
+0,baseline,mtp,pp2048,1775.87,1153.23756806523,bench-0-baseline-mtp.log
+0,baseline,mtp,tg128,44.61,2869.311813494732,bench-0-baseline-mtp.log
+0,baseline,mtp,pp2048 @ d4096,1615.66,1267.5934293106222,bench-0-baseline-mtp.log
+0,baseline,mtp,tg128 @ d4096,52.83,2422.865795949271,bench-0-baseline-mtp.log
+1,candidate,off,pp2048,1834.06,1116.6483103060968,bench-1-candidate-off.log
+1,candidate,off,tg128,30.14,4246.84804246848,bench-1-candidate-off.log
+1,candidate,off,pp2048 @ d4096,1677.36,1220.9662803453045,bench-1-candidate-off.log
+1,candidate,off,tg128 @ d4096,29.52,4336.043360433605,bench-1-candidate-off.log
+1,candidate,mtp,pp2048,1775.92,1153.2050993287985,bench-1-candidate-mtp.log
+1,candidate,mtp,tg128,44.79,2857.7807546327303,bench-1-candidate-mtp.log
+1,candidate,mtp,pp2048 @ d4096,1620.96,1263.4488204520778,bench-1-candidate-mtp.log
+1,candidate,mtp,tg128 @ d4096,52.81,2423.7833743609162,bench-1-candidate-mtp.log
+2,candidate,off,pp2048,1831.13,1118.4350646868327,bench-2-candidate-off.log
+2,candidate,off,tg128,30.12,4249.667994687915,bench-2-candidate-off.log
+2,candidate,off,pp2048 @ d4096,1677.87,1220.5951593389238,bench-2-candidate-off.log
+2,candidate,off,tg128 @ d4096,29.49,4340.454391319091,bench-2-candidate-off.log
+2,candidate,mtp,pp2048,1771.22,1156.2651731574847,bench-2-candidate-mtp.log
+2,candidate,mtp,tg128,44.77,2859.0574045119497,bench-2-candidate-mtp.log
+2,candidate,mtp,pp2048 @ d4096,1620.08,1264.135104439287,bench-2-candidate-mtp.log
+2,candidate,mtp,tg128 @ d4096,52.69,2429.3034731448097,bench-2-candidate-mtp.log
+3,baseline,off,pp2048,1829.53,1119.413182620673,bench-3-baseline-off.log
+3,baseline,off,tg128,30.1,4252.491694352158,bench-3-baseline-off.log
+3,baseline,off,pp2048 @ d4096,1670.99,1225.6207398009562,bench-3-baseline-off.log
+3,baseline,off,tg128 @ d4096,26.21,4883.632201449828,bench-3-baseline-off.log
+3,baseline,mtp,pp2048,1770.78,1156.552479698212,bench-3-baseline-mtp.log
+3,baseline,mtp,tg128,44.7,2863.534675615212,bench-3-baseline-mtp.log
+3,baseline,mtp,pp2048 @ d4096,1618.85,1265.0955925502672,bench-3-baseline-mtp.log
+3,baseline,mtp,tg128 @ d4096,46.69,2741.4863996573145,bench-3-baseline-mtp.log

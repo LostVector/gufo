@@ -14,6 +14,7 @@
 #include <string_view>
 #include <vector>
 
+#include "src/families/qwen/dflash/policy.hpp"
 #include "src/families/qwen/draft_vocab/draft_vocab.hpp"
 #include "src/families/qwen/text/tokenizer.hpp"
 #include "src/families/qwen/vision/encoder.hpp"
@@ -22,9 +23,20 @@
 #include "src/models/qwen38_flash_next/mtp_policy.hpp"
 #include "src/models/qwen38_flash_next/ngram.hpp"
 
+struct ihipStream_t;
+
 namespace gufo::core {
 class GgufReader;
 }
+
+namespace gufo::speculative {
+struct DraftProposal;
+}
+
+namespace gufo::hip {
+class QwenDFlashGpuModel;
+class QwenDFlashGpuExecutor;
+}  // namespace gufo::hip
 
 namespace gufo::models::qwen38_flash_next {
 
@@ -46,8 +58,14 @@ struct ModelOptions {
   /// Optional MTP draft sidecar (`mtp-...-shared-*.gguf`). Empty leaves
   /// speculative decoding off.
   std::string mtp_model_path;
+  // External DFlash2 sidecar. Reserves target verification rows without
+  // allocating the native MTP predictor; LoadDFlashDraft returns caller
+  // ownership.
+  std::string dflash_model_path;
   /// Maximum proposals per cycle; acceptance history selects the length.
   std::uint32_t max_draft_tokens = kMaxMtpDraftTokens;
+  speculative::DFlashDraftPolicy dflash_policy =
+      speculative::DFlashDraftPolicy::kFixed;
   std::string vision_model_path;
   /// Fixed serving capacity used by the calibrated MTP cost model. Keeping
   /// it independent of scheduler timing preserves seeded request replay.
@@ -76,7 +94,8 @@ public:
 
   [[nodiscard]] std::unique_ptr<Session> CreateSession(
       core::SessionMode mode, std::uint32_t max_context,
-      std::string* error_msg = nullptr);
+      std::string* error_msg = nullptr,
+      std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model = {});
 
   [[nodiscard]] std::vector<std::int32_t> Tokenize(std::string_view text) const;
   [[nodiscard]] std::string Decode(std::span<const std::int32_t> tokens) const;
@@ -90,6 +109,10 @@ public:
     return options_.max_context;
   }
   [[nodiscard]] bool HasMtp() const noexcept;
+  // The returned drafter retains this target; it is owned by the caller,
+  // never by Model itself, avoiding a target/drafter ownership cycle.
+  [[nodiscard]] std::shared_ptr<const hip::QwenDFlashGpuModel> LoadDFlashDraft(
+      const std::string& path, std::string* error_msg = nullptr);
   /// Trunk tensors the official GGUF keeps in F32 but this artifact stores
   /// as Q8_0 (see `ExpandedQ8_0Tensors`). The official MTP sidecar ships its
   /// inject as Q8_0, so the draft block is not counted.
@@ -102,10 +125,18 @@ public:
   [[nodiscard]] const tokenization::QwenTokenizer& tokenizer() const noexcept {
     return *tokenizer_;
   }
+  [[nodiscard]] speculative::DFlashDraftPolicy DFlashPolicy() const noexcept {
+    return options_.dflash_policy;
+  }
+  [[nodiscard]] std::uint32_t DFlashDraftLimit() const noexcept {
+    return options_.max_draft_tokens;
+  }
   [[nodiscard]] std::size_t ResidentBytes() const noexcept;
   /// Worst-case private device state, including the configured rollback cap.
   [[nodiscard]] std::size_t SessionBytes(core::SessionMode mode,
                                          std::uint32_t context) const noexcept;
+  [[nodiscard]] std::size_t DFlashSessionBytes(
+      const hip::QwenDFlashGpuModel& draft, std::uint32_t context) const;
   [[nodiscard]] std::size_t DeferredScratchBytes() const;
   /// Caps wide copy verification (Executor::LimitCopyRows); call before any
   /// session is created.
@@ -174,12 +205,59 @@ public:
       std::string* error_msg = nullptr, double* capture_ms = nullptr);
   [[nodiscard]] bool Evaluate(std::int32_t token,
                               std::string* error_msg = nullptr);
+  struct DecodeResult;
+  [[nodiscard]] static std::size_t DFlashSnapshotCapacity(
+      const hip::QwenDFlashGpuModel& draft, std::uint32_t context);
+  [[nodiscard]] bool EnableDFlash(
+      std::shared_ptr<const hip::QwenDFlashGpuModel> draft,
+      std::string* error_msg = nullptr);
+  [[nodiscard]] bool DFlashEnabled() const noexcept {
+    return dflash_ != nullptr;
+  }
+  /// Diagnostic count; does not affect proposal policy or persisted state.
+  [[nodiscard]] std::uint64_t DFlashSubsetBlocks() const noexcept;
+  [[nodiscard]] std::optional<std::uint32_t> PlanDFlash(
+      std::size_t max_tokens) const;
+  [[nodiscard]] bool DecodeDFlashStep(
+      std::size_t max_tokens, sampling::SamplerState& sampler,
+      DecodeResult* result, std::string* error_msg = nullptr,
+      bool stop_at_eos = true, std::optional<std::uint32_t> forced_drafts = {});
+  using TargetFeatureCapture = std::function<void(
+      std::uint32_t, const float*, std::uint32_t, ihipStream_t*)>;
+  using TargetFeatureConsumer = std::function<bool(
+      std::uint32_t position, std::uint32_t rows, std::string* error)>;
+  /// Consume only completed, committed rows after each target pass. The
+  /// capture callback itself executes during HIP graph capture/replay.
+  void SetTargetFeatureCapture(TargetFeatureCapture capture,
+                               TargetFeatureConsumer consume = {});
   struct DecodeResult {
     std::vector<std::int32_t> tokens;
     bool stop{false};
     std::vector<sampling::TokenLogprobs> logprobs;
     std::optional<sampling::TokenLogprobs> terminal_logprobs;
   };
+  // Verify an external greedy chain (anchor first) through the same target
+  // acceptance and recurrent rollback as native speculation. Sampling and
+  // external draft-state persistence are integrated separately.
+  [[nodiscard]] bool VerifyGreedyDraft(std::span<const std::int32_t> chain,
+                                       sampling::SamplerState& sampler,
+                                       DecodeResult* result,
+                                       std::string* error_msg = nullptr,
+                                       bool stop_at_eos = true);
+  /// The caller has already drawn anchor from this session's logits and
+  /// consumed the draft RNG. Proposal history includes anchor, while sampler
+  /// history excludes it. Rejection defers the exact residual draw.
+  [[nodiscard]] bool VerifySampledDraft(
+      std::int32_t anchor, const speculative::DraftProposal& proposal,
+      sampling::SamplerState& sampler, DecodeResult* result,
+      std::string* error_msg = nullptr, bool stop_at_eos = true);
+  /// Native DFlash cycle: select anchor, generate bounded proposals, verify,
+  /// roll back rejected target rows and inject only committed features.
+  [[nodiscard]] bool DecodeDFlashStep(
+      hip::QwenDFlashGpuExecutor& draft, std::size_t max_tokens,
+      sampling::SamplerState& sampler, DecodeResult* result,
+      std::string* error_msg = nullptr, bool stop_at_eos = true,
+      std::optional<std::uint32_t> neural_drafts = {});
   /// Greedy decoding verifies deterministic drafts. Sampled decoding draws
   /// compact MTP proposals and uses target/draft rejection with a residual
   /// correction. Prompt lookup appends copied tokens to the chain as
@@ -241,7 +319,8 @@ public:
     std::uint64_t cycles{0};
     std::uint64_t drafted{0};
     std::uint64_t accepted{0};
-    /// Cycles whose draft scored the small head (draft_vocab.hpp).
+    /// Native MTP cycles whose draft scored the small head (draft_vocab.hpp).
+    /// External DFlash head use is reported by DFlashSubsetBlocks().
     std::uint64_t small_head_cycles{0};
     /// Of drafted/accepted: proposals copied by prompt lookup.
     std::uint64_t lookup{0};
@@ -255,7 +334,7 @@ public:
   [[nodiscard]] NgramTotals NgramRowTotals() const noexcept;
 
   /// Compatibility version; bump on payload or inference arithmetic changes.
-  static constexpr std::uint32_t kSnapshotPayloadVersion = 20;
+  static constexpr std::uint32_t kSnapshotPayloadVersion = 21;
   /// Bytes a snapshot of the current context occupies.
   [[nodiscard]] std::uint64_t SnapshotBytes() const;
   [[nodiscard]] std::uint64_t PrefillCheckpointBytes(
@@ -350,8 +429,16 @@ private:
   bool FinishDecode(const DecodeRequest& request, const PendingDecode& pending,
                     std::string* error_msg);
 
+  void SerializeDFlashState(std::span<std::byte> destination) const;
+  bool RestoreDFlashState(std::span<const std::byte> payload,
+                          std::uint32_t expected, std::string* error_msg);
+  struct DFlashState;
   std::shared_ptr<Model> model_;
+  // Graphs must die before the capture buffers they reference.
+  std::unique_ptr<DFlashState> dflash_;
   std::unique_ptr<rocm::Session> session_;
+  bool target_feature_capture_{false};
+  TargetFeatureConsumer target_feature_consumer_;
   std::vector<std::int32_t> tokens_;
   std::vector<float> logits_;
   std::int32_t draft_token_{0};
@@ -359,7 +446,7 @@ private:
   std::vector<float> verify_logits_;
   std::uint32_t hidden_base_{0};  ///< first position whose hidden row is kept
   MtpLengthController draft_length_;
-  /// Index of tokens_ for prompt lookup (single-session MTP drafts).
+  /// Index of tokens_ for native MTP and DFlash prompt lookup.
   speculative::PromptLookup<> lookup_;
   /// Verification rows (anchor included) the next copy-only cycle of a
   /// greedy session decoding alone may use; 0 before the first. A copy

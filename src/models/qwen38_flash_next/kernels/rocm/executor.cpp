@@ -1258,7 +1258,9 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
   e->wide_mixer_ = c.hc_count == 4 && c.hidden_size % 32 == 0 &&
                    !model.layers().empty() &&
                    model.layers()[0].hc_ffn.down.type == GgmlType::kQ8_0;
-  if (model.has_mtp()) {
+  // External drafters also use the target's multirow verification selector.
+  // Its scratch must not depend on loading the native MTP predictor weights.
+  if (model.has_mtp() || e->options_.max_speculative > 1) {
     // The trunk's kept rows are session-owned. Its transient residual and
     // mixer buffers are free while MTP constructs its input. The split
     // projections consume h/embd before the first mixer rewrites xn/mixed.
@@ -3702,6 +3704,7 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
     // The last target layer's query outputs have no later cache consumer.
     // Preserve all K/V/indexer rows and the final query's original tile.
     const bool last_attention = WidePrefill(n) && !session.mtp_enabled_ &&
+                                !session.target_feature_capture_ &&
                                 il + 1 == c.num_layers && n_logits == 1 &&
                                 checkpoints.empty();
     if (l.linear) {
@@ -3736,6 +3739,7 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
     // Keep aligned tiles and at least 96 rows to retain the wide arithmetic.
     const auto needed = std::max(96U, n_logits);
     const auto skipped = prefill_phase && !session.mtp_enabled_ &&
+                                 !session.target_feature_capture_ &&
                                  il + 1 == c.num_layers && n > needed
                              ? (n - needed) / 128 * 128
                              : 0U;
@@ -3800,6 +3804,8 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
       return false;
     }
     normed = next_norm != nullptr;
+    if (session.target_feature_capture_)
+      session.target_feature_capture_(il, s_.res, n, stream_);
   }
   if (end_layer < c.num_layers) {
     return true;

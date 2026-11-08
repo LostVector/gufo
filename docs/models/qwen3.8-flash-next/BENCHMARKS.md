@@ -6,6 +6,17 @@ Gufo `fec4759d` (October 18, 2026); llama.cpp `b11069` AR and `6fcaa16f` MTP
 (September 22–23). Positive gain favors Gufo.
 [Quality and measurement details](QUALITY.md#benchmark-method) · [Model identities](artifacts/model-identities.json)
 
+## Single-node DFlash2 native-mode controls, November 7, 2026
+
+Pinned upstream `0fb50ce4` versus candidate `4e78ff2f`, same release preset,
+private ROCm 7.14.1, UD-Q4_K_XL and Q8_0 MTP sidecar. ABBA pp2048/tg128
+controls at depths 0/4096 and matched 8K-capacity HTTP cache histories show
+no candidate per-request regression flag. The final baseline deep-decode
+samples slowed in both modes; all observations are retained. Lifecycle
+startup/restart timings remain inconclusive, with a rising load-time trend
+also seen on baseline. This is no DFlash speedup or statistical superiority
+claim. [Exact values, scope, raw data and qualifications](DFLASH2-NATIVE-CONTROLS.md).
+
 ## PR #877 controls, November 4, 2026
 
 Pinned main `1c75887b` versus runtime candidate `e6b2a4c1`, Nix production

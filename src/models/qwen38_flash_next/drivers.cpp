@@ -180,12 +180,15 @@ std::shared_ptr<const models::qwen::vision::Prompt> PrepareVision(
 
 std::shared_ptr<models::qwen38_flash_next::Model> LoadFlashNextModel(
     const ext::TextPromptOptions& opt, const core::GgufReader& reader,
-    std::chrono::steady_clock::time_point load_start) {
+    std::chrono::steady_clock::time_point load_start,
+    std::shared_ptr<const hip::QwenDFlashGpuModel>* draft) {
   std::string error;
+  const bool use_dflash = opt.speculative_backend == "dflash2";
   if (opt.force_cpu ||
-      (!opt.speculative_backend.empty() && opt.speculative_backend != "mtp") ||
-      (opt.speculative_backend == "mtp" && opt.min_draft_tokens != 1)) {
-    std::cerr << "Flash-Next requires ROCm and supports MTP with "
+      (!opt.speculative_backend.empty() && opt.speculative_backend != "mtp" &&
+       !use_dflash) ||
+      (!opt.speculative_backend.empty() && opt.min_draft_tokens != 1)) {
+    std::cerr << "Flash-Next requires ROCm and supports MTP or DFlash2 with "
                  "--min-draft-tokens 1\n";
     return nullptr;
   }
@@ -199,9 +202,18 @@ std::shared_ptr<models::qwen38_flash_next::Model> LoadFlashNextModel(
       {.max_context = kDefaultContext,
        .mtp_model_path =
            opt.speculative_backend == "mtp" ? opt.mtp_model_path : "",
+       .dflash_model_path = use_dflash ? opt.dflash_model_path : "",
        .max_draft_tokens = opt.draft_tokens,
+       .dflash_policy =
+           use_dflash ? speculative::ParseDFlashDraftPolicy(opt.draft_policy)
+                      : speculative::DFlashDraftPolicy::kFixed,
        .vision_model_path = opt.vision_model_path},
       &error);
+  if (model && use_dflash) {
+    *draft = model->LoadDFlashDraft(opt.dflash_model_path, &error);
+    if (!*draft)
+      model.reset();
+  }
   PrintModelLoadTime(load_start, model != nullptr);
   if (!model)
     std::cerr << "Flash-Next load failed: " << error << '\n';
@@ -231,8 +243,13 @@ int GenerateFlashNextResponse(const ext::TextPromptOptions& opt,
   const auto start = std::chrono::steady_clock::now();
   while (generated.size() < opt.max_tokens) {
     models::qwen38_flash_next::Session::DecodeResult decoded;
-    if (!session.DecodeStep(opt.max_tokens - generated.size(), sampler,
-                            &decoded, &error)) {
+    const bool ok =
+        session.DFlashEnabled()
+            ? session.DecodeDFlashStep(opt.max_tokens - generated.size(),
+                                       sampler, &decoded, &error)
+            : session.DecodeStep(opt.max_tokens - generated.size(), sampler,
+                                 &decoded, &error);
+    if (!ok) {
       std::cerr << "Flash-Next decode failed: " << error << '\n';
       return 1;
     }
@@ -291,13 +308,18 @@ int RunQwen38FlashNextBenchmarkImpl(
   }
   const std::size_t required_context = FlashNextBenchContext(options);
   const bool mtp = options.speculative_backend == "mtp";
-  if (!options.speculative_backend.empty() && !mtp) {
-    std::cerr << "Error: Qwen3.8-Flash-Next supports only --speculative mtp "
-                 "or off\n";
+  const bool dflash = options.speculative_backend == "dflash2";
+  if (!options.speculative_backend.empty() && !mtp && !dflash) {
+    std::cerr << "Error: Qwen3.8-Flash-Next supports --speculative mtp, "
+                 "dflash2 or off\n";
     return 1;
   }
   if (mtp && options.mtp_model_path.empty()) {
     std::cerr << "Error: --speculative mtp requires --mtp-model\n";
+    return 1;
+  }
+  if (dflash && options.dflash_model_path.empty()) {
+    std::cerr << "Error: --speculative dflash2 requires --dflash-model\n";
     return 1;
   }
   if (options.concurrency != std::vector<std::size_t>{1}) {
@@ -305,7 +327,7 @@ int RunQwen38FlashNextBenchmarkImpl(
                  "benchmark for concurrent requests\n";
     return 1;
   }
-  if (mtp && options.min_draft_tokens != 1) {
+  if ((mtp || dflash) && options.min_draft_tokens != 1) {
     std::cerr << "Error: Flash-Next MTP requires --min-draft-tokens 1\n";
     return 1;
   }
@@ -332,7 +354,11 @@ int RunQwen38FlashNextBenchmarkImpl(
       qfn::ModelOptions{
           .max_context = static_cast<std::uint32_t>(required_context),
           .mtp_model_path = mtp ? options.mtp_model_path : "",
+          .dflash_model_path = dflash ? options.dflash_model_path : "",
           .max_draft_tokens = std::max<std::uint32_t>(1, options.draft_tokens),
+          .dflash_policy =
+              dflash ? speculative::ParseDFlashDraftPolicy(options.draft_policy)
+                     : speculative::DFlashDraftPolicy::kFixed,
           .rope_scaling = rope_scaling,
       },
       &error);
@@ -340,6 +366,15 @@ int RunQwen38FlashNextBenchmarkImpl(
     std::cerr << "Error creating Qwen3.8-Flash-Next model: " << error << '\n';
     PrintModelLoadTime(model_load_start, false);
     return 1;
+  }
+  std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model;
+  if (dflash) {
+    draft_model = model->LoadDFlashDraft(options.dflash_model_path, &error);
+    if (!draft_model) {
+      std::cerr << "DFlash2 load failed: " << error << '\n';
+      PrintModelLoadTime(model_load_start, false);
+      return 1;
+    }
   }
   PrintModelLoadTime(model_load_start);
   if (rope_scaling) {
@@ -369,15 +404,13 @@ int RunQwen38FlashNextBenchmarkImpl(
     // Batched prefill against one-token-at-a-time evaluation of the same
     // prefix; both run on the GPU, so this checks the batched kernels.
     auto sequential = model->CreateSession(
-        options.speculative_backend.empty()
-            ? gufo::core::SessionMode::kAutoregressive
-            : gufo::core::SessionMode::kSpeculative,
-        static_cast<std::uint32_t>(required_context), &error);
+        mtp ? gufo::core::SessionMode::kSpeculative
+            : gufo::core::SessionMode::kAutoregressive,
+        static_cast<std::uint32_t>(required_context), &error, draft_model);
     auto batched = model->CreateSession(
-        options.speculative_backend.empty()
-            ? gufo::core::SessionMode::kAutoregressive
-            : gufo::core::SessionMode::kSpeculative,
-        static_cast<std::uint32_t>(required_context), &error);
+        mtp ? gufo::core::SessionMode::kSpeculative
+            : gufo::core::SessionMode::kAutoregressive,
+        static_cast<std::uint32_t>(required_context), &error, draft_model);
     const auto prefix =
         std::span(tokens).first(options.validate_prefill_tokens);
     if (!sequential || !batched || !sequential->Sync(prefix.first(1), &error) ||
@@ -457,10 +490,9 @@ int RunQwen38FlashNextBenchmarkImpl(
       for (std::size_t repetition = warm_prefix ? 1 : 0;
            repetition <= options.repetitions; ++repetition) {
         auto session = model->CreateSession(
-            options.speculative_backend.empty()
-                ? gufo::core::SessionMode::kAutoregressive
-                : gufo::core::SessionMode::kSpeculative,
-            static_cast<std::uint32_t>(required_context), &error);
+            mtp ? gufo::core::SessionMode::kSpeculative
+                : gufo::core::SessionMode::kAutoregressive,
+            static_cast<std::uint32_t>(required_context), &error, draft_model);
         if (!session ||
             (depth > 0 &&
              !session->Sync(std::span(tokens).first(depth), &error))) {
@@ -494,10 +526,9 @@ int RunQwen38FlashNextBenchmarkImpl(
       for (std::size_t repetition = 0; repetition < options.repetitions;
            ++repetition) {
         auto session = model->CreateSession(
-            options.speculative_backend.empty()
-                ? gufo::core::SessionMode::kAutoregressive
-                : gufo::core::SessionMode::kSpeculative,
-            static_cast<std::uint32_t>(required_context), &error);
+            mtp ? gufo::core::SessionMode::kSpeculative
+                : gufo::core::SessionMode::kAutoregressive,
+            static_cast<std::uint32_t>(required_context), &error, draft_model);
         if (!session ||
             !session->Sync(std::span(tokens).first(prefix_length), &error)) {
           std::cerr << "Error preparing generation: " << error << '\n';
@@ -510,9 +541,13 @@ int RunQwen38FlashNextBenchmarkImpl(
         const auto start = std::chrono::steady_clock::now();
         while (generated.size() < generation_length) {
           qfn::Session::DecodeResult decoded;
-          if (!session->DecodeStep(generation_length - generated.size(),
-                                   sampler, &decoded, &error, false) ||
-              decoded.tokens.empty()) {
+          const bool ok =
+              dflash ? session->DecodeDFlashStep(
+                           generation_length - generated.size(), sampler,
+                           &decoded, &error, false)
+                     : session->DecodeStep(generation_length - generated.size(),
+                                           sampler, &decoded, &error, false);
+          if (!ok || decoded.tokens.empty()) {
             std::cerr << "Error running Flash-Next decode: " << error << '\n';
             return 1;
           }
@@ -583,13 +618,15 @@ int RunFlashNextPromptImpl(
         {});
   };
 
-  auto model = LoadFlashNextModel(opt, reader, model_load_start);
+  std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model;
+  auto model = LoadFlashNextModel(opt, reader, model_load_start, &draft_model);
   if (!model)
     return 1;
-  auto session = model->CreateSession(
-      opt.speculative_backend.empty() ? gufo::core::SessionMode::kAutoregressive
-                                      : gufo::core::SessionMode::kSpeculative,
-      kDefaultContext, &err);
+  auto session =
+      model->CreateSession(opt.speculative_backend == "mtp"
+                               ? gufo::core::SessionMode::kSpeculative
+                               : gufo::core::SessionMode::kAutoregressive,
+                           kDefaultContext, &err, draft_model);
   if (!session) {
     std::cerr << "Flash-Next session failed: " << err << '\n';
     return 1;
@@ -629,14 +666,16 @@ int RunFlashNextPrompt(const ext::TextPromptOptions& opt,
 int RunFlashNextChat(const ext::TextPromptOptions& opt,
                      const core::GgufReader& reader,
                      std::chrono::steady_clock::time_point model_load_start) {
-  auto model = LoadFlashNextModel(opt, reader, model_load_start);
+  std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model;
+  auto model = LoadFlashNextModel(opt, reader, model_load_start, &draft_model);
   if (!model)
     return 1;
   std::string err;
-  auto session = model->CreateSession(
-      opt.speculative_backend.empty() ? gufo::core::SessionMode::kAutoregressive
-                                      : gufo::core::SessionMode::kSpeculative,
-      kDefaultContext, &err);
+  auto session =
+      model->CreateSession(opt.speculative_backend == "mtp"
+                               ? gufo::core::SessionMode::kSpeculative
+                               : gufo::core::SessionMode::kAutoregressive,
+                           kDefaultContext, &err, draft_model);
   if (!session) {
     std::cerr << "Flash-Next session failed: " << err << '\n';
     return 1;
