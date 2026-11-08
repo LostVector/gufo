@@ -2,11 +2,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <gufo/ext/draft_backend.hpp>
 #include <span>
 #include <stdexcept>
 #include <vector>
-
-#include "src/core/speculative/draft_backend.hpp"
 
 namespace gufo::models::qwen38_flash_next {
 
