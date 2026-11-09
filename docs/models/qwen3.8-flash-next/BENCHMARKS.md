@@ -255,3 +255,15 @@ phase flags/30work changes remain. Equal-work repeated C1ranges1.991–2.556s.
 A separate diagnostic finds198actualslowCorsairNVMecommands in three cohorts,
 with IRQ→CQ≤6.75µs and observed reader runnable delay≤33.179µs. It does not explain the old long
 plateau; collector failure/partialEVOcoverage limits remain. [Evidence](../../patches/ar-snapshot-turn/README.md).
+
+## TP2 DFlash verification head sharing (November 9, 2026)
+
+With UD-Q4_K_XL/Q8_0 DFlash2, two Strix Halo machines, one slot, 65,536 context
+capacity, chunk 2,048 and fixed draft widths 3/7, a balanced 40-start study
+(200 requests, ten process pairs per width) measures decode gains of +1.836%
+(95% marginal CI [+1.634, +2.044]%) and +0.868% ([+0.639, +1.081]%). Both
+Holm-adjusted exact p-values are 0.015873. Tasks use short and actual 2,048-token
+prompts, greedy and seeded sampling. Client wall throughput gains of +1.452% and
++0.719% are secondary. All 14 phase flags and 16 error-affected starts remain;
+there is no uniform-tail, adaptive-policy or long-depth speed claim.
+[Full scope, per-case rates and raw data](../../patches/dflash-tp-head.md).

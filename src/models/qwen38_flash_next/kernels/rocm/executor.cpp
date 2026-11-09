@@ -3960,11 +3960,17 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
       return false;
     }
     const auto& output = model_->output();
-    // Reuse the measured two-row head gather only for ordinary MTP target
-    // verification. AR, prefill, wider verification and true batches keep
-    // their existing routes. Both ranks reconstruct every original logit.
+    // Share the existing Q8 output rows for native two-row MTP or guarded
+    // four/eight-row external verification. The latter fits the transport
+    // capacity already required for max_batch hidden rows at model setup.
+    // AR, prefill and other shapes keep their route. Reconstruct every logit.
     const bool gather_head =
-        target_head_decode && session.mtp_enabled_ && n_logits == 2 &&
+        target_head_decode &&
+        ((session.mtp_enabled_ && n_logits == 2) ||
+         (speculative && session.target_feature_capture_ &&
+          (n_logits == 4 || n_logits == 8) &&
+          std::size_t{output.rows / 2} * n_logits <=
+              std::size_t{options_.max_batch} * c.hidden_size)) &&
         model_->tp_world_size() == 2 && options_.target_head_gather &&
         output.type == GgmlType::kQ8_0 && output.rows == 248320 &&
         output.cols == 2560 && c.hidden_size == 2560;

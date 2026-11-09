@@ -533,3 +533,14 @@ Development measurements, not published cells.
 | Experiment | Outcome |
 | --- | --- |
 | Extend pending-snapshot admission to AR advances with recursive turns | Unqualified candidate: an actual trace shows 22 advances bypassing one waiting capture during 601 ms. The integrated AR pilot completes concurrent waves at 56.41/56.52 versus 36.75/53.12 tok/s in variable controls, with a first-request batching tradeoff and all 22 phase flags retained. Adaptive MTP remains inconclusive (25 flags, changed work); fixed-depth1 diagnostic has equal work and no flags. Greedy/cancellation/18K seeded replay and CPU checks pass. Later standalone bounded AR/MTP and cancellation/18Kcache checks pass, but24timing flags remain. Eight-pair integration AR throughput+5.415%,CI[0.886,12.644]%,balanced p=.028571, with16flags and a464msfirst-request tradeoff; separate MTPconfidence remains inconclusive. Standalone MTPtiming follow-up complete/inconclusive (55newflags). [Evidence and exact scope](../../patches/ar-snapshot-turn/README.md). |
+
+## TP2 DFlash verification head sharing (November 9, 2026)
+
+Retain guarded four/eight-row verification on the existing lossless head gather.
+A fixed balanced study measures +1.836%/+0.868% decode gains, with both primary
+outcomes significant after Holm adjustment. Numerical/state and serving checks
+cover both shapes; all phase flags and transport-error runs remain in the data.
+A separate diagnostic reproduces errors during shared prefill in baseline and
+candidate. It does not explain every timing flag. Keep native MTP deployed while
+reviewing this focused fork change; no new kernel, public flag or upstream PR.
+[Report, reproduction and raw evidence](../../patches/dflash-tp-head.md).
