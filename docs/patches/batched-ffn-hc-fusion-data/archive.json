@@ -1,0 +1,10 @@
+{
+  "entries": 929,
+  "uncompressed_bytes": 36909493,
+  "zip_bytes": 4962241,
+  "zip_sha256": "f42814a69ad6fc8f4b97182f0ec0ff642adae5016de8208642c6042e0c1df40f",
+  "production_source": "74f385dc46e68e06be8975c6ab41682d7591add4",
+  "baseline_source": "9c7157201e8aa30cbfc51ddf3595a3dea13b196a",
+  "test_head": "4749d941f44a03a2fb8351f16bea63e739de15ff",
+  "scope": "Complete624servingrecords/allphaseflags/work, earlierstrictstate/operator/runtime qualification and failures, exact source/harness/commands. GPU CSVs are explicitlyscoped targetwindow derivatives withfullparent hashes/counts retained; nofull1.3GBprofilerstreams inGit. No models/binaries/objects/controltokens/multiGBstatefiles. Offlineaudit cannot rerunGPU/livePID/kernel/NVMechecks. No significantservinggain/equivalence/defaultadoption."
+}
