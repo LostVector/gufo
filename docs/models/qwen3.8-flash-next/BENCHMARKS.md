@@ -267,3 +267,15 @@ prompts, greedy and seeded sampling. Client wall throughput gains of +1.452% and
 +0.719% are secondary. All 14 phase flags and 16 error-affected starts remain;
 there is no uniform-tail, adaptive-policy or long-depth speed claim.
 [Full scope, per-case rates and raw data](../../patches/dflash-tp-head.md).
+
+## TP2 native MTP wider head sharing (November 9, 2026)
+
+A fixed 20-start / ten-process-pair / 120-request study measures +1.487% C1
+decode speed, 95% CI [1.298, 1.684]%, exact balanced-order p=0.007937. All
+outputs/work match. Short greedy: 70.25 → 71.95 tok/s; actual pp2048 greedy:
+67.77 → 69.06. UD-Q4_K_XL/shared Q8_0 MTP, adaptive max7, 65,536 capacity,
+one slot, chunk2048, neutral penalties, no prompt cache, thinking off. Sampled
+tasks use held-out seeds2001..2010. Six phase flags and four transport-error
+starts remain. C2 screen has mixed descriptive points (+0.454% natural, −0.455%
+coding), 38 adaptive-work differences and nine phase flags: concurrent speedup
+and tail latency remain unqualified. [Full evidence](../../patches/native-mtp-head.md).

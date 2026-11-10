@@ -1251,3 +1251,15 @@ because its token-range filter includes another conversation's checkpoint.
 Unchanged assertions pass with isolated cache ownership at both widths. The
 fixed performance study preserves all 200 outputs and non-timing work counters.
 [Evidence, failure attribution and limits](../../patches/dflash-tp-head.md).
+
+## TP2 native MTP wider head sharing (November 9, 2026)
+
+Per node: 64 real-weight component cases / 71,516,160 finite bitwise logits
+plus guards, all rows1–8. Actual engine: 294 replay records and 28 complete
+serialized post-replay state comparisons at short/16K/32K, including rejection,
+rollback, borrowed/materialized/file restores, logits, tokens, RNG and history.
+Cross-node full logit hashes agree. Borrowed snapshots materialized before
+mutation; diagnostic sync is not asynchronous-lifetime proof. Unmodified HTTP
+stop/long-context/state-edge/cancel/cache/disk-restart fixtures pass. C1 has120
+exact output/work identities; C2 has52 exact output/prompt/cache identities but
+38 adaptive-work differences. [Scope and retained flags](../../patches/native-mtp-head.md).
