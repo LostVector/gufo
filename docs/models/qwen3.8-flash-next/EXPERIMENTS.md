@@ -544,3 +544,13 @@ A separate diagnostic reproduces errors during shared prefill in baseline and
 candidate. It does not explain every timing flag. Keep native MTP deployed while
 reviewing this focused fork change; no new kernel, public flag or upstream PR.
 [Report, reproduction and raw evidence](../../patches/dflash-tp-head.md).
+
+## TP2 native MTP wider head sharing (November 9, 2026)
+
+Extend the existing lossless two-row head gather to guarded native verification
+rows3–8. Separate source scopes place86–91%of cycle time in target execution,
+with many three-row calls. Actual source/engine state checks pass and the fixed
+C1 study resolves +1.487% decode, CI[1.298,1.684]%, p=.007937. No new kernel,
+allocation, public flag, math or controller policy. Retain as an isolated C1
+review candidate; C2 results and tail latency remain unqualified. No deployment,
+PR publication or driver change. [Report](../../patches/native-mtp-head.md).
