@@ -1234,3 +1234,20 @@ phase flags/30work changes remain. Equal-work repeated C1ranges1.991–2.556s.
 A separate diagnostic finds198actualslowCorsairNVMecommands in three cohorts,
 with IRQ→CQ≤6.75µs and observed reader runnable delay≤33.179µs. It does not explain the old long
 plateau; collector failure/partialEVOcoverage limits remain. [Evidence](../../patches/ar-snapshot-turn/README.md).
+
+## TP2 DFlash verification head sharing (November 9, 2026)
+
+At short, 16K and 32K actual depths, 294 replay records and 28 complete
+serialized post-replay state comparisons per node preserve full verification
+and frontier logits, tokens, RNG, history and work. The probe asserts 126 actual
+gather cycles and 107 sampled rejection cycles per node, changed rows 4/8 and
+fallback rows 1/2/3/7. Borrowed snapshots were materialized before mutation;
+this is not an unmaterialized copy-on-write lifetime proof. Diagnostic logit
+capture adds synchronization and is not throughput evidence.
+
+HTTP checks cover both widths, actual 24.6K histories, cancellation, cached
+replay and disk restores. The original aggregate cache report remains failed
+because its token-range filter includes another conversation's checkpoint.
+Unchanged assertions pass with isolated cache ownership at both widths. The
+fixed performance study preserves all 200 outputs and non-timing work counters.
+[Evidence, failure attribution and limits](../../patches/dflash-tp-head.md).
