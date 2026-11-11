@@ -170,56 +170,73 @@ std::uint32_t ExchangeImmediate(std::uint64_t scope_id,
   return static_cast<std::uint32_t>(x ^ (x >> 32));
 }
 
-/// One window set in device memory, exported as a DMA-BUF and registered with
-/// the RDMA device; its I/O address is the device pointer itself.
+/// One window set in device memory. Each window is its own allocation,
+/// exported as its own DMA-BUF and registered as its own memory region, so the
+/// set may exceed the largest DMA-BUF the RDMA device imports; a window's I/O
+/// address is its device pointer.
 struct GpuWindows {
-  void* device{nullptr};
-  int fd{-1};
-  ibv_mr* mr{nullptr};
+  struct Window {
+    void* device{nullptr};
+    int fd{-1};
+    ibv_mr* mr{nullptr};
+  };
+  std::array<Window, kWindows> windows{};
 
-  [[nodiscard]] bool Allocate(ibv_pd* pd, std::size_t bytes, int access,
+  [[nodiscard]] std::uint8_t* Device(std::uint64_t operation_id) const {
+    return static_cast<std::uint8_t*>(windows[operation_id % kWindows].device);
+  }
+  [[nodiscard]] std::uint32_t Lkey(std::uint64_t operation_id) const {
+    return windows[operation_id % kWindows].mr->lkey;
+  }
+
+  [[nodiscard]] bool Allocate(ibv_pd* pd, std::size_t window_bytes, int access,
                               std::string* error) {
-    // Uncached: the NIC reads what the stage kernel wrote and the add reads
-    // what the NIC placed, with no cache between them.
-    if (hipExtMallocWithFlags(&device, bytes, hipDeviceMallocUncached) !=
-            hipSuccess ||
-        device == nullptr) {
-      device = nullptr;
-      SetError(error, "uncached exchange window allocation failed");
-      return false;
-    }
-    if (hipMemset(device, 0, bytes) != hipSuccess ||
-        hipDeviceSynchronize() != hipSuccess ||
-        hipMemGetHandleForAddressRange(
-            &fd, reinterpret_cast<hipDeviceptr_t>(device), bytes,
-            hipMemRangeHandleTypeDmaBufFd, 0) != hipSuccess ||
-        fd < 0) {
-      fd = -1;
-      SetError(error, "exchange window DMA-BUF export failed");
-      return false;
-    }
-    mr = ibv_reg_dmabuf_mr(pd, 0, bytes,
-                           reinterpret_cast<std::uint64_t>(device), fd, access);
-    if (mr == nullptr) {
-      SetError(error,
-               "ibv_reg_dmabuf_mr: " + std::string(std::strerror(errno)));
-      return false;
+    for (Window& window : windows) {
+      // Uncached: the NIC reads what the stage kernel wrote and the add reads
+      // what the NIC placed, with no cache between them.
+      if (hipExtMallocWithFlags(&window.device, window_bytes,
+                                hipDeviceMallocUncached) != hipSuccess ||
+          window.device == nullptr) {
+        window.device = nullptr;
+        SetError(error, "uncached exchange window allocation failed");
+        return false;
+      }
+      if (hipMemset(window.device, 0, window_bytes) != hipSuccess ||
+          hipDeviceSynchronize() != hipSuccess ||
+          hipMemGetHandleForAddressRange(
+              &window.fd, reinterpret_cast<hipDeviceptr_t>(window.device),
+              window_bytes, hipMemRangeHandleTypeDmaBufFd, 0) != hipSuccess ||
+          window.fd < 0) {
+        window.fd = -1;
+        SetError(error, "exchange window DMA-BUF export failed");
+        return false;
+      }
+      window.mr = ibv_reg_dmabuf_mr(
+          pd, 0, window_bytes, reinterpret_cast<std::uint64_t>(window.device),
+          window.fd, access);
+      if (window.mr == nullptr) {
+        SetError(error,
+                 "ibv_reg_dmabuf_mr: " + std::string(std::strerror(errno)));
+        return false;
+      }
     }
     return true;
   }
 
   void Release() noexcept {
-    if (mr != nullptr) {
-      (void)ibv_dereg_mr(mr);
-      mr = nullptr;
-    }
-    if (fd >= 0) {
-      (void)::close(fd);
-      fd = -1;
-    }
-    if (device != nullptr) {
-      (void)hipFree(device);
-      device = nullptr;
+    for (Window& window : windows) {
+      if (window.mr != nullptr) {
+        (void)ibv_dereg_mr(window.mr);
+        window.mr = nullptr;
+      }
+      if (window.fd >= 0) {
+        (void)::close(window.fd);
+        window.fd = -1;
+      }
+      if (window.device != nullptr) {
+        (void)hipFree(window.device);
+        window.device = nullptr;
+      }
     }
   }
 };
@@ -566,9 +583,9 @@ public:
     // Device windows when the RDMA device can register DMA-BUF memory, on both
     // ranks; otherwise mapped host windows. The choice needs no option: a
     // device without DMA-BUF support refuses the registration.
-    const bool local_gpu = send_gpu_.Allocate(pd_, kBufferBytes, kGpuSendAccess,
+    const bool local_gpu = send_gpu_.Allocate(pd_, kWindowBytes, kGpuSendAccess,
                                               &gpu_unavailable_) &&
-                           recv_gpu_.Allocate(pd_, kBufferBytes, kGpuRecvAccess,
+                           recv_gpu_.Allocate(pd_, kWindowBytes, kGpuRecvAccess,
                                               &gpu_unavailable_);
     Socket control = config_.rank == 0
                          ? Socket::Listen(config_.bootstrap_host,
@@ -605,8 +622,8 @@ public:
       gpu_unavailable_ = "the peer has no DMA-BUF windows";
     }
     if (gpu_windows_) {
-      send_device_ = send_gpu_.device;
-      recv_device_ = recv_gpu_.device;
+      send_device_ = send_gpu_.windows[0].device;
+      recv_device_ = recv_gpu_.windows[0].device;
       data_offset_ = 0;
     } else {
       send_gpu_.Release();
@@ -942,13 +959,12 @@ public:
       return false;
     }
     const std::uint64_t operation_id = next_operation_;
-    const std::size_t window = (operation_id % kWindows) * kWindowBytes;
     auto* flags = static_cast<std::uint8_t*>(flags_device_);
     *partial = {
-        .send = reinterpret_cast<float*>(
-            static_cast<std::uint8_t*>(send_device_) + window + data_offset_),
-        .peer = reinterpret_cast<const float*>(
-            static_cast<std::uint8_t*>(recv_device_) + window + data_offset_),
+        .send = reinterpret_cast<float*>(SendDeviceWindow(operation_id) +
+                                         data_offset_),
+        .peer = reinterpret_cast<const float*>(RecvDeviceWindow(operation_id) +
+                                               data_offset_),
         .ready = reinterpret_cast<std::uint64_t*>(flags + kReadyOffset),
         .arrived =
             reinterpret_cast<const std::uint64_t*>(flags + kArrivedOffset),
@@ -1178,9 +1194,22 @@ private:
   /// The send window of `operation_id`: host memory, or device memory with
   /// device windows. StagingKind() copies a device partial into it.
   [[nodiscard]] std::uint8_t* SendWindow(std::uint64_t operation_id) const {
-    return static_cast<std::uint8_t*>(gpu_windows_ ? send_device_
-                                                   : send_buffer_) +
-           (operation_id % kWindows) * kWindowBytes;
+    return gpu_windows_ ? send_gpu_.Device(operation_id)
+                        : static_cast<std::uint8_t*>(send_buffer_) +
+                              (operation_id % kWindows) * kWindowBytes;
+  }
+  /// The device addresses of `operation_id`'s send and receive windows.
+  [[nodiscard]] std::uint8_t* SendDeviceWindow(
+      std::uint64_t operation_id) const {
+    return gpu_windows_ ? send_gpu_.Device(operation_id)
+                        : static_cast<std::uint8_t*>(send_device_) +
+                              (operation_id % kWindows) * kWindowBytes;
+  }
+  [[nodiscard]] std::uint8_t* RecvDeviceWindow(
+      std::uint64_t operation_id) const {
+    return gpu_windows_ ? recv_gpu_.Device(operation_id)
+                        : static_cast<std::uint8_t*>(recv_device_) +
+                              (operation_id % kWindows) * kWindowBytes;
   }
   [[nodiscard]] hipMemcpyKind StagingKind() const noexcept {
     return gpu_windows_ ? hipMemcpyDeviceToDevice : hipMemcpyDeviceToHost;
@@ -1314,8 +1343,8 @@ private:
       }
       return nullptr;
     }
-    return reinterpret_cast<const float*>(
-        static_cast<std::uint8_t*>(recv_device_) + window + kDataOffset);
+    return reinterpret_cast<const float*>(RecvDeviceWindow(operation_id) +
+                                          kDataOffset);
   }
 
   /// Transfer with device windows: one SEND_WITH_IMM of the staged partial
@@ -1339,7 +1368,7 @@ private:
     ibv_sge sge{};
     sge.addr = reinterpret_cast<std::uint64_t>(SendWindow(operation_id));
     sge.length = static_cast<std::uint32_t>(length);
-    sge.lkey = send_gpu_.mr->lkey;
+    sge.lkey = send_gpu_.Lkey(operation_id);
     ibv_send_wr wr{};
     wr.wr_id = kWriteTag | operation_id;
     wr.sg_list = length != 0 ? &sge : nullptr;
@@ -1359,9 +1388,7 @@ private:
     if (!WaitForExchange(operation_id, expected, error)) {
       return nullptr;
     }
-    return reinterpret_cast<const float*>(
-        static_cast<std::uint8_t*>(recv_device_) +
-        (operation_id % kWindows) * kWindowBytes);
+    return reinterpret_cast<const float*>(RecvDeviceWindow(operation_id));
   }
 
   /// Starts the thread that runs overlapped exchanges, under `mutex_`.
@@ -1516,10 +1543,9 @@ private:
   [[nodiscard]] bool PostWindowReceive(std::uint64_t operation_id,
                                        std::string* error) {
     ibv_sge sge{};
-    sge.addr = reinterpret_cast<std::uint64_t>(recv_gpu_.device) +
-               (operation_id % kWindows) * kWindowBytes;
+    sge.addr = reinterpret_cast<std::uint64_t>(recv_gpu_.Device(operation_id));
     sge.length = static_cast<std::uint32_t>(kWindowBytes);
-    sge.lkey = recv_gpu_.mr->lkey;
+    sge.lkey = recv_gpu_.Lkey(operation_id);
     ibv_recv_wr wr{};
     wr.wr_id = kRecvTag | operation_id;
     wr.sg_list = &sge;
