@@ -1969,6 +1969,108 @@ p.with_suffix(".requests.json").write_text(json.dumps({"version": 1, "requests":
                 self.assertEqual(report["status"], expected)
                 self.assertEqual(status, 0 if expected == "passed" else 1)
 
+    def test_legacy_spacing_has_its_own_server_and_cache(self):
+        for component in (False, True):
+            with self.subTest(component=component), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                child = """
+import json, sys
+from pathlib import Path
+out = Path(sys.argv[sys.argv.index('--output') + 1])
+out.write_text(json.dumps([{'status': 'passed', 'exact': True}]))
+out.with_suffix('.requests.json').write_text(json.dumps({'version': 1, 'requests': [{
+    'status': 'complete', 'wall_ms': 1, 'endpoint': '/v1/chat/completions',
+    'request_sha256': 'fixture'}]}))
+"""
+                for script in ("continuation.py", "cache_disk_spacing.py", "cache_persist.py"):
+                    (root / script).write_text(child)
+                calls = []
+
+                def server(command, log, timeout):
+                    cache = Path(command[command.index("--cache-disk") + 1])
+                    cache.mkdir(parents=True, exist_ok=True)
+                    calls.append((log.name, cache.name))
+                    text = ("schema=component-cache-v1 event=configured\n" if component else
+                            "event=snapshot_cache_configured\n")
+                    text += ("spacing publications only\n" if "spacing" in log.name else
+                             "foreign publication with an overlapping token count\n")
+                    log.write_text(text)
+                    return contextlib.nullcontext()
+
+                def check(grown, restored, report, restored_report):
+                    if not component:
+                        self.assertNotIn("foreign publication", grown)
+                        self.assertNotIn("foreign publication", restored)
+                    return {"checked": True}
+
+                args = ["run.py", "--record-baseline", "--output", str(root / "report"),
+                        "--sampling-preset", "qwen38", "--suite", "cache", "--",
+                        sys.executable, "serve", "llm", "--model", "fixture.gguf"]
+                with patch.object(sys, "argv", args), patch.object(functional, "TESTS", root), \
+                     patch.object(functional, "server", side_effect=server), \
+                     patch.object(sys.modules["cache_disk_spacing"], "check_disk_spacing",
+                                  side_effect=check), \
+                     patch.object(functional, "provenance", return_value={}), \
+                     patch.object(functional, "join_server_timings"), \
+                     patch.object(functional, "execution_coverage", return_value={}), \
+                     contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(functional.main(), 0)
+                report = json.loads((root / "report/report.json").read_text())
+                self.assertEqual(report["disk_spacing_isolated"], not component)
+                self.assertEqual(report["disk_spacing"], {"checked": True})
+                expected = [("server.log", "disk"), ("server-restarted.log", "disk")]
+                if not component:
+                    expected += [("server-spacing.log", "spacing-disk"),
+                                 ("server-spacing-restarted.log", "spacing-disk")]
+                    self.assertGreater(report["spacing_startup_ms"], 0)
+                    self.assertGreater(report["spacing_restart_ms"], 0)
+                    self.assertEqual(report["server_logs"]["disk-spacing.requests.json"],
+                                     "server-spacing.log")
+                self.assertEqual(calls, expected)
+                for cache in ("disk", "spacing-disk"):
+                    self.assertFalse((root / "report" / cache).exists())
+
+    def test_isolated_request_timings_use_their_owned_server_log(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "disk-spacing.requests.json"
+            path.write_text(json.dumps({"requests": [{"index": 1, "request_id": "r1",
+                "endpoint": "/v1/chat/completions", "metrics": {}}]}))
+            (root / "server.log").write_text(
+                "request=r1 event=completed duration_ms=100 draft_proposed=9 draft_accepted=8\n")
+            (root / "server-spacing.log").write_text(
+                "request=r1 event=completed duration_ms=2 draft_proposed=3 draft_accepted=2\n")
+            (root / "report.json").write_text(json.dumps({"server_logs": {
+                path.name: "server-spacing.log"}}))
+            join_server_timings(root)
+            metrics = json.loads(path.read_text())["requests"][0]["metrics"]
+            self.assertEqual(metrics["server_duration_ms"], 2)
+            self.assertEqual(metrics["draft_tokens"], 3)
+            self.assertEqual(metrics["draft_tokens_accepted"], 2)
+
+    def test_isolated_spacing_lifecycle_and_mode_remain_checked(self):
+        baseline = {"startup_ms": 100, "restart_ms": 100,
+                    "spacing_startup_ms": 200, "spacing_restart_ms": 300}
+        result = {"status": "passed", "measurements": []}
+        functional.compare_lifecycle(result, baseline,
+                                     {**baseline, "spacing_startup_ms": 225})
+        self.assertEqual(len(result["measurements"]), 4)
+        self.assertEqual(result["status"], "inconclusive")
+        missing = dict(baseline)
+        del missing["spacing_restart_ms"]
+        with self.assertRaisesRegex(ValueError, "spacing_restart_ms"):
+            functional.compare_lifecycle(result, baseline, missing)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "server.log").write_text(
+                "event=load_completed kind=text speculative=mtp\n")
+            for log in ("server-spacing.log", "server-spacing-restarted.log"):
+                path = root / log
+                path.write_text("event=load_completed kind=text speculative=off\n")
+                with self.assertRaisesRegex(ValueError, log):
+                    functional.execution_coverage(root, "mtp")
+                path.write_text("event=load_completed kind=text speculative=mtp\n")
+
     def test_disk_cache_is_removed_after_restart_checks(self):
         for exit_code, continuation_report, spacing_exact, expected in (
             (0, {"status": "passed", "exact": True}, True, "passed"),

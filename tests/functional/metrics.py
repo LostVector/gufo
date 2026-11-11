@@ -678,9 +678,17 @@ def qualify(comparisons, controls=()):
 def join_server_timings(directory):
     """Join after shutdown, when cancelled work and disk restoration have drained."""
     root = Path(directory)
+    report_path = root / "report.json"
+    report = json.loads(report_path.read_text()) if report_path.exists() else {}
+    log_names = report.get("server_logs", {})
+    if not isinstance(log_names, dict) or any(
+            not isinstance(key, str) or not isinstance(value, str)
+            or Path(value).name != value for key, value in log_names.items()):
+        raise ValueError("invalid request/server log attribution")
     for path in root.glob("*.requests.json"):
-        log = root / ("server-restarted.log" if path.name.endswith("-disk.requests.json")
-                      else "server.log")
+        default = ("server-restarted.log" if path.name.endswith("-disk.requests.json")
+                   else "server.log")
+        log = root / log_names.get(path.name, default)
         completed = {}
         for line in log.read_text().splitlines():
             if "event=completed " in line:

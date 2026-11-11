@@ -741,6 +741,10 @@ logged a capacity refusal during the continued request.
 Component disk-spacing checks correlate drained publication logs with the
 checkpoint IDs captured by their own requests, excluding delayed writes from
 earlier suites even when their token counts match.
+Legacy publications have no checkpoint IDs, so the runner gives their spacing
+fixture a separate disk cache and two additional server starts. Request timings
+use the corresponding server log, and both extra startup times remain subject
+to the lifecycle comparison. The spacing and restore assertions are unchanged.
 `cache` also checks `cache_persist: false` across the same restart: a flagged
 prompt still reuses RAM within the first server and finds nothing on disk after
 the restart, while an unflagged control prompt restores from disk.
