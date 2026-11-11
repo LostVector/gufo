@@ -170,6 +170,13 @@ private:
 class ToyRunner final : public gufo::ext::LegacyTextModelRunner {
 public:
   explicit ToyRunner(ToyOptions options) : options_(options) {}
+  std::optional<std::string> rendered_prompt;
+  mutable const ChatRequest* last_render_request{nullptr};
+  [[nodiscard]] std::optional<std::string> RenderPrompt(
+      const ChatRequest& request) const override {
+    last_render_request = &request;
+    return rendered_prompt;
+  }
   DeviceProbeStatus probe_status{DeviceProbeStatus::kUsable};
   DeviceProbeStatus PollDevice() const override { return probe_status; }
   bool DeviceUsable() const override {
@@ -941,6 +948,18 @@ gufo::sampling::SamplingConfig Sampled() {
 }  // namespace
 
 int main() {
+  {
+    auto toy = std::make_shared<ToyRunner>(ToyOptions{});
+    const TpMirroredRunner runner(toy, std::make_shared<CaptureSink>());
+    const ChatRequest request;
+    toy->rendered_prompt = "rendered model-specific prompt";
+    Require(runner.RenderPrompt(request) == toy->rendered_prompt &&
+                toy->last_render_request == &request,
+            "TP forwards prompt rendering and the original request");
+    toy->rendered_prompt.reset();
+    Require(!runner.RenderPrompt(request).has_value(),
+            "TP preserves unsupported prompt rendering");
+  }
   {
     auto toy = std::make_shared<ToyRunner>(ToyOptions{});
     const TpMirroredRunner runner(toy, std::make_shared<CaptureSink>());
