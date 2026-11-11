@@ -111,6 +111,14 @@ bool SetKeepAlive(Socket socket, int idle_seconds, int interval_seconds,
 /// Set only the receive timeout; zero restores an unbounded idle receive.
 bool SetReceiveTimeout(Socket socket, int timeout_ms) noexcept;
 
+/// Non-blocking TCP receive-half state, including a FIN behind unread bytes.
+/// Does not consume payload or change the socket's blocking mode. An error
+/// retains the native socket error for LastSocketError().
+/// Requires Linux RDHUP or Windows 10 1703+ TCP_INFO; unsupported systems
+/// report kError instead of silently missing a close behind buffered data.
+enum class PeerReceiveState { kOpen, kClosed, kError };
+[[nodiscard]] PeerReceiveState QueryPeerReceiveState(Socket socket) noexcept;
+
 /// Non-blocking check whether the remote peer has closed or reset the socket.
 bool IsPeerDisconnected(Socket socket) noexcept;
 

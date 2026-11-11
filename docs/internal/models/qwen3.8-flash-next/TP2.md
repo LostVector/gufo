@@ -295,7 +295,11 @@ pairing.
 continuation cache through `TpMirroredRunner`. Just before each call that
 changes model state, it sends the call to rank 1 over an authenticated TCP
 control channel; rank 1's `TpExecutor` makes the same call on the same state,
-and both ranks meet in the call's exchanges. Token selection reads only logits
+and both ranks meet in the call's exchanges. While loading before the handshake,
+a control-channel watch detects peer closure without consuming a queued hello.
+The handshake stops the watch; subsequent failures belong to the worker/broker.
+A lost worker exits without waiting for teardown of an exchange its peer cannot
+finish. Token selection reads only logits
 and stays on rank 0. A request opens with `kSingle` (prompt, sampling
 configuration and prepared images) and closes with `kEnd`. Mirrored calls:
 

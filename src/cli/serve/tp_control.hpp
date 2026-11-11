@@ -3,12 +3,15 @@
 
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <optional>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "src/core/platform/net.hpp"
@@ -271,6 +274,13 @@ public:
   TpControlChannel(const TpControlChannel&) = delete;
   TpControlChannel& operator=(const TpControlChannel&) = delete;
 
+  /// Calls `on_lost` once, from a background thread, if the peer closes the
+  /// channel or its connection fails before this rank begins the handshake.
+  /// The ranks pair before each loads its model, which takes about a minute;
+  /// without the watch a rank whose peer exited meanwhile learns of it only
+  /// from the handshake, after its whole load, while the restarted peer waits
+  /// for a new pairing. Handshake and the destructor end the watch.
+  void WatchPeerUntilHandshake(std::function<void(std::string)> on_lost);
   [[nodiscard]] bool Handshake(const TpControlConfig& config,
                                std::string* error);
   [[nodiscard]] bool SendCommand(const TpControlCommand& command,
@@ -304,6 +314,8 @@ private:
                              std::string* error);
   [[nodiscard]] bool RecvAll(void* data, std::size_t bytes, std::string* error);
 
+  void StopPeerWatch() noexcept;
+
   net::Socket fd_{net::kInvalidSocket};
   std::uint16_t port_{0};
   std::uint32_t rank_{0};
@@ -314,6 +326,10 @@ private:
   std::mutex send_mutex_;
   std::mutex receive_mutex_;
   std::atomic<bool> interrupted_{false};
+  std::atomic<bool> stop_peer_watch_{false};
+  std::mutex peer_watch_mutex_;
+  std::condition_variable peer_watch_changed_;
+  std::thread peer_watch_;
   std::vector<std::uint8_t> command_prompt_;
   std::vector<std::uint8_t> response_payload_;
 };

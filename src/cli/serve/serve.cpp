@@ -1832,6 +1832,15 @@ int RunServe(std::span<const char* const> args) {
         return 1;
       }
     }
+    if (tp_control) {
+      tp_control->WatchPeerUntilHandshake([](const std::string& reason) {
+        server::Logger::Error(
+            "tp", "event=tp_peer_lost phase=load action=exit reason=" + reason);
+        std::cerr.flush();
+        std::fflush(nullptr);
+        std::_Exit(1);
+      });
+    }
     tp_config.runtime = tp_communicator;
     tp_config.control = tp_control;
     std::string err;
@@ -1956,7 +1965,10 @@ int RunServe(std::span<const char* const> args) {
       if (!backend->run_worker(&worker_error)) {
         server::Logger::Error("server",
                               "event=tp_worker_failed reason=" + worker_error);
-        return 1;
+        // The lost rank cannot complete queued exchanges during teardown.
+        std::cerr.flush();
+        std::fflush(nullptr);
+        std::_Exit(1);
       }
       return 0;
     }

@@ -6,6 +6,10 @@
 #include <stdexcept>
 #include <system_error>
 
+#if defined(_WIN32)
+#include <mstcpip.h>
+#endif
+
 namespace gufo::net {
 namespace {
 
@@ -206,6 +210,60 @@ bool SetReceiveTimeout(Socket socket, int timeout_ms) noexcept {
   timeout.tv_usec = (timeout_ms % 1000) * 1000;
   return ::setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeout,
                       sizeof(timeout)) == 0;
+#endif
+}
+
+PeerReceiveState QueryPeerReceiveState(Socket socket) noexcept {
+  if (socket == kInvalidSocket)
+    return PeerReceiveState::kClosed;
+#if defined(_WIN32)
+#if defined(SIO_TCP_INFO) && defined(NTDDI_WIN10_RS2) && \
+    NTDDI_VERSION >= NTDDI_WIN10_RS2
+  DWORD version = 0;
+  DWORD returned = 0;
+  TCP_INFO_v0 info{};
+  if (WSAIoctl(socket, SIO_TCP_INFO, &version, sizeof(version), &info,
+               sizeof(info), &returned, nullptr, nullptr) != 0)
+    return PeerReceiveState::kError;
+  if (returned < sizeof(info.State)) {
+    WSASetLastError(WSAEINVAL);
+    return PeerReceiveState::kError;
+  }
+  switch (info.State) {
+    case TCPSTATE_CLOSED:
+    case TCPSTATE_CLOSE_WAIT:
+    case TCPSTATE_CLOSING:
+    case TCPSTATE_LAST_ACK:
+    case TCPSTATE_TIME_WAIT:
+      return PeerReceiveState::kClosed;
+    default:
+      return PeerReceiveState::kOpen;
+  }
+#else
+  WSASetLastError(WSAEOPNOTSUPP);
+  return PeerReceiveState::kError;
+#endif
+#elif defined(POLLRDHUP)
+  pollfd descriptor{.fd = socket, .events = POLLRDHUP, .revents = 0};
+  if (::poll(&descriptor, 1, 0) < 0)
+    return PeerReceiveState::kError;
+  if ((descriptor.revents & POLLNVAL) != 0) {
+    errno = EBADF;
+    return PeerReceiveState::kError;
+  }
+  if ((descriptor.revents & POLLERR) != 0) {
+    int error = 0;
+    socklen_t size = sizeof(error);
+    if (::getsockopt(socket, SOL_SOCKET, SO_ERROR, &error, &size) == 0)
+      errno = error != 0 ? error : ECONNRESET;
+    return PeerReceiveState::kError;
+  }
+  return (descriptor.revents & (POLLRDHUP | POLLHUP)) != 0
+             ? PeerReceiveState::kClosed
+             : PeerReceiveState::kOpen;
+#else
+  errno = ENOTSUP;
+  return PeerReceiveState::kError;
 #endif
 }
 

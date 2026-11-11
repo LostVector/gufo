@@ -534,12 +534,59 @@ std::shared_ptr<TpControlChannel> TpControlChannel::Connect(
 }
 
 TpControlChannel::~TpControlChannel() {
+  StopPeerWatch();
   interrupted_.store(true, std::memory_order_release);
   if (fd_ != net::kInvalidSocket) {
     (void)net::ShutdownSocket(fd_, net::ShutdownHow::kReadWrite);
     net::CloseSocket(fd_);
     fd_ = net::kInvalidSocket;
   }
+}
+
+void TpControlChannel::WatchPeerUntilHandshake(
+    std::function<void(std::string)> on_lost) {
+  if (peer_watch_.joinable() || handshaken_ || fd_ == net::kInvalidSocket)
+    return;
+  stop_peer_watch_.store(false, std::memory_order_release);
+  peer_watch_ = std::thread([this, on_lost = std::move(on_lost)] {
+    const auto stopped = [this] {
+      return stop_peer_watch_.load(std::memory_order_acquire);
+    };
+    while (!stopped()) {
+      const auto state = net::QueryPeerReceiveState(fd_);
+      if (state != net::PeerReceiveState::kOpen && !stopped()) {
+        // A signal interrupt is transient; keep watching the same socket.
+        if (state == net::PeerReceiveState::kClosed) {
+          on_lost("TP control peer closed the channel before the handshake");
+          return;
+        }
+        if (!net::IsSocketInterrupted()) {
+          on_lost(SystemError("TP control peer watch"));
+          return;
+        }
+      }
+      // Payload readability must not cause a busy loop: a hello may already
+      // be queued while this rank loads. The handshake owns those bytes.
+      std::unique_lock<std::mutex> lock(peer_watch_mutex_);
+      peer_watch_changed_.wait_for(lock, std::chrono::milliseconds(100),
+                                   stopped);
+    }
+  });
+}
+
+void TpControlChannel::StopPeerWatch() noexcept {
+  {
+    const std::lock_guard<std::mutex> lock(peer_watch_mutex_);
+    stop_peer_watch_.store(true, std::memory_order_release);
+  }
+  peer_watch_changed_.notify_all();
+  if (!peer_watch_.joinable())
+    return;
+  // on_lost can release the last channel owner on the watching thread.
+  if (peer_watch_.get_id() == std::this_thread::get_id())
+    peer_watch_.detach();
+  else
+    peer_watch_.join();
 }
 
 void TpControlChannel::Interrupt() noexcept {
@@ -664,6 +711,7 @@ bool TpControlChannel::ReceiveFrame(std::uint16_t type, std::uint64_t* sequence,
 
 bool TpControlChannel::Handshake(const TpControlConfig& config,
                                  std::string* error) {
+  StopPeerWatch();
   if (config.world_size != 2 || config.rank != rank_ || config.rank > 1 ||
       config.max_context == 0 || config.prefill_chunk_tokens == 0 ||
       config.sessions == 0 || config.auth_token.empty() ||

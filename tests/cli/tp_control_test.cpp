@@ -6,11 +6,14 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <future>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <utility>
@@ -78,7 +81,64 @@ void RequireInvalidResponse(const TpControlResponse& response,
 
 }  // namespace
 
+void TestPeerReceiveStatePreservesQueuedBytes() {
+  namespace net = gufo::net;
+  const auto listener = net::CreateStreamSocket(AF_INET);
+  Require(listener != net::kInvalidSocket, "receive-state listener opens");
+  sockaddr_in address{};
+  address.sin_family = AF_INET;
+  address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+  Require(::bind(listener, reinterpret_cast<sockaddr*>(&address),
+                 sizeof(address)) == 0 &&
+              ::listen(listener, 1) == 0,
+          "receive-state listener binds");
+  socklen_t length = sizeof(address);
+  Require(::getsockname(listener, reinterpret_cast<sockaddr*>(&address),
+                        &length) == 0,
+          "receive-state listener address");
+  const auto sender = net::CreateStreamSocket(AF_INET);
+  Require(
+      sender != net::kInvalidSocket &&
+          ::connect(sender, reinterpret_cast<sockaddr*>(&address), length) == 0,
+      "receive-state sender connects");
+  const auto receiver = net::AcceptClientSocket(listener);
+  net::CloseSocket(listener);
+  Require(receiver != net::kInvalidSocket, "receive-state receiver accepts");
+  const std::string payload = "queued hello";
+  Require(net::SendNoSignal(sender, payload.data(), payload.size()) ==
+                  static_cast<std::intptr_t>(payload.size()) &&
+              net::PollReadable(receiver, 1000) > 0,
+          "hello is queued before close check");
+  Require(net::QueryPeerReceiveState(receiver) == net::PeerReceiveState::kOpen,
+          "unread hello alone is not a closed peer");
+  Require(net::ShutdownSocket(sender, net::ShutdownHow::kWrite),
+          "sender half-closes behind unread hello");
+  auto state = net::PeerReceiveState::kOpen;
+  const auto deadline =
+      std::chrono::steady_clock::now() + std::chrono::seconds(1);
+  while (state == net::PeerReceiveState::kOpen &&
+         std::chrono::steady_clock::now() < deadline) {
+    state = net::QueryPeerReceiveState(receiver);
+    std::this_thread::yield();
+  }
+  Require(state == net::PeerReceiveState::kClosed,
+          "FIN behind buffered hello is detected without reading it");
+  std::string received(payload.size(), '\0');
+  std::size_t copied = 0;
+  while (copied < received.size()) {
+    const auto count = net::Receive(receiver, received.data() + copied,
+                                    received.size() - copied);
+    Require(count > 0, "buffered hello remains readable after close query");
+    copied += static_cast<std::size_t>(count);
+  }
+  Require(received == payload,
+          "close query preserves every buffered hello byte");
+  net::CloseSocket(sender);
+  net::CloseSocket(receiver);
+}
+
 int main() {
+  TestPeerReceiveStatePreservesQueuedBytes();
   const auto port = FreePort();
   std::string client_error;
   std::shared_ptr<TpControlChannel> client;
@@ -1003,6 +1063,125 @@ int main() {
   }
   Require(idle_broker.Failure().find("receive failed") != std::string::npos,
           "an idle TP broker reports a lost peer: " + idle_broker.Failure());
+
+  // The ranks pair, then each loads its model for about a minute before the
+  // handshake. A peer that sends its hello first is not a lost peer: the hello
+  // stays queued for the handshake.
+  const auto load_port = FreePort();
+  std::shared_ptr<TpControlChannel> loading_worker;
+  std::thread load_connector([&] {
+    loading_worker =
+        TpControlChannel::Connect("127.0.0.1", load_port, &client_error);
+  });
+  auto loaded_server = TpControlChannel::Listen(load_port, &server_error);
+  load_connector.join();
+  Require(loaded_server != nullptr && loading_worker != nullptr,
+          "TP loading pair connects");
+  std::atomic<bool> worker_saw_loss{false};
+  loading_worker->WatchPeerUntilHandshake(
+      [&](const std::string&) { worker_saw_loss.store(true); });
+  bool loaded_server_handshake = false;
+  std::thread loaded_server_thread([&] {
+    loaded_server_handshake = loaded_server->Handshake(rank0, &server_error);
+  });
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  Require(!worker_saw_loss.load(),
+          "a peer hello during the load is not a lost peer");
+  Require(loading_worker->Handshake(rank1, &client_error), client_error);
+  loaded_server_thread.join();
+  Require(loaded_server_handshake && !worker_saw_loss.load(),
+          "TP pair handshakes after a watched load");
+
+  // Rank 0 exiting while rank 1 loads is reported at once, not after the
+  // load at the handshake, so rank 1 can restart into rank 0's next pairing.
+  const auto lost_port = FreePort();
+  std::shared_ptr<TpControlChannel> orphan_worker;
+  std::thread lost_connector([&] {
+    orphan_worker =
+        TpControlChannel::Connect("127.0.0.1", lost_port, &client_error);
+  });
+  auto exiting_server = TpControlChannel::Listen(lost_port, &server_error);
+  lost_connector.join();
+  Require(exiting_server != nullptr && orphan_worker != nullptr,
+          "TP orphan pair connects");
+  std::mutex loss_mutex;
+  std::string loss_reason;
+  std::atomic<int> loss_reports{0};
+  orphan_worker->WatchPeerUntilHandshake([&](std::string reason) {
+    const std::lock_guard<std::mutex> lock(loss_mutex);
+    loss_reason = std::move(reason);
+    loss_reports.fetch_add(1);
+  });
+  exiting_server.reset();
+  const auto orphan_deadline =
+      std::chrono::steady_clock::now() + std::chrono::seconds(5);
+  while (loss_reports.load() == 0 &&
+         std::chrono::steady_clock::now() < orphan_deadline) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  }
+  std::this_thread::sleep_for(std::chrono::milliseconds(300));
+  {
+    const std::lock_guard<std::mutex> lock(loss_mutex);
+    Require(loss_reports.load() == 1 &&
+                loss_reason.find("closed the channel before the handshake") !=
+                    std::string::npos,
+            "a peer lost during the load is reported once: " + loss_reason);
+  }
+  orphan_worker.reset();
+
+  // A watch the handshake already ended stays silent when the pair ends.
+  const auto ended_port = FreePort();
+  std::shared_ptr<TpControlChannel> ended_worker;
+  std::thread ended_connector([&] {
+    ended_worker =
+        TpControlChannel::Connect("127.0.0.1", ended_port, &client_error);
+  });
+  auto ended_server = TpControlChannel::Listen(ended_port, &server_error);
+  ended_connector.join();
+  Require(ended_server != nullptr && ended_worker != nullptr,
+          "TP ended pair connects");
+  std::atomic<bool> ended_saw_loss{false};
+  ended_worker->WatchPeerUntilHandshake(
+      [&](const std::string&) { ended_saw_loss.store(true); });
+  bool ended_server_handshake = false;
+  std::thread ended_server_thread([&] {
+    ended_server_handshake = ended_server->Handshake(rank0, &server_error);
+  });
+  Require(ended_worker->Handshake(rank1, &client_error), client_error);
+  ended_server_thread.join();
+  Require(ended_server_handshake, server_error);
+  ended_server.reset();
+  std::this_thread::sleep_for(std::chrono::milliseconds(300));
+  Require(!ended_saw_loss.load(),
+          "the handshake ends the watch; later losses go to the worker loop");
+
+  // The last channel owner may be released by the watch's callback. The
+  // destructor must not join its own thread or touch freed channel storage.
+  {
+    const auto release_port = FreePort();
+    std::shared_ptr<TpControlChannel> release_worker;
+    std::thread connector([&] {
+      release_worker =
+          TpControlChannel::Connect("127.0.0.1", release_port, &client_error);
+    });
+    auto release_peer = TpControlChannel::Listen(release_port, &server_error);
+    connector.join();
+    Require(release_worker && release_peer, "self-release pair connects");
+    std::weak_ptr<TpControlChannel> weak = release_worker;
+    auto released = std::make_shared<std::promise<void>>();
+    auto finished = released->get_future();
+    release_worker->WatchPeerUntilHandshake(
+        [&release_worker, released](const std::string&) {
+          release_worker.reset();
+          released->set_value();
+        });
+    release_peer.reset();
+    Require(
+        finished.wait_for(std::chrono::seconds(2)) == std::future_status::ready,
+        "callback releases its last channel owner without self-join");
+    finished.get();
+    Require(weak.expired(), "watched channel was destroyed on callback thread");
+  }
 
   Require(server->port() == port && client->port() == port,
           "TP control service port");
