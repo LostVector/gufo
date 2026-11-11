@@ -5,44 +5,23 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <span>
 #include <string_view>
 #include <vector>
 
-#include "src/ext/continuation.hpp"
+#include "src/cli/serve/continuation_types.hpp"
 
 namespace gufo::server {
-
-// The continuation bases and token id are runtime contracts (RFC step 6).
-// These aliases keep the serving spelling; cache policy below stays here.
-using ext::ContinuationInputPrefix;
-using ext::ContinuationSnapshot;
-using ext::ContinuationState;
-using ext::ContinuationToken;
-using ext::PrefixInputIdentity;
 
 enum class SnapshotEventAction : std::uint8_t {
   kRemoved,
   kSkipped,
 };
 
-enum class SnapshotEventReason : std::uint8_t {
-  kByteCapacity,
-  kEntryCapacity,
-  kExactReplacement,
-  kCaptureFailure,
-  kReservationMismatch,
-};
-
 /// Continuation boundaries take precedence over optional history/retry copies.
 /// A branch point is a continuation boundary learned where two prompts
 /// diverged; it stays a branch point after the older prompt's checkpoints go.
-enum class SnapshotPurpose : std::uint8_t {
-  kContinuation,
-  kHistory,
-  kRetry,
-  kBranchPoint,
-};
 
 /// Sanitized snapshot-retention event.
 ///
@@ -58,11 +37,6 @@ struct SnapshotEvent {
 };
 
 /// Explains a miss without exposing prompt or token contents.
-struct ContinuationLookup {
-  std::string_view miss_reason;
-  std::size_t common_prefix_tokens{0};
-  std::size_t checkpoint_tokens{0};
-};
 
 /// Bounded exact-prefix cache over opaque model continuation states.
 ///
@@ -89,6 +63,9 @@ public:
     /// without snapshot support.
     StateReusable state_reusable;
     SnapshotReusable snapshot_reusable;
+    // Like component snapshots: only an unchanged retry may use an unaligned
+    // full prompt; continuations restore an aligned earlier checkpoint.
+    std::optional<std::size_t> prefill_alignment;
   };
 
   class Lease {

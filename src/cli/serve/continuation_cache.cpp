@@ -560,7 +560,10 @@ ContinuationCache::Lease ContinuationCache::Acquire(
                  IsPrefix(entry->tokens, prompt);
         });
     const auto can_reuse = [&](std::size_t count) {
-      return has_fallback || count <= stable_prefix_tokens;
+      const auto alignment = std::max<std::size_t>(
+          1, impl_->snapshot_support.prefill_alignment.value_or(1));
+      return (count == prompt.size() || count % alignment == 0) &&
+             (has_fallback || count <= stable_prefix_tokens);
     };
     std::size_t source = no_entry;
     std::size_t cached_tokens = 0;

@@ -198,7 +198,7 @@ std::shared_ptr<const sampling::TokenConstraint> RebuildConstraint(
   }
   sampling::SamplingConfig config;
   (void)ConstrainChatRequest(
-      request, runner, &config, nullptr,
+      request, runner, &config, nullptr, nullptr,
       source.reasoning ? TextGenerationBackend::InitialOutputState::kReasoning
                        : TextGenerationBackend::InitialOutputState::kContent);
   if (config.constraint == nullptr)
@@ -679,6 +679,11 @@ TextRunnerDescriptor TpMirroredRunner::Descriptor() const {
     identity.insert(identity.end(), kMarker.begin(), kMarker.end());
   }
   return descriptor;
+}
+
+bool TpMirroredRunner::CanContinue(const TextRunnerState& state,
+                                   std::size_t prompt_tokens) const {
+  return inner_->CanContinue(Mirrored(state).inner(), prompt_tokens);
 }
 
 TextRunnerResourceClaim TpMirroredRunner::ResourceClaim() const {

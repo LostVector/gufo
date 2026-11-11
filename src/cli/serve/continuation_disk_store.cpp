@@ -1278,8 +1278,21 @@ struct ContinuationDiskStore::Impl {
         prompt.size(), input_identity, input_prefixes,
         [&](auto begin, auto end, auto identity) {
           const auto descriptor = DescriptorForInput(runner, identity);
-          const auto candidate =
+          auto candidate =
               FindLongestCandidate(*descriptor.persistence, prompt.first(end));
+          const auto alignment = std::max<std::size_t>(
+              1, descriptor.capabilities.prefill_alignment);
+          while (candidate != entries.end() &&
+                 candidate->tokens.size() != prompt.size() &&
+                 candidate->tokens.size() % alignment != 0) {
+            const auto count = candidate->tokens.size();
+            if (count == 0) {
+              candidate = entries.end();
+              break;
+            }
+            candidate = FindLongestCandidate(*descriptor.persistence,
+                                             prompt.first(count - 1));
+          }
           if (candidate != entries.end() && candidate->tokens.size() >= begin &&
               (best == entries.end() ||
                candidate->tokens.size() > best->tokens.size()))

@@ -10,11 +10,14 @@
   libpng,
   libjpeg,
   libwebp,
+  libopus,
   libsndfile,
   soxr,
   openssl,
   ffmpeg-headless,
   ccache,
+  rustToolchain,
+  rustPlatform,
   rocmPackages,
   rdma-core ? null,
   enableTp2Rdma ? false,
@@ -32,6 +35,35 @@ let
   rocmRuntime = rocmPackages.rocm-runtime.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [ ./patches/rocr-fixed-cwsr-rocm10.patch ];
   });
+  # The CI timing baseline builds an older revision with this definition; before
+  # the Cargo workspace, the lockfile sat next to the PNG decoder.
+  cargoSetup = import ./rust-cargo.nix {
+    inherit lib rustPlatform;
+    lockFile =
+      if builtins.pathExists (sourceRoot + "/Cargo.lock") then
+        sourceRoot + "/Cargo.lock"
+      else
+        sourceRoot + "/src/core/png_decode/Cargo.lock";
+  };
+  # The CI timing baseline builds an older revision with this definition;
+  # before the Rust audio decoder, EmbeddingGemma 2 linked libsndfile and soxr.
+  hasRustAudio = builtins.pathExists (sourceRoot + "/src/core/audio_decode/Cargo.toml");
+  # A store path has no Git metadata. A flake input or fetcher result still
+  # names its commit (`dirtyRev` ends in "-dirty") or at least the hash of its
+  # tree; a plain path names nothing.
+  extensionRevision =
+    ext:
+    let
+      revision =
+        if builtins.isAttrs ext then
+          ext.rev or ext.dirtyRev or ext.narHash or ext.outputHash or "unknown"
+        else
+          "unknown";
+    in
+    if builtins.isString revision && revision != "" && !(lib.hasInfix ";" revision) then
+      revision
+    else
+      "unknown";
   versionLabel = if releaseVersion == null then "development" else releaseVersion;
   packageVersion =
     if releaseVersion == null then "0-unstable-${revision}" else releaseVersion;
@@ -39,6 +71,8 @@ let
   # Revisions before model extensions have no extensions.lock, keep the eval
   # fixture under the DeepSeek tests and report no extension selection.
   hasExtensions = builtins.pathExists (sourceRoot + "/extensions.lock");
+  # Revisions before extension modules have no SDK to install.
+  hasExtensionSdk = builtins.pathExists (sourceRoot + "/cmake/GufoExtensionSdk.cmake");
   evalFixture =
     if hasExtensions then
       "tests/fixtures/eval/antirez-ds4.json"
@@ -54,7 +88,7 @@ let
         relativePath = lib.removePrefix "${root}/" pathString;
       in
       pathString == root
-      || builtins.elem relativePath [ "CMakeLists.txt" "LICENSE" "NOTICE" "THIRD_PARTY_NOTICES.md" "extensions.lock" ]
+      || builtins.elem relativePath [ "CMakeLists.txt" "LICENSE" "NOTICE" "THIRD_PARTY_NOTICES.md" "extensions.lock" "rust-toolchain.toml" "Cargo.toml" "Cargo.lock" ]
       || relativePath == "licenses"
       || lib.hasPrefix "licenses/" relativePath
       || relativePath == "cmake"
@@ -88,12 +122,16 @@ stdenv.mkDerivation {
   pname = "gufo";
   version = packageVersion;
   src = productionSource;
+  # The extension SDK pins the build toolchain, so it lives in its own output:
+  # the runtime closure stays free of compilers and development libraries.
+  outputs = [ "out" ] ++ lib.optional hasExtensionSdk "sdk";
 
   nativeBuildInputs = [
     cmake
     ninja
     pkg-config
     makeWrapper
+    rustToolchain
     rocmPackages.clr
   ];
 
@@ -103,8 +141,7 @@ stdenv.mkDerivation {
     libpng
     libjpeg
     libwebp
-    libsndfile
-    soxr
+    libopus
     openssl
     ffmpeg-headless
     rocmPackages.clr
@@ -114,7 +151,11 @@ stdenv.mkDerivation {
     rocmPackages.rocprim
     rocmPackages.rocwmma
     rocmPackages.rocblas
-  ] ++ lib.optionals enableTp2Rdma [ rdma-core rdma-core.dev ];
+  ] ++ lib.optionals enableTp2Rdma [ rdma-core rdma-core.dev ]
+  ++ lib.optionals (!hasRustAudio) [
+    libsndfile
+    soxr
+  ];
 
   cmakeFlags = [
     "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
@@ -126,13 +167,17 @@ stdenv.mkDerivation {
     "-DGUFO_FFPROBE_EXECUTABLE=${ffmpeg-headless}/bin/ffprobe"
     "-DCMAKE_HIP_COMPILER=${rocmPackages.llvm.clang}/bin/clang"
   ] ++ lib.optionals enableTp2Rdma [ "-DGUFO_ENABLE_TP2_RDMA=ON" ]
-    ++ lib.optional (extensions != [ ]) "-DGUFO_EXTENSION_DIRS=${lib.concatMapStringsSep ";" (ext: "${ext}") extensions}";
+  ++ lib.optional hasExtensionSdk "-DGUFO_SDK_INSTALL_DIR=${placeholder "sdk"}/lib/gufo/sdk"
+  ++ lib.optionals (extensions != [ ]) [
+    "-DGUFO_EXTENSION_DIRS=${lib.concatMapStringsSep ";" (ext: "${ext}") extensions}"
+    "-DGUFO_EXTENSION_DIR_REVISIONS=${lib.concatMapStringsSep ";" extensionRevision extensions}"
+  ];
 
   # CI exposes a persistent /tmp/gufo-ccache through extra-sandbox-paths for
   # C/C++ sources. Keep HIP uncached: Clang emits a bundled preprocessor output
   # whose included headers ccache 4.13.6 does not record. A header-only change
   # can then reuse a stale HIP object, including one from the timing baseline.
-  preConfigure = ''
+  preConfigure = cargoSetup + ''
     ccache_dir=/tmp/gufo-ccache
     if [[ -d "$ccache_dir" && -w "$ccache_dir" ]]; then
       export CCACHE_DIR="$ccache_dir"
@@ -177,6 +222,12 @@ stdenv.mkDerivation {
       test -e ${lib.getLib rdma-core}/lib/libibverbs.so
       test -f $out/share/licenses/gufo/third-party/rdma-core/COPYING.GPL2
     ''}
+  '' + lib.optionalString hasExtensionSdk ''
+    test ! -e $out/lib/gufo/sdk
+    test -f $sdk/lib/gufo/sdk/profile.cmake
+    GUFO_SDK_DIR=$sdk/lib/gufo/sdk GUFO_EXTENSIONS_DIR=$TMPDIR/extensions \
+      $out/bin/gufo extension list --json > extension-list.json
+  '' + ''
 
     runHook postInstallCheck
   '';

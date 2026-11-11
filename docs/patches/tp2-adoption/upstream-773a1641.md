@@ -118,7 +118,7 @@ not justify another SSD, driver or queue-policy patch by themselves.
 
 ## Reproduce and audit
 
-Build the pinned source on both peers using the [TP2 instructions](../../models/qwen3.8-flash-next/TP2.md).
+Build the pinned source on both peers using the [TP2 instructions](../../internal/models/qwen3.8-flash-next/TP2.md).
 Keep the release preset and identical executable/provider/model files on both.
 The tested profile remains UD-Q4_K_XL/shared-Q8_0 MTP, context65,536, slots2 (4for
 wider tests), prefill chunk2,048 and1GiB RAM cache; TX32, active pollingoff,

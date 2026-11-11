@@ -113,30 +113,10 @@ void TestInvalidDepth() {
          "invalid depth rejected");
   Expect(!error.empty(), "invalid depth reports an error");
 
-  const std::array<const char*, 4> range_args = {"--draft-tokens", "3",
-                                                 "--min-draft-tokens", "4"};
-  Expect(!gufo::cli::ParseBenchOptions(range_args, &error).has_value(),
-         "invalid draft range rejected");
-
-  const std::array<const char*, 4> unsupported_floor = {
-      "--speculative", "dflash2", "--min-draft-tokens", "2"};
-  Expect(!gufo::cli::ParseBenchOptions(unsupported_floor, &error).has_value() &&
-             error.find("min-draft-tokens") != std::string::npos,
-         "DFlash2 rejects an unsupported minimum draft length");
-  for (const char* policy : {"fixed", "adaptive", "unknown"}) {
-    const std::array<const char*, 4> args = {"--speculative", "dflash2",
-                                             "--draft-policy", policy};
-    const auto parsed = gufo::cli::ParseBenchOptions(args, &error);
-    Expect(parsed.has_value() == (std::string_view(policy) != "unknown"),
-           "DFlash benchmark validates its controller");
-    if (parsed)
-      Expect(parsed->draft_policy == policy,
-             "DFlash benchmark retains the requested controller");
-  }
-  const std::array<const char*, 2> policy_without_backend = {"--draft-policy",
-                                                             "adaptive"};
-  Expect(!gufo::cli::ParseBenchOptions(policy_without_backend, &error),
-         "a DFlash controller requires its backend");
+  const std::array<const char*, 6> ignored = {
+      "--draft-tokens", "3", "--min-draft-tokens", "4", "--draft-policy", "x"};
+  Expect(gufo::cli::ParseBenchOptions(ignored, &error).has_value(),
+         "deprecated draft flags are accepted and ignored");
 }
 
 void TestInvalidWorkload() {
@@ -198,8 +178,8 @@ void TestFlashNextYarnRule() {
          "a deep benchmark reserves past the native context");
   Expect(!ResolveFlashNextBenchYarn(*options, 262144, &scaling, &error) &&
              error ==
-                 "context above the native 262144 tokens needs static YaRN, "
-                 "which applies to every request; pass --enable-yarn "
+                 "context above the native 262144 tokens needs YaRN, which "
+                 "scales each session that grows past it; pass --enable-yarn "
                  "(requested 264097)",
          "a benchmark past the native context requires --enable-yarn");
   options->enable_yarn = true;

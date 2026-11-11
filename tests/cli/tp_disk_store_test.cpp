@@ -89,7 +89,7 @@ public:
 };
 
 /// Persists one 64-bit value; only the persistence calls are used.
-class FakeRunner final : public TextModelRunner {
+class FakeRunner final : public gufo::ext::LegacyTextModelRunner {
 public:
   [[nodiscard]] TextRunnerDescriptor Descriptor() const override {
     return {.model_id = "fake",

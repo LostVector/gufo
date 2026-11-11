@@ -50,7 +50,6 @@ public:
   virtual void Invalidate() noexcept = 0;
 };
 
-/// Immutable model-private continuation payload.
 class ContinuationSnapshot {
 public:
   ContinuationSnapshot() = default;

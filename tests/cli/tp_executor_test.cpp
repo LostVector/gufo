@@ -167,7 +167,7 @@ private:
 
 /// A deterministic model whose next token depends on the whole sequence, so
 /// any divergence between the ranks changes later tokens too.
-class ToyRunner final : public TextModelRunner {
+class ToyRunner final : public gufo::ext::LegacyTextModelRunner {
 public:
   explicit ToyRunner(ToyOptions options) : options_(options) {}
   DeviceProbeStatus probe_status{DeviceProbeStatus::kUsable};
@@ -896,8 +896,8 @@ std::vector<std::pair<std::string_view, std::size_t>> CapabilityFields(
                final_token_advance_required, incremental_text_is_exact,
                multi_token_decode, batched_multi_token_decode,
                batched_multi_token_decode_max_width, prefix_reuse,
-               in_pass_checkpoint, partial_prefill_retention,
-               prefill_rollback] = capabilities;
+               in_pass_checkpoint, partial_prefill_retention, prefill_rollback,
+               prefill_alignment, max_in_pass_checkpoints] = capabilities;
   return {{"supports_vision", supports_vision},
           {"incremental_prefill", incremental_prefill},
           {"snapshot", snapshot},
@@ -911,7 +911,9 @@ std::vector<std::pair<std::string_view, std::size_t>> CapabilityFields(
           {"prefix_reuse", prefix_reuse},
           {"in_pass_checkpoint", in_pass_checkpoint},
           {"partial_prefill_retention", partial_prefill_retention},
-          {"prefill_rollback", prefill_rollback}};
+          {"prefill_rollback", prefill_rollback},
+          {"prefill_alignment", prefill_alignment},
+          {"max_in_pass_checkpoints", max_in_pass_checkpoints}};
 }
 
 /// Capabilities TP2 turns off because rank 1 cannot mirror them yet. Each is
@@ -965,6 +967,8 @@ int main() {
         .in_pass_checkpoint = true,
         .partial_prefill_retention = true,
         .prefill_rollback = true,
+        .prefill_alignment = 4,
+        .max_in_pass_checkpoints = 3,
     };
     auto toy = std::make_shared<ToyRunner>(ToyOptions{.capabilities = every});
     const TpMirroredRunner runner(toy, std::make_shared<CaptureSink>());

@@ -139,7 +139,7 @@ struct TpRequestContext final : TextPromptContext {
 /// rejected request left is reused (`CanReuse`), so a disagreement never
 /// spreads through the cache.
 class TpMirroredRunner final
-    : public TextModelRunner,
+    : public ext::LegacyTextModelRunner,
       public std::enable_shared_from_this<TpMirroredRunner> {
 public:
   TpMirroredRunner(
@@ -169,6 +169,8 @@ public:
 
   [[nodiscard]] TextRunnerDescriptor Descriptor() const override;
   [[nodiscard]] TextRunnerResourceClaim ResourceClaim() const override;
+  [[nodiscard]] bool CanContinue(const TextRunnerState& state,
+                                 std::size_t prompt_tokens) const override;
   [[nodiscard]] std::vector<TextExecutionPlan> SupportedPlans() const override;
   [[nodiscard]] std::shared_ptr<const sampling::ConstraintVocabulary>
   BuildConstraintVocabulary() const override;

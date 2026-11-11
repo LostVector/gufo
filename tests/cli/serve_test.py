@@ -51,6 +51,14 @@ def main():
                "--served-model-name", "dup", "--model", "missing.gguf"], 2,
               "duplicate --served-model-name")
     check(["serve", "image"], 2, "--model <DIR> is required")
+    # Image provider options come from manifests of built, available providers
+    # (#974). Undeclared spellings stay usage errors before any model loads,
+    # and a host option keeps a value that looks like a provider option.
+    check(["serve", "image", "--help"], 0, "Image model directory")
+    check(["serve", "image", "--model", "/missing", "--not-declared", "x"], 2,
+          "Unknown option: --not-declared")
+    check(["serve", "image", "--served-model-name", "--not-declared"], 2,
+          "--model <DIR> is required")
     check(["serve", "embedding"], 2, "--model <DIR> is required")
     text = check(["serve", "embedding", "--help"], 0, "--served-model-name")
     assert "--context" not in text and "--sessions" not in text
@@ -104,7 +112,8 @@ def main():
     for value in ("OFF", "-1", "16G"):
         check(["serve", "llm", "--cache-ram-bytes", value], 2,
               "--cache-ram-bytes must be off or a byte count")
-    assert "it applies to every request" in help_text
+    assert ("each session stays native until it holds more than 262144 tokens"
+            in help_text)
     # The flag is a plain switch: it must not swallow the next argument.
     check(["serve", "llm", "--enable-yarn", "--model", "missing.gguf"], 1,
           "Error loading model 'missing.gguf'")
@@ -245,7 +254,8 @@ def main():
 
     for command in ("prompt", "chat", "bench"):
         check([command, "--help"], 0, "--draft-policy")
-        check([command, "--draft-tokens", "0"], 2, "draft-tokens")
+        check([command, "--draft-tokens", "0"], 2 if command == "bench" else 0,
+              "--draft-tokens is deprecated")
     check(["chat", "unexpected"], 2, "Unexpected argument")
     check(["chat", "--prompt", "unused"], 2, "Unknown option")
     print("Serving and text CLI checks passed.")

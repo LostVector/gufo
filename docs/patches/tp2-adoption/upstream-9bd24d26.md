@@ -74,6 +74,6 @@ python3 docs/patches/tp2-adoption/upstream-9bd24d26-data/check.py
 This auditor checks retained summary hashes and consistency, not live GPU/hosts
 or a complete raw-trace replay. Full build/request/identity/counter/kernel records
 remain at the acquisition lab. Rebuild exact75de with the standard release preset
-and GUFO_ENABLE_TP2_RDMAON; use the [TP2 setup](../../models/qwen3.8-flash-next/TP2.md)
+and GUFO_ENABLE_TP2_RDMAON; use the [TP2 setup](../../internal/models/qwen3.8-flash-next/TP2.md)
 for matched peer settings. No new upstream PR, ready or upstream merge action was
 performed; existing upstream patches remain subject to manual user review.

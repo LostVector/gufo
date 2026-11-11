@@ -6,6 +6,7 @@
   "purpose": "Shared DFlash2 GGUF loading, block-diffusion drafting, selector and private draft-cache state for Qwen targets.",
   "depends": [
     "control_tokens",
+    "draft_vocab",
     "hip_common",
     "kernels",
     "text"

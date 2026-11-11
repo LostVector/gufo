@@ -125,7 +125,7 @@ const FakeSnapshot& RequireFakeSnapshot(const TextRunnerSnapshot& snapshot) {
   return *fake;
 }
 
-class FakeRunner final : public TextModelRunner {
+class FakeRunner final : public gufo::ext::LegacyTextModelRunner {
 public:
   explicit FakeRunner(std::string identity, std::string model_id = "fake-model")
       : identity_(identity.begin(), identity.end()),
