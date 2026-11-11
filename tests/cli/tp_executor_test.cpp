@@ -583,8 +583,10 @@ public:
       disk_options = gufo::server::TextRunnerDiskCacheOptions{
           .directory = disk0, .capacity_bytes = 1U << 20};
     }
-    pool_ = std::make_shared<TextRunnerPool>(mirrored_, sessions,
-                                             std::move(disk_options));
+    pool_ = std::make_shared<TextRunnerPool>(
+        mirrored_, sessions, std::move(disk_options),
+        gufo::server::TextRunnerRamCacheOptions{},
+        TextRunnerPool::CheckpointRecordPolicy::kReplaceIdleConversation);
     scheduler_ = std::make_shared<TextGenerationScheduler>(pool_);
     if (!disk1.empty()) {
       const auto persistence = runner1_->Descriptor().persistence;

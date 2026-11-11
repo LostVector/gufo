@@ -214,6 +214,13 @@ public:
   [[nodiscard]] std::size_t capacity() const noexcept;
   /// Immutable checkpoint records, independent of execution capacity().
   [[nodiscard]] std::size_t entry_capacity() const noexcept;
+  /// Under record pressure, a new copy first replaces the least recently
+  /// used copy of another conversation (never a branch point, its source or
+  /// its own conversation), as a byte-bounded cache would, instead of being
+  /// skipped or evicting its own earlier boundaries. Off by default: an
+  /// optional copy may not displace a last useful checkpoint. Set before the
+  /// first lease.
+  void set_optional_copies_displace_idle(bool enabled) noexcept;
   [[nodiscard]] std::size_t snapshot_capacity_bytes() const noexcept;
   [[nodiscard]] std::size_t retained_snapshot_bytes() const noexcept;
   [[nodiscard]] std::size_t reserved_snapshot_bytes() const noexcept;

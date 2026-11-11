@@ -284,6 +284,12 @@ A new stable boundary can replace its own older boundary when that avoids
 removing another family's last copy. Sources are rechecked before replacement
 because another request may have changed the record.
 
+TP2's model-owned cache opts into a different record-pressure policy: a new
+checkpoint may replace the least recently used copy of another idle conversation.
+It preserves its source, shared branch points and its own earlier boundaries.
+This private serving setting applies to the legacy TP cache; component-cache
+retention and the ordinary model-owned default keep their own policies.
+
 The original resume point stays protected during intermediate/retry admission.
 Earlier checkpoints remain best-effort: under pressure, edits and rewind may
 need more prefill. Rotation beyond the actual memory or record capacity can

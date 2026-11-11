@@ -503,7 +503,8 @@ struct TextRunnerPool::Impl {
   static constexpr std::size_t kIntermediateCheckpoints = 4;
   Impl(std::shared_ptr<TextModelRunner> model_runner, std::size_t state_count,
        std::optional<TextRunnerDiskCacheOptions> disk_cache_options,
-       TextRunnerRamCacheOptions ram_cache_options)
+       TextRunnerRamCacheOptions ram_cache_options,
+       CheckpointRecordPolicy record_policy)
       : validated(ValidateRunner(std::move(model_runner), state_count)) {
     if (validated.runner->UsesComponentCache()) {
       const auto resources = validated.runner->ResourceClaim();
@@ -567,6 +568,8 @@ struct TextRunnerPool::Impl {
         },
         MakeSnapshotSupport(&validated, ram_cache_options),
         TextRunnerRamCacheOptions::kMaxEntries);
+    cache->set_optional_copies_displace_idle(
+        record_policy == CheckpointRecordPolicy::kReplaceIdleConversation);
     // Entry and byte limits constrain retention independently of session count.
     if (validated.descriptor.capabilities.snapshot) {
       // Report the same post-allocation limits that selected the capacity.
@@ -2160,9 +2163,10 @@ void TextRunnerPool::Request::Invalidate() noexcept {
 TextRunnerPool::TextRunnerPool(
     std::shared_ptr<TextModelRunner> runner, std::size_t state_count,
     std::optional<TextRunnerDiskCacheOptions> disk_cache,
-    TextRunnerRamCacheOptions ram_cache)
+    TextRunnerRamCacheOptions ram_cache, CheckpointRecordPolicy record_policy)
     : impl_(std::make_unique<Impl>(std::move(runner), state_count,
-                                   std::move(disk_cache), ram_cache)) {}
+                                   std::move(disk_cache), ram_cache,
+                                   record_policy)) {}
 
 TextRunnerPool::~TextRunnerPool() = default;
 

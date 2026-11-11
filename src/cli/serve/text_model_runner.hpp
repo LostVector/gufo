@@ -154,10 +154,19 @@ public:
     std::unique_ptr<Impl> impl_;
   };
 
+  // Component caches have their own retention policy. This selects only
+  // the model-owned cache's behavior when checkpoint records run out.
+  enum class CheckpointRecordPolicy {
+    kPreserveLastCopies,
+    kReplaceIdleConversation,
+  };
+
   TextRunnerPool(
       std::shared_ptr<TextModelRunner> runner, std::size_t state_count,
       std::optional<TextRunnerDiskCacheOptions> disk_cache = std::nullopt,
-      TextRunnerRamCacheOptions ram_cache = {});
+      TextRunnerRamCacheOptions ram_cache = {},
+      CheckpointRecordPolicy record_policy =
+          CheckpointRecordPolicy::kPreserveLastCopies);
   ~TextRunnerPool();
 
   TextRunnerPool(const TextRunnerPool&) = delete;

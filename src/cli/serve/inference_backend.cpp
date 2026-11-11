@@ -678,7 +678,10 @@ bool InferenceBackend::load(std::shared_ptr<ext::TextModelRunner> runner,
       }
       auto runner_pool = std::make_shared<TextRunnerPool>(
           std::move(pool_runner), session_count, std::move(runner_disk_cache),
-          ram_cache_config);
+          ram_cache_config,
+          tp_world_size > 1
+              ? TextRunnerPool::CheckpointRecordPolicy::kReplaceIdleConversation
+              : TextRunnerPool::CheckpointRecordPolicy::kPreserveLastCopies);
       new_state->scheduler = std::make_shared<TextGenerationScheduler>(
           std::move(runner_pool), prefill_policy, scheduler_policy);
     }
