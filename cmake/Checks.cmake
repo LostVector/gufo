@@ -42,8 +42,8 @@ set(gufo_pr_targets
   qwen38_flash_next_mtp_sampling_test qwen38_flash_next_probe_test qwen38_flash_next_rdma_gid_test
   qwen38_flash_next_rope_scaling_test qwen38_flash_next_runner_options_test
   qwen38_flash_next_tp_partition_test qwen3_asr_audio_api_test qwen3_asr_config_test
-  qwen3_tts_audio_api_test qwen3_tts_config_test qwen_chat_template_test qwen_image_21_test
-  qwen_image_21_lora_test qwen_image_21_weights_test qwen_tokenizer_test video_api_test
+  qwen3_tts_audio_api_test qwen3_tts_config_test qwen_chat_template_test qwen_image_21_lora_test
+  qwen_image_21_test qwen_image_21_weights_test qwen_tokenizer_test video_api_test
   # END GENERATED MODEL PR TARGETS
 )
 set(gufo_pr_tests ${gufo_pr_targets})
@@ -83,7 +83,7 @@ if (WIN32)
   # per-file fsync stress in component_text_cache_test.
   set(gufo_pr_linux_only
     # These control/disk fixtures use POSIX sockets and mkdtemp.
-    tp_control_test tp_disk_store_test
+    tp_control_test tp_disk_store_test continuation_disk_store_test
     gguf_reader_test gguf_identity_test platform_publish_test
     trace_test http_server_signals_test
     http_server_test audio_websocket_test

@@ -18,6 +18,34 @@ SPEC.loader.exec_module(GEN)
 
 
 class GenerateInfrastructureTest(unittest.TestCase):
+    def test_windows_hosted_targets_keep_portable_cache_checks(self):
+        """Evaluate the real hosted target list without a Windows compiler."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            captured = root / "targets.txt"
+            script = root / "windows-checks.cmake"
+            script.write_text(
+                'set(WIN32 TRUE)\n'
+                'function(add_custom_target name)\n'
+                f'  file(WRITE "{captured.as_posix()}" '
+                '"${gufo_pr_targets}\\n${gufo_pr_tests}")\n'
+                'endfunction()\n'
+                f'include("{(ROOT / "cmake/Checks.cmake").as_posix()}")\n',
+                encoding="utf-8",
+            )
+            result = subprocess.run(
+                ["cmake", "-P", str(script)], capture_output=True, text=True
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            targets, tests = captured.read_text(encoding="utf-8").splitlines()
+            portable = {"continuation_cache_test",
+                        "legacy_text_model_runner_test", "tp_snapshot_gate_test"}
+            posix = {"continuation_disk_store_test", "tp_control_test",
+                     "tp_disk_store_test"}
+            for entries in (set(targets.split(";")), set(tests.split(";"))):
+                self.assertTrue(portable <= entries)
+                self.assertTrue(posix.isdisjoint(entries))
+
     def test_live_infrastructure_is_in_sync(self):
         """Repository infrastructure must match manifests with zero drift."""
         is_clean, drifts = GEN.check_targets(ROOT)

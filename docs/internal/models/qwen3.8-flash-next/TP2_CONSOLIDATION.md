@@ -68,6 +68,14 @@ identity, not on selecting a mutable build artifact by its timestamp. The
 executable was built with only Flash Next, `BUILD_TESTING=OFF`, using the existing
 private ROCm 7.14.1 toolchain for gfx1151.
 
+Merge qualification subsequently repaired three CI discrepancies: regenerate
+the model check-target order, omit the POSIX disk-store fixture from Windows
+`check-pr`, and update eleven identity goldens from layout 20 to the already
+implemented layout 21. A CMake-evaluating regression protects the Windows filter
+while retaining portable cache checks. These repairs change tests and their
+selection, not runtime serialization or model arithmetic. `Checks.cmake` is
+included only when `BUILD_TESTING=ON`.
+
 ## Limits and separate work
 
 The inherited strict literal-history test still appends a warning after `DONE`
