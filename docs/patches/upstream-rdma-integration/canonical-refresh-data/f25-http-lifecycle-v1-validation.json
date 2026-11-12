@@ -1,0 +1,49 @@
+{
+  "cache_cases": [
+    {
+      "case": "content-preserve0-sampled0",
+      "cached": 317,
+      "prefill": 34,
+      "proposed": 1,
+      "accepted": 0,
+      "exact": true,
+      "discard_assistant": false
+    },
+    {
+      "case": "content-preserve1-sampled0",
+      "cached": 317,
+      "prefill": 13,
+      "proposed": 9,
+      "accepted": 9,
+      "exact": true,
+      "discard_assistant": true
+    },
+    {
+      "case": "content-preserve0-sampled1",
+      "cached": 317,
+      "prefill": 34,
+      "proposed": 1,
+      "accepted": 0,
+      "exact": true,
+      "discard_assistant": false
+    },
+    {
+      "case": "content-preserve1-sampled1",
+      "cached": 317,
+      "prefill": 13,
+      "proposed": 9,
+      "accepted": 9,
+      "exact": true,
+      "discard_assistant": true
+    }
+  ],
+  "two_C2_victim_roles_and_live_survivors_width2_exact_solo_and_postcancel_replay": true,
+  "completed_substantive_requests_actual_MTP": true,
+  "13_case_records_not13_HTTPcalls": true,
+  "frozen_harness_binary_settings_boot_topology_PIDs_final_idle_checks": true,
+  "checked_transport_error_deltas": {
+    "0": {},
+    "1": {}
+  },
+  "scope": "Canonical f25f4744 merge4e8a2dc0, current release provider-based TP2, wire21 dynamic-host-window batched-target-head greedy/sampled interrupted-assistant cache restore and two-role C2cancellation correctness; all underlying HTTP timings retained in *.requests.json/requests.json. No newpath read-error/peerloss/extraDensefailure, diskrestart, exhaustive acceptance-prefix or matched speed/timing-equivalence qualification. Earlier24pilot and6confidence warmup comparisons remain; no timing waiver. Materialized full-logit/seededRNG snapshot checks are separate; borrowed/serialized/diskrestart and fault-at-newhead/peerloss require their own evidence."
+}

@@ -1,0 +1,14 @@
+{
+  "files": {
+    "source-contract.json": "bc0ddc4c488590bce3935136be7e9087cd068d97934d7719f018886409b28c68",
+    "build-comparison.json": "d2e8debd025c63702b3bd71fc3125312f6f44e4f0c7c8b63b3a8b0c6f4df1153",
+    "cpu-validation.json": "8235e1d1f81569b84051fec6bfe552dce4669f35c27d44b48cabc1eff97ac295",
+    "repository-checks.json": "e7826187eec8513663ca793182878509eb0992d9d2fb867117d808c6652bab52",
+    "ci.json": "5e89924e6fb095b453203836c76c92913d29411a14ab6a3417ffbb18ecb042b9",
+    "binary.json": "e7577ade0836dbbf3544ecd8b0169d167759842017f1bebec2fe19b2cedc4039",
+    "native-smoke.json": "9492c896369bb1030198f0e6707864da636b59cffb20894321a9a526aeffc421",
+    "native-lifecycle.json": "0e0ffce2f47089c1b5166d42cbf70c26de5509c71a9d54f0a3fdb81814073113",
+    "check.py": "e773016358873ca8bf62e1aa6e223a7905a487ad2fc9d373a2f26ee60ec4a6e7"
+  },
+  "scope": "Compact qualification summaries. Hash/field audit checks retained summaries, not live GPU/hosts or a complete raw-trace replay. Full acquisition retained at the original lab."
+}

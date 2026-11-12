@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <span>
 #include <string>
 #include <vector>
@@ -23,16 +24,21 @@ public:
   /// Float32 formulas versus an independent emulation of decode storage:
   /// Q8 activation blocks, F16 KV/pooled keys and F16 uploaded router weights.
   enum class Storage { kFloat32, kDecode };
+  using LayerObserver =
+      std::function<void(std::uint32_t, std::span<const float>)>;
   ReferenceModel(const ModelWeights& weights, NgramTable* ngram,
                  std::uint32_t max_context,
                  Storage storage = Storage::kFloat32);
 
   /// Runs one token at the next position; `logits` (vocab floats) receives
   /// the output distribution when non-empty. `hc_out` (hc_dim floats) receives
-  /// the final wide residual, the MTP block's hidden input.
+  /// the final wide residual, the MTP block's hidden input. An optional
+  /// observer sees the raw wide residual after each completed transformer
+  /// layer.
   [[nodiscard]] bool Step(std::int32_t token, std::span<float> logits,
                           std::span<float> hc_out = {},
-                          std::string* error_msg = nullptr);
+                          std::string* error_msg = nullptr,
+                          const LayerObserver& observer = {});
 
   /// Independent scalar predictor. An empty hidden input uses the previous
   /// predictor residual; otherwise use the supplied pre-head trunk stream.

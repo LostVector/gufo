@@ -1,0 +1,215 @@
+{
+  "requests": [
+    {
+      "pair": 1,
+      "case": "short-c2",
+      "actor": 0,
+      "baseline": {
+        "role": "baseline",
+        "first_ms": 347.23918000236154,
+        "second_ms": 396.3863340031821,
+        "bytes": [
+          5,
+          4
+        ],
+        "ttft": 347.24727999127936,
+        "wall": 3552.5000280031236
+      },
+      "candidate": {
+        "role": "candidate",
+        "first_ms": 278.14339099859353,
+        "second_ms": 391.793040005723,
+        "bytes": [
+          5,
+          4
+        ],
+        "ttft": 278.1504910090007,
+        "wall": 3418.266003005556
+      },
+      "first_event_delta_ms": -69.095789003768,
+      "second_event_delta_ms": -4.593293997459114,
+      "wall_delta_ms": -134.23402499756776
+    },
+    {
+      "pair": 1,
+      "case": "short-c2",
+      "actor": 1,
+      "baseline": {
+        "role": "baseline",
+        "first_ms": 336.8778989970451,
+        "second_ms": 428.2839709921973,
+        "bytes": [
+          4,
+          3
+        ],
+        "ttft": 336.88331799930893,
+        "wall": 3283.399075997295
+      },
+      "candidate": {
+        "role": "candidate",
+        "first_ms": 337.3669040011009,
+        "second_ms": 484.65158000180963,
+        "bytes": [
+          4,
+          3
+        ],
+        "ttft": 337.3768140008906,
+        "wall": 3195.125119993463
+      },
+      "first_event_delta_ms": 0.48900500405579805,
+      "second_event_delta_ms": 56.36760900961235,
+      "wall_delta_ms": -88.2739560038317
+    },
+    {
+      "pair": 6,
+      "case": "coding-c2",
+      "actor": 0,
+      "baseline": {
+        "role": "baseline",
+        "first_ms": 272.0129039953463,
+        "second_ms": 385.0850010057911,
+        "bytes": [
+          3,
+          6
+        ],
+        "ttft": 272.02568399661686,
+        "wall": 5613.990861995262
+      },
+      "candidate": {
+        "role": "candidate",
+        "first_ms": 339.7585339989746,
+        "second_ms": 388.16107000457123,
+        "bytes": [
+          3,
+          6
+        ],
+        "ttft": 339.7702640068019,
+        "wall": 5533.39141899778
+      },
+      "first_event_delta_ms": 67.74563000362832,
+      "second_event_delta_ms": 3.0760689987801015,
+      "wall_delta_ms": -80.59944299748167
+    },
+    {
+      "pair": 7,
+      "case": "coding-c2",
+      "actor": 0,
+      "baseline": {
+        "role": "baseline",
+        "first_ms": 272.20351999858394,
+        "second_ms": 388.86331899266224,
+        "bytes": [
+          3,
+          6
+        ],
+        "ttft": 272.23280900216196,
+        "wall": 5624.505740997847
+      },
+      "candidate": {
+        "role": "candidate",
+        "first_ms": 340.68570600356907,
+        "second_ms": 386.82942000741605,
+        "bytes": [
+          3,
+          6
+        ],
+        "ttft": 340.7035160053056,
+        "wall": 5816.262599997572
+      },
+      "first_event_delta_ms": 68.48218600498512,
+      "second_event_delta_ms": -2.0338989852461964,
+      "wall_delta_ms": 191.7568589997245
+    },
+    {
+      "pair": 7,
+      "case": "coding-c2",
+      "actor": 1,
+      "baseline": {
+        "role": "baseline",
+        "first_ms": 330.42992299306206,
+        "second_ms": 412.5052540039178,
+        "bytes": [
+          1,
+          2
+        ],
+        "ttft": 330.44767199316993,
+        "wall": 6140.5125169985695
+      },
+      "candidate": {
+        "role": "candidate",
+        "first_ms": 330.30685600533616,
+        "second_ms": 447.8419499937445,
+        "bytes": [
+          1,
+          2
+        ],
+        "ttft": 330.31809600652196,
+        "wall": 6122.3354899993865
+      },
+      "first_event_delta_ms": -0.12306698772590607,
+      "second_event_delta_ms": 35.336695989826694,
+      "wall_delta_ms": -18.177026999183
+    },
+    {
+      "pair": 8,
+      "case": "short-c2",
+      "actor": 0,
+      "baseline": {
+        "role": "baseline",
+        "first_ms": 347.8803120087832,
+        "second_ms": 396.72407500620466,
+        "bytes": [
+          5,
+          4
+        ],
+        "ttft": 347.88594201381784,
+        "wall": 3543.5212000011234
+      },
+      "candidate": {
+        "role": "candidate",
+        "first_ms": 277.0222559920512,
+        "second_ms": 390.4970909934491,
+        "bytes": [
+          5,
+          4
+        ],
+        "ttft": 277.0381659938721,
+        "wall": 3474.7314729902428
+      },
+      "first_event_delta_ms": -70.85805601673201,
+      "second_event_delta_ms": -6.226984012755565,
+      "wall_delta_ms": -68.7897270108806
+    },
+    {
+      "pair": 8,
+      "case": "short-c2",
+      "actor": 1,
+      "baseline": {
+        "role": "baseline",
+        "first_ms": 337.54360099555925,
+        "second_ms": 428.56103599478956,
+        "bytes": [
+          4,
+          3
+        ],
+        "ttft": 337.55156099505257,
+        "wall": 3242.385113990167
+      },
+      "candidate": {
+        "role": "candidate",
+        "first_ms": 336.24498000426684,
+        "second_ms": 485.97737299860455,
+        "bytes": [
+          4,
+          3
+        ],
+        "ttft": 336.26083900162484,
+        "wall": 3250.8722909988137
+      },
+      "first_event_delta_ms": -1.2986209912924096,
+      "second_event_delta_ms": 57.41633700381499,
+      "wall_delta_ms": 8.48717700864654
+    }
+  ],
+  "scope": "Observed client event arrivals relative to each request start; head clock only. Same final canonical outputs, but chunk sizes/work can differ; this is event availability, not guaranteed identical semantic token position. Original28phase flags retained and not waived."
+}

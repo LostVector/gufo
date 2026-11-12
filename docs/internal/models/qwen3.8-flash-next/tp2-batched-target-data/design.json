@@ -1,0 +1,151 @@
+{
+  "status": "Frozen before acquisition",
+  "pairs": [
+    {
+      "pair": 1,
+      "order": [
+        "candidate",
+        "baseline"
+      ],
+      "baseline": "pair01-baseline",
+      "candidate": "pair01-candidate"
+    },
+    {
+      "pair": 2,
+      "order": [
+        "candidate",
+        "baseline"
+      ],
+      "baseline": "pair02-baseline",
+      "candidate": "pair02-candidate"
+    },
+    {
+      "pair": 3,
+      "order": [
+        "candidate",
+        "baseline"
+      ],
+      "baseline": "pair03-baseline",
+      "candidate": "pair03-candidate"
+    },
+    {
+      "pair": 4,
+      "order": [
+        "candidate",
+        "baseline"
+      ],
+      "baseline": "pair04-baseline",
+      "candidate": "pair04-candidate"
+    },
+    {
+      "pair": 5,
+      "order": [
+        "baseline",
+        "candidate"
+      ],
+      "baseline": "pair05-baseline",
+      "candidate": "pair05-candidate"
+    },
+    {
+      "pair": 6,
+      "order": [
+        "baseline",
+        "candidate"
+      ],
+      "baseline": "pair06-baseline",
+      "candidate": "pair06-candidate"
+    },
+    {
+      "pair": 7,
+      "order": [
+        "baseline",
+        "candidate"
+      ],
+      "baseline": "pair07-baseline",
+      "candidate": "pair07-candidate"
+    },
+    {
+      "pair": 8,
+      "order": [
+        "baseline",
+        "candidate"
+      ],
+      "baseline": "pair08-baseline",
+      "candidate": "pair08-candidate"
+    }
+  ],
+  "sequence": [
+    [
+      "pair01-candidate",
+      "candidate"
+    ],
+    [
+      "pair01-baseline",
+      "baseline"
+    ],
+    [
+      "pair02-candidate",
+      "candidate"
+    ],
+    [
+      "pair02-baseline",
+      "baseline"
+    ],
+    [
+      "pair03-candidate",
+      "candidate"
+    ],
+    [
+      "pair03-baseline",
+      "baseline"
+    ],
+    [
+      "pair04-candidate",
+      "candidate"
+    ],
+    [
+      "pair04-baseline",
+      "baseline"
+    ],
+    [
+      "pair05-baseline",
+      "baseline"
+    ],
+    [
+      "pair05-candidate",
+      "candidate"
+    ],
+    [
+      "pair06-baseline",
+      "baseline"
+    ],
+    [
+      "pair06-candidate",
+      "candidate"
+    ],
+    [
+      "pair07-baseline",
+      "baseline"
+    ],
+    [
+      "pair07-candidate",
+      "candidate"
+    ],
+    [
+      "pair08-baseline",
+      "baseline"
+    ],
+    [
+      "pair08-candidate",
+      "candidate"
+    ]
+  ],
+  "order_seed": 2026110121,
+  "bootstrap_seed": 2026110122,
+  "requests_per_start": 12,
+  "total_requests": 192,
+  "primary": "Natural C2 whole-wave throughput,256 completed tokens divided by firstclientstart to lastclientfinish; paired log C/B,8balanced randomizedfreshpairs. Require exact70assignmenttwo-sidedp<=.05 AND20000pairedbootstrap95CIentirelyabove0. No magnitude cutoff.",
+  "secondary": "Coding C2 whole-wave throughput and first/repeat2KC1decode rates, each estimated separately with pairedCI and exactp shown as secondary/unadjusted, not independent confirmatory claims. Per-actor TTFT/wall/gaps and all strict phaseflags mandatory; primary gain never waives individual regressions or C1harm.",
+  "stop": "Exactly16freshstarts/8pairs/192requests, no interimstats, optionalstopping, exclusions, replacement, addedpairs or pooling pilot/component/observeddata. Output/prompt/cache/runtime/safety mismatches fail. C1MTPwork strict; C2adaptivework differences retained and disclosed.",
+  "scope": "Exacte815 wire16 dynamic-window parent versus fc08 wire17 batched full-target head, all prioroptimizations inboth. SameQ4XL/sharedQ8MTP,65536capacity/two slots/chunk2048/cachebypass/greedythinkoff,81C6TX32/fourrails/crossed40+20. Identical12requesthistory warmup8,first/repeat2K113EOS,naturalC2,fiveshort16controls,codingC2cap256. ExistingclientSSE recorderonly; noSDK/BPF/adminsampler/extraidle/prime/fulltablewarm/sourcebuildgitdocwritesduringtiming. Allold33pilot and23observedflags retained. Oldconfidence-v1stoppedonfixedVA EEXISTbefore6thstartup; no oldsamplesreused. BothnewvariantsusequalifiedOS-selectedaddresses,wire16versus17; matchingpeersonly. Initialprefill90msflagdidnotrecurinpairedtrace; zeroForwardBatch inC1excludesexecutednewbodybutnotsetup/layout/environment effects. No driver/system/default or newPRchange."
+}

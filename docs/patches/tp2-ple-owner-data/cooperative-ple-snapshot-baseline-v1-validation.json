@@ -1,0 +1,16 @@
+{
+  "records_per_rank": 104,
+  "actual_new_batch_gathers_per_rank": 44,
+  "complete_postreplay_state_pairs_per_rank": 32,
+  "contexts": [
+    "short",
+    32768
+  ],
+  "borrowed_same_and_cross_session_replay_exact": true,
+  "serialized_cross_and_file_roundtrip_cross_replay_exact": true,
+  "external_RNG_full_logits_tokens_positions_proposal_work_exact": true,
+  "cross_rank_JSON_records_exact": true,
+  "frozen_sources_harness_binary_PIDs_counters_kernel_boot_topology_idle_pass": true,
+  "scope": "Fresh PLE baseline numerical/state control; transport-bounded prefill, wire21, actual TP2 batchedMTP snapshot replay. Short/actual32K and greedy/sampled. Borrowed same/cross-session, serialized cross and file roundtrip cross, paired full-projection reference.104records/44gathers/32fullstatepairs perrank required. Production confidence unchanged, zero/oneproposal caps guarantee2/3packedrows. ExternalRNG/logits/tokens/positions/work exact. File roundtrip within same model process, not HTTP diskcache restart or performance.",
+  "limits": "File roundtrip in same model process, not fresh HTTP diskcache restart. Exact materialized state bytes compared within rank. No throughput, physical fault or default claim."
+}

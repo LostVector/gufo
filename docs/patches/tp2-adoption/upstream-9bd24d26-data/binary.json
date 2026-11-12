@@ -1,0 +1,8 @@
+{
+  "sha256": "033595203293ca031c63be72061b9e8fd2a86cccda5798223e45234bb99273b9",
+  "source_commit": "75de9f82234da17257321db81bd13e914ea2dbb6",
+  "source_tree": "aae99377409de267078d0ae1f5c5427be94873bf",
+  "canonical_head": "9bd24d26b066ce08a463c2def8da9acb95c75338",
+  "build_testing": false,
+  "full_fresh_release": true
+}

@@ -1,0 +1,3 @@
+control,case,repetition,actor,metric,baseline,candidate
+before-baseline,short-c2,1,0,draft_tokens,86,85
+after-baseline,short-c2,1,0,draft_tokens,86,85

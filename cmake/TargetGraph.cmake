@@ -13,16 +13,23 @@ set(GUFO_LINK_GRAPH_PROTECTED
   gufo_cache
   gufo_cache_hip
   gufo_core
-  gufo_ext_runtime)
+  gufo_ext_runtime
+  gufo_ext_core
+  gufo_ext_cache
+  gufo_ext_hip)
 set(GUFO_LINK_GRAPH_FORBIDDEN gufo_serving gufo_http)
 
 # Link items that name a system library rather than a project target. The
-# platform leaf's own list joins it, so a new OS library stays classified.
+# platform leaf's and the Rust library's own lists join it, so a new OS
+# library stays classified.
 set(GUFO_LINK_GRAPH_SYSTEM_LIBS
   dl m pthread rt atomic stdc++ gcc_s
   ws2_32 iphlpapi bcrypt advapi32)
 if (DEFINED GUFO_PLATFORM_LIBS)
   list(APPEND GUFO_LINK_GRAPH_SYSTEM_LIBS ${GUFO_PLATFORM_LIBS})
+endif()
+if (DEFINED GUFO_RUST_LIBS)
+  list(APPEND GUFO_LINK_GRAPH_SYSTEM_LIBS ${GUFO_RUST_LIBS})
 endif()
 list(REMOVE_DUPLICATES GUFO_LINK_GRAPH_SYSTEM_LIBS)
 
@@ -56,8 +63,13 @@ function(gufo_link_graph_entry TARGET OUT)
     elseif("${item}" MATCHES "^\\$<(LINK_ONLY|BUILD_INTERFACE):([^>]+)>$")
       # CMAKE_MATCH_ is only valid after the enclosing if() finished, so the
       # target test goes in its own command.
-      if(TARGET "${CMAKE_MATCH_2}")
-        list(APPEND entries "${CMAKE_MATCH_2}")
+      set(unwrapped "${CMAKE_MATCH_2}")
+      if(TARGET "${unwrapped}")
+        list(APPEND entries "${unwrapped}")
+      elseif(IS_ABSOLUTE "${unwrapped}" OR "${unwrapped}" MATCHES "^-" OR
+             "${unwrapped}" IN_LIST GUFO_LINK_GRAPH_SYSTEM_LIBS)
+        # Static PRIVATE links wrap legitimate system libraries too. Apply
+        # the same classification as plain items without hiding target edges.
       else()
         message(FATAL_ERROR "Link graph: unclassified interface item '${item}' on ${TARGET}")
       endif()

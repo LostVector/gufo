@@ -1,0 +1,15 @@
+{
+  "affected": [
+    "cooperative-ple-component-v1",
+    "cooperative-ple-http-smoke-v1",
+    "cooperative-ple-http-lifecycle-v1",
+    "cooperative-ple-snapshot-candidate-v1",
+    "cooperative-ple-release-comparison-v1"
+  ],
+  "source": "85586a63 (component f683b344)",
+  "issue": "BUILD_TESTING=ON used for probe construction also changed candidate model library compile definitions with GUFO_CACHE_TESTING and two test CLI include directories. Earlier correctness observations apply to those exact testing-enabled binaries; not production build qualification.",
+  "baseline_snapshot_v1": "Baseline373a98cd BUILD_TESTING=OFF; frozen source, model, harness and raw results remain valid for that arm.",
+  "partial_performance": "One full pair and interrupted next baseline preserved; exact acquisition SIGINT cleanup completed with no errors. No throughput/statistical conclusion.",
+  "correction": "Fresh candidate build with BUILD_TESTING=OFF; verify all77common model/family commands match production baseline before qualification/acquisition. Fresh smoke/lifecycle/snapshot candidate studies and fresh20start performance protocol; preserve all original data unchanged.",
+  "corrected_build": "Production OFF rebuild94938 exit0; all77sharedmodel/family compile commands match. Official release preset is RelWithDebInfo, with identical effective target flags in botharms; no build-type override applied."
+}

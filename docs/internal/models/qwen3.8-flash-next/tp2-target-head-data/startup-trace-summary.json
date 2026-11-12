@@ -1,0 +1,95 @@
+{
+  "measured_binaries": {
+    "baseline": {
+      "name": "gufo-confidence-first-cap-v1",
+      "sha256": "1caf9512d974e7f4b93b34ef7f23586d31d61e03efcb3c2003edd64bc686c932"
+    },
+    "candidate": {
+      "name": "gufo-target-head-gather-mtp-abort-v1",
+      "sha256": "6c4f1403d57549e712d70b3c18b36585388b8198712bec0a84c04083afd533ae"
+    }
+  },
+  "workload": "19token warmup/8generated, then first/repeat2K113EOS; UD-Q4_K_XL/sharedQ8MTP, capacity65536/two slots/chunk2048/greedy/thinkingoff; four fresh BCCB observed starts.",
+  "starts": [
+    {
+      "phase": "b1-baseline",
+      "prefill_ms": 160.31938300000002,
+      "snapshot_metric_ms": 9.570905,
+      "EVO_first_sync_ms": 94.981514,
+      "EVO_first_sync_HIP_event_wait_ms": 83.2885,
+      "Corsair_first_sync_ms": 94.928549,
+      "Corsair_ngram_wait_ms": 11.241847,
+      "Corsair_pread_union_ms": 16.656349,
+      "Corsair_longest_pread_ms": 13.154431,
+      "warmup_head_gather_host_call_union_ms": 0,
+      "EVO_warmup_Forward_rows": [
+        12,
+        7,
+        4,
+        4
+      ]
+    },
+    {
+      "phase": "c1-candidate",
+      "prefill_ms": 151.77650799999998,
+      "snapshot_metric_ms": 9.549225,
+      "EVO_first_sync_ms": 85.090539,
+      "EVO_first_sync_HIP_event_wait_ms": 74.059748,
+      "Corsair_first_sync_ms": 84.958117,
+      "Corsair_ngram_wait_ms": 0.00248,
+      "Corsair_pread_union_ms": 4.673406,
+      "Corsair_longest_pread_ms": 2.320419,
+      "warmup_head_gather_host_call_union_ms": 0.0,
+      "EVO_warmup_Forward_rows": [
+        12,
+        7,
+        4,
+        4
+      ]
+    },
+    {
+      "phase": "c2-candidate",
+      "prefill_ms": 183.27553799999998,
+      "snapshot_metric_ms": 9.572064000000001,
+      "EVO_first_sync_ms": 117.276289,
+      "EVO_first_sync_HIP_event_wait_ms": 106.074225,
+      "Corsair_first_sync_ms": 117.225921,
+      "Corsair_ngram_wait_ms": 33.982525,
+      "Corsair_pread_union_ms": 39.015109,
+      "Corsair_longest_pread_ms": 36.453178,
+      "warmup_head_gather_host_call_union_ms": 0.0,
+      "EVO_warmup_Forward_rows": [
+        12,
+        7,
+        4,
+        4
+      ]
+    },
+    {
+      "phase": "b2-baseline",
+      "prefill_ms": 149.46745800000002,
+      "snapshot_metric_ms": 10.592784000000002,
+      "EVO_first_sync_ms": 83.39981,
+      "EVO_first_sync_HIP_event_wait_ms": 72.311173,
+      "Corsair_first_sync_ms": 83.323834,
+      "Corsair_ngram_wait_ms": 0.00326,
+      "Corsair_pread_union_ms": 4.5837,
+      "Corsair_longest_pread_ms": 2.131266,
+      "warmup_head_gather_host_call_union_ms": 0,
+      "EVO_warmup_Forward_rows": [
+        12,
+        7,
+        4,
+        4
+      ]
+    }
+  ],
+  "validation": {
+    "all12_canonical_requests_and_MTP_work_pass": true,
+    "all8_captures_balanced_internal_counters_depth_loss_checks_pass": true,
+    "candidate_head_gather_never_overlaps_SessionSync": true,
+    "frozen_source_harness_binary_PIDs_driver_boot_topology_counters_kernel_idle_pass": true,
+    "limits": "Application spans and host HIP wait times only, inclusive unions overlap and must not be summed. pread latency is application call wall, not NVMe service; HIP sync includes GPU/peer/queue progress, not pure wasted CPU. Independent uprobe missed counter unavailable; no unobserved frequency/equivalence claim. Snapshot SaveSnapshot is engine capture, not entire HTTP snapshot metric; older worker/consumer study remains separate."
+  },
+  "limits": "Sameclock intervals within eachhost; only durations compared acrosshosts. No crosshost timestamp subtraction. Inclusive host spans overlap; do not sum. Application pread wall is not NVMe service. Probe internal pairing/loss/depth checks pass; independent kernel uprobe missed counters unavailable. Original thirteen untraced flags retained; reproduced mode does not retrospectively classify every original request. Original3.176ms snapshot flag does not recur, not disproven."
+}

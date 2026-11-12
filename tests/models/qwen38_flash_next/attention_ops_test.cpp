@@ -297,6 +297,84 @@ void CheckYarnPhase(float factor, std::uint32_t position) {
             << ": HF angle and mscale\n";
 }
 
+// Dynamic YaRN: keys written under one factor and re-rotated to another must
+// match the keys written under the target factor at every position, past the
+// native context too. The cache holds F16 keys, so a re-rotation rounds once
+// more than a direct write: each value may differ by one F16 ulp of its
+// pair's magnitude. Dimensions past the rotary ones keep their bits.
+// Writes keys at path.front(), re-rotates through every later factor, and
+// compares with keys written directly at path.back(). From `first` on, the last
+// hop runs out of place, as a cache capture does.
+void CheckRerotation(const std::vector<float>& path, std::uint32_t rows,
+                     std::uint32_t first = 0) {
+  const auto rope_for = [](float factor) {
+    return factor == 1.0F ? qfn::YarnRope{} : Yarn(factor);
+  };
+  const std::size_t count = std::size_t{rows} * kKvWidth;
+  HipBuffer<float> source(count), work(count);
+  HipBuffer<__half> rotated(count), expected(count);
+  HipBuffer<std::uint32_t> pos(1);
+  Upload(&source, MakeValues(count, 0xC0FFEE, 1.0F));
+  Upload(&pos, std::vector<std::uint32_t>{0});
+  const auto write = [&](float factor, HipBuffer<__half>* cache) {
+    CheckHip(hipMemcpy(work.get(), source.get(), source.bytes(),
+                       hipMemcpyDeviceToDevice),
+             "re-rotation input");
+    q::Rope(work.get(), rows, kKvHeads, kDim, 64, pos.get(), 1e7F, nullptr,
+            nullptr, rope_for(factor));
+    q::StoreKv(work.get(), cache->get(), rows, kKvWidth, pos.get(), nullptr);
+  };
+  write(path.front(), &rotated);
+  write(path.back(), &expected);
+  for (std::size_t hop = 1; hop + 1 < path.size(); ++hop)
+    q::RerotateKeys(rotated.get(), rotated.get(), 0, rows, kKvHeads, kDim, 64,
+                    1, 1e7F, nullptr, rope_for(path[hop - 1]),
+                    rope_for(path[hop]), nullptr);
+  const std::size_t skipped = std::size_t{first} * kKvWidth;
+  HipBuffer<__half> last(count);
+  q::RerotateKeys(rotated.get() + skipped, last.get(), first, rows - first,
+                  kKvHeads, kDim, 64, 1, 1e7F, nullptr,
+                  rope_for(path[path.size() - 2]), rope_for(path.back()),
+                  nullptr);
+  CheckHip(hipDeviceSynchronize(), "re-rotation");
+  std::vector<__half> got(count - skipped), want(count);
+  CheckHip(hipMemcpy(got.data(), last.get(), got.size() * sizeof(__half),
+                     hipMemcpyDeviceToHost),
+           "re-rotated keys");
+  CheckHip(hipMemcpy(want.data(), expected.get(), expected.bytes(),
+                     hipMemcpyDeviceToHost),
+           "directly written keys");
+  double worst = 0.0;
+  const double bound = static_cast<double>(path.size() - 1);
+  for (std::size_t i = skipped; i < count; ++i) {
+    const std::uint32_t dim = i % kDim;
+    if (dim >= 64) {
+      if (std::memcmp(&got[i - skipped], &want[i], sizeof(__half)) != 0)
+        throw std::runtime_error("re-rotation changed a non-rotary dimension");
+      continue;
+    }
+    const std::size_t lo = dim < 32 ? i : i - 32;
+    const float magnitude = std::hypot(static_cast<float>(want[lo]),
+                                       static_cast<float>(want[lo + 32]));
+    const float ulp = std::ldexp(
+        1.0F,
+        std::max(std::ilogb(std::max(magnitude, 6.1035156e-5F)) - 10, -24));
+    const double error = std::fabs(static_cast<float>(got[i - skipped]) -
+                                   static_cast<float>(want[i])) /
+                         ulp;
+    worst = std::max(worst, error);
+    if (error > bound) {
+      throw std::runtime_error(
+          "re-rotated key differs from a direct write: position " +
+          std::to_string(i / kKvWidth) + " dim " + std::to_string(dim) + ", " +
+          std::to_string(error) + " ulp");
+    }
+  }
+  std::cout << "dynamic YaRN re-rotation " << path.front() << " -> "
+            << path.back() << " in " << path.size() - 1 << " hops over " << rows
+            << " positions: within " << worst << " F16 ulp of each pair\n";
+}
+
 // mRoPE: pair i reads T, H or W exactly as qwen::vision::RopePosition does.
 void CheckYarnVisionPhase(float factor) {
   const std::vector<std::int32_t> thw{300000, 200000, 250000};
@@ -707,6 +785,95 @@ void CheckStructured(const char* name, std::uint32_t n_tokens,
   }
 }
 
+/// A TP rank holds one KV head and its twelve query heads. From the rank's
+/// slice of the queries, gates and caches, the one-KV-head kernel must give
+/// exactly the full kernel's output for those heads, on either rank.
+void CheckRankSlices(std::uint32_t n_tokens, std::uint32_t start_pos,
+                     bool masked, bool sparse, std::uint32_t seed) {
+  constexpr std::uint32_t kRankQ = kQWidth / kKvHeads;
+  const std::uint32_t n_kv = start_pos + n_tokens;
+  const std::uint32_t mask_words = ((n_kv + kRatio - 1) / kRatio + 31) / 32;
+  const std::size_t q_count = std::size_t(n_tokens) * kQWidth;
+  const std::size_t kv_count = std::size_t(n_kv) * kKvWidth;
+  const auto qv = MakeValues(q_count, seed, 4.0F);
+  const auto gate = MakeValues(q_count, seed ^ 0x5555U, 3.0F);
+  std::vector<__half> kh(kv_count), vh(kv_count);
+  {
+    const auto kf = MakeValues(kv_count, seed ^ 0xAAAAU, 1.0F);
+    const auto vf = MakeValues(kv_count, seed ^ 0x3333U, 1.0F);
+    for (std::size_t i = 0; i < kv_count; ++i) {
+      kh[i] = __float2half(kf[i]);
+      vh[i] = __float2half(vf[i]);
+    }
+  }
+  std::vector<std::uint32_t> mask(std::size_t(n_tokens) * mask_words);
+  std::uint32_t state = seed ^ 0x77777777U;
+  for (std::uint32_t& word : mask) {
+    word = NextRandom(&state) & NextRandom(&state);
+    if (sparse) {
+      word &= NextRandom(&state) & NextRandom(&state);
+    }
+  }
+  HipBuffer<float> d_q(q_count), d_gate(q_count), d_full(q_count);
+  HipBuffer<__half> d_k(kv_count), d_v(kv_count);
+  HipBuffer<std::uint32_t> d_mask(mask.size());
+  Upload(&d_q, qv);
+  Upload(&d_gate, gate);
+  Upload(&d_k, kh);
+  Upload(&d_v, vh);
+  Upload(&d_mask, mask);
+  const std::uint32_t* mask_ptr = masked ? d_mask.get() : nullptr;
+  if (!q::WmmaCausalAttention(d_q.get(), d_gate.get(), d_k.get(), d_v.get(),
+                              mask_ptr, mask_words, d_full.get(), n_tokens,
+                              start_pos, kHeads, kKvHeads, kDim, kRatio,
+                              nullptr)) {
+    throw std::runtime_error("WMMA attention rejected the model geometry");
+  }
+  const auto full = Download(&d_full, q_count);
+  for (std::uint32_t rank = 0; rank < kKvHeads; ++rank) {
+    std::vector<float> rq(std::size_t(n_tokens) * kRankQ);
+    std::vector<float> rgate(rq.size());
+    for (std::size_t t = 0; t < n_tokens; ++t) {
+      std::copy_n(qv.begin() + t * kQWidth + rank * kRankQ, kRankQ,
+                  rq.begin() + t * kRankQ);
+      std::copy_n(gate.begin() + t * kQWidth + rank * kRankQ, kRankQ,
+                  rgate.begin() + t * kRankQ);
+    }
+    std::vector<__half> rk(std::size_t(n_kv) * kDim), rv(rk.size());
+    for (std::size_t t = 0; t < n_kv; ++t) {
+      std::copy_n(kh.begin() + t * kKvWidth + rank * kDim, kDim,
+                  rk.begin() + t * kDim);
+      std::copy_n(vh.begin() + t * kKvWidth + rank * kDim, kDim,
+                  rv.begin() + t * kDim);
+    }
+    HipBuffer<float> d_rq(rq.size()), d_rgate(rq.size()), d_out(rq.size());
+    HipBuffer<__half> d_rk(rk.size()), d_rv(rv.size());
+    Upload(&d_rq, rq);
+    Upload(&d_rgate, rgate);
+    Upload(&d_rk, rk);
+    Upload(&d_rv, rv);
+    if (!q::WmmaCausalAttention(d_rq.get(), d_rgate.get(), d_rk.get(),
+                                d_rv.get(), mask_ptr, mask_words, d_out.get(),
+                                n_tokens, start_pos, kHeads / kKvHeads, 1, kDim,
+                                kRatio, nullptr)) {
+      throw std::runtime_error("WMMA attention rejected a rank's heads");
+    }
+    const auto out = Download(&d_out, rq.size());
+    for (std::size_t t = 0; t < n_tokens; ++t) {
+      if (std::memcmp(out.data() + t * kRankQ,
+                      full.data() + t * kQWidth + rank * kRankQ,
+                      kRankQ * sizeof(float)) != 0) {
+        throw std::runtime_error(
+            "a rank's attention heads differ from the "
+            "full kernel's");
+      }
+    }
+  }
+  std::cout << "rank attention n=" << n_tokens << " start=" << start_pos
+            << (masked ? (sparse ? " sparse" : " masked") : " dense")
+            << ": both ranks exact\n";
+}
+
 /// The compacted-selection route against the mask walk. Random masks of at
 /// most the 512-block budget per row (a short context selects every block):
 /// the outputs must match bit for bit, single-block and split eight ways, and
@@ -1061,6 +1228,11 @@ int main() {
     CheckChunks(136, 94);
     CheckChunks(2048, 1025);
     CheckBudgetRows(0xB0D6E7U);
+    CheckRankSlices(100, 0, false, false, 0x51C3U);
+    CheckRankSlices(77, 51, true, false, 0x51C4U);
+    CheckRankSlices(96, 4096, true, true, 0x51C5U);
+    CheckRankSlices(7, 65533, true, true, 0x51C6U);
+    CheckRankSlices(5, 131069, true, true, 0x51C7U);
     CheckWmmaLiveExtent();
     CheckPositionPastMask();
     CheckPreparation(1, 0, 64);
@@ -1074,6 +1246,12 @@ int main() {
       for (const std::uint32_t position : {1000U, 300000U, 650000U})
         CheckYarnPhase(factor, position);
     CheckYarnVisionPhase(2.5F);
+    CheckRerotation({1.0F, 2.0F}, 300000);
+    CheckRerotation({2.0F, 4.0F}, 300000);
+    CheckRerotation({2.0F, 1.0F}, 300000);
+    CheckRerotation({1.0F, 2.0F, 3.0F, 3.875F}, 300000);
+    CheckRerotation({1.5625F, 1.0F}, 300000, 262144);
+    CheckRerotation({1.0F, 1.5625F, 1.0F, 1.5625F}, 300000);
     CheckOracleRms();
     // Structured selections against the sparse path's 1024-block compaction
     // windows and 64-block key tiles. At 131069 the last 512 blocks sit in

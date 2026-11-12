@@ -1,0 +1,104 @@
+{
+  "C2_stages": 24,
+  "ranges_ms": {
+    "launch_to_worker_ms": {
+      "min": 0.043219,
+      "max": 0.169705
+    },
+    "local_snapshot_wall_ms": {
+      "min": 1.061839,
+      "max": 4.217854
+    },
+    "capture_call_mutex_wait_ms": {
+      "min": 0.00077,
+      "max": 66.552195
+    },
+    "remaining_peer_ack_wait_ms": {
+      "min": 0.00024,
+      "max": 1.512675
+    },
+    "worker_to_consumer_ms": {
+      "min": 0.132536,
+      "max": 102.662158
+    }
+  },
+  "natural_actor0_frontier39": [
+    {
+      "phase": "b1-baseline",
+      "role": "baseline",
+      "case": "short-c2",
+      "rep": "1",
+      "actor": "0",
+      "impl": "0x713d9812bea0",
+      "frontier": "39",
+      "state": "0x5b8bd9c6de00",
+      "snapshot_id": "9",
+      "metric_contribution_ms": "2.227693000000002",
+      "launch_to_worker_ms": "0.068868",
+      "worker_wall_ms": "1.121076",
+      "capture_call_mutex_wait_ms": "0.00389",
+      "control_mutex_wait_ms": "8e-05",
+      "local_snapshot_wall_ms": "1.061839",
+      "remaining_peer_ack_wait_ms": "0.00055",
+      "worker_to_consumer_ms": "1.036919",
+      "future_get_ms": "0.00401",
+      "other_prefill_overlap_capture_wait_ms": "0.0",
+      "other_prefill_overlap_consumer_lag_ms": "0.0",
+      "launch_ns": "131936715778162",
+      "worker_end_ns": "131936716968106",
+      "consumer_ns": "131936718005025"
+    },
+    {
+      "phase": "c1-candidate",
+      "role": "candidate",
+      "case": "short-c2",
+      "rep": "1",
+      "actor": "0",
+      "impl": "0x7a07940e0050",
+      "frontier": "39",
+      "state": "0x5e18908b68b0",
+      "snapshot_id": "9",
+      "metric_contribution_ms": "69.602624",
+      "launch_to_worker_ms": "0.059328",
+      "worker_wall_ms": "4.71395",
+      "capture_call_mutex_wait_ms": "3.496506",
+      "control_mutex_wait_ms": "0.0001",
+      "local_snapshot_wall_ms": "1.161985",
+      "remaining_peer_ack_wait_ms": "0.00026",
+      "worker_to_consumer_ms": "64.828486",
+      "future_get_ms": "0.00208",
+      "other_prefill_overlap_capture_wait_ms": "0.0",
+      "other_prefill_overlap_consumer_lag_ms": "64.754888",
+      "launch_ns": "131988351195768",
+      "worker_end_ns": "131988355969046",
+      "consumer_ns": "131988420797532"
+    },
+    {
+      "phase": "b2-baseline",
+      "role": "baseline",
+      "case": "short-c2",
+      "rep": "1",
+      "actor": "0",
+      "impl": "0x729b7419fad0",
+      "frontier": "39",
+      "state": "0x651b97dadc70",
+      "snapshot_id": "9",
+      "metric_contribution_ms": "69.783029",
+      "launch_to_worker_ms": "0.055698",
+      "worker_wall_ms": "4.926883",
+      "capture_call_mutex_wait_ms": "3.653841",
+      "control_mutex_wait_ms": "0.00011",
+      "local_snapshot_wall_ms": "1.205055",
+      "remaining_peer_ack_wait_ms": "0.00042",
+      "worker_to_consumer_ms": "64.799628",
+      "future_get_ms": "0.0025",
+      "other_prefill_overlap_capture_wait_ms": "0.0",
+      "other_prefill_overlap_consumer_lag_ms": "64.72035",
+      "launch_ns": "132039723684837",
+      "worker_end_ns": "132039728667418",
+      "consumer_ns": "132039793467046"
+    }
+  ],
+  "original_confidence_flags_retained": 28,
+  "scope": "Three fresh BCB observed starts/36requests/72typed snapshot stages; currente815/fc08 parents. Exact reconstruction of all snapshot metrics. No unobserved frequency, equivalence, pure GPU/SSD or new speed claim."
+}

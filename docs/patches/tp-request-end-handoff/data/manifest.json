@@ -1,0 +1,114 @@
+{
+  "base_commit": "ac8f6ed7d4f47ee532971c2da03f26d7943d66f8",
+  "histories": [
+    {
+      "run": 1,
+      "role": "baseline",
+      "inputs": {
+        "requests": {
+          "file": "baseline-01.requests.jsonl.gz",
+          "sha256": "5c44af439a85f5e4b5016e2c9b1157244cbc31d6ab9fea8579906cacfb589ad5",
+          "gzip_sha256": "c9413221dd774a7171bd5f6f4c4d5b1a50eb6eae675c0d96710da4d8eecf14ab",
+          "local_provenance": "results/model-scaling/tp-end-handoff-v1-replay01-baseline.jsonl"
+        },
+        "trace": {
+          "file": "baseline-01.trace.jsonl.gz",
+          "sha256": "e71f44a0d73178d4fb5b4e9c26947d1f1b016d97da49678a9947bcf2b8ef3c8f",
+          "gzip_sha256": "a560e62bcc86fe67ea80ba7a7a0020aec8a5c1e73a277198aa95926af549eb0c",
+          "local_provenance": "tp-cache-retention/tp-end-handoff-v1/trace-tp-end-handoff-v1-replay01-baseline-rank0.jsonl"
+        }
+      }
+    },
+    {
+      "run": 1,
+      "role": "candidate",
+      "inputs": {
+        "requests": {
+          "file": "candidate-01.requests.jsonl.gz",
+          "sha256": "44559e3b5feab113c4b93eecc20ebcde702e15e674117f189e20ab72d177fe92",
+          "gzip_sha256": "cee9e5ded7a51093e3942056224556b9573d5878be854cc4cc6d769d9e4167b6",
+          "local_provenance": "results/model-scaling/tp-end-handoff-replay-v2-replay01-candidate.jsonl"
+        },
+        "trace": {
+          "file": "candidate-01.trace.jsonl.gz",
+          "sha256": "92e6c9811ea9779219ccacca7ccc8282f5cc8fc02eea4fdde34e9b252267d7f1",
+          "gzip_sha256": "b0fc6f9bc9c1527213b8eddd8c1ce3dba3f28ca9adefaa13d8f1ae37c176785b",
+          "local_provenance": "tp-cache-retention/tp-end-handoff-replay-v2/trace-tp-end-handoff-replay-v2-replay01-candidate-rank0.jsonl"
+        }
+      }
+    },
+    {
+      "run": 2,
+      "role": "baseline",
+      "inputs": {
+        "requests": {
+          "file": "baseline-02.requests.jsonl.gz",
+          "sha256": "93f75e222f93ef540024c88f3460e697d04e3f2ea1b87a2c43edc47c357590ce",
+          "gzip_sha256": "99c4a1e25c33920265460ea8e056a906ed487cd0e0a6fe13b7730fbd2136a8e6",
+          "local_provenance": "results/model-scaling/tp-end-handoff-replay-v2-replay02-baseline.jsonl"
+        },
+        "trace": {
+          "file": "baseline-02.trace.jsonl.gz",
+          "sha256": "5534255beb716fab235b85cd8ec64f8b1614e04d029ea034338ff778d28b743a",
+          "gzip_sha256": "4e38f67059a84a2e6d4f4978fe54863c2d8e6174404d8a8576a4599ce4b93d89",
+          "local_provenance": "tp-cache-retention/tp-end-handoff-replay-v2/trace-tp-end-handoff-replay-v2-replay02-baseline-rank0.jsonl"
+        }
+      }
+    },
+    {
+      "run": 2,
+      "role": "candidate",
+      "inputs": {
+        "requests": {
+          "file": "candidate-02.requests.jsonl.gz",
+          "sha256": "9f92006e908246a8124d8d56eb7d980ef3d2cab5a3a52e73a56d1ba5c1487fbd",
+          "gzip_sha256": "678b2e9a9a135f9e7acebf0b71127e82d2c94cf13dca7f62d16215cfa82fe6ab",
+          "local_provenance": "results/model-scaling/tp-end-handoff-replay-v2-replay02-candidate.jsonl"
+        },
+        "trace": {
+          "file": "candidate-02.trace.jsonl.gz",
+          "sha256": "43191c2b3aa3e373e8336f32242111c044e5215f7bbd195b859fff34aa1eba95",
+          "gzip_sha256": "41d3571b66c6544fb4e9aa7d86f4c955dfb056717eaa26a37ad868c0f3b285df",
+          "local_provenance": "tp-cache-retention/tp-end-handoff-replay-v2/trace-tp-end-handoff-replay-v2-replay02-candidate-rank0.jsonl"
+        }
+      }
+    },
+    {
+      "run": 3,
+      "role": "baseline",
+      "inputs": {
+        "requests": {
+          "file": "baseline-03.requests.jsonl.gz",
+          "sha256": "037efc829d5f4ba8d15c8a446e8ee160cf34a4a5c48997ee8e08fcd085e8b0d1",
+          "gzip_sha256": "0b5dcf2554851f09747c8ca23ae30bd04ea94804d00e2fe5d44a77720d8394d5",
+          "local_provenance": "results/model-scaling/tp-end-handoff-replay-v2-replay03-baseline.jsonl"
+        },
+        "trace": {
+          "file": "baseline-03.trace.jsonl.gz",
+          "sha256": "311cc00f6cd6ca013f01579aea055f9ae9462f54e934b48c9f0904eba157f1fe",
+          "gzip_sha256": "d7cb004c95310f56918d774d799a1e6e5b3a00d014e2063979972fc3374e3e2e",
+          "local_provenance": "tp-cache-retention/tp-end-handoff-replay-v2/trace-tp-end-handoff-replay-v2-replay03-baseline-rank0.jsonl"
+        }
+      }
+    },
+    {
+      "run": 3,
+      "role": "candidate",
+      "inputs": {
+        "requests": {
+          "file": "candidate-03.requests.jsonl.gz",
+          "sha256": "b420aa5c3ba0254ea094bfa546237b0e36c104b14190978d0b79c7436ac620c2",
+          "gzip_sha256": "25afde8e9e0d9093243c7e78db4c53dd7c8ad18631ed1bbc3bb2985d9eb11c38",
+          "local_provenance": "results/model-scaling/tp-end-handoff-replay-v2-replay03-candidate.jsonl"
+        },
+        "trace": {
+          "file": "candidate-03.trace.jsonl.gz",
+          "sha256": "81435c48c719ff6006f0d5d5e9775cc94fe16e8e81430e120d4d6d5298cb20c9",
+          "gzip_sha256": "7be499bb64bfcf1e0672b98eb9caf631ef7cce3051cfcbb3f107c48f3db9b862",
+          "local_provenance": "tp-cache-retention/tp-end-handoff-replay-v2/trace-tp-end-handoff-replay-v2-replay03-candidate-rank0.jsonl"
+        }
+      }
+    }
+  ],
+  "scope": "Six exploratory real TP2 histories, three per arm; combined target heads in both. Only EndRequest pending handoff differs, with sparse CPU markers around Finish/End in both. Master-only hooks, zero dropped records. First completed baseline retained after a collection-only absent-worker-file error, independently validated; no request replay/exclusion. Not inferential throughput evidence."
+}

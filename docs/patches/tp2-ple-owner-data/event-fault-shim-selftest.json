@@ -1,0 +1,93 @@
+{
+  "records": [
+    {
+      "case": "no-target",
+      "calls": 4,
+      "errors": 0,
+      "passed": true,
+      "output": "PASS calls=4 errors=0 real=4"
+    },
+    {
+      "case": "wrong-PC",
+      "calls": 4,
+      "errors": 0,
+      "passed": true,
+      "output": "PASS calls=4 errors=0 real=4"
+    },
+    {
+      "case": "not-armed",
+      "calls": 4,
+      "errors": 0,
+      "passed": true,
+      "output": "PASS calls=4 errors=0 real=4"
+    },
+    {
+      "case": "one-failure",
+      "calls": 4,
+      "errors": 1,
+      "passed": true,
+      "output": "PASS calls=4 errors=1 real=3"
+    },
+    {
+      "case": "thread-race",
+      "calls": 8,
+      "errors": 1,
+      "passed": true,
+      "output": "PASS calls=8 errors=1 real=7"
+    }
+  ],
+  "source_artifact_SHA256": {
+    "event-fault.cpp": "b50c446215d3a0390a59621b685ff82d5b90249eb6fe5529be090303b363a2f9",
+    "event-fault.so": "8d889bc0c2705892fe162f9bc287e327344d660cd13e016ec5b6b3890878a5a2",
+    "fake-hip.cpp": "5126b9a3769bd512805d014355c06668c772bf8d142c67510e5849eb1ecf3ce1",
+    "libfakehip.so": "a9e853499f5b9dec09d2a797e5c0b47d9c0552bb2f3c6c33c0f10d7cf5370bd1",
+    "fixture.cpp": "f660c1c2b7fbc9808b1bc029d3b4a2282e8f67d470ede4b6c6591c54978d79d4",
+    "fixture": "21312bdc4c7cd3763c5c4e94634a1394c0d03c3c2535e4afa89259956c51eb83",
+    "build-test.py": "5b8868c9dd31afc9e1845194437d3a46b326c82d36a3d4342318b9aa1cc9500b"
+  },
+  "fixture_return_pc": 13299,
+  "commands": [
+    [
+      "/home/rkuo/.local/opt/rocm-7.14.1/bin/amdclang++",
+      "-std=c++20",
+      "-D__HIP_PLATFORM_AMD__",
+      "-I/home/rkuo/.local/opt/rocm-7.14.1/include",
+      "-shared",
+      "-fPIC",
+      "-O2",
+      "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/ple-event-fault-shim-v1/event-fault.cpp",
+      "-ldl",
+      "-o",
+      "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/ple-event-fault-shim-v1/event-fault.so"
+    ],
+    [
+      "/home/rkuo/.local/opt/rocm-7.14.1/bin/amdclang++",
+      "-std=c++20",
+      "-D__HIP_PLATFORM_AMD__",
+      "-I/home/rkuo/.local/opt/rocm-7.14.1/include",
+      "-shared",
+      "-fPIC",
+      "-O2",
+      "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/ple-event-fault-shim-v1/fake-hip.cpp",
+      "-o",
+      "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/ple-event-fault-shim-v1/libfakehip.so"
+    ],
+    [
+      "/home/rkuo/.local/opt/rocm-7.14.1/bin/amdclang++",
+      "-std=c++20",
+      "-D__HIP_PLATFORM_AMD__",
+      "-I/home/rkuo/.local/opt/rocm-7.14.1/include",
+      "-O0",
+      "-g",
+      "-fno-optimize-sibling-calls",
+      "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/ple-event-fault-shim-v1/fixture.cpp",
+      "-L/home/rkuo/strix-dispatch-investigation/tp-cache-retention/ple-event-fault-shim-v1",
+      "-lfakehip",
+      "-Wl,-rpath,$ORIGIN",
+      "-pthread",
+      "-o",
+      "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/ple-event-fault-shim-v1/fixture"
+    ]
+  ],
+  "scope": "Five CPU-only ABI/caller/arming/once/thread-race controls with typed HIP header declarations and fake next API; no real GPU, model error handling or performance proof."
+}

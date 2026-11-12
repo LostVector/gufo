@@ -1,0 +1,61 @@
+[
+  {
+    "name": "format",
+    "command": [
+      "python3",
+      "tools/ci/check-format.py"
+    ],
+    "exit": 0,
+    "ended_ns": 1793652480058962343
+  },
+  {
+    "name": "api",
+    "command": [
+      "python3",
+      "tools/ci/check-extension-api.py",
+      "--base",
+      "1ad4bd3b047c8aa3b3526bee6303d8f98f36d441"
+    ],
+    "exit": 0,
+    "ended_ns": 1793652480341658099
+  },
+  {
+    "name": "isolation",
+    "command": [
+      "python3",
+      "tools/ci/check-extension-isolation.py"
+    ],
+    "exit": 0,
+    "ended_ns": 1793652484445347190
+  },
+  {
+    "name": "docs",
+    "command": [
+      "python3",
+      "tools/ci/check-docs.py"
+    ],
+    "exit": 0,
+    "ended_ns": 1793652484529639078
+  },
+  {
+    "name": "generated",
+    "command": [
+      "python3",
+      "tools/ci/generate-infrastructure.py",
+      "--check"
+    ],
+    "exit": 0,
+    "ended_ns": 1793652484559109602
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit": 0,
+    "ended_ns": 1793652484573050268
+  }
+]

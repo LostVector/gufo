@@ -8,10 +8,12 @@ and family code never includes a model header.
 | Library | Target | Kind | Contents | Used by |
 | --- | --- | --- | --- | --- |
 | `control_tokens` | `gufo_qwen_control_tokens` | interface | Shared control-token spellings in `gufo::tokenization`. | Qwen 27B, Flash-Next, Qwen3-TTS, Qwen-Image-2.1, MiniMax H3 |
+| `draft_vocab` | `gufo_qwen_draft_vocab` | interface | Speculative draft-head vocabulary: the 98,304-row prefix plus per-request table and the rules for when a draft may use it. | Qwen 27B (DFlash2), Flash-Next (MTP) |
 | `hip_common` | `gufo_qwen_hip_common` | interface | Execution policy, attention policy, recurrent-state layout, GEMM routing, quantization helpers, the RoPE layout shared by attention and vision, and the continuation-hook interface. Below `kernels` and `vision`. | kernels, vision, Qwen 27B, Flash-Next |
 | `config` | `gufo_qwen_config` | static (CPU) | `ExtractQwenConfig`: Qwen GGUF configuration extraction and structural validation. Reaches no HIP. | Qwen 27B, text (chat-template shape check), `prompt` |
 | `text` | `gufo_qwen_text` | static (CPU) | Tokenizer and bounded deterministic ChatML template. | Qwen 27B, Flash-Next, Qwen-Image-2.1 |
 | `kernels` | `gufo_qwen_kernels` | static (HIP) | Shared Qwen HIP operators: `ops.hpp`, `ops/` launcher interfaces and the kernel translation units. | Qwen 27B, Flash-Next, Qwen3-TTS |
+| `dflash` | `gufo_qwen_dflash` | static (CPU/HIP) | DFlash2 checkpoint parsing, draft policy and HIP execution through explicit target tensor views. | Qwen 27B, Flash-Next |
 | `vision` | `gufo_qwen_vision` | static | Vision encoder, device image input, image prompt expansion and image cache. | Qwen 27B, Flash-Next |
 
 Dependency order (each library may use the ones above it):

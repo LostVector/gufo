@@ -1,0 +1,26 @@
+[
+  {
+    "mode": "good",
+    "exit_codes": [
+      0,
+      0
+    ],
+    "passed": true
+  },
+  {
+    "mode": "rows",
+    "exit_codes": [
+      0,
+      0
+    ],
+    "passed": true
+  },
+  {
+    "mode": "read",
+    "exit_codes": [
+      0,
+      0
+    ],
+    "passed": true
+  }
+]

@@ -1,0 +1,323 @@
+{
+  "scope": "Descriptive TP2,C1 B/C/B screen on one isolated physical USB4 connection; 8192 context capacity, 2 session slots, chunk512, TG256, cache disabled. Not independent paired confidence evidence or general throughput/quality proof.",
+  "arms": {
+    "baseline-before": {
+      "code": {
+        "median_tps": 99.0230711428164,
+        "tps": [
+          99.03239355395829,
+          99.0230711428164,
+          98.97027823767547
+        ],
+        "lookup": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ],
+        "prompt_tokens": [
+          1917,
+          1917,
+          1917
+        ]
+      },
+      "prose": {
+        "median_tps": 42.69514880679557,
+        "tps": [
+          42.69705517845032,
+          42.69514880679557,
+          42.66128211606265
+        ],
+        "lookup": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ],
+        "prompt_tokens": [
+          22,
+          22,
+          22
+        ]
+      }
+    },
+    "candidate": {
+      "code": {
+        "median_tps": 123.19553745801775,
+        "tps": [
+          123.21282712142266,
+          123.19553745801775,
+          123.11138870207186
+        ],
+        "lookup": [
+          156,
+          156,
+          156
+        ],
+        "lookup_accepted": [
+          148,
+          148,
+          148
+        ],
+        "prompt_tokens": [
+          1917,
+          1917,
+          1917
+        ]
+      },
+      "prose": {
+        "median_tps": 42.95121938273586,
+        "tps": [
+          42.95121938273586,
+          42.92411104792274,
+          43.021290584164525
+        ],
+        "lookup": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ],
+        "prompt_tokens": [
+          22,
+          22,
+          22
+        ]
+      }
+    },
+    "baseline-after": {
+      "code": {
+        "median_tps": 98.86175228016407,
+        "tps": [
+          98.79206586038518,
+          98.86175228016407,
+          98.91678867653279
+        ],
+        "lookup": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ],
+        "prompt_tokens": [
+          1917,
+          1917,
+          1917
+        ]
+      },
+      "prose": {
+        "median_tps": 42.63753594174189,
+        "tps": [
+          42.57221335720735,
+          42.666529643106706,
+          42.63753594174189
+        ],
+        "lookup": [
+          0,
+          0,
+          0
+        ],
+        "lookup_accepted": [
+          0,
+          0,
+          0
+        ],
+        "prompt_tokens": [
+          22,
+          22,
+          22
+        ]
+      }
+    }
+  },
+  "phase_flags": [],
+  "checks": {
+    "baseline-before": {
+      "pass": true,
+      "requests": 6,
+      "greedy_compared_to_tp2_ar": false,
+      "process_exits": [
+        0,
+        1
+      ],
+      "ended_ns": 1793901463481005967
+    },
+    "candidate": {
+      "pass": true,
+      "requests": 6,
+      "greedy_compared_to_tp2_ar": true,
+      "process_exits": [
+        0,
+        1
+      ],
+      "ended_ns": 1793901530780730915
+    },
+    "baseline-after": {
+      "pass": true,
+      "requests": 6,
+      "greedy_compared_to_tp2_ar": true,
+      "process_exits": [
+        0,
+        1
+      ],
+      "ended_ns": 1793901600228114592
+    }
+  },
+  "output_sha256": {
+    "code": "c3346b6c12dcc49d5ae253628e50562cfde925f746522e6773ab0323b34aefb9",
+    "prose": "0f9a183dc0fe92d408213c0b1e8c62b1e7a477aa0f3ede300c064cfd9de267e7"
+  },
+  "relative_gain_pct": {
+    "code": {
+      "baseline-before": 24.410943870180034,
+      "baseline-after": 24.613952935908156
+    },
+    "prose": {
+      "baseline-before": 0.5997650391126541,
+      "baseline-after": 0.7356978635504996
+    }
+  },
+  "functional_controller": {
+    "exit": 1,
+    "ended_ns": 1793901690072696415
+  },
+  "functional_aggregate": {
+    "status": "failed",
+    "functional_status": "failed",
+    "error": "disk checkpoints closer than 2048 tokens: {'stored_tokens': [2447, 2828, 6278], 'min_step_skips': 11}",
+    "execution": {
+      "loaded_mode": "dflash2",
+      "draft_tokens": 770,
+      "draft_tokens_accepted": 372,
+      "draft_execution_observed": true
+    }
+  },
+  "functional_cases": {
+    "long-context": {
+      "status": "passed",
+      "report": "long-context.json",
+      "seconds": 10.882
+    },
+    "text-cancel": {
+      "status": "passed",
+      "report": "text-cancel.json",
+      "seconds": 2.118
+    },
+    "thinking-tool-cancel": {
+      "status": "passed",
+      "report": "thinking-tool-cancel.json",
+      "seconds": 3.972
+    },
+    "legacy-tool-cancel": {
+      "status": "passed",
+      "report": "legacy-tool-cancel.json",
+      "seconds": 3.022
+    },
+    "disk-spacing": {
+      "status": "passed",
+      "report": "disk-spacing.json",
+      "seconds": 8.431
+    },
+    "cache-persist": {
+      "status": "passed",
+      "report": "cache-persist.json",
+      "seconds": 5.926
+    },
+    "text-cancel-disk": {
+      "status": "passed",
+      "report": "text-cancel-disk.json",
+      "seconds": 0.867
+    },
+    "thinking-tool-cancel-disk": {
+      "status": "passed",
+      "report": "thinking-tool-cancel-disk.json",
+      "seconds": 1.167
+    },
+    "legacy-tool-cancel-disk": {
+      "status": "passed",
+      "report": "legacy-tool-cancel-disk.json",
+      "seconds": 0.816
+    },
+    "cache-persist-disk": {
+      "status": "passed",
+      "report": "cache-persist-disk.json",
+      "seconds": 3.319
+    },
+    "disk-spacing-disk": {
+      "status": "passed",
+      "report": "disk-spacing-disk.json",
+      "seconds": 2.32
+    }
+  },
+  "isolated_spacing": {
+    "passed": true,
+    "spacing": {
+      "stored_tokens": [
+        2447,
+        6278
+      ],
+      "min_step_skips": 16,
+      "shared_boundary_tokens": [
+        3043
+      ]
+    },
+    "ended_ns": 1793901853854707313
+  },
+  "sampled_copy": [
+    {
+      "lookup_n": 323,
+      "lookup_n_accepted": 321,
+      "draft_n": 365,
+      "draft_n_accepted": 357,
+      "predicted_n": 410
+    },
+    {
+      "lookup_n": 323,
+      "lookup_n_accepted": 321,
+      "draft_n": 365,
+      "draft_n_accepted": 357,
+      "predicted_n": 410
+    }
+  ],
+  "qualification": "Isolated-link decode, replay, copied proposals and 11 functional cases pass; original aggregate functional run remains failed due to mixed-lineage spacing assertion. Isolated original spacing assertions pass. Dual-cable run remains failed transport, no dual-cable reliability claim.",
+  "provenance": {
+    "baseline_source": "fbaae5b81e6346bc490b14d3721cc92b3ba32346",
+    "candidate_source": "aa561cbd8eac3e6028f0d25791bbcc27bb399091",
+    "baseline_sha256": "0e0bb851ef075b44ac3b471a7e249bff391c97a8acead88bbf1d99888fe2a8c0",
+    "candidate_sha256": "d697d9bba14225edf87aa3736db2fe347502f616c83c56eb0bc9ddb3d171bb54",
+    "kernel": "7.3.0-strix-test",
+    "driver_sourceversion": "81C6FF2FBAC473C7AB21844",
+    "target": "UD-Q4_K_XL with shared Q8_0 embedding/head",
+    "draft": "Q8_0",
+    "native_domain_mask": {
+      "evo": 1,
+      "corsair": 2
+    },
+    "link": "20.0 Gb/s per lane, 2 lanes, one physical connection",
+    "raw_artifact_directory": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/dflash2-flash-next-port-v1/tp2-lookup-2026-11-05"
+  },
+  "dual_cable_failure": {
+    "status": "failed",
+    "stage": "third code prefill, before lookup decode",
+    "evidence": "RX frame_len2816 vs payload len4048 on slower peer2 path, retransmit exhaustion; HTTP500",
+    "partial_results_qualified": false,
+    "scope": "Both cables attached:20.0Gb/s/lane+10.0Gb/s/lane,two lanes each; native same-peer multicable striping enabled."
+  },
+  "driver_cleanup": "Approved baseline restored on both hosts; no persistent configuration change."
+}

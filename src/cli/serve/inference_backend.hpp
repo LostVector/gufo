@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <functional>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -15,6 +16,18 @@
 #include "src/cli/serve/text_generation_scheduler.hpp"
 
 namespace gufo::server {
+class TpControlChannel;
+struct TextTpConfig {
+  std::uint32_t rank{0};
+  std::uint32_t world_size{1};
+  int hip_device{0};
+  std::shared_ptr<ext::TextParallelRuntime> runtime;
+  std::shared_ptr<TpControlChannel> control;
+  std::string auth_token;
+  std::uint32_t max_draft_tokens{7};
+  bool use_dflash{false};
+  bool dflash_adaptive{false};
+};
 
 using TextSpeculativeBackend = ext::TextSpeculativeBackend;
 using TextDFlashDraftPolicy = ext::TextDFlashDraftPolicy;
@@ -34,6 +47,16 @@ using ext::TextDFlashDraftPolicyName;
 }
 }  // namespace speculative
 
+/// Generated tokens with reasoning text, excluding the delimiters. Text output
+/// has none. Reasoning the prompt opened ends at `close`, after any repeated
+/// `open`; an automatic output counts only a block it opens itself, after blank
+/// text. An unclosed block counts to the end.
+[[nodiscard]] std::size_t CountReasoningTokens(
+    std::span<const tokenization::TokenId> tokens,
+    TextGenerationBackend::InitialOutputState initial,
+    const ext::ReasoningMarkup& reasoning,
+    const std::function<std::string(tokenization::TokenId)>& decode);
+
 /// Thread-safe HTTP inference facade over shared immutable GPU model resources
 /// and a bounded pool of request-owned executor sessions.
 class InferenceBackend final : public TextGenerationBackend {
@@ -50,26 +73,45 @@ public:
   InferenceBackend(InferenceBackend&&) = delete;
   InferenceBackend& operator=(InferenceBackend&&) = delete;
 
+  /// Completes `options` for the selected text provider before its runner is
+  /// created (command-line settings that depend on the provider); false, with
+  /// `error` set, rejects the load.
+  using PrepareRunnerOptions = std::function<bool(
+      const ext::TextProvider& provider, const core::GgufReader& reader,
+      ext::TextRunnerOptions* options, std::string* error)>;
+
   /// Loads weights from a GGUF file. Returns false and sets *error on failure.
-  /// `enable_yarn` opts Flash-Next into static YaRN, required for (and only
-  /// accepted with) a `max_context` above its native context.
+  /// `enable_yarn` opts Flash-Next into YaRN, required for (and only accepted
+  /// with) a `max_context` above its native context; each session scales only
+  /// past the native context. `prepare_runner_options` runs after the
+  /// provider is selected.
   bool load(const std::string& model_path, std::string* error,
             std::uint32_t max_context = 0, std::size_t session_count = 1,
-            TextPrefillPolicy prefill_policy = {},
             TextSchedulerPolicy scheduler_policy = {},
             const TextSpeculativeConfig& speculative_config = {},
             const TextDiskCacheConfig& disk_cache_config = {},
             const std::string& vision_model_path = {},
             TextRunnerRamCacheOptions ram_cache_config = {},
-            bool enable_yarn = false);
+            const TextTpConfig& tp_config = {}, bool enable_yarn = false,
+            const PrepareRunnerOptions& prepare_runner_options = {});
 
   /// Installs a previously prepared runner with request-owned sessions.
   bool load(std::shared_ptr<ext::TextModelRunner> runner, std::string* error,
             std::size_t session_count = 1,
-            TextPrefillPolicy prefill_policy = {},
             TextSchedulerPolicy scheduler_policy = {},
             const TextDiskCacheConfig& disk_cache_config = {},
-            TextRunnerRamCacheOptions ram_cache_config = {});
+            TextRunnerRamCacheOptions ram_cache_config = {},
+            const TextTpConfig& tp_config = {});
+
+#if defined(ENGINE_ENABLE_HIP)
+  /// Runs the rank-1 TP2 worker loop until the control channel closes.
+  [[nodiscard]] bool run_worker(std::string* error);
+#endif
+
+  /// Rank 0 of a TP2 pair: why the pair broke (rank 1 or the link was lost),
+  /// or empty. Once it did, every later request fails and the server is not
+  /// ready.
+  [[nodiscard]] std::string tp_failure() const;
 
   /// Stable model identifier used in API responses.
   [[nodiscard]] std::string model_id() const override;
@@ -82,6 +124,8 @@ public:
   [[nodiscard]] SamplingDefaults sampling_defaults() const override;
   [[nodiscard]] std::uint32_t max_context() const override;
   [[nodiscard]] std::vector<SessionState> session_states() const override;
+  [[nodiscard]] std::optional<PromptAdmissionBudget> prompt_admission_budget()
+      const override;
   [[nodiscard]] ReasoningOptions reasoning_defaults() const override;
   [[nodiscard]] InitialOutputState initial_output_state(
       const ChatRequest& request) const override;
@@ -139,6 +183,10 @@ public:
   /// Prompt text of a chat request as generation would render it.
   [[nodiscard]] std::optional<std::string> render_chat_prompt(
       const ChatRequest& request) const override;
+
+  /// Token ids of raw text, as complete() tokenizes a prompt.
+  [[nodiscard]] std::optional<std::vector<std::uint32_t>> tokenize(
+      std::string_view text) const override;
 
 private:
   struct Impl;

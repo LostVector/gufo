@@ -78,12 +78,16 @@ Q8Weights MakeWeights(std::size_t m, std::size_t k, std::uint32_t seed,
 }
 
 // Reuse the wide projection fixture to check the fused convolution through
-// its actual consumer, including the state carried into the next chunk.
+// its actual consumer, including the state carried into the next chunk: the
+// model's 16 key and 48 value heads, or a TP rank's 8 and 24.
 void CheckSsmProjection(const void* w, const __half* x, float* projected,
                         const std::vector<float>& reference,
-                        std::uint32_t batch) {
-  constexpr std::uint32_t m = 16384, k = 2560, channels = 10240;
-  constexpr std::uint32_t kh = 16, vh = 48, d = 128, value_dim = vh * d;
+                        std::uint32_t batch, std::uint32_t kh,
+                        std::uint32_t vh) {
+  constexpr std::uint32_t k = 2560, d = 128;
+  const std::uint32_t value_dim = vh * d;
+  const std::uint32_t channels = 2 * kh * d + value_dim;
+  const std::uint32_t m = channels + value_dim;
   const std::size_t conv_count = std::size_t(batch) * channels;
   const std::size_t state_count = std::size_t(vh) * d * d;
   const std::size_t out_count = std::size_t(batch) * value_dim;
@@ -191,7 +195,7 @@ void CheckSsmProjection(const void* w, const __half* x, float* projected,
     CheckHip(hipDeviceSynchronize(), "SSM inputs");
     if (!q::DenseF16SsmGemm(w, x, conv_w, conv_state, fused, scratch, batch, m,
                             k, channels, 4, replay == 2 ? main_stream : nullptr,
-                            0, replay == 2 ? z_stream : nullptr, z_start)) {
+                            {}, replay == 2 ? z_stream : nullptr, z_start)) {
       throw std::runtime_error("SSM projection rejected the shape");
     }
     CheckHip(hipDeviceSynchronize(), "SSM projection");
@@ -228,14 +232,17 @@ void CheckSsmProjection(const void* w, const __half* x, float* projected,
   std::cout << "fused SSM convolution, output, state and replay are exact\n";
 }
 
+/// `heads` query heads over `kv_heads` KV heads: the model's 24 over two, or
+/// a TP rank's 12 over one.
 void CheckAttentionProjection(
     const void* weights, const __half* input, const float* projected,
-    std::uint32_t batch,
+    std::uint32_t batch, std::uint32_t heads, std::uint32_t kv_heads,
     const gufo::models::qwen38_flash_next::YarnRope& yarn = {}) {
   constexpr std::uint32_t start = 131069;
-  const std::size_t query_bytes = (std::size_t(batch) * 6144 + 16) * 4;
+  const std::uint32_t rows = 2 * (heads + kv_heads) * 256;
+  const std::size_t query_bytes = (std::size_t(batch) * heads * 256 + 16) * 4;
   const std::size_t cache_bytes =
-      (std::size_t(start + batch) * 512 + 16) * sizeof(__half);
+      (std::size_t(start + batch) * kv_heads * 256 + 16) * sizeof(__half);
   struct Buffers {
     std::vector<void*> pointers;
     ~Buffers() {
@@ -268,13 +275,13 @@ void CheckAttentionProjection(
   CheckHip(hipMemcpy(device_gamma, gamma.data(), gamma.size() * 4,
                      hipMemcpyHostToDevice),
            "attention norm weights");
-  if (!q::PrepareAttention(projected, 13312, device_gamma, device_gamma + 256,
+  if (!q::PrepareAttention(projected, rows, device_gamma, device_gamma + 256,
                            static_cast<float*>(expected[0]) + 8,
                            static_cast<float*>(expected[1]) + 8,
                            static_cast<__half*>(expected[2]) + 8,
-                           static_cast<__half*>(expected[3]) + 8, batch, 24, 2,
-                           256, 64, position, 1e7F, 1e-6F, nullptr, nullptr,
-                           false, yarn))
+                           static_cast<__half*>(expected[3]) + 8, batch, heads,
+                           kv_heads, 256, 64, position, 1e7F, 1e-6F, nullptr,
+                           nullptr, false, yarn))
     throw std::runtime_error("attention preparation rejected the model shape");
   hipStream_t stream = nullptr;
   hipGraph_t graph = nullptr;
@@ -292,8 +299,9 @@ void CheckAttentionProjection(
                            static_cast<float*>(actual[0]) + 8,
                            static_cast<float*>(actual[1]) + 8,
                            static_cast<__half*>(actual[2]) + 8,
-                           static_cast<__half*>(actual[3]) + 8, batch, position,
-                           1e7F, 1e-6F, stream, vision.rope(), yarn))
+                           static_cast<__half*>(actual[3]) + 8, batch, heads,
+                           kv_heads, position, 1e7F, 1e-6F, stream,
+                           vision.rope(), yarn))
     throw std::runtime_error("attention fusion rejected the model shape");
   CheckHip(hipStreamEndCapture(stream, &graph), "attention capture end");
   CheckHip(hipGraphInstantiate(&replay, graph, nullptr, nullptr, 0),
@@ -324,8 +332,9 @@ void CheckAttentionProjection(
                           static_cast<float*>(actual[0]) + 8,
                           static_cast<float*>(actual[1]) + 8,
                           static_cast<__half*>(actual[2]) + 8,
-                          static_cast<__half*>(actual[3]) + 8, 0, position,
-                          1e7F, 1e-6F, nullptr, nullptr, yarn))
+                          static_cast<__half*>(actual[3]) + 8, 0, heads,
+                          kv_heads, position, 1e7F, 1e-6F, nullptr, nullptr,
+                          yarn))
     throw std::runtime_error("attention fusion accepted an empty batch");
   CheckHip(hipGraphExecDestroy(replay), "attention graph free");
   CheckHip(hipGraphDestroy(graph), "attention graph definition free");
@@ -744,7 +753,13 @@ void CheckArenaGraphReplay() {
     CheckHip(hipMalloc(&d, decoy_bytes), "decoy");
     CheckHip(hipMemset(d, 0x5A, decoy_bytes), "decoy fill");
   }
-  CheckHip(hipMemset(d_y, 0, small * m * 4), "clear");
+  // Clear `d_y` through the replay's own stream: a synchronous hipMemset
+  // runs on the legacy NULL stream, which does not order with launches on
+  // a non-blocking stream. The memset raced the replayed kernels and
+  // intermittently zeroed rows they had already written; the async form
+  // restores stream order (witnessed on gfx1151, ROCm core-10.1: 7/80
+  // stock vs 0/80 stream-ordered, every failure partial-zero only).
+  CheckHip(hipMemsetAsync(d_y, 0, small * m * 4, stream), "clear");
   CheckHip(hipGraphLaunch(replay, stream), "replay");
   CheckHip(hipStreamSynchronize(stream), "replay wait");
   const bool output_ok = download(small) == want_small;
@@ -859,7 +874,7 @@ double Run(std::size_t batch, std::size_t m, std::size_t k, std::uint32_t seed,
       0) {
     throw std::runtime_error("F16 replay changed the output");
   }
-  if (batch >= 1024 && m == 2560 && k == 6144) {
+  if (batch >= 1024 && m == 2560 && (k == 6144 || k == 3072)) {
     const std::size_t stride = k + 32;
     __half* padded = nullptr;
     // The ragged final row ends at the allocation boundary. NaN padding
@@ -904,19 +919,22 @@ double Run(std::size_t batch, std::size_t m, std::size_t k, std::uint32_t seed,
             << worst_f16_vs_mmq << ", worst |W8A8 - F64| " << worst_vs_ref
             << ", worst |F16 - F64| " << worst_f16 << " (reference scale "
             << ref_scale << ")\n";
-  if (m == 16384 && k == 2560 && batch > 8) {
+  if ((m == 16384 || m == 8192) && k == 2560 && batch > 8) {
     CheckSsmProjection(d_w, d_x_half, d_f16, f16,
-                       static_cast<std::uint32_t>(batch));
+                       static_cast<std::uint32_t>(batch), m == 16384 ? 16 : 8,
+                       m == 16384 ? 48 : 24);
   }
   if (m == 320 && k == 10240 && batch >= 96) {
     CheckHcDownProjection(d_w, d_tiled, d_w8,
                           static_cast<std::uint32_t>(batch));
   }
-  if (m == 13312 && k == 2560 && batch > 8) {
+  if ((m == 13312 || m == 6656) && k == 2560 && batch > 8) {
     CheckAttentionProjection(d_w, d_x_half, d_f16,
-                             static_cast<std::uint32_t>(batch));
+                             static_cast<std::uint32_t>(batch),
+                             m == 13312 ? 24 : 12, m == 13312 ? 2 : 1);
     CheckAttentionProjection(
         d_w, d_x_half, d_f16, static_cast<std::uint32_t>(batch),
+        m == 13312 ? 24 : 12, m == 13312 ? 2 : 1,
         gufo::models::qwen38_flash_next::MakeYarnRope(
             {.factor = 2.5F, .original_context = 262144}, 64, 1e7F));
   }
@@ -1339,16 +1357,24 @@ int main() {
     ok = Run(37, 640, 2560, 0x0BADF00DU) < 1e-2 && ok;
     ok = Run(200, 200, 6144, 0xDEADBEEFU) < 1e-2 && ok;
     ok = Run(1025, 2560, 6144, 0x51A17U, 2) < 1e-2 && ok;
+    ok = Run(1025, 2560, 3072, 0x51A18U, 2) < 1e-2 && ok;
     ok = Run(2049, 2560, 6144, 0x25606144U, 2) < 1e-2 && ok;
     // Wide SSM projection: two K blocks per stage, with a partial token tile.
     ok = Run(2049, 16384, 2560, 0x16384256U, 2) < 1e-2 && ok;
+    // A TP rank's GDN heads: 8 key and 24 value heads.
+    ok = Run(2049, 8192, 2560, 0x8192256U, 2) < 1e-2 && ok;
     ok = Run(2049, 13312, 2560, 0x13312256U, 2) < 1e-2 && ok;
+    // A TP rank's attention heads: 12 query heads over one KV head.
+    ok = Run(2049, 6656, 2560, 0x6656256U, 2) < 1e-2 && ok;
     // Every prefill pass wider than a vector batch fuses these projections:
-    // one partial 32-token tile, a ragged 128-token tile and a mid-size pass.
+    // one partial 32-token tile, a ragged 128-token tile and a mid-size pass,
+    // for the model's heads and a TP rank's.
     for (const std::size_t batch : {9U, 33U, 470U}) {
       const auto seed = static_cast<std::uint32_t>(batch);
       ok = Run(batch, 16384, 2560, 0x16384000U + seed, 2) < 1e-2 && ok;
       ok = Run(batch, 13312, 2560, 0x13312000U + seed, 2) < 1e-2 && ok;
+      ok = Run(batch, 8192, 2560, 0x08192000U + seed, 2) < 1e-2 && ok;
+      ok = Run(batch, 6656, 2560, 0x06656000U + seed, 2) < 1e-2 && ok;
     }
     // HC up: the grouped grid, including the last partial token tile.
     ok = Run(2049, 10240, 320, 0x8A8A320U, 2) < 1e-2 && ok;

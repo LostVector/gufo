@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <span>
@@ -16,9 +17,11 @@
 #include <vector>
 
 #include "gufo/ext/component_cache_resources.hpp"
+#include "gufo/ext/experimental/admission_query.hpp"
 #include "gufo/ext/gguf_identity.hpp"
 #include "gufo/ext/host_budget.hpp"
 #include "src/families/qwen/control_tokens/control_tokens.hpp"
+#include "src/families/qwen/dflash/hip/executor.hpp"
 #include "src/families/qwen/text/chat_template.hpp"
 #include "src/families/qwen/text/tokenizer.hpp"
 #include "src/families/qwen/vision/encoder.hpp"
@@ -27,6 +30,9 @@
 #include "src/models/qwen38_flash_next/continuation_adapter.hpp"
 #include "src/models/qwen38_flash_next/continuation_identity.hpp"
 #include "src/models/qwen38_flash_next/engine.hpp"
+#include "src/models/qwen38_flash_next/kernels/rocm/communicator.hpp"
+#include "src/models/qwen38_flash_next/kernels/rocm/executor.hpp"
+#include "src/models/qwen38_flash_next/probe.hpp"
 #include "src/models/qwen38_flash_next/rope_scaling.hpp"
 
 namespace gufo::models::qwen38_flash_next {
@@ -41,7 +47,12 @@ std::vector<std::int32_t> QwenFlashNextEngineTokens(
     std::span<const TextRunnerToken> tokens) {
   std::vector<std::int32_t> converted;
   converted.reserve(tokens.size());
-  for (const auto token : tokens) {
+  for (const TextRunnerToken token : tokens) {
+    if (token > static_cast<TextRunnerToken>(
+                    std::numeric_limits<std::int32_t>::max())) {
+      throw std::invalid_argument(
+          "Qwen3.8-Flash-Next token ID exceeds engine range");
+    }
     converted.push_back(static_cast<std::int32_t>(token));
   }
   return converted;
@@ -159,15 +170,147 @@ std::shared_ptr<const models::qwen::vision::Prompt> QwenPrompt(
   return image->prompt;
 }
 
+// A Qwen image context for a TP2 peer: the prompt's tokens, RoPE layout,
+// resized pixels and cache identity, so the peer encodes the same images.
+constexpr std::uint32_t kQwenImageContextFormat = 1;
+
+std::vector<std::uint8_t> EncodeQwenImageContext(
+    const TextPromptContext& context) {
+  const auto* image = dynamic_cast<const QwenImageContext*>(&context);
+  if (image == nullptr || image->prompt == nullptr)
+    throw std::invalid_argument("invalid Qwen prompt context");
+  const auto& prompt = *image->prompt;
+  std::vector<std::uint8_t> out;
+  const auto u32 = [&](std::uint64_t value) {
+    if (value > std::numeric_limits<std::uint32_t>::max())
+      throw std::invalid_argument("Qwen prompt context is too large");
+    for (unsigned shift = 0; shift < 32; shift += 8)
+      out.push_back(static_cast<std::uint8_t>(value >> shift));
+  };
+  const auto grid = [&](const models::qwen::vision::ImageGrid& value) {
+    u32(value.offset);
+    u32(value.height);
+    u32(value.width);
+  };
+  u32(kQwenImageContextFormat);
+  u32(prompt.cache_identity.size());
+  out.insert(out.end(), prompt.cache_identity.begin(),
+             prompt.cache_identity.end());
+  u32(prompt.tokens.size());
+  for (const auto token : prompt.tokens)
+    u32(token);
+  u32(prompt.rope.images.size());
+  for (const auto& value : prompt.rope.images)
+    grid(value);
+  u32(prompt.images.size());
+  for (const auto& value : prompt.images) {
+    if (value.pixels == nullptr)
+      throw std::invalid_argument("Qwen prompt context image has no pixels");
+    const auto& pixels = *value.pixels;
+    grid(value.grid);
+    u32(pixels.width);
+    u32(pixels.height);
+    u32(pixels.pixels.size());
+    out.insert(out.end(), pixels.pixels.begin(), pixels.pixels.end());
+  }
+  return out;
+}
+
+std::shared_ptr<const TextPromptContext> DecodeQwenImageContext(
+    std::span<const std::uint8_t> bytes, std::uint32_t max_context) {
+  std::size_t offset = 0;
+  const auto u32 = [&]() {
+    if (bytes.size() - offset < 4)
+      throw std::invalid_argument("Qwen prompt context is truncated");
+    std::uint32_t value = 0;
+    for (unsigned shift = 0; shift < 32; shift += 8)
+      value |= std::uint32_t{bytes[offset++]} << shift;
+    return value;
+  };
+  const auto span = [&](std::size_t size) {
+    if (bytes.size() - offset < size)
+      throw std::invalid_argument("Qwen prompt context is truncated");
+    const auto result = bytes.subspan(offset, size);
+    offset += size;
+    return result;
+  };
+  const auto grid = [&]() {
+    models::qwen::vision::ImageGrid value;
+    value.offset = u32();
+    value.height = u32();
+    value.width = u32();
+    return value;
+  };
+  if (u32() != kQwenImageContextFormat)
+    throw std::invalid_argument("Qwen prompt context format is unknown");
+  auto prompt = std::make_shared<models::qwen::vision::Prompt>();
+  const auto identity = span(u32());
+  prompt->cache_identity.assign(identity.begin(), identity.end());
+  const auto token_count = u32();
+  if (token_count == 0 || token_count > max_context)
+    throw std::invalid_argument("Qwen prompt context tokens are invalid");
+  prompt->tokens.resize(token_count);
+  for (auto& token : prompt->tokens)
+    token = u32();
+  const auto rope_count = u32();
+  if (rope_count > token_count)
+    throw std::invalid_argument("Qwen prompt context layout is invalid");
+  prompt->rope.images.resize(rope_count);
+  for (auto& value : prompt->rope.images)
+    value = grid();
+  prompt->rope.Validate(max_context);
+  const auto image_count = u32();
+  if (image_count == 0 || image_count > rope_count)
+    throw std::invalid_argument("Qwen prompt context images are invalid");
+  prompt->images.resize(image_count);
+  for (auto& value : prompt->images) {
+    value.grid = grid();
+    auto image = std::make_shared<core::Image>();
+    image->width = u32();
+    image->height = u32();
+    const auto size = u32();
+    if (std::uint64_t{image->width} * image->height * 3 != size)
+      throw std::invalid_argument("Qwen prompt context pixels are invalid");
+    const auto pixels = span(size);
+    image->pixels.assign(pixels.begin(), pixels.end());
+    value.pixels = std::move(image);
+  }
+  if (offset != bytes.size())
+    throw std::invalid_argument("Qwen prompt context has trailing bytes");
+  auto context = std::make_shared<QwenImageContext>();
+  context->cache_identity = prompt->cache_identity;
+  context->prompt = std::move(prompt);
+  return context;
+}
+
 class QwenFlashNextTextRunnerState final : public TextRunnerState {
 public:
+  QwenFlashNextTextRunnerState(
+      const std::shared_ptr<QwenFlashNextModel>& model,
+      std::uint32_t max_context, bool use_mtp,
+      std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model = {}) {
+    std::string error;
+    owned_session_ =
+        model->CreateSession(use_mtp ? gufo::core::SessionMode::kSpeculative
+                                     : gufo::core::SessionMode::kAutoregressive,
+                             max_context, &error, std::move(draft_model));
+    if (owned_session_ == nullptr) {
+      throw std::runtime_error("Failed to create Qwen3.8-Flash-Next session: " +
+                               error);
+    }
+    session_ = owned_session_.get();
+  }
+
   QwenFlashNextTextRunnerState(QwenFlashNextSession& session,
                                cache::Adapter& adapter, cache::Slot& slot)
       : session_(&session), adapter_(&adapter), slot_(&slot) {}
 
   void Invalidate() noexcept override {
     session_->SetCancellationCheck({});
-    (void)adapter_->Invalidate(*slot_);
+    if (adapter_)
+      (void)adapter_->Invalidate(*slot_);
+    else
+      session_->Reset();
     position_ = 0;
   }
   void SetCancellationCheck(const CancellationCheck& check) override {
@@ -175,7 +318,9 @@ public:
   }
   [[nodiscard]] TextRunnerMeasuredResources MeasuredResources()
       const noexcept override {
-    return {.per_request_state_bytes = session_->AllocatedBytes(),
+    return {.per_request_state_bytes =
+                session_->AllocatedBytes() +
+                (adapter_ ? adapter().PrivateScratchBytes() : 0),
             .temporary_scratch_bytes = 0};
   }
 
@@ -190,10 +335,42 @@ public:
   void set_position(std::size_t position) noexcept { position_ = position; }
 
 private:
+  std::unique_ptr<QwenFlashNextSession> owned_session_;
   QwenFlashNextSession* session_{};
   cache::Adapter* adapter_{};
   cache::Slot* slot_{};
   std::size_t position_{0};
+};
+
+class QwenFlashNextTextRunnerSnapshot final : public TextRunnerSnapshot {
+public:
+  QwenFlashNextTextRunnerSnapshot(
+      std::shared_ptr<QwenFlashNextModel> model,
+      std::unique_ptr<models::qwen38_flash_next::SessionSnapshot> snapshot,
+      std::size_t position)
+      : model(std::move(model)),
+        snapshot(std::move(snapshot)),
+        position(position) {}
+
+  [[nodiscard]] std::size_t PayloadBytes() const noexcept override {
+    if (snapshot == nullptr ||
+        snapshot->SizeBytes() > static_cast<std::uint64_t>(
+                                    std::numeric_limits<std::size_t>::max())) {
+      return 0;
+    }
+    return static_cast<std::size_t>(snapshot->SizeBytes());
+  }
+
+  [[nodiscard]] bool PrefersState(
+      const ContinuationState& state) const noexcept override {
+    const auto* flash =
+        dynamic_cast<const QwenFlashNextTextRunnerState*>(&state);
+    return snapshot && flash && flash->session().OwnsSnapshot(*snapshot);
+  }
+
+  std::shared_ptr<QwenFlashNextModel> model;
+  std::unique_ptr<models::qwen38_flash_next::SessionSnapshot> snapshot;
+  std::size_t position;
 };
 
 QwenFlashNextTextRunnerState& RequireQwenFlashNextState(
@@ -214,24 +391,47 @@ const QwenFlashNextTextRunnerState& RequireQwenFlashNextState(
   return *qfn;
 }
 
+// Arms the model's layer hook from the host's yield for one prefill step.
+class PrefillYieldScope {
+public:
+  PrefillYieldScope(const QwenFlashNextModel& model,
+                    const TextRunnerState& state)
+      : model_(model) {
+    if (state.prefill_yield_groups() > 1)
+      model_.SetPrefillYield(state.prefill_yield_groups(),
+                             [&state] { state.YieldPrefill(); });
+  }
+  ~PrefillYieldScope() { model_.SetPrefillYield(1, {}); }
+  PrefillYieldScope(const PrefillYieldScope&) = delete;
+  PrefillYieldScope& operator=(const PrefillYieldScope&) = delete;
+
+private:
+  const QwenFlashNextModel& model_;
+};
+
+// Beside decoders, prompts keep the 4,096-row pass and split it into layer
+// groups: one pass takes about 2.1 s, a decode step about 34 ms.
+constexpr std::size_t kMaxPrefillLayerGroups = 8;
+// Every batched plan runs inside a layer hook (Executor::kHookParkedRows),
+// so each round decodes all decoders at once rather than one in turn.
+constexpr std::size_t kMaxBatchWidth = 8;
+
 class QwenFlashNextTextRunner final : public HipTextModelRunner {
 public:
   sampling::JsonConstraint::ToolFormat ToolFormat() const override {
     return sampling::JsonConstraint::ToolFormat::kQwen;
   }
-  QwenFlashNextTextRunner(std::shared_ptr<QwenFlashNextModel> model,
-                          std::uint32_t max_context, bool use_mtp,
-                          std::uint32_t max_draft_tokens,
-                          std::string artifact_fingerprint = {},
-                          std::string mtp_fingerprint = {})
+  QwenFlashNextTextRunner(
+      std::shared_ptr<QwenFlashNextModel> model, std::uint32_t max_context,
+      bool use_mtp, std::uint32_t max_draft_tokens,
+      std::string artifact_fingerprint = {}, std::string mtp_fingerprint = {},
+      std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model = {})
       : model_(std::move(model)),
+        draft_model_(std::move(draft_model)),
         max_context_(max_context),
         use_mtp_(use_mtp),
-        max_draft_tokens_(max_draft_tokens) {
-    // The typed in-process API owns an immutable loaded model but need not
-    // supply file fingerprints when disk caching is disabled. Its model
-    // lifetime is an exact process-local identity; durable caches still
-    // require the validated full artifact fingerprints below.
+        max_draft_tokens_(max_draft_tokens),
+        distributed_(model_->TpWorldSize() > 1) {
     if (!artifact_fingerprint.empty()) {
       persistence_ = TextRunnerPersistenceDescriptor{
           .compatibility_identity = QwenFlashNextCompatibilityIdentity(
@@ -243,15 +443,41 @@ public:
           .payload_version =
               models::qwen38_flash_next::Session::kSnapshotPayloadVersion,
       };
+      if (distributed_) {
+        // A TP rank's snapshot holds only its half of the split state.
+        const std::string rank =
+            "tp_rank=" + std::to_string(model_->TpRank()) +
+            "\ntp_world_size=" + std::to_string(model_->TpWorldSize()) + "\n";
+        auto& identity = persistence_->compatibility_identity;
+        identity.insert(identity.end(), rank.begin(), rank.end());
+      }
       component_identity_ = persistence_->compatibility_identity;
     } else {
       component_identity_ = QwenFlashNextProcessIdentity(
           model_.get(), max_context_, use_mtp_, max_draft_tokens_,
           model_->DecodeConcurrency());
     }
+    if (draft_model_) {
+      std::string identity = "\ndflash2-v1\n" +
+                             std::string(speculative::DFlashDraftPolicyName(
+                                 model_->DFlashPolicy())) +
+                             "\n" + mtp_fingerprint;
+      if (mtp_fingerprint.empty())
+        identity += "\nprocess=" +
+                    std::to_string(
+                        reinterpret_cast<std::uintptr_t>(draft_model_.get()));
+      component_identity_.insert(component_identity_.end(), identity.begin(),
+                                 identity.end());
+      if (persistence_)
+        persistence_->compatibility_identity.insert(
+            persistence_->compatibility_identity.end(), identity.begin(),
+            identity.end());
+    }
   }
 
-  [[nodiscard]] bool UsesComponentCache() const override { return true; }
+  [[nodiscard]] bool UsesComponentCache() const override {
+    return !distributed_;
+  }
   [[nodiscard]] std::unique_ptr<ComponentCacheResources>
   CreateComponentCacheResources(cache::ResourceLedger& ledger,
                                 std::size_t ram) const override {
@@ -261,7 +487,7 @@ public:
             model_,
             use_mtp_ ? core::SessionMode::kSpeculative
                      : core::SessionMode::kAutoregressive,
-            max_context_, component_identity_),
+            max_context_, component_identity_, draft_model_),
         ledger, HipComponentCacheHooks());
   }
   [[nodiscard]] std::unique_ptr<TextRunnerState> BindComponentState(
@@ -279,45 +505,66 @@ public:
   [[nodiscard]] TextRunnerDescriptor Descriptor() const override {
     return {
         .model_id = model_->ModelName(),
-        .state_abi = std::string(kQwenFlashNextStateAbi),
+        .state_abi = draft_model_ ? "qwen38-flash-next-dflash2-rocm-session-v1"
+                                  : std::string(kQwenFlashNextStateAbi),
         .max_context = max_context_,
         .capabilities =
             TextRunnerCapabilities{
                 .supports_vision = model_->VisionEncoder() != nullptr,
                 .incremental_prefill = true,
-                .snapshot = true,
-                .fork = true,
+                .snapshot = distributed_,
+                .fork = distributed_,
                 .final_token_advance_required = false,
                 .incremental_text_is_exact = true,
-                .multi_token_decode = use_mtp_,
+                .multi_token_decode = use_mtp_ || bool(draft_model_),
                 .batched_multi_token_decode = use_mtp_,
-                .batched_multi_token_decode_max_width = use_mtp_ ? 8u : 0u,
+                .batched_multi_token_decode_max_width =
+                    use_mtp_ ? kMaxBatchWidth : 0u,
                 .prefix_reuse = true,
-                .in_pass_checkpoint = true,
+                .in_pass_checkpoint = !distributed_,
                 .partial_prefill_retention = true,
+                // Sparse prefill tiles group four queries from each pass
+                // start: one selection block (compress ratio).
+                .prefill_alignment =
+                    std::max<std::size_t>(1, model_->config().compress_ratio),
+                .max_in_pass_checkpoints = rocm::kMaxPassCheckpoints,
             },
         .persistence = persistence_,
-        .sampling_preset = sampling::TextModelPreset::kQwen38,
+        .sampling_defaults = FlashNextSamplingDefaults(),
+        .scheduling =
+            TextSchedulingProfile{
+                .pass_tokens = model_->PrefillCapacity(),
+                .max_layer_groups = distributed_ ? 1 : kMaxPrefillLayerGroups,
+                .max_yield_decode_width = distributed_ ? 1 : kMaxBatchWidth,
+            },
     };
   }
 
   [[nodiscard]] TextRunnerResourceClaim ResourceClaim() const override {
-    std::size_t free_bytes = 0;
-    std::size_t total_bytes = 0;
+    const auto session_bytes =
+        draft_model_
+            ? model_->DFlashSessionBytes(*draft_model_, max_context_) +
+                  sizeof(std::uint64_t) +
+                  Session::DFlashSnapshotCapacity(*draft_model_, max_context_)
+            : model_->SessionBytes(
+                  use_mtp_ ? gufo::core::SessionMode::kSpeculative
+                           : gufo::core::SessionMode::kAutoregressive,
+                  max_context_);
     std::optional<std::size_t> capacity;
-    if (hipMemGetInfo(&free_bytes, &total_bytes) == hipSuccess) {
+    if (const auto memory = gufo::hip::QueryAdmissionMemory()) {
       const auto deferred = model_->DeferredScratchBytes();
-      capacity = free_bytes > deferred ? free_bytes - deferred : 0;
+      capacity =
+          memory->free_bytes > deferred ? memory->free_bytes - deferred : 0;
+      gufo::hip::LogStateCapacity(*memory, *capacity, session_bytes, deferred);
     }
     // Admission charges complete snapshot payloads. Flash-Next can retain
     // mutable state and protected K/V rows in private device storage.
     return {
-        .resident_weights_bytes = model_->ResidentBytes(),
+        .resident_weights_bytes =
+            model_->ResidentBytes() +
+            (draft_model_ ? draft_model_->GetPackedWeightBytes() : 0),
         .state_capacity_bytes = capacity,
-        .per_request_state_bytes = model_->SessionBytes(
-            use_mtp_ ? gufo::core::SessionMode::kSpeculative
-                     : gufo::core::SessionMode::kAutoregressive,
-            max_context_),
+        .per_request_state_bytes = session_bytes,
         // Runtime scratch is shared and already allocated at model load;
         // reserve its remaining lazy buffers once from aggregate capacity.
         .temporary_scratch_bytes = 0,
@@ -328,9 +575,14 @@ public:
   }
 
   [[nodiscard]] std::vector<TextExecutionPlan> SupportedPlans() const override {
+    // Under TP2 batched multi-token decoding is not qualified, so a batch of
+    // MTP requests advances one token each; a request decoding alone still
+    // takes multi-token steps.
     std::vector<TextExecutionPlan> plans{
         {.kind = TextExecutionPlanKind::kSerial, .physical_width = 1}};
-    for (std::size_t width = 2; width <= 8; ++width) {
+    if (draft_model_)
+      return plans;
+    for (std::size_t width = 2; width <= kMaxBatchWidth; ++width) {
       plans.push_back(
           {.kind = TextExecutionPlanKind::kBatched, .physical_width = width});
     }
@@ -397,6 +649,19 @@ public:
         QwenPrompt(context));
   }
 
+  [[nodiscard]] std::vector<std::uint8_t> EncodePromptContext(
+      const TextPromptContext& context) const override {
+    return EncodeQwenImageContext(context);
+  }
+
+  [[nodiscard]] std::shared_ptr<const TextPromptContext> DecodePromptContext(
+      std::span<const std::uint8_t> bytes) const override {
+    if (model_->VisionEncoder() == nullptr) {
+      throw std::invalid_argument("image input requires --mmproj");
+    }
+    return DecodeQwenImageContext(bytes, max_context_);
+  }
+
   [[nodiscard]] ext::InitialOutputState InitialOutputState(
       const ChatRequest& request) const override {
     return QwenChatOptions(request, max_context_).enable_thinking
@@ -410,6 +675,10 @@ public:
   }
 
   [[nodiscard]] std::unique_ptr<TextRunnerState> CreateState() const override {
+    if (distributed_) {
+      return std::make_unique<QwenFlashNextTextRunnerState>(
+          model_, max_context_, use_mtp_, draft_model_);
+    }
     throw std::logic_error(
         "Flash-Next execution slots are owned by the component cache");
   }
@@ -439,10 +708,10 @@ public:
     }
     const std::size_t remaining = prompt.size() - offset;
     const std::size_t consumed =
-        std::min<std::size_t>({max_input_tokens, remaining,
-                               remaining <= model_->PrefillThroughCapacity()
-                                   ? model_->PrefillThroughCapacity()
-                                   : model_->PrefillCapacity()});
+        StepTokens(offset, max_input_tokens, remaining,
+                   remaining <= model_->PrefillThroughCapacity()
+                       ? model_->PrefillThroughCapacity()
+                       : model_->PrefillCapacity());
     const std::size_t next_position = offset + consumed;
     const auto prefix = QwenFlashNextEngineTokens(prompt.first(next_position));
     // The next step most likely takes the same budget; its n-gram rows are
@@ -458,6 +727,7 @@ public:
                                       ? model_->PrefillThroughCapacity()
                                       : model_->PrefillCapacity()})));
     std::string error;
+    const PrefillYieldScope yield(*model_, state);
     if (!qfn.session().Sync(prefix, &error, next)) {
       qfn.set_position(0);
       throw std::runtime_error("Qwen3.8-Flash-Next prefill failed: " + error);
@@ -473,11 +743,13 @@ public:
       const TextRunnerState& state, std::span<const TextRunnerToken> prompt,
       std::size_t offset, std::size_t budget,
       std::size_t boundary) const override {
+    // TP control mirrors bounded prefill and separate capture operations.
+    if (distributed_)
+      return std::nullopt;
     const auto& qfn = RequireQwenFlashNextState(state);
-    const auto consumed = std::min<std::size_t>(
-        {budget, prompt.size() - offset, model_->PrefillThroughCapacity()});
-    if (boundary <= offset + 1 || boundary >= offset + consumed ||
-        offset + consumed - boundary > 8)
+    const auto consumed = StepTokens(offset, budget, prompt.size() - offset,
+                                     model_->PrefillThroughCapacity());
+    if (boundary <= offset + 1 || boundary >= offset + consumed)
       return std::nullopt;
     const auto bytes = qfn.session().PrefillCheckpointBytes(
         static_cast<std::uint32_t>(boundary));
@@ -486,33 +758,40 @@ public:
 
   [[nodiscard]] TextPrefillStep PrefillThrough(
       TextRunnerState& state, std::span<const TextRunnerToken> prompt,
-      std::size_t offset, std::size_t budget, std::size_t boundary,
-      std::unique_ptr<TextRunnerSnapshot>* checkpoint,
-      const std::function<std::unique_ptr<TextRunnerSnapshot>()>& capture)
-      const override {
+      std::size_t offset, std::size_t budget,
+      std::span<const std::size_t> boundaries,
+      const InPassConsumer& consume) const override {
     auto& qfn = RequireQwenFlashNextState(state);
-    if (!checkpoint || !capture || offset != qfn.position())
+    if (!consume || boundaries.empty() || offset != qfn.position())
       throw std::logic_error("invalid component in-pass checkpoint request");
-    const auto consumed = std::min<std::size_t>(
-        {budget, prompt.size() - offset, model_->PrefillThroughCapacity()});
+    const auto consumed = StepTokens(offset, budget, prompt.size() - offset,
+                                     model_->PrefillThroughCapacity());
     const auto next_position = offset + consumed;
     const auto prefix = QwenFlashNextEngineTokens(prompt.first(next_position));
+    // As in Prefill: the next step's n-gram rows are read during this one.
+    const auto rest = next_position == prompt.size()
+                          ? state.prefill_lookahead()
+                          : prompt.subspan(next_position);
+    const std::size_t after = rest.size();
+    const auto next = QwenFlashNextEngineTokens(rest.subspan(
+        0, std::min<std::size_t>({budget, after,
+                                  after <= model_->PrefillThroughCapacity()
+                                      ? model_->PrefillThroughCapacity()
+                                      : model_->PrefillCapacity()})));
+    std::vector<std::uint32_t> points(boundaries.begin(), boundaries.end());
     double capture_ms = 0;
+    const PrefillYieldScope yield(*model_, state);
     try {
       qfn.adapter().PrefillThrough(
-          qfn.slot(), prefix, static_cast<std::uint32_t>(boundary), [&] {
+          qfn.slot(), prefix, points,
+          [&](std::size_t index) {
             const auto started = std::chrono::steady_clock::now();
-            try {
-              *checkpoint = capture();
-            } catch (...) {
-              // Optional retention may refuse; the complete live prefill is
-              // valid.
-              checkpoint->reset();
-            }
+            consume(index);
             capture_ms += std::chrono::duration<double, std::milli>(
                               std::chrono::steady_clock::now() - started)
                               .count();
-          });
+          },
+          next);
     } catch (...) {
       qfn.set_position(0);
       throw;
@@ -587,7 +866,34 @@ public:
   [[nodiscard]] TextDecodeStep DecodeStep(
       TextRunnerState& state, std::size_t max_tokens,
       sampling::SamplerState& sampler) const override {
-    if (!use_mtp_ || max_tokens == 1) {
+    return DecodeStepPlanned(state, max_tokens, sampler, std::nullopt);
+  }
+
+  [[nodiscard]] std::optional<std::uint32_t> PlanDecodeStep(
+      TextRunnerState& state, std::size_t max_tokens,
+      const sampling::SamplerState& sampler,
+      std::size_t occupancy) const override {
+    if (draft_model_) {
+      return RequireQwenFlashNextState(state).session().PlanDFlash(
+          std::min<std::size_t>(max_tokens,
+                                std::uint64_t{max_draft_tokens_} + 1));
+    }
+    if (!use_mtp_ || max_tokens <= 1) {
+      return std::nullopt;
+    }
+    auto& qfn = RequireQwenFlashNextState(state);
+    const auto budget =
+        std::min<std::size_t>(max_tokens, std::uint64_t{max_draft_tokens_} + 1);
+    return qfn.session().PlanDecode(budget, sampler,
+                                    static_cast<std::uint32_t>(occupancy));
+  }
+
+  /// `plan`, when given, fixes the cycle's draft count (a TP2 peer's choice).
+  [[nodiscard]] TextDecodeStep DecodeStepPlanned(
+      TextRunnerState& state, std::size_t max_tokens,
+      sampling::SamplerState& sampler,
+      std::optional<std::uint32_t> plan) const override {
+    if (!draft_model_ && (!use_mtp_ || max_tokens == 1)) {
       return TextModelRunner::DecodeStep(state, max_tokens, sampler);
     }
     if (max_tokens == 0) {
@@ -605,10 +911,17 @@ public:
     // Use the same request policy as SelectNext and the batched MTP path.
     // The engine bounds the physical block and stops at EOS. Preserve the
     // remaining request budget so its policy can recognize a short tail.
-    if (!qfn.session().DecodeStep(max_tokens, working_sampler, &decoded, &error,
-                                  qfn.stop_at_eos())) {
-      throw std::runtime_error("Qwen3.8-Flash-Next MTP decode failed: " +
-                               error);
+    const bool ok =
+        draft_model_
+            ? qfn.session().DecodeDFlashStep(
+                  std::min<std::size_t>(max_tokens,
+                                        std::uint64_t{max_draft_tokens_} + 1),
+                  working_sampler, &decoded, &error, qfn.stop_at_eos(), plan)
+            : qfn.session().DecodeStep(max_tokens, working_sampler, &decoded,
+                                       &error, qfn.stop_at_eos(), 1, plan);
+    if (!ok) {
+      throw std::runtime_error(
+          "Qwen3.8-Flash-Next speculative decode failed: " + error);
     }
     // The pool accepts the returned tokens once. Publish the RNG and residual
     // draw so the next batch retains the rejection-conditioned distribution.
@@ -628,6 +941,8 @@ public:
 
   void AdvanceBatch(
       std::span<const TextRunnerAdvance> advances) const override {
+    if (draft_model_)
+      return TextModelRunner::AdvanceBatch(advances);
     if (advances.size() < 2) {
       return TextModelRunner::AdvanceBatch(advances);
     }
@@ -662,6 +977,36 @@ public:
 
   [[nodiscard]] std::vector<TextDecodeStep> DecodeBatch(
       std::span<const TextRunnerDecode> decodes) const override {
+    return RunDecodeBatch(decodes, nullptr);
+  }
+
+  [[nodiscard]] std::optional<std::uint32_t> PlanDecodeBatch(
+      std::span<const TextRunnerDecode> decodes) const override {
+    if (decodes.size() < 2 || !use_mtp_) {
+      return std::nullopt;
+    }
+    std::vector<QwenFlashNextSession::DecodeRequest> requests;
+    requests.reserve(decodes.size());
+    for (const auto& decode : decodes) {
+      requests.push_back(
+          {&RequireQwenFlashNextState(decode.state.get()).session(),
+           std::min<std::size_t>(decode.max_tokens,
+                                 std::uint64_t{max_draft_tokens_} + 1),
+           &decode.sampler.get(), nullptr});
+    }
+    return QwenFlashNextSession::PlanBatch(requests);
+  }
+
+  [[nodiscard]] std::vector<TextDecodeStep> DecodeBatchPlanned(
+      std::span<const TextRunnerDecode> decodes,
+      std::optional<std::uint32_t> plan) const override {
+    return RunDecodeBatch(decodes, &plan);
+  }
+
+  /// `plan`, when given, fixes the batch's draft count (a TP2 peer's choice).
+  [[nodiscard]] std::vector<TextDecodeStep> RunDecodeBatch(
+      std::span<const TextRunnerDecode> decodes,
+      const std::optional<std::uint32_t>* plan) const {
     if (decodes.size() < 2 || !use_mtp_) {
       return TextModelRunner::DecodeBatch(decodes);
     }
@@ -680,10 +1025,11 @@ public:
       auto& sampler = samplers.emplace_back(decodes[i].sampler.get());
       before.push_back(session.Statistics());
       requests.push_back({&session, decodes[i].max_tokens, &sampler,
-                          &results[i], state.stop_at_eos(), &outcomes[i]});
+                          &results[i], state.stop_at_eos(), &outcomes[i],
+                          decodes[i].drafts});
     }
     std::string error;
-    (void)QwenFlashNextSession::DecodeBatch(requests, &error);
+    (void)QwenFlashNextSession::DecodeBatch(requests, &error, plan);
     const auto active_count = static_cast<std::size_t>(std::count_if(
         results.begin(), results.end(),
         [](const auto& result) { return !result.tokens.empty(); }));
@@ -701,10 +1047,8 @@ public:
       ResolveStepTokens(state, results[i].stop, results[i].tokens, &step,
                         results[i]);
       if (active_count > 1 && !results[i].tokens.empty()) {
-        step.execution_plan = TextExecutionPlan{
-            .kind = TextExecutionPlanKind::kBatched,
-            .physical_width = active_count,
-        };
+        step.execution_plan = {.kind = TextExecutionPlanKind::kBatched,
+                               .physical_width = active_count};
       }
       const auto stats = state.session().Statistics();
       step.draft_rounds = stats.cycles - before[i].cycles;
@@ -724,6 +1068,118 @@ public:
     return RequireQwenFlashNextState(state).position();
   }
 
+  [[nodiscard]] std::size_t SnapshotPayloadBytes(
+      const TextRunnerState& state) const override {
+    const std::uint64_t bytes =
+        RequireQwenFlashNextState(state).session().SnapshotBytes();
+    if (bytes == 0 || bytes > static_cast<std::uint64_t>(
+                                  std::numeric_limits<std::size_t>::max())) {
+      throw std::overflow_error(
+          "Qwen3.8-Flash-Next snapshot size is unavailable");
+    }
+    return static_cast<std::size_t>(bytes);
+  }
+
+  [[nodiscard]] std::unique_ptr<TextRunnerSnapshot> Snapshot(
+      const TextRunnerState& state) const override {
+    return CaptureSnapshot(state,
+                           QwenFlashNextSession::SnapshotMode::kBorrowed);
+  }
+
+  [[nodiscard]] std::unique_ptr<TextRunnerSnapshot> SnapshotForPersistence(
+      const TextRunnerState& state) const override {
+    return CaptureSnapshot(state,
+                           QwenFlashNextSession::SnapshotMode::kMaterialized);
+  }
+
+  [[nodiscard]] std::unique_ptr<TextRunnerSnapshot> CaptureSnapshot(
+      const TextRunnerState& state,
+      QwenFlashNextSession::SnapshotMode mode) const {
+    const auto& qfn = RequireQwenFlashNextState(state);
+    std::string error;
+    auto snapshot = qfn.session().SaveSnapshot(&error, mode);
+    if (snapshot == nullptr) {
+      throw std::runtime_error("Qwen3.8-Flash-Next snapshot failed: " + error);
+    }
+    return std::make_unique<QwenFlashNextTextRunnerSnapshot>(
+        model_, std::move(snapshot), qfn.position());
+  }
+
+  void RestoreOrFork(TextRunnerState& state,
+                     const TextRunnerSnapshot& snapshot) const override {
+    const auto* qfn_snapshot =
+        dynamic_cast<const QwenFlashNextTextRunnerSnapshot*>(&snapshot);
+    if (qfn_snapshot == nullptr || qfn_snapshot->model.get() != model_.get() ||
+        qfn_snapshot->snapshot == nullptr) {
+      throw std::invalid_argument(
+          "Qwen3.8-Flash-Next snapshot does not belong to this model");
+    }
+    auto& restored = RequireQwenFlashNextState(state);
+    std::string error;
+    if (!restored.session().RestoreSnapshot(*qfn_snapshot->snapshot, &error)) {
+      restored.Invalidate();
+      throw std::runtime_error("Qwen3.8-Flash-Next snapshot restore failed: " +
+                               error);
+    }
+    restored.set_position(qfn_snapshot->position);
+  }
+
+  [[nodiscard]] std::size_t PersistentSnapshotPayloadBytes(
+      const TextRunnerSnapshot& snapshot) const override {
+    const auto* qfn_snapshot =
+        dynamic_cast<const QwenFlashNextTextRunnerSnapshot*>(&snapshot);
+    if (qfn_snapshot == nullptr || qfn_snapshot->model.get() != model_.get() ||
+        qfn_snapshot->snapshot == nullptr) {
+      throw std::invalid_argument(
+          "Qwen3.8-Flash-Next persistent snapshot does not belong to this "
+          "model");
+    }
+    return qfn_snapshot->PayloadBytes();
+  }
+
+  [[nodiscard]] std::size_t SerializePersistentSnapshot(
+      const TextRunnerSnapshot& snapshot,
+      std::span<std::uint8_t> destination) const override {
+    const auto* qfn_snapshot =
+        dynamic_cast<const QwenFlashNextTextRunnerSnapshot*>(&snapshot);
+    if (qfn_snapshot == nullptr || qfn_snapshot->model.get() != model_.get() ||
+        qfn_snapshot->snapshot == nullptr ||
+        destination.size() != qfn_snapshot->PayloadBytes() ||
+        !qfn_snapshot->snapshot->CopyTo(destination)) {
+      throw std::invalid_argument(
+          "Qwen3.8-Flash-Next persistent snapshot serialization failed");
+    }
+    return destination.size();
+  }
+
+  void StreamPersistentSnapshot(const TextRunnerSnapshot& snapshot,
+                                const SnapshotSink& sink) const override {
+    (void)PersistentSnapshotPayloadBytes(snapshot);
+    sink(dynamic_cast<const QwenFlashNextTextRunnerSnapshot&>(snapshot)
+             .snapshot->bytes());
+  }
+
+  void RestorePersistentSnapshot(
+      TextRunnerState& state,
+      std::span<const std::uint8_t> payload) const override {
+    // Under TP2 a payload is this rank's half, which the identity names.
+    auto& restored = RequireQwenFlashNextState(state);
+    std::string error;
+    if (!restored.session().RestoreSnapshot(payload, &error)) {
+      restored.Invalidate();
+      throw std::runtime_error(
+          "Qwen3.8-Flash-Next persistent snapshot restore failed: " + error);
+    }
+    const std::uint32_t position = restored.session().Position();
+    if (position == 0 || position > max_context_) {
+      restored.Invalidate();
+      throw std::runtime_error(
+          "Qwen3.8-Flash-Next persistent snapshot restored an invalid "
+          "position");
+    }
+    restored.set_position(position);
+  }
+
   [[nodiscard]] TextRunnerNgramRows NgramRows(
       const TextRunnerState& state) const override {
     const auto totals =
@@ -733,11 +1189,29 @@ public:
   }
 
 private:
+  /// Tokens one prefill step takes from `offset`. A step the pass capacity
+  /// ends before the prompt stops on a selection block (prefill_alignment),
+  /// as the serving runner ends budget-limited ones, so the next step
+  /// continues the prompt exactly from an unaligned reused frontier too.
+  [[nodiscard]] std::size_t StepTokens(std::size_t offset, std::size_t budget,
+                                       std::size_t remaining,
+                                       std::size_t capacity) const noexcept {
+    auto count = std::min({budget, remaining, capacity});
+    const std::size_t ratio =
+        std::max<std::uint32_t>(1, model_->config().compress_ratio);
+    if (const auto over = (offset + count) % ratio;
+        count < remaining && count > over)
+      count -= over;
+    return count;
+  }
+
   mutable models::qwen::vision::ImageCache image_cache_;
   std::shared_ptr<QwenFlashNextModel> model_;
+  std::shared_ptr<const hip::QwenDFlashGpuModel> draft_model_;
   std::uint32_t max_context_;
   bool use_mtp_;
   std::uint32_t max_draft_tokens_;
+  bool distributed_{false};
   std::optional<TextRunnerPersistenceDescriptor> persistence_;
   cache::Identity component_identity_;
 };
@@ -748,16 +1222,78 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
     std::shared_ptr<Model> model, std::uint32_t max_context,
     const ext::TextSpeculativeConfig& speculative_config,
     std::string artifact_fingerprint, std::string draft_artifact_fingerprint) {
+  if (!model)
+    throw std::invalid_argument("Flash-Next model must not be null");
+  if (max_context == 0)
+    max_context = model->MaxContext();
+  if (max_context == 0 || max_context > model->MaxContext())
+    throw std::invalid_argument(
+        "Flash-Next runner context exceeds its model context");
   const bool use_mtp =
       speculative_config.backend == ext::TextSpeculativeBackend::kMtp;
+  const bool use_dflash =
+      speculative_config.backend == ext::TextSpeculativeBackend::kDFlash;
+  if (speculative_config.backend != ext::TextSpeculativeBackend::kDisabled &&
+      !use_mtp && !use_dflash)
+    throw std::invalid_argument("unsupported Flash-Next speculative backend");
+  if (use_mtp && !model->HasMtp())
+    throw std::invalid_argument(
+        "Flash-Next MTP requires a model loaded with its draft sidecar");
+  if ((use_mtp || use_dflash) && (speculative_config.max_draft_tokens == 0 ||
+                                  speculative_config.max_draft_tokens > 7 ||
+                                  speculative_config.min_draft_tokens != 1))
+    throw std::invalid_argument(
+        "Flash-Next speculation requires 1-7 draft tokens and "
+        "--min-draft-tokens 1");
+  std::shared_ptr<const hip::QwenDFlashGpuModel> draft;
+  if (use_dflash) {
+    const auto policy =
+        speculative_config.dflash_policy == ext::TextDFlashDraftPolicy::kFixed
+            ? speculative::DFlashDraftPolicy::kFixed
+            : speculative::DFlashDraftPolicy::kAdaptive;
+    if (speculative_config.draft_model_path.empty() ||
+        model->DFlashPolicy() != policy ||
+        speculative_config.max_draft_tokens > model->DFlashDraftLimit())
+      throw std::invalid_argument(
+          "Flash-Next DFlash2 model must reserve matching draft "
+          "policy/capacity");
+    std::string error;
+    draft = model->LoadDFlashDraft(speculative_config.draft_model_path, &error);
+    if (!draft)
+      throw std::runtime_error("Flash-Next DFlash2 load failed: " + error);
+    if (!artifact_fingerprint.empty() && draft_artifact_fingerprint.empty()) {
+      auto reader = core::GgufReader::OpenFile(
+          speculative_config.draft_model_path, &error);
+      if (!reader)
+        throw std::runtime_error(error);
+      draft_artifact_fingerprint = core::GgufIdentityHex(*reader);
+    }
+  }
   return std::make_shared<QwenFlashNextTextRunner>(
       std::move(model), max_context, use_mtp,
       speculative_config.max_draft_tokens, std::move(artifact_fingerprint),
-      std::move(draft_artifact_fingerprint));
+      std::move(draft_artifact_fingerprint), std::move(draft));
 }
 
 std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
     const ext::TextRunnerOptions& options, std::string* error) {
+  return CreateQwenFlashNextTextRunner(options, {}, error, nullptr);
+}
+
+std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
+    const ext::TextRunnerOptions& options,
+    std::shared_ptr<rocm::Communicator> communicator, std::string* error,
+    bool* uses_yarn) {
+  if (options.speculative.backend != ext::TextSpeculativeBackend::kDisabled &&
+      (options.speculative.max_draft_tokens == 0 ||
+       options.speculative.max_draft_tokens > 7 ||
+       options.speculative.min_draft_tokens != 1)) {
+    if (error)
+      *error =
+          "Flash-Next MTP requires a positive draft limit and "
+          "--min-draft-tokens 1";
+    return {};
+  }
   std::shared_ptr<const core::GgufReader> reader = options.reader;
   if (!reader) {
     std::string load_error;
@@ -795,17 +1331,22 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
   }
   const bool use_mtp =
       options.speculative.backend == ext::TextSpeculativeBackend::kMtp;
+  const bool use_dflash =
+      options.speculative.backend == ext::TextSpeculativeBackend::kDFlash;
   if (options.speculative.backend != ext::TextSpeculativeBackend::kDisabled &&
-      !use_mtp) {
+      !use_mtp && !use_dflash) {
     if (error)
-      *error =
-          "Qwen3.8-Flash-Next HTTP models support only MTP speculative "
-          "decoding";
+      *error = "Unsupported Qwen3.8-Flash-Next speculative backend";
     return nullptr;
   }
   if (use_mtp && options.speculative.draft_model_path.empty()) {
     if (error)
       *error = "Qwen3.8-Flash-Next MTP HTTP decoding requires --mtp-model";
+    return nullptr;
+  }
+  if (use_dflash && options.speculative.draft_model_path.empty()) {
+    if (error)
+      *error = "Flash-Next DFlash2 requires --dflash-model";
     return nullptr;
   }
   std::string load_error;
@@ -815,9 +1356,20 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
           .max_context = max_context,
           .mtp_model_path =
               use_mtp ? options.speculative.draft_model_path : std::string{},
+          .dflash_model_path =
+              use_dflash ? options.speculative.draft_model_path : std::string{},
+          .max_draft_tokens = options.speculative.max_draft_tokens,
+          .dflash_policy = options.speculative.dflash_policy ==
+                                   ext::TextDFlashDraftPolicy::kFixed
+                               ? speculative::DFlashDraftPolicy::kFixed
+                               : speculative::DFlashDraftPolicy::kAdaptive,
           .vision_model_path = options.vision_model_path,
           .decode_concurrency =
               DecodeConcurrencyForSessions(options.session_count),
+          .tp_rank = communicator ? communicator->rank() : 0,
+          .tp_world_size = communicator ? communicator->world_size() : 1,
+          .hip_device = communicator ? communicator->device_index() : 0,
+          .communicator = communicator,
           .rope_scaling = rope_scaling,
       },
       &load_error);
@@ -825,6 +1377,31 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
     if (error)
       *error = "Failed to load Flash-Next model: " + load_error;
     return nullptr;
+  }
+  try {
+    models::qwen::vision::PrepareForServing(model->VisionEncoder());
+  } catch (const std::exception& e) {
+    if (error)
+      *error = e.what();
+    return nullptr;
+  }
+  // Each eight rows of wide copy verification past the first reserve
+  // rollback rows beside the sessions (ResourceClaim). Narrow the width
+  // until the configured sessions fit, rather than refusing a session count
+  // the ordinary verifier width fits.
+  if (std::size_t free_bytes = 0, total_bytes = 0;
+      use_mtp && hipMemGetInfo(&free_bytes, &total_bytes) == hipSuccess) {
+    const std::size_t sessions =
+        std::max<std::size_t>(options.session_count, 1);
+    for (std::uint32_t rows = rocm::Executor::kWideRows;; rows -= 8) {
+      model->LimitCopyRows(rows);
+      if (rows == 8 ||
+          sessions * model->SessionBytes(gufo::core::SessionMode::kSpeculative,
+                                         max_context) +
+                  model->DeferredScratchBytes() <=
+              free_bytes)
+        break;
+    }
   }
   std::string model_fingerprint = options.disk_cache.model_artifact_fingerprint;
   if (!options.disk_cache.directory.empty() && model_fingerprint.empty()) {
@@ -858,9 +1435,21 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
       return nullptr;
     }
   }
-  return CreateQwenFlashNextTextRunner(std::move(model), max_context,
-                                       options.speculative, model_fingerprint,
-                                       draft_fingerprint);
+  if (uses_yarn)
+    *uses_yarn = model->config().rope_scaling.Enabled();
+  if (communicator && model->VisionEncoder()) {
+    (void)model->VisionEncoder()->identity();
+    model->VisionEncoder()->Upload();
+  }
+  try {
+    return CreateQwenFlashNextTextRunner(std::move(model), max_context,
+                                         options.speculative, model_fingerprint,
+                                         draft_fingerprint);
+  } catch (const std::exception& exception) {
+    if (error)
+      *error = exception.what();
+    return nullptr;
+  }
 }
 
 }  // namespace gufo::models::qwen38_flash_next

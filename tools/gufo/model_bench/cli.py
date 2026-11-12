@@ -6,7 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from gufo.serving_bench import load_fingerprint, source_identity
+from gufo.serving_bench import source_identity
 
 from .config import TARGETS, BenchConfig, load_config, parse_file_args
 
@@ -16,9 +16,9 @@ FILE_ROLES = ("gguf", "draft", "mtp", "dspark", "mmproj")
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="model-bench",
-        description="Measure docs/models/<model>/BENCHMARKS.md tables for Gufo and its reference server.",
+        description="Measure docs/internal/models/<model>/BENCHMARKS.md tables for Gufo and its reference server.",
     )
-    parser.add_argument("--model", required=True, help="docs/models/<model> directory name")
+    parser.add_argument("--model", required=True, help="docs/internal/models/<model> directory name")
     parser.add_argument("--gufo", type=Path, default=Path("result/bin/gufo"), help="Gufo binary")
     for role in FILE_ROLES:
         parser.add_argument(f"--{role}", action="append", default=[], metavar="[VARIANT=]PATH")
@@ -26,7 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
                         help="server logs (ignored directory)")
     parser.add_argument("--config", type=Path, default=None, help="bench.json override (experiments)")
     parser.add_argument("--artifacts-dir", type=Path, default=None,
-                        help="write/read artifacts here instead of docs/models/<model>/artifacts")
+                        help="write/read artifacts here instead of docs/internal/models/<model>/artifacts")
     sub = parser.add_subparsers(dest="command", required=True)
 
     run = sub.add_parser("run", help="measure tables for one target")
@@ -44,6 +44,11 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--mode", action="append", default=[], help="restrict to a mode: ar or the speculative mode")
     run.add_argument("--context", type=int, default=None,
                      help="override the single-user tables' context capacity (e.g. to fit a reference server in RAM)")
+    run.add_argument("--artifact-target", default=None,
+                     help="store results under this target name, e.g. gufo-onehost for a "
+                          "one-host run of the build a TP2 run measures")
+    run.add_argument("--request-transport", choices=("sse", "json"), default=None,
+                     help="override the HTTP request transport")
 
     render = sub.add_parser("render", help="rewrite marked tables in BENCHMARKS.md from artifacts")
     render.add_argument("--table", action="append", default=[])
@@ -117,17 +122,20 @@ def cmd_run(config: BenchConfig, args: argparse.Namespace) -> int:
         raise SystemExit(f"Gufo binary not found: {gufo_binary} (run `nix build`, or on Windows build the windows-release preset)")
     reference_binary = args.reference_binary or config.data["reference"]["server"]
     revision, dirty = source_identity(root)
-    fingerprint = load_fingerprint(None, gufo_binary)
     document = config.benchmarks_path.read_text(encoding="utf-8") if config.benchmarks_path.exists() else ""
+    build_mode = "windows-release" if sys.platform == "win32" else "container-gpu-tp2" if args.target == "gufo" and config.data.get("gufo", {}).get("tp2") else "nix-release"
     session = llm.Session(
         config, args.target, gufo_binary=gufo_binary, reference_binary=reference_binary,
-        source={"revision": revision, "dirty": dirty, "buildMode": "windows-release" if sys.platform == "win32" else "nix-release"},
-        fingerprint=fingerprint, log_dir=(args.log_dir if args.log_dir.is_absolute() else root / args.log_dir),
+        source={"revision": revision, "dirty": dirty, "buildMode": build_mode},
+        fingerprint={}, log_dir=(args.log_dir if args.log_dir.is_absolute() else root / args.log_dir),
         document=document, todo_only=args.todo, drop_caches=args.drop_caches,
         repetitions=args.repetitions, fresh=args.fresh,
         depths=[int(d) for d in args.depths.split(",")] if args.depths else None,
         modes=args.mode or None, context=args.context,
+        request_transport=args.request_transport,
+        artifact_target=args.artifact_target,
     )
+    session.fingerprint = session.runtime_fingerprint()
     wanted = _table_ids(args.table)
     tables = [t for t in config.tables() if not wanted or t.id in wanted]
     unknown = wanted - {t.id for t in config.tables()}

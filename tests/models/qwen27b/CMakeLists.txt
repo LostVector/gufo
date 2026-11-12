@@ -53,6 +53,15 @@ if (ENGINE_ENABLE_HIP)
   add_qwen27b_test(qwen_mtp_gpu_test mtp_test.cpp "gpu;hip;mtp;external-model")
   add_qwen27b_test(qwen_dflash_gpu_test dflash_test.cpp
     "gpu;hip;dflash;dflash2;external-model")
+  add_qwen27b_test(qwen27b_wide_verification_test wide_verification_test.cpp
+    "gpu;hip;target;dflash2;external-model")
+  # Layered prefill (SetPrefillYield) against lone runs, in AR and DFlash2
+  # modes; DFlash2 needs GUFO_QWEN27B_DFLASH_MODEL as well.
+  add_qwen27b_test(qwen27b_layered_prefill_test layered_prefill_test.cpp
+    "gpu;hip;dflash2;external-model")
+  target_link_libraries(qwen27b_layered_prefill_test PRIVATE gufo_test_support)
+  set_tests_properties(qwen27b_layered_prefill_test PROPERTIES
+    RUN_SERIAL TRUE TIMEOUT 1800)
   add_qwen27b_test(qwen_dflash_upload_lifetime_test
     dflash_upload_lifetime_test.cpp "gpu;hip;dflash2;external-model")
   target_link_libraries(qwen_dflash_upload_lifetime_test PRIVATE hip::host)

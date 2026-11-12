@@ -1,0 +1,6 @@
+control,case,repetition,actor,metric,baseline,candidate
+after-baseline,short-c2,1,0,draft_tokens,84,86
+after-baseline,short-c2,1,0,raw.draft_rounds,55,56
+after-baseline,short-c2,1,1,draft_tokens,81,84
+after-baseline,short-c2,1,1,draft_accepted_tokens,64,69
+after-baseline,short-c2,1,1,raw.draft_rounds,44,42

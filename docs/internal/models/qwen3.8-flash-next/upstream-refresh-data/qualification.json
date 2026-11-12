@@ -1,0 +1,390 @@
+{
+  "scope": "Local semantic integration checkpoint; not a release or universal-optimal configuration",
+  "canonical_reference": "0d238d4f5fee49720d6be45c2c27795100922d5c",
+  "neuhaus_reference": "f070a179c628a7409a5cee8e07b1ca76f1f7e660",
+  "reviewed_runtime_source": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
+  "control_wire_fix_source": "13c0bd02ed699f99dd4279650b7845e6d949f4d1",
+  "deployment": "Original pre-refresh server retained; no driver/system/runtime deployment",
+  "toolchain": "Existing private ROCm7.14.1/gfx1151",
+  "driver": {
+    "srcversion": "B6C332F34D27E163651EE38",
+    "source": "3bbb3ee",
+    "TX_window": 32,
+    "active_poll": 0,
+    "dmabuf_verbs": false
+  },
+  "models": {
+    "target": "Qwen3.8-Flash-Next UD-Q4_K_XL",
+    "mtp": "shared Q8_0",
+    "dflash2": "Qwen3.8-Flash-Next-DFlash2 Q8_0"
+  },
+  "profiles": [
+    {
+      "mode": "mtp",
+      "source_commit": "6ec3ff0a81cd50caf339902c48c7cbc493480aaa",
+      "binary_sha256": "b72c99b407c6eb4ad93469d5bfd131d6c9b5467ccc254aa7a14fdb9fa88abb04",
+      "harness_commit": "0688109d",
+      "selected_suites": [
+        "discovery",
+        "long-context",
+        "cache"
+      ],
+      "status": "passed",
+      "subchecks": {
+        "discovery": "passed",
+        "long-context": "passed",
+        "text-cancel": "passed",
+        "thinking-tool-cancel": "passed",
+        "legacy-tool-cancel": "passed",
+        "cache-persist": "passed",
+        "text-cancel-disk": "passed",
+        "thinking-tool-cancel-disk": "passed",
+        "legacy-tool-cancel-disk": "passed",
+        "cache-persist-disk": "passed",
+        "disk-spacing": "passed",
+        "disk-spacing-disk": "passed"
+      },
+      "disk_spacing": {
+        "stored_tokens": [
+          2444,
+          6276
+        ],
+        "min_step_skips": 13,
+        "shared_boundary_tokens": [
+          3040
+        ]
+      },
+      "loaded_execution": {
+        "loaded_mode": "mtp",
+        "draft_tokens": 413,
+        "draft_tokens_accepted": 327,
+        "draft_execution_observed": true
+      },
+      "measured_request_records": 55,
+      "long_context_max_actual_prompt_tokens": 24767,
+      "capacity_tokens": 65536,
+      "slots": 2,
+      "ram_cache_bytes": 1073741824,
+      "timings": "Per-request and lifecycle recorded; no matched candidate/control timing qualification",
+      "restored_original_service": true,
+      "raw_local_artifact": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1/two-host-validation/model-mtp-v2",
+      "raw_report_sha256": "6ad00f001c82d78b38ccfee795d78c148e934696801dd16f6e3784baf4b8883d"
+    },
+    {
+      "mode": "ar",
+      "source_commit": "8c2d9b005678c573867640cd9289ea2571175338",
+      "binary_sha256": "579da873f69969fb31ee90b1662081f3a041cdf135ed9326e1096f6ef82f6aae",
+      "harness_commit": "0688109d",
+      "selected_suites": [
+        "discovery",
+        "long-context",
+        "cache"
+      ],
+      "status": "passed",
+      "subchecks": {
+        "discovery": "passed",
+        "long-context": "passed",
+        "text-cancel": "passed",
+        "thinking-tool-cancel": "passed",
+        "legacy-tool-cancel": "passed",
+        "cache-persist": "passed",
+        "text-cancel-disk": "passed",
+        "thinking-tool-cancel-disk": "passed",
+        "legacy-tool-cancel-disk": "passed",
+        "cache-persist-disk": "passed",
+        "disk-spacing": "passed",
+        "disk-spacing-disk": "passed"
+      },
+      "disk_spacing": {
+        "stored_tokens": [
+          2444,
+          6276
+        ],
+        "min_step_skips": 13,
+        "shared_boundary_tokens": [
+          3040
+        ]
+      },
+      "loaded_execution": {
+        "loaded_mode": "off",
+        "draft_tokens": 0,
+        "draft_tokens_accepted": 0,
+        "draft_execution_observed": false
+      },
+      "measured_request_records": 55,
+      "long_context_max_actual_prompt_tokens": 24767,
+      "capacity_tokens": 65536,
+      "slots": 2,
+      "ram_cache_bytes": 1073741824,
+      "timings": "Per-request and lifecycle recorded; no matched candidate/control timing qualification",
+      "restored_original_service": true,
+      "raw_local_artifact": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1/two-host-validation/model-ar-final-v1",
+      "raw_report_sha256": "b020301b8926991cd1cde0cb1a48a860eefc40f00cc752ca7055e1ddc0f445c5"
+    },
+    {
+      "mode": "dflash2",
+      "source_commit": "8c2d9b005678c573867640cd9289ea2571175338",
+      "binary_sha256": "579da873f69969fb31ee90b1662081f3a041cdf135ed9326e1096f6ef82f6aae",
+      "harness_commit": "0688109d",
+      "selected_suites": [
+        "discovery",
+        "long-context",
+        "cache"
+      ],
+      "status": "passed",
+      "subchecks": {
+        "discovery": "passed",
+        "long-context": "passed",
+        "text-cancel": "passed",
+        "thinking-tool-cancel": "passed",
+        "legacy-tool-cancel": "passed",
+        "cache-persist": "passed",
+        "text-cancel-disk": "passed",
+        "thinking-tool-cancel-disk": "passed",
+        "legacy-tool-cancel-disk": "passed",
+        "cache-persist-disk": "passed",
+        "disk-spacing": "passed",
+        "disk-spacing-disk": "passed"
+      },
+      "disk_spacing": {
+        "stored_tokens": [
+          2444,
+          6276
+        ],
+        "min_step_skips": 10,
+        "shared_boundary_tokens": [
+          3040
+        ]
+      },
+      "loaded_execution": {
+        "loaded_mode": "dflash2",
+        "draft_tokens": 798,
+        "draft_tokens_accepted": 362,
+        "draft_execution_observed": true
+      },
+      "measured_request_records": 55,
+      "long_context_max_actual_prompt_tokens": 24767,
+      "capacity_tokens": 65536,
+      "slots": 2,
+      "ram_cache_bytes": 1073741824,
+      "timings": "Per-request and lifecycle recorded; no matched candidate/control timing qualification",
+      "restored_original_service": true,
+      "raw_local_artifact": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1/two-host-validation/model-dflash2-final-v1",
+      "raw_report_sha256": "79981363ea31bef7108a1f57e8c24b4695144d9452417643b761a88bf42f7ca4"
+    }
+  ],
+  "host_window_transport": {
+    "status": "PASS",
+    "exchanges_per_rank": 512,
+    "checked_float_values_per_rank": 171376640,
+    "dma_buf": "Not qualified: disabled in approved profile"
+  },
+  "inherited_failure": {
+    "checks": {
+      "full_saved_request_equal": true,
+      "text_equal": true,
+      "finish_equal": true,
+      "prompt_tokens_equal": true,
+      "completion_tokens_equal": true,
+      "zero_cached_tokens": true
+    },
+    "old_binary_sha256": "d697d9bba14225edf87aa3736db2fe347502f616c83c56eb0bc9ddb3d171bb54",
+    "new_binary_sha256": "b72c99b407c6eb4ad93469d5bfd131d6c9b5467ccc254aa7a14fdb9fa88abb04",
+    "source_revision_of_old_binary": null,
+    "source_revision_note": "Do not infer source commit from binary hash; immutable deployed artifact used",
+    "prompt_tokens": 408,
+    "completion_tokens": 47,
+    "request_sha256": "ba313202de0d6e017b9f2c0423f2b1167f443494d7d762de714a1b0a305bcc9d",
+    "conclusion": "The saved uncached HTTP exact-DONE failure exists in deployed pre-refresh binary; identical actual text on refreshed binary. Not newly introduced relative to deployed request behavior. This is not proof of matching old token IDs/logits or all-model numerical equivalence, and does not waive strict correctness gates.",
+    "scope": "Single frozen uncached request, both TP2 AR, same model/settings/host stack; no speed or global regression claim"
+  },
+  "numerical_trace": {
+    "prepared_tokens": 408,
+    "actual_ids_equal": true,
+    "observed_row": "last original prompt position407",
+    "tp2_rank_records_bitwise_equal": 192,
+    "tp1_whole_serial_inputs_bitwise_equal": 48,
+    "tp2_paired_serial_records_bitwise_equal": 192,
+    "first_layer_relative_l2": 5.603732991523737e-05,
+    "last_layer_relative_l2": 0.3774388224199778,
+    "root_cause": "Not attributed to a faulty operation; strict output gate remains failed"
+  },
+  "wire_logprobs": {
+    "status": "PASS CPU negative/positive regression and real TP2 Chat/Responses suites in AR/MTP/DFlash2",
+    "source": "Adapted from Neuhaus e97f6554 structural merge; tests preserve absent/zero/nonzero and reject invalid/instruction-only placement",
+    "wire_version": 22,
+    "cases": [
+      "absent",
+      "explicit0",
+      "explicit1",
+      "explicit20",
+      "reject21",
+      "rejectUINT32_MAX",
+      "reject request-only field on instruction"
+    ],
+    "profiles": [
+      {
+        "mode": "ar",
+        "source_commit": "13c0bd02ed699f99dd4279650b7845e6d949f4d1",
+        "binary_sha256": "ae24451b661f3066abf655d73b0b856fdb75b24c6d729e0abfd67ba3236428b5",
+        "status": "passed",
+        "subchecks": {
+          "logprobs": "passed",
+          "responses-logprobs": "passed"
+        },
+        "execution": {
+          "loaded_mode": "off",
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0,
+          "draft_execution_observed": false
+        },
+        "measured_request_records": 35,
+        "raw_local_artifact": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1/two-host-validation/logprobs-ar-v1",
+        "raw_report_sha256": "6627efa5996249c937ebe0f22118cb15594fa9ea0fad8b02e72d76232a18db9d",
+        "performance": "No matched timing claim",
+        "original_restoration_complete": true
+      },
+      {
+        "mode": "mtp",
+        "source_commit": "13c0bd02ed699f99dd4279650b7845e6d949f4d1",
+        "binary_sha256": "ae24451b661f3066abf655d73b0b856fdb75b24c6d729e0abfd67ba3236428b5",
+        "status": "passed",
+        "subchecks": {
+          "logprobs": "passed",
+          "responses-logprobs": "passed"
+        },
+        "execution": {
+          "loaded_mode": "mtp",
+          "draft_tokens": 1304,
+          "draft_tokens_accepted": 1176,
+          "draft_execution_observed": true
+        },
+        "measured_request_records": 35,
+        "raw_local_artifact": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1/two-host-validation/logprobs-mtp-v1",
+        "raw_report_sha256": "de2ed1044152c955c383553ba4fc3cf3a7bb855eeb646a8b9a45693c90e00390",
+        "performance": "No matched timing claim",
+        "original_restoration_complete": true
+      },
+      {
+        "mode": "dflash2",
+        "source_commit": "13c0bd02ed699f99dd4279650b7845e6d949f4d1",
+        "binary_sha256": "ae24451b661f3066abf655d73b0b856fdb75b24c6d729e0abfd67ba3236428b5",
+        "status": "passed",
+        "subchecks": {
+          "logprobs": "passed",
+          "responses-logprobs": "passed"
+        },
+        "execution": {
+          "loaded_mode": "dflash2",
+          "draft_tokens": 1743,
+          "draft_tokens_accepted": 1188,
+          "draft_execution_observed": true
+        },
+        "measured_request_records": 35,
+        "raw_local_artifact": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1/two-host-validation/logprobs-dflash2-v1",
+        "raw_report_sha256": "75a50510f660791823739c14e1e255e1ac75b3d77dc70614023fc2d443384a91",
+        "performance": "No matched timing claim",
+        "original_restoration_complete": true
+      }
+    ]
+  },
+  "limits": [
+    "Selected correctness suites only; not full-model quality or performance qualification",
+    "Known exact-DONE TP2 failure is retained, not waived even though deployment baseline also fails",
+    "DMA-BUF disabled, Windows watch not compiled/run, Nix/container not built",
+    "Raw request/trace archives retained on the investigation host; this checked-in summary is not the full reproduction archive",
+    "NativeMTP gating retained intentionally after this scoped review; no claim of full Neuhaus semantic/history parity or universal rank agreement"
+  ],
+  "neuhaus_doc_sources": [
+    "2af741d7d167fd03f100ef58f49b83bf06ea9b05",
+    "de82d619f0268384bb9d323d6fbf2e47c9013a18"
+  ],
+  "confidence_policy_review": {
+    "decision": "Retain current fork policy; intentional difference from Neuhaus e97f6554 disabling TP confidence gates. No policy/kernel change based on this investigation.",
+    "source_base": "8cde20f9df61ca0b8b00ce4d3782158738d1c082",
+    "initial_trace": {
+      "scalar_events_per_rank": [
+        1250,
+        1250
+      ],
+      "probability_bits_decisions_chain_identity_equal": true,
+      "uninstrumented_requests_output_work_equal": true,
+      "uninstrumented_request_records": 35,
+      "sampled_scope": "84sampled values all1.0; lookup untagged in this first trace, not learned-sampled coverage"
+    },
+    "targeted_trace": {
+      "request_records": 4,
+      "scalar_events_per_rank": [
+        531,
+        531
+      ],
+      "batch_events_per_rank": [
+        78,
+        78
+      ],
+      "scalar_and_batch_bits_decisions_order_equal": true,
+      "nonlookup_sampled_evaluations": 92,
+      "nonlookup_sampled_probability_range": [
+        0.04007464647293091,
+        1.0
+      ],
+      "planned_cohort_width": 2,
+      "batch_drops": 35,
+      "batch_retains": 43,
+      "nearest_threshold_probability_distance": {
+        "greedy": 0.0026224851608276367,
+        "sampled_nonlookup": 0.00404965877532959,
+        "planned_batch_drop": 0.0008903145790100098
+      },
+      "semantic_quality": "Only valid API/output/usage and rank mechanism checks, no independent answer oracle or matched performance control"
+    },
+    "gpu_oracle": {
+      "status": "PASS",
+      "confidence_cases": 90,
+      "vocabulary_sizes": [
+        2,
+        10,
+        256,
+        99328,
+        248320
+      ],
+      "policy_thresholds": [
+        0.85,
+        0.95,
+        0.6
+      ],
+      "threshold_bracket_offset": 1e-05,
+      "reference": "Independent CPUF64 confidence from actual logits; production whole/split GPU kernels. Host sums synthetic split payload; actual network covered by model traces.",
+      "existing_tolerances_unchanged": true,
+      "worst_absolute_error": 7.75991e-08,
+      "wall_seconds": 0.46550387300158036,
+      "binary_sha256": "25dc004e1817f8bab384ad25b37802aecc5d59a207f228363d7a99149a4c7492"
+    },
+    "limits": [
+      "Actual gate observations do not exhaust all floating-boundary cases, workloads or hardware",
+      "No inferred equality of TP1/TP2 logits or global model quality",
+      "Instrumented timings not used for performance claims"
+    ],
+    "raw_local_artifacts": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1/confidence-audit",
+    "trace_manifests": {
+      "manifest.json": {
+        "source_commit": "8cde20f9df61ca0b8b00ce4d3782158738d1c082",
+        "patch_sha256": "9ad15c3d0f0f6e25e96e50c7d5147cee9683e198da5ec76051ccd672dc687479",
+        "sha256": "15c1e09267b769351e3439e0a67300555d095f8a800632ad953b68c9f62ec69a",
+        "scope": "Temporary actual GateStops bit/decision logger; same stop expression; no math or tuning changes; no timing qualification",
+        "deployed": false
+      },
+      "manifest-v2.json": {
+        "source_commit": "8cde20f9df61ca0b8b00ce4d3782158738d1c082",
+        "patch_sha256": "c73bd8c09acc127652a9d95547f04a316a46eeed7a58dfab3bad5193fae573fc",
+        "sha256": "41c48688caac0a70037487c4cbe378cf429c698deff9fcfc5d048867856f5e4a",
+        "scope": "Private read-only scalar+batch gate logger with lookup tag; no policy/math changes or performance claims",
+        "deployed": false
+      }
+    }
+  },
+  "earlier_reviewed_runtime_source": "8c2d9b005678c573867640cd9289ea2571175338",
+  "extension_api": "0.3.4",
+  "latest_production_controls": "production-controls.json",
+  "latest_scope": "Source54cafa78 production-selected real AR/MTP/DFlash histories pass correctness with verified disk restore. AR7/MTP9 timingmetrics inconclusive; DFlash128single-pair metrics pass. Broader quality/performance not qualified."
+}

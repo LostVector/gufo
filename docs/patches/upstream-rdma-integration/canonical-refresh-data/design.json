@@ -1,0 +1,96 @@
+{
+  "sequence": [
+    [
+      "pair01-candidate",
+      "candidate"
+    ],
+    [
+      "pair01-baseline",
+      "baseline"
+    ],
+    [
+      "pair02-baseline",
+      "baseline"
+    ],
+    [
+      "pair02-candidate",
+      "candidate"
+    ],
+    [
+      "pair03-baseline",
+      "baseline"
+    ],
+    [
+      "pair03-candidate",
+      "candidate"
+    ],
+    [
+      "pair04-candidate",
+      "candidate"
+    ],
+    [
+      "pair04-baseline",
+      "baseline"
+    ],
+    [
+      "pair05-baseline",
+      "baseline"
+    ],
+    [
+      "pair05-candidate",
+      "candidate"
+    ],
+    [
+      "pair06-baseline",
+      "baseline"
+    ],
+    [
+      "pair06-candidate",
+      "candidate"
+    ],
+    [
+      "pair07-candidate",
+      "candidate"
+    ],
+    [
+      "pair07-baseline",
+      "baseline"
+    ],
+    [
+      "pair08-baseline",
+      "baseline"
+    ],
+    [
+      "pair08-candidate",
+      "candidate"
+    ],
+    [
+      "pair09-candidate",
+      "candidate"
+    ],
+    [
+      "pair09-baseline",
+      "baseline"
+    ],
+    [
+      "pair10-candidate",
+      "candidate"
+    ],
+    [
+      "pair10-baseline",
+      "baseline"
+    ]
+  ],
+  "requests_per_start": 12,
+  "randomization": {
+    "seed": 202611011531,
+    "uniform_choice_of_five_baseline_first_pairs": [
+      2,
+      3,
+      5,
+      6,
+      8
+    ]
+  },
+  "scope": "Fixed ten randomized balanced-order fresh pairs. Same12request history, 240records. Compare preserved EndRequest-fixed combined-head release with current canonical-extension release. No dropped/replaced pairs or pooling with earlier performance studies. C1 output/prompt/cache/speculative work exact; C2 adaptive work may vary and is retained. Strict per-request timing flags at both5% and3ms, all retained. Two co-primary measures: first pp2048-tg128 server-accounted decode rate and first shortC2 complete client-wave throughput, including prefill/admission/terminal wait. Ten-pair paired log/bootstrap and balanced-assignment sensitivity with Holm for two primaries; p-values are conditional/symmetry calculations, not absence-of-difference/equivalence proof. Secondary repeatC1, codingC2, TTFT, per-request wall/prefill/decode/gap/completion-tail. No agent-loop claim. Retain per-request flags for queue, both TTFT fields, prefill/decode/wall, maximum/first-followup content gaps and last-content-to-HTTP-finish, plus raw cache_snapshot_ms (future-consumption accounting, not pure GPU copy). Repeated/aliased flags are not independent incidents."
+}

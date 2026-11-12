@@ -7,6 +7,8 @@
 #include <cmath>
 #include <csignal>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -26,6 +28,7 @@
 
 #include "gufo/ext/registry.hpp"
 #include "src/cli/arg_parser.hpp"
+#include "src/cli/provider_options.hpp"
 #include "src/cli/sampling_options.hpp"
 #include "src/cli/serve/asr_service.hpp"
 #include "src/cli/serve/decision_service.hpp"
@@ -35,7 +38,10 @@
 #include "src/cli/serve/inference_backend.hpp"
 #include "src/cli/serve/logging.hpp"
 #include "src/cli/serve/sampling_request.hpp"
+#include "src/cli/serve/tp_control.hpp"
+#include "src/cli/speculative_settings.hpp"
 #include "src/core/diagnostics/gpu_queues.h"
+#include "src/core/gguf_reader.hpp"
 #include "src/core/platform/shutdown_signal.hpp"
 
 #if defined(ENGINE_ENABLE_HIP)
@@ -537,6 +543,56 @@ void AddSpeechOptions(ArgParser& parser, bool tts, SpeechOptions* options) {
       });
 }
 
+struct ImageOptions {
+  std::filesystem::path model;
+  std::vector<std::string> names;
+  server::ImageLoraOptions loras;
+};
+
+void AddImageOptions(ArgParser& parser, ImageOptions* options) {
+  parser.AddOption("-m", "--model", "DIR",
+                   "Image model directory (Diffusers layout)", "Model",
+                   &options->model);
+  AddServedModelNamesOption(parser, &options->names);
+  parser.AddCustomOption(
+      "", "--lora", "NAME=PATH",
+      "Register a LoRA adapter for the Qwen-Image-2.1 transformer; requests "
+      "select it by name (repeatable)",
+      "Model",
+      [options](std::string_view, std::string_view value, std::string* err) {
+        std::string name;
+        std::string path;
+        if (!SplitNameValue(value, "--lora", &name, &path, err)) {
+          return false;
+        }
+        options->loras.files.emplace_back(std::move(name), std::move(path));
+        return true;
+      });
+  parser.AddCustomOption(
+      "", "--lora-default", "NAME:SCALE",
+      "Apply a registered --lora to requests that omit 'loras' (repeatable)",
+      "Model",
+      [options](std::string_view, std::string_view value, std::string* err) {
+        const std::size_t separator = value.rfind(':');
+        float scale = 0;
+        if (separator == std::string_view::npos || separator == 0) {
+          *err = "--lora-default expects NAME:SCALE";
+          return false;
+        }
+        const auto text = value.substr(separator + 1);
+        const auto [end, ec] =
+            std::from_chars(text.data(), text.data() + text.size(), scale);
+        if (text.empty() || ec != std::errc{} ||
+            end != text.data() + text.size()) {
+          *err = "--lora-default expects NAME:SCALE";
+          return false;
+        }
+        options->loras.defaults.push_back(
+            {std::string(value.substr(0, separator)), scale});
+        return true;
+      });
+}
+
 void AddEmbeddingOptions(ArgParser& parser, std::filesystem::path* model,
                          std::vector<std::string>* served_model_names,
                          std::string* default_prompt_name) {
@@ -580,15 +636,19 @@ void PrintServeHelp(std::string_view program_name,
     return;
   }
   if (subcommand == "image") {
-    std::filesystem::path model;
-    std::vector<std::string> names;
+    ImageOptions options;
     ArgParser parser(std::string(program_name) + " serve image",
-                     "Serve Qwen-Image-2.1 generation and editing.");
-    parser.AddOption("-m", "--model", "DIR",
-                     "Qwen-Image-2.1 safetensors directory", "Model", &model);
-    AddServedModelNamesOption(parser, &names);
+                     "Serve image generation and editing (Qwen-Image-2.1 or "
+                     "an image extension provider).");
+    AddImageOptions(parser, &options);
+    ext::Registry registry;
+    ext::RegisterBuiltExtensions(registry);
     ServerOptionHelpTargets server_help;
     AddServerOptionsForHelp(parser, &server_help, false);
+    ProviderOptions provider_options(registry,
+                                     std::string(ext::kImageServeCommand),
+                                     ext::Capability::kImageGeneration);
+    provider_options.Register(parser);
     parser.PrintHelp();
     return;
   }
@@ -666,8 +726,8 @@ void PrintServeHelp(std::string_view program_name,
     std::string vision_model_path;
     std::size_t draft_tokens = 7;
     std::size_t min_draft_tokens = 1;
-    std::size_t prefill_chunk_tokens =
-        server::kDefaultDecodeActivePrefillTokens;
+    // Parsed for the deprecated --prefill-chunk only; never used.
+    std::size_t prefill_chunk_tokens = 0;
     std::size_t max_pending_requests = 16;
     std::size_t max_pending_requests_per_client = 0;
     std::uint64_t request_timeout_ms = 0;
@@ -682,6 +742,16 @@ void PrintServeHelp(std::string_view program_name,
     std::size_t cache_disk_bytes =
         server::TextRunnerDiskCacheOptions::kDefaultCapacityBytes;
     std::size_t cache_disk_staging_bytes = 0;
+    std::uint32_t tp_rank = 0;
+    std::uint32_t tp_world_size = 1;
+    std::uint32_t tp_device = 0;
+    std::string tp_rdma_device;
+    std::uint32_t tp_rdma_port = 1;
+    std::int64_t tp_gid_index = -1;
+    std::uint32_t tp_bootstrap_port = 18515;
+    std::uint32_t tp_control_port = 18516;
+    std::string tp_bootstrap_host;
+    std::string tp_control_token;
     bool log_progress = false;
     bool enable_yarn = false;
     std::string trace_path;
@@ -704,9 +774,37 @@ void PrintServeHelp(std::string_view program_name,
         "-c", "--context", "N",
         "Context tokens per session (default: 0 = model native context)",
         "Model", &max_context);
+    parser.AddOption("", "--tp-world-size", "N",
+                     "Qwen3.8-Flash-Next TP world size (1 or 2)", "TP2",
+                     &tp_world_size);
+    parser.AddOption("", "--tp-rank", "N", "TP rank (0 or 1)", "TP2", &tp_rank);
+    parser.AddOption("", "--tp-bootstrap-host", "HOST",
+                     "Rank-1 address of the rank-0 RDMA bootstrap", "TP2",
+                     &tp_bootstrap_host);
+    parser.AddOption("", "--tp-bootstrap-port", "N",
+                     "TCP bootstrap port (default: 18515)", "TP2",
+                     &tp_bootstrap_port);
+    parser.AddOption("", "--tp-control-port", "N",
+                     "TCP worker control port (default: 18516)", "TP2",
+                     &tp_control_port);
+    parser.AddOption("", "--tp-control-token", "TOKEN",
+                     "Shared token for TP worker authentication", "TP2",
+                     &tp_control_token);
+    parser.AddOption("", "--tp-device", "N", "HIP device index", "TP2",
+                     &tp_device);
+    parser.AddOption("", "--tp-rdma-device", "NAME",
+                     "RDMA device (default: the host's only one)", "TP2",
+                     &tp_rdma_device);
+    parser.AddOption("", "--tp-rdma-port", "N", "RDMA device port (default: 1)",
+                     "TP2", &tp_rdma_port);
+    parser.AddOption("", "--tp-gid-index", "N",
+                     "RDMA GID index (default: 0 on InfiniBand, the port's "
+                     "RoCE v2 GID on RoCE)",
+                     "TP2", &tp_gid_index);
     parser.AddFlag("", "--enable-yarn",
-                   "Flash-Next: static YaRN, required for --context above the "
-                   "native 262144; it applies to every request",
+                   "Flash-Next: YaRN for --context above the native 262144; "
+                   "each session stays native until it holds more than "
+                   "262144 tokens",
                    "Model", &enable_yarn);
 
     // Sampling Defaults
@@ -742,10 +840,9 @@ void PrintServeHelp(std::string_view program_name,
     parser.AddOption("", "--dflash-model", "PATH",
                      "Path to Qwen DFlash2 GGUF file", "Speculative",
                      &dflash_model_path);
-    parser.AddOption(
-        "", "--draft-policy", "POLICY",
-        "DFlash2 block length: fixed or adaptive (default: adaptive)",
-        "Speculative", &draft_policy);
+    parser.AddOption("", "--draft-policy", "POLICY",
+                     "Deprecated and ignored: each model sets its draft length",
+                     "Speculative", &draft_policy);
     parser.AddOption("", "--dspark-model", "PATH",
                      "Path to DeepSeek V4 Flash DSpark support GGUF file",
                      "Speculative", &dspark_model_path);
@@ -753,17 +850,16 @@ void PrintServeHelp(std::string_view program_name,
                      "Path to the Qwen MTP draft GGUF (Qwen3.8-Flash-Next: the "
                      "mtp-...-shared-*.gguf sidecar)",
                      "Speculative", &mtp_model_path);
-    parser.AddOption(
-        "-d", "--draft-tokens", "N",
-        "Maximum speculative draft tokens evaluated per step (default: 7)",
-        "Speculative", &draft_tokens);
+    parser.AddOption("-d", "--draft-tokens", "N",
+                     "Deprecated and ignored: each model sets its draft length",
+                     "Speculative", &draft_tokens);
 
     parser.AddOption("", "--min-draft-tokens", "N",
-                     "Adaptive draft floor (default: 1)", "Speculative",
-                     &min_draft_tokens);
+                     "Deprecated and ignored: each model sets its draft length",
+                     "Speculative", &min_draft_tokens);
     parser.AddOption(
         "", "--prefill-chunk", "N",
-        "Maximum prompt tokens between active decode rounds (default: 512)",
+        "Deprecated and ignored: prompts beside decoders are split by layers",
         "Scheduling", &prefill_chunk_tokens);
     parser.AddOption("", "--max-pending", "N",
                      "Maximum queued generation requests (default: 16)",
@@ -814,6 +910,10 @@ void PrintServeHelp(std::string_view program_name,
     parser.AddOption("", "--trace", "PATH", kTraceHelp, "Logging", &trace_path);
     ServerOptionHelpTargets server_help;
     AddServerOptionsForHelp(parser, &server_help);
+    ext::Registry registry;
+    ext::RegisterBuiltExtensions(registry);
+    ProviderOptions provider(registry, "serve");
+    provider.Register(parser);
     parser.PrintHelp();
     return;
   }
@@ -1017,6 +1117,7 @@ int RunServe(std::span<const char* const> args) {
   std::string parse_err;
 
   std::shared_ptr<server::InferenceBackend> backend;
+  bool tp_rank_zero = false;
   std::shared_ptr<server::VideoJobService> video_jobs;
   std::shared_ptr<server::TtsService> tts;
   std::shared_ptr<server::AsrService> asr;
@@ -1116,14 +1217,16 @@ int RunServe(std::span<const char* const> args) {
         "model=" + embeddings->model_id() + " context_tokens=" +
         std::to_string(server::EmbeddingService::kMaxInputTokens));
   } else if (subcommand == "image") {
-    std::filesystem::path model;
-    std::vector<std::string> names;
+    ImageOptions options;
     ArgParser parser("gufo serve image",
-                     "Serve Qwen-Image-2.1 generation and editing.");
-    parser.AddOption("-m", "--model", "DIR",
-                     "Qwen-Image-2.1 safetensors directory", "Model", &model);
-    AddServedModelNamesOption(parser, &names);
+                     "Serve image generation and editing (Qwen-Image-2.1 or "
+                     "an image extension provider).");
+    AddImageOptions(parser, &options);
     add_server_options(parser, false);
+    ProviderOptions declared_options(registry,
+                                     std::string(ext::kImageServeCommand),
+                                     ext::Capability::kImageGeneration);
+    declared_options.Register(parser);
     if (!parser.Parse(sub_args, &parse_err)) {
       std::cerr << "Error: " << parse_err << '\n';
       return 2;
@@ -1132,23 +1235,63 @@ int RunServe(std::span<const char* const> args) {
       PrintServeHelp("gufo", "image");
       return 0;
     }
+    ext::ParsedOptions provider_options;
+    try {
+      provider_options = declared_options.Parse();
+    } catch (const std::invalid_argument& error) {
+      std::cerr << "Error: " << error.what() << '\n';
+      return 2;
+    }
     if (!prepare_server_options())
       return 2;
-    if (model.empty()) {
+    if (options.model.empty()) {
       std::cerr << "Error: --model <DIR> is required for image server\n";
       return 2;
     }
-    ModelLoadLog load_log("qwen_image_21", model);
+    // Adapter names and defaults are usage errors: report them before the
+    // runner loads any weights.
     try {
-      images = std::make_shared<server::ImageService>(
-          model, names.empty() ? "Qwen-Image-2.1" : names.front(),
-          server::ImageService::Runner{}, ModelAliases(names));
+      server::ValidateLoraOptions(options.loras);
+    } catch (const std::invalid_argument& error) {
+      std::cerr << "Error: " << error.what() << '\n';
+      return 2;
+    }
+    // Selection reads only the probe's metadata, so option errors (another
+    // provider's option, a missing sidecar path) stop before any weights load.
+    const ext::ImageProvider* provider = nullptr;
+    try {
+      provider = &server::SelectImageProvider(registry, options.model,
+                                              provider_options);
+    } catch (const std::invalid_argument& error) {
+      std::cerr << "Error: " << error.what() << '\n';
+      return 2;
     } catch (const std::exception& error) {
-      std::cerr << "Error loading Qwen-Image-2.1: " << error.what() << '\n';
+      std::cerr << "Error loading image model: " << error.what() << '\n';
       return 1;
     }
-    load_log.Complete("model=" + images->model_id() +
-                      " weights=mapped upload=on_demand");
+    std::string kind = provider->id;
+    std::ranges::replace(kind, '-', '_');
+    ModelLoadLog load_log(kind, options.model);
+    try {
+      images = std::make_shared<server::ImageService>(
+          server::CreateImageRunner(*provider, options.model, provider_options),
+          options.names.empty() ? (provider->id == "qwen-image-21" ||
+                                           provider->id == "qwen-image-2.1"
+                                       ? "Qwen-Image-2.1"
+                                       : provider->id)
+                                : options.names.front(),
+          ModelAliases(options.names), options.loras);
+    } catch (const std::exception& error) {
+      std::cerr << "Error loading image model " << provider->id << ": "
+                << error.what() << '\n';
+      return 1;
+    }
+    std::string loaded = "model=" + images->model_id() +
+                         " provider=" + provider->id +
+                         " weights=mapped upload=on_demand";
+    if (!options.loras.files.empty())
+      loaded += " loras=" + std::to_string(options.loras.files.size());
+    load_log.Complete(loaded);
   } else if (subcommand == "video") {
     std::filesystem::path video_model;
     std::filesystem::path video_root = "video-jobs";
@@ -1327,8 +1470,8 @@ int RunServe(std::span<const char* const> args) {
     std::string vision_model_path;
     std::size_t draft_tokens = 7;
     std::size_t min_draft_tokens = 1;
-    std::size_t prefill_chunk_tokens =
-        server::kDefaultDecodeActivePrefillTokens;
+    // Parsed for the deprecated --prefill-chunk only; never used.
+    std::size_t prefill_chunk_tokens = 0;
     std::size_t max_pending_requests = 16;
     // Defaults to --max-pending after parsing unless supplied.
     std::size_t max_pending_requests_per_client = 0;
@@ -1344,6 +1487,16 @@ int RunServe(std::span<const char* const> args) {
     std::size_t cache_disk_bytes =
         server::TextRunnerDiskCacheOptions::kDefaultCapacityBytes;
     std::size_t cache_disk_staging_bytes = 0;
+    std::uint32_t tp_rank = 0;
+    std::uint32_t tp_world_size = 1;
+    std::uint32_t tp_device = 0;
+    std::string tp_rdma_device;
+    std::uint32_t tp_rdma_port = 1;
+    std::int64_t tp_gid_index = -1;
+    std::uint32_t tp_bootstrap_port = 18515;
+    std::uint32_t tp_control_port = 18516;
+    std::string tp_bootstrap_host;
+    std::string tp_control_token;
     bool log_progress = false;
     bool enable_yarn = false;
     std::string trace_path;
@@ -1377,9 +1530,38 @@ int RunServe(std::span<const char* const> args) {
         "-c", "--context", "N",
         "Context tokens per session (default: 0 = model native context)",
         "Model", &max_context);
+    llm_parser.AddOption("", "--tp-world-size", "N",
+                         "Qwen3.8-Flash-Next TP world size (1 or 2)", "TP2",
+                         &tp_world_size);
+    llm_parser.AddOption("", "--tp-rank", "N", "TP rank (0 or 1)", "TP2",
+                         &tp_rank);
+    llm_parser.AddOption("", "--tp-bootstrap-host", "HOST",
+                         "Rank-1 address of the rank-0 RDMA bootstrap", "TP2",
+                         &tp_bootstrap_host);
+    llm_parser.AddOption("", "--tp-bootstrap-port", "N",
+                         "TCP bootstrap port (default: 18515)", "TP2",
+                         &tp_bootstrap_port);
+    llm_parser.AddOption("", "--tp-control-port", "N",
+                         "TCP worker control port (default: 18516)", "TP2",
+                         &tp_control_port);
+    llm_parser.AddOption("", "--tp-control-token", "TOKEN",
+                         "Shared token for TP worker authentication", "TP2",
+                         &tp_control_token);
+    llm_parser.AddOption("", "--tp-device", "N", "HIP device index", "TP2",
+                         &tp_device);
+    llm_parser.AddOption("", "--tp-rdma-device", "NAME",
+                         "RDMA device (default: the host's only one)", "TP2",
+                         &tp_rdma_device);
+    llm_parser.AddOption("", "--tp-rdma-port", "N",
+                         "RDMA device port (default: 1)", "TP2", &tp_rdma_port);
+    llm_parser.AddOption("", "--tp-gid-index", "N",
+                         "RDMA GID index (default: 0 on InfiniBand, the "
+                         "port's RoCE v2 GID on RoCE)",
+                         "TP2", &tp_gid_index);
     llm_parser.AddFlag("", "--enable-yarn",
-                       "Flash-Next: static YaRN, required for --context above "
-                       "the native 262144; it applies to every request",
+                       "Flash-Next: YaRN for --context above the native "
+                       "262144; each session stays native until it holds more "
+                       "than 262144 tokens",
                        "Model", &enable_yarn);
     llm_parser.AddOption(
         "-n", "--max-tokens", "N",
@@ -1411,7 +1593,7 @@ int RunServe(std::span<const char* const> args) {
                          &dflash_model_path);
     llm_parser.AddOption(
         "", "--draft-policy", "POLICY",
-        "DFlash2 block length: fixed or adaptive (default: adaptive)",
+        "Deprecated and ignored: each model sets its draft length",
         "Speculative", &draft_policy);
     llm_parser.AddOption("", "--dspark-model", "PATH",
                          "Path to DeepSeek V4 Flash DSpark support GGUF file",
@@ -1423,15 +1605,16 @@ int RunServe(std::span<const char* const> args) {
         "Speculative", &mtp_model_path);
     llm_parser.AddOption(
         "-d", "--draft-tokens", "N",
-        "Maximum speculative draft tokens evaluated per step (default: 7)",
+        "Deprecated and ignored: each model sets its draft length",
         "Speculative", &draft_tokens);
 
-    llm_parser.AddOption("", "--min-draft-tokens", "N",
-                         "Adaptive draft floor (default: 1)", "Speculative",
-                         &min_draft_tokens);
+    llm_parser.AddOption(
+        "", "--min-draft-tokens", "N",
+        "Deprecated and ignored: each model sets its draft length",
+        "Speculative", &min_draft_tokens);
     llm_parser.AddOption(
         "", "--prefill-chunk", "N",
-        "Maximum prompt tokens between active decode rounds (default: 512)",
+        "Deprecated and ignored: prompts beside decoders are split by layers",
         "Scheduling", &prefill_chunk_tokens);
     llm_parser.AddOption("", "--max-pending", "N",
                          "Maximum queued generation requests (default: 16)",
@@ -1485,6 +1668,8 @@ int RunServe(std::span<const char* const> args) {
                          &trace_path);
 
     add_server_options(llm_parser);
+    ProviderOptions provider_options(registry, "serve");
+    provider_options.Register(llm_parser);
     if (!llm_parser.Parse(sub_args, &parse_err)) {
       std::cerr << "Error: " << parse_err << "\n";
       PrintServeHelp("gufo", "llm");
@@ -1499,6 +1684,23 @@ int RunServe(std::span<const char* const> args) {
     }
     if (!prepare_server_options()) {
       return 2;
+    }
+    // Every text runner declares a scheduling profile and the host splits
+    // prompt passes beside decoders by layers.
+    if (llm_parser.WasSupplied("--prefill-chunk")) {
+      server::Logger::Warn(
+          "scheduling",
+          "event=deprecated_option option=--prefill-chunk action=ignored "
+          "reason=layered_prefill");
+    }
+    // Each model sets its draft settings (TextSpeculativeDefaults).
+    for (const char* option :
+         {"--draft-tokens", "--min-draft-tokens", "--draft-policy"}) {
+      if (llm_parser.WasSupplied(option)) {
+        server::Logger::Warn("speculative",
+                             std::string("event=deprecated_option option=") +
+                                 option + " action=ignored reason=model_owned");
+      }
     }
     // Progress lines are INFO-tier. Under a quieter threshold `--log-progress`
     // would be accepted and then silently discarded, so reject the combination
@@ -1525,8 +1727,7 @@ int RunServe(std::span<const char* const> args) {
         json::Value::object(), sampling_config, &validated_sampling);
     if (max_tokens < -1 || max_tokens == 0 ||
         max_tokens > std::numeric_limits<std::uint32_t>::max() ||
-        prefill_chunk_tokens == 0 || max_pending_requests == 0 ||
-        max_pending_requests_per_client == 0 ||
+        max_pending_requests == 0 || max_pending_requests_per_client == 0 ||
         max_pending_requests_per_client > max_pending_requests ||
         max_output_bytes == 0 || max_buffered_output_bytes == 0 ||
         max_buffered_output_bytes_total == 0 ||
@@ -1538,12 +1739,6 @@ int RunServe(std::span<const char* const> args) {
         (stall_timeout_ms != 0 && stall_timeout_ms < kMinStallTimeoutMs) ||
         !sampling_valid) {
       std::cerr << "Error: sampling and scheduling limits are invalid\n";
-      return 2;
-    }
-    if (draft_tokens == 0 || min_draft_tokens == 0 ||
-        min_draft_tokens > draft_tokens ||
-        draft_tokens > std::numeric_limits<std::uint32_t>::max()) {
-      std::cerr << "Error: speculative draft limits are invalid\n";
       return 2;
     }
     auto reasoning_defaults = ResolveReasoningDefaults(
@@ -1578,19 +1773,14 @@ int RunServe(std::span<const char* const> args) {
       return 2;
     }
     try {
-      if (!draft_policy.empty() &&
-          speculative_config.backend != server::TextSpeculativeBackend::kDFlash)
-        throw std::invalid_argument("--draft-policy requires DFlash2");
-      speculative_config.dflash_policy =
-          server::speculative::ParseDFlashDraftPolicy(draft_policy);
+      provider_options.Parse();
     } catch (const std::invalid_argument& exception) {
       std::cerr << "Error: " << exception.what() << '\n';
       return 2;
     }
     if (speculative_config.backend == server::TextSpeculativeBackend::kDFlash &&
-        (dflash_model_path.empty() || min_draft_tokens != 1)) {
-      std::cerr << "Error: DFlash2 requires --dflash-model and "
-                   "--min-draft-tokens 1; bound blocks with --draft-tokens\n";
+        dflash_model_path.empty()) {
+      std::cerr << "Error: DFlash2 requires --dflash-model\n";
       return 2;
     }
     speculative_config.draft_model_path =
@@ -1599,26 +1789,127 @@ int RunServe(std::span<const char* const> args) {
         : speculative_config.backend == server::TextSpeculativeBackend::kMtp
             ? mtp_model_path
             : dflash_model_path;
-    speculative_config.max_draft_tokens =
-        static_cast<std::uint32_t>(draft_tokens);
-    speculative_config.min_draft_tokens =
-        static_cast<std::uint32_t>(min_draft_tokens);
     if (model.empty()) {
       std::cerr << "Error: --model <PATH> is required\n";
       return 2;
     }
+    if (tp_world_size != 1 && tp_world_size != 2) {
+      std::cerr << "Error: --tp-world-size must be 1 or 2\n";
+      return 2;
+    }
+    if (tp_world_size == 1 && tp_rank != 0) {
+      std::cerr << "Error: single-rank TP requires --tp-rank 0\n";
+      return 2;
+    }
+    if (tp_rank >= tp_world_size) {
+      std::cerr << "Error: --tp-rank must be less than --tp-world-size\n";
+      return 2;
+    }
+    if (tp_world_size == 2 && (tp_rank == 1 && tp_bootstrap_host.empty())) {
+      std::cerr << "Error: rank one requires --tp-bootstrap-host\n";
+      return 2;
+    }
+    if (tp_bootstrap_port == 0 || tp_bootstrap_port > 65535 ||
+        tp_control_port == 0 || tp_control_port > 65535 ||
+        tp_bootstrap_port == tp_control_port ||
+        tp_device >
+            static_cast<std::uint32_t>(std::numeric_limits<int>::max()) ||
+        tp_rdma_port == 0 ||
+        tp_rdma_port > std::numeric_limits<std::uint8_t>::max() ||
+        tp_gid_index < -1 ||
+        tp_gid_index > std::numeric_limits<std::uint8_t>::max()) {
+      std::cerr << "Error: invalid TP2 network/device options\n";
+      return 2;
+    }
+    if (tp_world_size == 2 &&
+        (tp_control_token.empty() || tp_control_token.size() > 4096)) {
+      std::cerr << "Error: TP2 requires --tp-control-token\n";
+      return 2;
+    }
+
+    server::TextTpConfig tp_config{
+        .rank = tp_rank,
+        .world_size = tp_world_size,
+        .hip_device = static_cast<int>(tp_device),
+        .auth_token = tp_control_token,
+        .max_draft_tokens = speculative_config.max_draft_tokens,
+    };
+    std::shared_ptr<ext::TextParallelRuntime> tp_communicator;
+    std::shared_ptr<server::TpControlChannel> tp_control;
+    if (tp_world_size == 2 && tp_rank == 1) {
+      // Rank 1 serves nothing and keeps nothing worth saving: stop at once on
+      // SIGINT or SIGTERM, also while loading. As a container's PID 1 it
+      // would otherwise ignore them.
+      platform::InstallImmediateTerminationHandlers();
+    }
+    if (tp_world_size == 2) {
+      const ext::TextParallelTransportOptions rdma_config{
+          .rank = tp_rank,
+          .world_size = tp_world_size,
+          .bootstrap_host = tp_bootstrap_host,
+          .bootstrap_port = static_cast<std::uint16_t>(tp_bootstrap_port),
+          .device_index = tp_device,
+          .rdma_device = tp_rdma_device,
+          .rdma_port = tp_rdma_port,
+          .gid_index = tp_gid_index < 0
+                           ? std::nullopt
+                           : std::optional<std::uint32_t>(
+                                 static_cast<std::uint32_t>(tp_gid_index)),
+      };
+      std::string tp_error;
+      const auto reader = core::GgufReader::OpenFile(model, &tp_error);
+      const auto* provider = reader ? ext::ProbeTextProvider(*reader) : nullptr;
+      if (!provider || !provider->create_parallel) {
+        std::cerr << "Error: selected model has no TP2 transport provider: "
+                  << tp_error << '\n';
+        return 2;
+      }
+      tp_communicator = provider->create_parallel(rdma_config, &tp_error);
+      if (!tp_communicator) {
+        std::cerr << "Error creating TP2 RDMA communicator: " << tp_error
+                  << '\n';
+        return 1;
+      }
+      server::Logger::Info("tp",
+                           "event=rdma_ready " + tp_communicator->Describe());
+      tp_control =
+          tp_rank == 0
+              ? server::TpControlChannel::Listen(
+                    static_cast<std::uint16_t>(tp_control_port), &tp_error)
+              : server::TpControlChannel::Connect(
+                    tp_bootstrap_host,
+                    static_cast<std::uint16_t>(tp_control_port), &tp_error);
+      if (!tp_control) {
+        std::cerr << "Error creating TP2 worker control channel: " << tp_error
+                  << '\n';
+        return 1;
+      }
+    }
+    if (tp_control) {
+      tp_control->WatchPeerUntilHandshake([](const std::string& reason) {
+        server::Logger::Error(
+            "tp", "event=tp_peer_lost phase=load action=exit reason=" + reason);
+        std::cerr.flush();
+        std::fflush(nullptr);
+        std::_Exit(1);
+      });
+    }
+    tp_config.runtime = tp_communicator;
+    tp_config.control = tp_control;
     std::string err;
     ModelLoadLog load_log("text", model);
+    server::TextSpeculativeConfig loaded_speculative = speculative_config;
     backend = std::make_shared<server::InferenceBackend>();
     // The disk snapshot tier is walked during load, which can take minutes.
     // Answer 503 `Loading model` on the port meanwhile, as llama-server does,
     // so supervisors see a loading server rather than a refused connection.
-    server::LoadingResponder loading(host, port);
+    // A TP2 worker (rank 1) never serves HTTP.
+    std::optional<server::LoadingResponder> loading;
+    if (tp_world_size != 2 || tp_rank != 1) {
+      loading.emplace(host, port);
+    }
     const bool load_ok = backend->load(
         model, &err, max_context, session_count,
-        server::TextPrefillPolicy{
-            .decode_active_tokens = prefill_chunk_tokens,
-        },
         server::TextSchedulerPolicy{
             .max_pending_requests = max_pending_requests,
             .max_pending_requests_per_client = max_pending_requests_per_client,
@@ -1642,8 +1933,23 @@ int RunServe(std::span<const char* const> args) {
             .staging_capacity_bytes = cache_disk_staging_bytes,
             .model_artifact_fingerprint = {},
         },
-        vision_model_path, cache_ram, enable_yarn);
-    loading.stop();
+        vision_model_path, cache_ram, tp_config, enable_yarn,
+        [&](const ext::TextProvider& provider, const core::GgufReader&,
+            ext::TextRunnerOptions* options, std::string* error) {
+          try {
+            options->provider_options = provider_options.Select(provider.id);
+            ApplySpeculativeSettings(
+                ResolveSpeculativeSettings(provider, speculative_backend, {}),
+                &options->speculative);
+            loaded_speculative = options->speculative;
+            return true;
+          } catch (const std::invalid_argument& exception) {
+            *error = exception.what();
+            return false;
+          }
+        });
+    if (loading)
+      loading->stop();
     if (!load_ok) {
       std::cerr << "Error loading model '" << model << "': " << err << "\n";
       return 1;
@@ -1700,9 +2006,27 @@ int RunServe(std::span<const char* const> args) {
         "model=" + backend->model_id() +
         " sessions=" + std::to_string(session_count) + " context_tokens=" +
         std::to_string(backend->max_context()) + " speculative=" + speculation +
-        " draft_limit=" + std::to_string(speculative_config.max_draft_tokens) +
+        " draft_limit=" + std::to_string(loaded_speculative.max_draft_tokens) +
+        (loaded_speculative.draft_policy.empty()
+             ? std::string()
+             : " draft_policy=" + loaded_speculative.draft_policy) +
         " disk_cache=" + (cache_disk_directory.empty() ? "off" : "enabled") +
         served_names);
+#if defined(ENGINE_ENABLE_HIP)
+    if (tp_world_size == 2 && tp_rank == 1) {
+      std::string worker_error;
+      if (!backend->run_worker(&worker_error)) {
+        server::Logger::Error("server",
+                              "event=tp_worker_failed reason=" + worker_error);
+        // The lost rank cannot complete queued exchanges during teardown.
+        std::cerr.flush();
+        std::fflush(nullptr);
+        std::_Exit(1);
+      }
+      return 0;
+    }
+#endif
+    tp_rank_zero = tp_world_size == 2;
   }
 
   // run() joins every request thread, so no hook call outlives it.
@@ -1724,6 +2048,29 @@ int RunServe(std::span<const char* const> args) {
     std::cerr << "Error starting HTTP server: " << err << "\n";
     return 1;
   }
+  // Rank 0 of a TP2 pair whose peer or link is gone fails every request, so
+  // it exits for a supervisor to restart both ranks; rank 1 exits on its own.
+  // Requests that already failed get a moment to deliver their errors. The
+  // exit skips teardown, which could wait on an exchange the peer never ends.
+  std::atomic<bool> serving{true};
+  std::thread pair_watch;
+  if (tp_rank_zero) {
+    pair_watch = std::thread([&serving, backend] {
+      while (serving.load(std::memory_order_acquire)) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        const auto failure = backend->tp_failure();
+        if (failure.empty()) {
+          continue;
+        }
+        server::Logger::Error(
+            "server", "event=tp_pair_lost action=exit reason=" + failure);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cerr.flush();
+        std::fflush(nullptr);
+        std::_Exit(1);
+      }
+    });
+  }
   // Releasing model state on a lost device crashes; the kernel reclaims it.
   // The backend is checked as well: an external SIGTERM can stop the server
   // after the scheduler records the loss but before a request fires the hook.
@@ -1732,12 +2079,19 @@ int RunServe(std::span<const char* const> args) {
       ::_exit(kDeviceLostExitStatus);
     }
   };
+  const auto finish_pair_watch = [&] {
+    serving.store(false, std::memory_order_release);
+    if (pair_watch.joinable())
+      pair_watch.join();
+  };
   try {
     server.run(/*handle_signals=*/true);
   } catch (...) {
+    finish_pair_watch();
     exit_if_device_lost();
     throw;
   }
+  finish_pair_watch();
   exit_if_device_lost();
   return 0;
 }

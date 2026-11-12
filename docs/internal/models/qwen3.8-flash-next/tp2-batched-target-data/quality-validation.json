@@ -1,0 +1,18 @@
+{
+  "records_per_rank": 576,
+  "paired_cases_per_rank": 72,
+  "actual_new_batch_gathers_per_rank": 96,
+  "complete_materialized_state_pairs_per_rank": 144,
+  "contexts": [
+    "short",
+    32768
+  ],
+  "context_capacity": 65536,
+  "full_logits_tokens_positions_RNG_proposal_work_exact": true,
+  "all_eligible_rows_2_to_7_activated": true,
+  "rows_8_9_10_12_and_mixed_AR_pure_AR_fallbacks_verified": true,
+  "cross_rank_records_exact": true,
+  "frozen_sources_harness_binary_PIDs_counters_kernel_boot_topology_idle_pass": true,
+  "scope": "Test-only batch predicate/counters on fc08 dynamic windows, sameGPUkernels/headers/wire17. One actual TP2 model, paired disabled/full versus enabled/gather;72 paired cases/576 session-stage records perrank at short and actual32768 contexts. All2..7 eligible shapes,8/9/10/12 fallbacks, mixedAR/MTP/pureAR, greedy/sampled/mixedsamplers. Supported per-request forced draft counts and empty shared timing plan,16tokenbudget prevent adaptive confidence changing shapes. Main and one-token continuation percase; alltokens/full-logit hashes/positions/RNG/proposalwork exact,144 complete materialized state byte pairs.96actual newbatchgathers required. Sampler state kept externally, not claimed stored in snapshots. No performance/default/PR claim.",
+  "limits": "Diagnostic batch host toggle/counting object only; actual model/GPU/transport. Full state bytes compared within rank in C++; no cross-rank state byte claim. Not natural adaptive performance, serialized/borrowed/disk caches, HTTP cancellation or batch-context fault recovery. No default/PR claim."
+}

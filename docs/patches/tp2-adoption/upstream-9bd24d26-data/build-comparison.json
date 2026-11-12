@@ -1,0 +1,23 @@
+{
+  "old_compile_units": 336,
+  "new_compile_units": 336,
+  "unit_set_identical": true,
+  "changed_normalized_commands": [],
+  "changed_compiled_source": [
+    "src/cli/serve/image_api.cpp",
+    "src/cli/serve/audio_asr_api.cpp",
+    "src/cli/serve/asr_service.cpp",
+    "src/cli/serve/embeddings_api.cpp",
+    "src/cli/serve/embedding_service.cpp",
+    "src/cli/serve/audio_tts_api.cpp",
+    "src/cli/serve/tts_service.cpp",
+    "src/cli/serve/video_api.cpp",
+    "src/cli/serve/video_jobs.cpp",
+    "src/cli/serve/http_server.cpp",
+    "src/cli/serve/asr_websocket.cpp",
+    "src/cli/serve/voice_page.cpp",
+    "src/cli/serve/serve.cpp"
+  ],
+  "normalization": "Only source/build roots and GUFO_REVISION literal; raw compile_commands retained in each build. Header closure rebuilt fresh; source-only list does not imply headers irrelevant.",
+  "scope": "Production release compile-input proof, not completed build/runtime/numerical qualification."
+}

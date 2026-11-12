@@ -5,44 +5,23 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <span>
 #include <string_view>
 #include <vector>
 
-#include "src/ext/continuation.hpp"
+#include "src/cli/serve/continuation_types.hpp"
 
 namespace gufo::server {
-
-// The continuation bases and token id are runtime contracts (RFC step 6).
-// These aliases keep the serving spelling; cache policy below stays here.
-using ext::ContinuationInputPrefix;
-using ext::ContinuationSnapshot;
-using ext::ContinuationState;
-using ext::ContinuationToken;
-using ext::PrefixInputIdentity;
 
 enum class SnapshotEventAction : std::uint8_t {
   kRemoved,
   kSkipped,
 };
 
-enum class SnapshotEventReason : std::uint8_t {
-  kByteCapacity,
-  kEntryCapacity,
-  kExactReplacement,
-  kCaptureFailure,
-  kReservationMismatch,
-};
-
 /// Continuation boundaries take precedence over optional history/retry copies.
 /// A branch point is a continuation boundary learned where two prompts
 /// diverged; it stays a branch point after the older prompt's checkpoints go.
-enum class SnapshotPurpose : std::uint8_t {
-  kContinuation,
-  kHistory,
-  kRetry,
-  kBranchPoint,
-};
 
 /// Sanitized snapshot-retention event.
 ///
@@ -58,11 +37,6 @@ struct SnapshotEvent {
 };
 
 /// Explains a miss without exposing prompt or token contents.
-struct ContinuationLookup {
-  std::string_view miss_reason;
-  std::size_t common_prefix_tokens{0};
-  std::size_t checkpoint_tokens{0};
-};
 
 /// Bounded exact-prefix cache over opaque model continuation states.
 ///
@@ -76,11 +50,22 @@ public:
       std::function<void(ContinuationState&, const ContinuationSnapshot&)>;
   using SnapshotCapacity = std::function<std::size_t()>;
   using SnapshotEventSink = std::function<void(const SnapshotEvent&)>;
+  using StateReusable = std::function<bool(const ContinuationState&)>;
+  using SnapshotReusable = std::function<bool(const ContinuationSnapshot&)>;
 
   struct SnapshotSupport {
     SnapshotRestore restore;
     SnapshotCapacity capacity_bytes;
     SnapshotEventSink on_event;
+    /// False while a retained live state or snapshot must not be reused yet;
+    /// an unset check allows every one. Consulted, under the cache lock,
+    /// whenever a request looks up a prefix. Only the state check applies
+    /// without snapshot support.
+    StateReusable state_reusable;
+    SnapshotReusable snapshot_reusable;
+    // Like component snapshots: only an unchanged retry may use an unaligned
+    // full prompt; continuations restore an aligned earlier checkpoint.
+    std::optional<std::size_t> prefill_alignment;
   };
 
   class Lease {
@@ -149,6 +134,10 @@ public:
         std::shared_ptr<const ContinuationSnapshot> snapshot = nullptr,
         std::vector<ContinuationToken> live_tokens = {});
 
+    /// True when the cache retains immutable snapshots. Without them an entry
+    /// describes its live state, so a commit must name that state's tokens.
+    [[nodiscard]] bool retains_snapshots() const noexcept;
+
     /// Explicitly discards partial state. The destructor does the same if a
     /// lease is not committed.
     void Invalidate() noexcept;
@@ -203,6 +192,9 @@ public:
       bool reuse_prompt = true, std::size_t stable_prefix_tokens = 0,
       std::span<const ContinuationInputPrefix> input_prefixes = {});
 
+  /// Drop all reuse state. Requires no outstanding leases or reservations.
+  void Clear();
+
   /// Longest retained prefix of prompt with a matching input identity,
   /// ignoring stable-prefix fallback rules. Leases nothing.
   [[nodiscard]] std::size_t CachedPrefixTokens(
@@ -222,6 +214,13 @@ public:
   [[nodiscard]] std::size_t capacity() const noexcept;
   /// Immutable checkpoint records, independent of execution capacity().
   [[nodiscard]] std::size_t entry_capacity() const noexcept;
+  /// Under record pressure, a new copy first replaces the least recently
+  /// used copy of another conversation (never a branch point, its source or
+  /// its own conversation), as a byte-bounded cache would, instead of being
+  /// skipped or evicting its own earlier boundaries. Off by default: an
+  /// optional copy may not displace a last useful checkpoint. Set before the
+  /// first lease.
+  void set_optional_copies_displace_idle(bool enabled) noexcept;
   [[nodiscard]] std::size_t snapshot_capacity_bytes() const noexcept;
   [[nodiscard]] std::size_t retained_snapshot_bytes() const noexcept;
   [[nodiscard]] std::size_t reserved_snapshot_bytes() const noexcept;

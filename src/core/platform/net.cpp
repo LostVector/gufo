@@ -6,6 +6,10 @@
 #include <stdexcept>
 #include <system_error>
 
+#if defined(_WIN32)
+#include <mstcpip.h>
+#endif
+
 namespace gufo::net {
 namespace {
 
@@ -121,6 +125,145 @@ int PollReadable(Socket socket, int timeout_ms) noexcept {
 #else
   struct pollfd pfd{.fd = socket, .events = POLLIN, .revents = 0};
   return ::poll(&pfd, 1, timeout_ms);
+#endif
+}
+
+int PollWritable(Socket socket, int timeout_ms) noexcept {
+#if defined(_WIN32)
+  WSAPOLLFD pfd{.fd = socket, .events = POLLWRNORM, .revents = 0};
+  return WSAPoll(&pfd, 1, timeout_ms);
+#else
+  struct pollfd pfd{.fd = socket, .events = POLLOUT, .revents = 0};
+  return ::poll(&pfd, 1, timeout_ms);
+#endif
+}
+
+bool IsSocketConnectPending() noexcept {
+#if defined(_WIN32)
+  const int error = WSAGetLastError();
+  return error == WSAEWOULDBLOCK || error == WSAEINPROGRESS;
+#else
+  return errno == EINPROGRESS;
+#endif
+}
+
+bool SocketHasNoError(Socket socket) noexcept {
+  int error = 0;
+  SocklenT size = sizeof(error);
+#if defined(_WIN32)
+  return ::getsockopt(socket, SOL_SOCKET, SO_ERROR,
+                      reinterpret_cast<char*>(&error), &size) == 0 &&
+         error == 0;
+#else
+  return ::getsockopt(socket, SOL_SOCKET, SO_ERROR, &error, &size) == 0 &&
+         error == 0;
+#endif
+}
+
+std::string AddressErrorMessage(int error) {
+#if defined(_WIN32)
+  return ::gai_strerrorA(error);
+#else
+  return ::gai_strerror(error);
+#endif
+}
+
+bool SetKeepAlive(Socket socket, int idle_seconds, int interval_seconds,
+                  int probes) noexcept {
+  const int enabled = 1;
+#if defined(_WIN32)
+  // Enabling keepalive is portable; Winsock retains its system probe limits.
+  (void)idle_seconds;
+  (void)interval_seconds;
+  (void)probes;
+  return ::setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE,
+                      reinterpret_cast<const char*>(&enabled),
+                      sizeof(enabled)) == 0;
+#else
+  const bool enabled_ok = ::setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE,
+                                       &enabled, sizeof(enabled)) == 0;
+#if defined(TCP_KEEPIDLE) && defined(TCP_KEEPINTVL) && defined(TCP_KEEPCNT)
+  // Preserve the control channel's one-minute idle, ten-second probes and
+  // six-probe limit on Linux, including while a server is otherwise idle.
+  (void)::setsockopt(socket, IPPROTO_TCP, TCP_KEEPIDLE, &idle_seconds,
+                     sizeof(idle_seconds));
+  (void)::setsockopt(socket, IPPROTO_TCP, TCP_KEEPINTVL, &interval_seconds,
+                     sizeof(interval_seconds));
+  (void)::setsockopt(socket, IPPROTO_TCP, TCP_KEEPCNT, &probes, sizeof(probes));
+#else
+  (void)idle_seconds;
+  (void)interval_seconds;
+  (void)probes;
+#endif
+  return enabled_ok;
+#endif
+}
+
+bool SetReceiveTimeout(Socket socket, int timeout_ms) noexcept {
+#if defined(_WIN32)
+  const DWORD ms = static_cast<DWORD>(timeout_ms);
+  return ::setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO,
+                      reinterpret_cast<const char*>(&ms), sizeof(ms)) == 0;
+#else
+  timeval timeout{};
+  timeout.tv_sec = timeout_ms / 1000;
+  timeout.tv_usec = (timeout_ms % 1000) * 1000;
+  return ::setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeout,
+                      sizeof(timeout)) == 0;
+#endif
+}
+
+PeerReceiveState QueryPeerReceiveState(Socket socket) noexcept {
+  if (socket == kInvalidSocket)
+    return PeerReceiveState::kClosed;
+#if defined(_WIN32)
+#if defined(SIO_TCP_INFO) && defined(NTDDI_WIN10_RS2) && \
+    NTDDI_VERSION >= NTDDI_WIN10_RS2
+  DWORD version = 0;
+  DWORD returned = 0;
+  TCP_INFO_v0 info{};
+  if (WSAIoctl(socket, SIO_TCP_INFO, &version, sizeof(version), &info,
+               sizeof(info), &returned, nullptr, nullptr) != 0)
+    return PeerReceiveState::kError;
+  if (returned < sizeof(info.State)) {
+    WSASetLastError(WSAEINVAL);
+    return PeerReceiveState::kError;
+  }
+  switch (info.State) {
+    case TCPSTATE_CLOSED:
+    case TCPSTATE_CLOSE_WAIT:
+    case TCPSTATE_CLOSING:
+    case TCPSTATE_LAST_ACK:
+    case TCPSTATE_TIME_WAIT:
+      return PeerReceiveState::kClosed;
+    default:
+      return PeerReceiveState::kOpen;
+  }
+#else
+  WSASetLastError(WSAEOPNOTSUPP);
+  return PeerReceiveState::kError;
+#endif
+#elif defined(POLLRDHUP)
+  pollfd descriptor{.fd = socket, .events = POLLRDHUP, .revents = 0};
+  if (::poll(&descriptor, 1, 0) < 0)
+    return PeerReceiveState::kError;
+  if ((descriptor.revents & POLLNVAL) != 0) {
+    errno = EBADF;
+    return PeerReceiveState::kError;
+  }
+  if ((descriptor.revents & POLLERR) != 0) {
+    int error = 0;
+    socklen_t size = sizeof(error);
+    if (::getsockopt(socket, SOL_SOCKET, SO_ERROR, &error, &size) == 0)
+      errno = error != 0 ? error : ECONNRESET;
+    return PeerReceiveState::kError;
+  }
+  return (descriptor.revents & (POLLRDHUP | POLLHUP)) != 0
+             ? PeerReceiveState::kClosed
+             : PeerReceiveState::kOpen;
+#else
+  errno = ENOTSUP;
+  return PeerReceiveState::kError;
 #endif
 }
 

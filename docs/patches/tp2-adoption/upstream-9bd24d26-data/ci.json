@@ -1,0 +1,45 @@
+{
+  "Repository checks": {
+    "databaseId": 41524577980,
+    "headSha": "75de9f82234da17257321db81bd13e914ea2dbb6",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/LostVector/gufo/actions/runs/41524577980",
+    "jobs": [
+      {
+        "name": "Run CPU and repository checks",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Warm Linux package cache / Linux package",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "Windows validation": {
+    "databaseId": 41524799587,
+    "headSha": "75de9f82234da17257321db81bd13e914ea2dbb6",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/LostVector/gufo/actions/runs/41524799587",
+    "jobs": [
+      {
+        "name": "Check Windows extension contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build / Windows package",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run Windows model checks",
+        "status": "completed",
+        "conclusion": "skipped"
+      }
+    ]
+  }
+}

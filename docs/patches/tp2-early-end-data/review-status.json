@@ -1,0 +1,19 @@
+{
+  "production_code": "dd9449e690f5ff4e916c05b3e2be2397e05fd217",
+  "CI": {
+    "41412883568": {
+      "conclusion": "",
+      "headSha": "dd9449e690f5ff4e916c05b3e2be2397e05fd217",
+      "status": "in_progress"
+    },
+    "41412886725": {
+      "conclusion": "",
+      "headSha": "dd9449e690f5ff4e916c05b3e2be2397e05fd217",
+      "status": "in_progress"
+    }
+  },
+  "local_correctness_and_failure_qualification": "PASS; fresh smoke/lifecycle,100 matched primary identities,60 wider controls,live EIO and peer loss with independent exact recovery.",
+  "timing": "Primary completion-tail benefit supported.65 primary-study phase entries/37 work fields plus6 wider entries/25 work fields retained; broader timing unqualified. No throughput gain or equivalence.",
+  "review_state": "Draft while repository/Windows CI pending. Not adopted into maintained tp2.",
+  "updated": "2026-11-02T08:39:51.762543+00:00"
+}

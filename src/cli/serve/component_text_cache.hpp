@@ -11,13 +11,13 @@
 #include "src/cache/streaming.hpp"
 #include "src/cli/serve/component_cache_metrics.hpp"
 #include "src/cli/serve/continuation_cache.hpp"
+#include "src/cli/serve/continuation_types.hpp"
 #include "src/cli/serve/text_publication_wait.hpp"
 
 namespace gufo::server {
 using ext::TextModelRunner;
 using ext::TextPromptContext;
 using ext::TextRunnerDiskCacheOptions;
-using ext::TextRunnerSnapshot;
 using ext::TextRunnerState;
 
 // The capture/backing contracts are cache-owned (RFC step 6); these aliases
@@ -44,20 +44,21 @@ public:
     [[nodiscard]] bool restored_from_disk() const noexcept;
     [[nodiscard]] ContinuationLookup lookup() const noexcept;
     [[nodiscard]] bool HasSnapshotFor(std::span<const ContinuationToken>) const;
-    [[nodiscard]] bool TryReserveSnapshot(std::size_t, std::size_t, bool,
-                                          SnapshotPurpose,
-                                          std::span<const ContinuationToken>);
+    [[nodiscard]] bool TryReserveSnapshot(
+        std::size_t, std::size_t, bool = false,
+        SnapshotPurpose = SnapshotPurpose::kContinuation,
+        std::span<const ContinuationToken> = {});
     void SkipSnapshot(SnapshotEventReason, std::size_t, std::size_t) noexcept;
     std::size_t PublishSnapshot(std::vector<ContinuationToken>,
                                 std::shared_ptr<const ContinuationSnapshot>,
-                                bool);
+                                bool = false);
     std::size_t Commit(std::vector<ContinuationToken>,
-                       std::shared_ptr<const ContinuationSnapshot>,
-                       std::vector<ContinuationToken>);
+                       std::shared_ptr<const ContinuationSnapshot> = {},
+                       std::vector<ContinuationToken> = {});
     void Invalidate() noexcept;
     [[nodiscard]] std::size_t CaptureBytes() const;
     [[nodiscard]] std::size_t CaptureBytes(std::size_t boundary) const;
-    [[nodiscard]] std::unique_ptr<TextRunnerSnapshot> Capture();
+    [[nodiscard]] std::unique_ptr<ContinuationSnapshot> Capture();
     void PreparePrefill(std::size_t tokens);
     [[nodiscard]] ComponentCacheMetrics Metrics() const;
     [[nodiscard]] std::vector<std::size_t> PlannedCaptures(
@@ -67,6 +68,11 @@ public:
     friend class ComponentTextCache;
     std::unique_ptr<Impl> impl_;
   };
+  // Ledger room for index and request metadata when the RAM cache is off. It
+  // caps accounting only; the memory is not reserved. A caller sizing the
+  // ledger from host RAM keeps at least this much, so a host short of its
+  // reserve still loads the model with the cache off.
+  static constexpr std::size_t kOffMetadataBytes = std::size_t{64} << 20;
   // Slots allocate under the larger of ram_bytes and ceiling_bytes, so a
   // smaller budget does not refuse what they pin. The RAM limit then becomes
   // the budget plus those pins, within the host ceiling. With `ram_enabled`
@@ -79,8 +85,7 @@ public:
                      bool ram_enabled = true);
   ~ComponentTextCache();
   [[nodiscard]] std::unique_ptr<Lease> Acquire(
-      std::span<const ContinuationToken>,
-      const ContinuationCache::CancellationCheck&,
+      std::span<const ContinuationToken>, const std::function<bool()>&,
       std::shared_ptr<const TextPromptContext>, bool, std::size_t, bool,
       bool persist = true);
   // A disk job is writing a prefix of the prompt much deeper than any
@@ -93,7 +98,21 @@ public:
   [[nodiscard]] std::size_t CachedPrefixTokens(
       std::span<const ContinuationToken>, const TextPromptContext*,
       bool common = false) const;
+  // Re-tokenizing a conversation can split a previous answer differently from
+  // the tokens the model sampled, and a recurrent frontier cannot rewind to
+  // the first difference (#1154). When the prompt repeats the whole text of an
+  // idle live frontier, replace that part with the frontier's own tokens.
+  // With `trimmed` (a chat template rendered the prompt), whitespace it trimmed
+  // from the edges of a reply stays as the model generated it; whitespace
+  // missing anywhere else is an edit. A frontier ending inside a prompt token
+  // continues with the rest of that token. `stable` follows the rewrite, and
+  // the prompt stays below `max_tokens`. Returns whether the prompt changed.
+  bool AlignToLiveFrontier(std::vector<ContinuationToken>& prompt,
+                           std::size_t& stable, std::size_t max_tokens,
+                           bool trimmed) const;
   [[nodiscard]] std::size_t capacity() const noexcept;
+  // RAM the cache may retain after host limits; zero with the RAM cache off.
+  [[nodiscard]] std::size_t ram_budget() const noexcept;
 
 private:
   std::unique_ptr<Impl> impl_;
@@ -113,6 +132,8 @@ public:
     return component_ || bool(legacy_);
   }
   [[nodiscard]] bool component() const noexcept { return bool(component_); }
+  ServingCacheLease* operator->() noexcept { return this; }
+  const ServingCacheLease* operator->() const noexcept { return this; }
   [[nodiscard]] ContinuationState& state() const;
   [[nodiscard]] bool cache_hit() const noexcept;
   [[nodiscard]] std::size_t cached_tokens() const noexcept;
@@ -134,9 +155,11 @@ public:
                      std::shared_ptr<const ContinuationSnapshot> = {},
                      std::vector<ContinuationToken> = {});
   void Invalidate() noexcept;
+  /// False only for a legacy cache with the RAM snapshot tier off.
+  [[nodiscard]] bool retains_snapshots() const noexcept;
   [[nodiscard]] std::size_t CaptureBytes() const;
   [[nodiscard]] std::size_t CaptureBytes(std::size_t boundary) const;
-  [[nodiscard]] std::unique_ptr<TextRunnerSnapshot> Capture();
+  [[nodiscard]] std::unique_ptr<ContinuationSnapshot> Capture();
   void PreparePrefill(std::size_t tokens);
   [[nodiscard]] std::optional<ComponentCacheMetrics> Metrics() const;
   [[nodiscard]] std::vector<std::size_t> PlannedCaptures(

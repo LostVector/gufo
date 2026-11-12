@@ -78,31 +78,9 @@ private:
   bool invalidated_{false};
 };
 
-class FakeSnapshot final : public gufo::ext::ContinuationSnapshot {
-public:
-  explicit FakeSnapshot(const gufo::ext::ContinuationState* preferred)
-      : preferred_(preferred) {}
-  [[nodiscard]] std::size_t PayloadBytes() const noexcept override {
-    return 4096;
-  }
-  [[nodiscard]] bool PrefersState(
-      const gufo::ext::ContinuationState& state) const noexcept override {
-    return &state == preferred_;
-  }
-
-private:
-  const gufo::ext::ContinuationState* preferred_;
-};
-
 void CheckContinuationBases() {
   FakeState state;
-  FakeSnapshot snapshot(&state);
   gufo::ext::ContinuationState& base = state;
-  gufo::ext::ContinuationSnapshot& snapshot_base = snapshot;
-  Expect(snapshot_base.PayloadBytes() == 4096, "snapshot payload bytes");
-  Expect(snapshot_base.PrefersState(base), "snapshot prefers its own state");
-  FakeSnapshot unrelated(nullptr);
-  Expect(!unrelated.PrefersState(base), "unrelated snapshot prefers nothing");
   base.Invalidate();
   Expect(state.invalidated(), "Invalidate reaches the model implementation");
 
@@ -198,6 +176,8 @@ void CheckModalProviders() {
   gufo::ext::RegisterTextProvider({.id = "test-text"});
   Expect(gufo::ext::FindTextProvider("test-text") != nullptr,
          "registered text provider is discoverable by id");
+  Expect(gufo::ext::FindTextProvider("test-text")->create_parallel == nullptr,
+         "ordinary providers require no parallel transport");
   gufo::ext::RegisterAsrProvider({.id = "test-asr"});
   Expect(gufo::ext::FindAsrProvider("test-asr") != nullptr,
          "find asr provider");

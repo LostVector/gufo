@@ -17,6 +17,9 @@ function(add_qwen38_flash_next_test name library labels)
   set(target qwen38_flash_next_${name}_test)
   add_executable(${target} ${name}_test.cpp)
   target_link_libraries(${target} PRIVATE ${library})
+  if (library STREQUAL "gufo_qwen38_flash_next_hip")
+    target_link_libraries(${target} PRIVATE hip::host gufo_core)
+  endif()
   add_test(NAME qwen38_flash_next.${name} COMMAND ${target})
   set_tests_properties(qwen38_flash_next.${name} PROPERTIES
     LABELS "qwen38_flash_next;${labels}")
@@ -24,17 +27,21 @@ function(add_qwen38_flash_next_test name library labels)
 endfunction()
 
 add_qwen38_flash_next_test(runner_options gufo_qwen38_flash_next "cpu")
+add_qwen38_flash_next_test(probe gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(config gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(continuation_layout gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(ngram gufo_qwen38_flash_next "cpu")
+add_qwen38_flash_next_test(tp_partition gufo_qwen38_flash_next "cpu")
+add_qwen38_flash_next_test(rdma_gid gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(mtp_sampling gufo_core "cpu")
 add_qwen38_flash_next_test(rope_scaling gufo_qwen38_flash_next "cpu")
 # The HF-oracle/off-bit-identity checks link the scalar model oracle, so
 # (like ngram) this stays out of cmake/Checks.cmake's hosted check-pr set.
 add_qwen38_flash_next_test(rope_scaling_oracle
   gufo_qwen38_flash_next_reference "cpu")
-add_qwen38_flash_next_test(draft_vocab gufo_core "cpu")
 add_qwen38_flash_next_test(prompt_lookup gufo_core "cpu")
+add_qwen38_flash_next_test(dflash_donor gufo_qwen_dflash "cpu;dflash2;correctness")
+add_qwen38_flash_next_test(dflash_lookup gufo_core "cpu;dflash2;correctness")
 
 add_executable(qwen38_flash_next_reference_probe EXCLUDE_FROM_ALL reference_probe.cpp)
 target_link_libraries(qwen38_flash_next_reference_probe PRIVATE
@@ -42,15 +49,56 @@ target_link_libraries(qwen38_flash_next_reference_probe PRIVATE
 set_source_files_properties(reference_probe.cpp PROPERTIES COMPILE_OPTIONS "-O2")
 
 if (ENGINE_ENABLE_HIP)
+  add_executable(qwen38_flash_next_dflash_trace EXCLUDE_FROM_ALL dflash_trace.cpp)
+  target_link_libraries(qwen38_flash_next_dflash_trace PRIVATE
+    gufo_qwen38_flash_next_hip gufo_qwen38_flash_next_reference hip::host gufo_core)
+  add_qwen38_flash_next_test(dflash_prototype gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;correctness")
+  set_target_properties(qwen38_flash_next_dflash_prototype_test PROPERTIES
+    EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_prototype PROPERTIES
+    SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_sampled gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;correctness")
+  set_target_properties(qwen38_flash_next_dflash_sampled_test PROPERTIES
+    EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_sampled PROPERTIES
+    SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_lookup_model gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;correctness")
+  set_target_properties(qwen38_flash_next_dflash_lookup_model_test PROPERTIES
+    EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_lookup_model PROPERTIES
+    SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_owned gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;correctness")
+  set_target_properties(qwen38_flash_next_dflash_owned_test PROPERTIES EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_owned PROPERTIES SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_component gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;external-model;cache;correctness")
+  set_target_properties(qwen38_flash_next_dflash_component_test PROPERTIES EXCLUDE_FROM_ALL TRUE)
+  set_tests_properties(qwen38_flash_next.dflash_component PROPERTIES SKIP_RETURN_CODE 77)
+  add_qwen38_flash_next_test(dflash_features gufo_qwen38_flash_next_hip
+    "gpu;hip;dflash2;correctness")
   add_library(qwen38_flash_next_test_hip INTERFACE)
   target_link_libraries(qwen38_flash_next_test_hip INTERFACE
     gufo_qwen38_flash_next_hip gufo_qwen38_flash_next_mmq hip::host)
   target_compile_definitions(qwen38_flash_next_test_hip INTERFACE ENGINE_ENABLE_HIP=1)
   foreach(name IN ITEMS mtp_ops blaslt_ops hc_mix_ops hc_route_ops gdn_ops
       attention_ops moe_epilogue_ops moe_ids_ops projection_ops routed_wmma_ops
-      select_ops snapshot_copy verification_sampling)
+      select_ops snapshot_copy verification_sampling wide_verification)
     add_qwen38_flash_next_test(${name} qwen38_flash_next_test_hip "hip;gpu;gfx1151")
   endforeach()
+  target_link_libraries(qwen38_flash_next_mtp_ops_test PRIVATE
+    gufo_qwen_kernels)
+  target_link_libraries(qwen38_flash_next_hc_mix_ops_test PRIVATE
+    gufo_qwen38_flash_next_mmq)
+  # Reuse the synthetic model fixture, with short prompts around a reduced
+  # sparse budget. This exercises actual Executor capture/replay without GGUFs.
+  add_test(NAME qwen38_flash_next.decode_graph
+    COMMAND qwen38_flash_next_wide_verification_test --decode-graph-only)
+  set_tests_properties(qwen38_flash_next.decode_graph PROPERTIES
+    LABELS "qwen38_flash_next;hip;gpu;gfx1151")
   # The rope phase and RMS checks compare against the scalar CPU oracle.
   target_link_libraries(qwen38_flash_next_attention_ops_test PRIVATE
     gufo_qwen38_flash_next_reference)
@@ -67,13 +115,52 @@ if (ENGINE_ENABLE_HIP)
     device_headroom_fault.cpp)
   target_link_libraries(qwen38_flash_next_continuation_adapter_test PRIVATE
     qwen38_flash_next_test_hip ${CMAKE_DL_LIBS})
+  # In-pass checkpoints through the component path against split passes, in
+  # AR and MTP modes. Build it with qwen38_flash_next_model_tests. It needs
+  # the model: QWEN38_FLASH_NEXT_MODEL names the first GGUF shard and
+  # QWEN38_FLASH_NEXT_MTP_MODEL the MTP head. Without them it is skipped.
+  add_test(NAME qwen38_flash_next.in_pass_checkpoints
+    COMMAND qwen38_flash_next_continuation_adapter_test --in-pass-only)
+  set_tests_properties(qwen38_flash_next.in_pass_checkpoints PROPERTIES
+    LABELS "qwen38_flash_next;hip;gpu;gfx1151;external-model"
+    SKIP_RETURN_CODE 77
+    RUN_SERIAL TRUE
+    TIMEOUT 1800)
+  # Layered prefill (SetPrefillYield) against lone runs, in AR and MTP modes.
+  # Built with qwen38_flash_next_model_tests; needs the same model variables
+  # and is skipped without them.
+  add_executable(qwen38_flash_next_layered_prefill_test EXCLUDE_FROM_ALL
+    layered_prefill_test.cpp)
+  target_link_libraries(qwen38_flash_next_layered_prefill_test PRIVATE
+    gufo_test_support qwen38_flash_next_test_hip)
+  add_test(NAME qwen38_flash_next.layered_prefill
+    COMMAND qwen38_flash_next_layered_prefill_test)
+  set_tests_properties(qwen38_flash_next.layered_prefill PROPERTIES
+    LABELS "qwen38_flash_next;hip;gpu;gfx1151;external-model"
+    SKIP_RETURN_CODE 77
+    RUN_SERIAL TRUE
+    TIMEOUT 1800)
   add_executable(qwen38_flash_next_continuation_probe EXCLUDE_FROM_ALL
     continuation_probe.cpp)
   target_link_libraries(qwen38_flash_next_continuation_probe PRIVATE
     qwen38_flash_next_test_hip)
   add_custom_target(qwen38_flash_next_model_tests
     DEPENDS qwen38_flash_next_session_test qwen38_flash_next_snapshot_test
-      qwen38_flash_next_continuation_adapter_test)
+      qwen38_flash_next_continuation_adapter_test
+      qwen38_flash_next_layered_prefill_test)
+
+  add_executable(qwen38_flash_next_tp_probe EXCLUDE_FROM_ALL tp_probe.cpp)
+  target_link_libraries(qwen38_flash_next_tp_probe PRIVATE
+    gufo_qwen38_flash_next_hip hip::host)
+
+  # Batched-decode probe: the same program on both ranks over one RDMA pair,
+  # with no control channel, scheduler or executor.
+  if (GUFO_ENABLE_TP2_RDMA)
+    add_executable(qwen38_flash_next_tp_batched_probe EXCLUDE_FROM_ALL
+      tp_batched_probe.cpp)
+    target_link_libraries(qwen38_flash_next_tp_batched_probe PRIVATE
+      gufo_qwen38_flash_next_hip hip::host)
+  endif()
 
   add_executable(qwen38_flash_next_dense_gemm_bench EXCLUDE_FROM_ALL
     dense_gemm_bench.cpp)
@@ -103,4 +190,11 @@ if (ENGINE_ENABLE_HIP)
     mtp_audit.cpp)
   target_link_libraries(qwen38_flash_next_gpu_probe PRIVATE
     gufo_qwen38_flash_next_reference qwen38_flash_next_test_hip)
+endif()
+
+# Requires two real native RDMA peers; intentionally outside automatic CTest.
+if (ENGINE_ENABLE_HIP AND GUFO_ENABLE_TP2_RDMA)
+  add_executable(qwen38_flash_next_ple_owner_probe EXCLUDE_FROM_ALL ple_owner_probe.cpp)
+  target_link_libraries(qwen38_flash_next_ple_owner_probe PRIVATE
+    qwen38_flash_next_test_hip gufo_qwen38_flash_next_rdma)
 endif()

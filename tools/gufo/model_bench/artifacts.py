@@ -1,4 +1,4 @@
-"""Retained per-table JSON artifacts under docs/models/<model>/artifacts."""
+"""Retained per-table JSON artifacts under docs/internal/models/<model>/artifacts."""
 
 from __future__ import annotations
 
@@ -29,8 +29,20 @@ def load_artifact(path: Path) -> dict[str, Any] | None:
 
 
 def public_command(command: list[str]) -> list[str]:
-    """Server command with file paths reduced to their basenames."""
-    return [Path(part).name if "/" in part else part for part in command]
+    """Server command with file paths reduced and credentials removed."""
+    redacted: list[str] = []
+    hide_next = False
+    secret_options = {"--tp-control-token", "--tp-bootstrap-host", "--api-key"}
+    for part in command:
+        if hide_next:
+            redacted.append("<redacted>")
+            hide_next = False
+        elif part in secret_options:
+            redacted.append(part)
+            hide_next = True
+        else:
+            redacted.append(Path(part).name if "/" in part else part)
+    return redacted
 
 
 def new_artifact(

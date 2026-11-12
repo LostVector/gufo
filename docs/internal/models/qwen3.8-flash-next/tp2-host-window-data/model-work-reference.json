@@ -1,0 +1,9 @@
+{
+  "path": "/home/rkuo/strix-dispatch-investigation/results/model-scaling/batched-target-head-c2-pilot-v1-b1-baseline.jsonl",
+  "sha256": "57beba3ab63b2319ed417700a85c0f53736f7b8c6beb86e85daff3f9502f48f4",
+  "binary": {
+    "name": "gufo-target-head-gather-mtp-abort-v1",
+    "sha256": "6c4f1403d57549e712d70b3c18b36585388b8198712bec0a84c04083afd533ae"
+  },
+  "scope": "Actual immediate6c4fparent, identical12requesthistory/model/settings; legacy canonical reference was3c policy, unsuitable for comparing speculative work."
+}

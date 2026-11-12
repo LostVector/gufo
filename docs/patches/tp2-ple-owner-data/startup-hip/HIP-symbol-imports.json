@@ -1,0 +1,18 @@
+{
+  "gufo-tp2-published-fbacf9cc": [
+    "U hipEventSynchronize@hip_4.2",
+    "U hipGraphLaunch@hip_4.3",
+    "U hipHostMalloc@hip_4.2",
+    "U hipMalloc@hip_4.2",
+    "U hipMemcpyAsync@hip_4.2",
+    "U hipStreamSynchronize@hip_4.2"
+  ],
+  "gufo-tp2-cooperative-ple-85586a63-release": [
+    "U hipEventSynchronize@hip_4.2",
+    "U hipGraphLaunch@hip_4.3",
+    "U hipHostMalloc@hip_4.2",
+    "U hipMalloc@hip_4.2",
+    "U hipMemcpyAsync@hip_4.2",
+    "U hipStreamSynchronize@hip_4.2"
+  ]
+}
