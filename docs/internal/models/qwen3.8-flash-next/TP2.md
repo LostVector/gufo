@@ -7,7 +7,45 @@ libibverbs and the build option `GUFO_ENABLE_TP2_RDMA` (off by default). Its
 measurements are in [EXPERIMENTS.md](EXPERIMENTS.md#tp2), not in the published
 one-host tables.
 
-## Current fork checkpoint
+## Local upstream reconciliation, November 11, 2026
+
+The local `sync/gufo-upstreams-2026-11-11` branch combines canonical
+`4b030049` with the maintained fork and reviewed Neuhaus changes through
+`f070a179`. This is semantic intake, not a merge of all Neuhaus history, and
+has not been pushed or deployed. The extension API is 0.3.2. Control wire22
+preserves the requested logprobs count, distinguishing absent from explicit
+zero; both ranks need the matching build. See the
+[qualification record](upstream-refresh-data/qualification.json) for exact
+binary identities, completed checks and remaining failures.
+
+Native tests use the existing private ROCm 7.14.1 toolchain, Q4_K_XL target,
+shared-Q8 MTP or Q8 DFlash2, 64K capacity, two slots and 1 GiB RAM cache.
+The existing container recipes have not been rebuilt or qualified for this
+integration. Neither native qualification nor these notes change the host
+ROCm, kernel, driver or boot configuration.
+
+The approved driver profile deliberately uses host windows with
+`dmabuf_verbs=0`, TX32 and no active polling. Each of two cable links reports
+`rx_speed=tx_speed=10.0 Gb/s`, `rx_lanes=tx_lanes=2`; retain both fields when
+comparing runs. Historical 40+20 Gb/s results below use another link state.
+
+The model-owned execution path warns that `--prefill-chunk` and
+`--draft-tokens` are ignored. Check the loaded model's draft limit and actual
+prefill work; matching obsolete command-line values does not establish a
+matched execution configuration. TP2 retains coordinated model-owned snapshots
+through the explicit legacy adapter; one-host serving keeps the canonical
+component cache. Unmirrored in-pass captures and layer-yield hooks stay disabled.
+
+The isolated literal-history test still fails on TP2: it appends a warning
+after `DONE`. The deployed pre-refresh binary produces the identical 47-token
+continuation for the same uncached HTTP request, so this behavior predates the
+refresh. The failure is retained, not waived. Actual prepared IDs match TP1/TP2;
+a real-engine probe reproduces a close stop/newline ranking reversal without
+HTTP, cache reuse or MTP. Captured last-row values match between TP2 ranks
+and between paired/serial execution. These checks identify no faulty operator
+and do not qualify all numerical behavior or performance.
+
+## Previously qualified fork checkpoint
 
 The maintained combined branch is `tp2`; fork `main` mirrors `gufo-org/gufo`.
 The November2 compatibility intake includes canonical `9bd24d26`, native RDMA,
@@ -23,10 +61,12 @@ admission/capacity checks; [earlier records](../../../patches/tp2-adoption/upstr
 preserve their actual32K continuation and inconclusive startup timings.
 Independent Q8-reuse and fused-HC drafts remain excluded.
 
-The validated baseline uses matched wire22 builds and registered host windows
-(`dmabuf_verbs=0` in the driver setup). GPU DMA-BUF registration being refused in
-this baseline is expected; separate descriptor-mode experiments use another
-transport configuration. Older DMA-BUF/wire8 descriptions below are historical.
+The previously qualified source `75de9f82` uses control wire21 and registered
+host windows (`dmabuf_verbs=0`). The new control wire22 above requires upgrading
+both ranks together; no mixed-build compatibility is implied. GPU DMA-BUF
+registration being refused in the host-window profile is expected. Separate
+descriptor-mode experiments use another transport configuration. Older
+DMA-BUF/bootstrap-wire8 descriptions below are historical.
 
 The tested text-serving configuration is UD-Q4_K_XL target/shared-Q8_0 MTP,
 `--context 65536 --sessions 2 --prefill-chunk 2048`,
@@ -82,7 +122,7 @@ candidates. Both ranks must use the same link layer. Each rank logs its choice a
 ### USB4
 
 Two Strix Halo hosts linked by USB4 cables can run TP2 without network cards:
-[thunderbolt-ibverbs](https://github.com/neuhaus/donnerkeule/tree/feat/write-striping)
+[thunderbolt-ibverbs](https://github.com/neuhaus/donnerkeule)
 turns each cable's DMA rings into RoCE v2 RDMA devices. Its write striping
 spreads Gufo's single QP over every ring of every cable to the other host;
 without it a QP stays on one ring (about 10 Gbit/s). With two 40 Gb/s cables
@@ -93,28 +133,43 @@ it reaches 44 Gbit/s one way. Load it with an IPv4 address on its
 sudo ip link add tbv0 type dummy
 sudo ip addr add 10.77.0.1/24 dev tbv0 && sudo ip link set tbv0 up   # .2 on rank 1
 sudo modprobe thunderbolt_ibverbs profile=linux_perf tbnet=prefer_rdma \
-  lanes=2 register_verbs=1 roce_netdev=tbv0 native_write_striping=1
+  bind_services=1 allocate_rings=1 start_rings=1 negotiate_native=1 \
+  enable_tunnels=1 lanes=2 register_verbs=1 roce_netdev=tbv0 \
+  native_write_striping=1
 ibv_devices                        # usb4_rdma0 .. usb4_rdma3 with two cables
 build/gpu-tp2/gufo serve llm ... --tp-rdma-device usb4_rdma0
 ```
 
-Both ranks produce output identical to InfiniBand. Against FDR InfiniBand
+Service binding and ring/native negotiation must be enabled or this driver
+registers no verbs devices. Memory registration also needs sufficient
+`memlock`: a typical 8 MiB limit is insufficient. The container user units
+set `--ulimit memlock=-1`; native service limits must permit the required
+pinned memory too. These are setup requirements, not commands to reload a
+running cluster. Use the driver revision's matching setup procedure.
+
+In the [upstream USB4 comparison](https://github.com/neuhaus/gufo/blob/f070a179c628a7409a5cee8e07b1ca76f1f7e660/docs/models/qwen3.8-flash-next/TP2.md#usb4),
+both ranks produced output identical to InfiniBand. Against FDR InfiniBand
 (ConnectX-3, PCIe 3.0 x4), Q4 with a 25.8k-token prompt prefilled at 1824
 against 1892 tok/s and decoded at 32.6 against 34.5 tok/s; USB4 costs more
 CPU (several cores in kernel workers) and latency per exchange. The links
-must train at 2 × 20 Gb/s; check `rx_speed` and `rx_lanes` in
-`/sys/bus/thunderbolt/devices/*/` after plugging.
+can train at Gen2 or Gen3: record `rx_speed`, `tx_speed`, `rx_lanes` and
+`tx_lanes` in `/sys/bus/thunderbolt/devices/*/` after plugging. A link at
+2 × 10 Gb/s is usable; do not reject it solely for missing Gen3. Published
+results from a different host pair do not measure this cluster's bandwidth.
 
 #### Device windows over USB4
 
-The speedup needs the experimental driver mode of thunderbolt-ibverbs
-(branch `codex/gpu-verbs-checkpoint`, not the default), loaded on both hosts
-with `dmabuf_verbs=1 dmabuf_push_done=1 dmabuf_credits=1` (direct post is on by
-default there). With it a GPU window registers as a DMA-BUF, the receiver's
+The historical device-window tests below use DMA-BUF verbs support, now
+present in the referenced driver's `main` but disabled by default. They use
+`dmabuf_verbs=1 dmabuf_push_done=1 dmabuf_credits=1` and matching board options
+on both hosts. This is separate from the approved host-window profile above.
+Gufo registers each exchange window separately to stay within the driver's
+per-export size limit. With it a GPU window registers as a DMA-BUF, the receiver's
 posted windows arm SEND credits, and the sender skips the per-exchange PREPARE
 round trip. The stock driver refuses `ibv_reg_dmabuf_mr`, so Gufo logs
 `windows=host_write (ibv_reg_dmabuf_mr: Operation not supported)` and runs as
-before; the driver mode never changes results, only exchange latency.
+before. Validate payloads and model behavior before comparing timings;
+a lower exchange latency does not establish an end-to-end inference gain.
 Both ranks must run the same Gufo build (bootstrap wire version 8) and agree on
 the driver mode, or the pair falls back to host windows.
 
