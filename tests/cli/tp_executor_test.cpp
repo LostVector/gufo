@@ -948,9 +948,62 @@ gufo::sampling::SamplingConfig Sampled() {
   return config;
 }
 
+// Exercise the real TP wrapper, not just the standalone gate. The local
+// instruction sink checks scheduling/ownership; it is not a transport
+// benchmark.
+void TestPrefillWaitsOutsideCallMutexForPendingSnapshot() {
+  auto toy = std::make_shared<ToyRunner>(ToyOptions{.cache = true});
+  auto sink = std::make_shared<CaptureSink>();
+  auto runner = std::make_shared<TpMirroredRunner>(toy, sink);
+  auto captured_state = runner->CreateState();
+  auto prefill_state = runner->CreateState();
+  runner->BeginRequest(7);
+  runner->BeginRequest(8);
+  runner->SetPromptContext(*captured_state,
+                           std::make_shared<TpRequestContext>(7));
+  runner->SetPromptContext(*prefill_state,
+                           std::make_shared<TpRequestContext>(8));
+  const std::vector<TextRunnerToken> prompt{4, 5, 6};
+  (void)runner->Prefill(*captured_state, prompt, 0, prompt.size());
+  auto pending = runner->ReserveAsyncSnapshot();
+  std::promise<void> attempting;
+  auto started = attempting.get_future();
+  auto prefill = std::async(std::launch::async, [&] {
+    attempting.set_value();
+    return runner->Prefill(*prefill_state, prompt, 0, prompt.size());
+  });
+  started.wait();
+  const bool blocked = prefill.wait_for(std::chrono::milliseconds(50)) ==
+                       std::future_status::timeout;
+  auto capture = std::async(std::launch::async,
+                            [&] { return runner->Snapshot(*captured_state); });
+  const bool captured_before_release =
+      capture.wait_for(std::chrono::seconds(5)) == std::future_status::ready;
+  const bool still_pending =
+      prefill.wait_for(std::chrono::seconds(0)) == std::future_status::timeout;
+  // Release before bounded checks. A misplaced wait may deadlock capture;
+  // fail by deadline instead of calling get() on an unfinished future.
+  pending.reset();
+  Require(captured_before_release,
+          "TP prefill waits outside call_mutex so capture can acquire it");
+  Require(
+      prefill.wait_for(std::chrono::seconds(5)) == std::future_status::ready &&
+          capture.wait_for(std::chrono::seconds(5)) ==
+              std::future_status::ready,
+      "prefill and capture settle after the reservation releases");
+  const auto step = prefill.get();
+  const auto snapshot = capture.get();
+  Require(blocked && still_pending,
+          "TP prefill cannot pass a pending snapshot reservation");
+  Require(step.consumed_tokens == prompt.size() && toy->prefill_calls() == 2 &&
+              snapshot && runner->CanReuse(*snapshot),
+          "priority preserves exact prefill work and snapshot reuse");
+}
+
 }  // namespace
 
 int main() {
+  TestPrefillWaitsOutsideCallMutexForPendingSnapshot();
   {
     auto toy = std::make_shared<ToyRunner>(ToyOptions{});
     const TpMirroredRunner runner(toy, std::make_shared<CaptureSink>());

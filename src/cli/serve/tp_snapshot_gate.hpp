@@ -7,10 +7,9 @@
 
 namespace gufo::server {
 
-// Decode waits outside the existing recursive call mutex, allowing an already
-// waiting snapshot or completed request to acquire it before another decode
-// or advance call.
-// This does not preempt an active call or impose ordering on prefill.
+// Decode and prefill wait outside the existing recursive call mutex, allowing
+// an already waiting snapshot or completed request to acquire it before another
+// decode or advance call. This does not preempt an active call.
 class TpSnapshotGate {
 public:
   // A fallback DecodeStep may hold the call mutex while calling Advance.

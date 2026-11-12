@@ -878,6 +878,7 @@ void TpMirroredRunner::PrepareBatchExecution(TextRunnerState& state) const {
 TextPrefillStep TpMirroredRunner::Prefill(
     TextRunnerState& state, std::span<const TextRunnerToken> prompt,
     std::size_t offset, std::size_t max_input_tokens) const {
+  const TpSnapshotGate::Turn turn(snapshot_gate_);
   const std::lock_guard<std::recursive_mutex> call_lock(call_mutex_);
   auto& mirrored = Mirrored(state);
   if (offset >= prompt.size() || max_input_tokens == 0) {
