@@ -129,7 +129,11 @@ int main(int argc, char** argv) {
           config.seed = 513;
           config.repeat_penalty = 1.1F;
         }
+        const auto subset_before = session->DFlashSubsetBlocks();
         const auto first = Generate(*session, config, error);
+        if (draft->DraftPrefixRows() != 0)
+          Require(session->DFlashSubsetBlocks() > subset_before,
+                  "owned DFlash did not execute the shared small head");
         if (mode == 0) {
           sampling::SamplerState greedy;
           std::vector<std::int32_t> expected;

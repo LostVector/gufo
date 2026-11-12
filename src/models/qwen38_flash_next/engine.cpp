@@ -142,6 +142,34 @@ struct Session::DFlashState {
     const auto header = Validate(bytes, expected);
     executor->RestorePersistentSnapshot(bytes.subspan(sizeof(header)));
     controller.Restore(header.mean, header.last_full_width);
+    draft_vocab_stale = true;
+  }
+  speculative::DraftVocab draft_vocab;
+  std::vector<std::int32_t> draft_added;
+  bool draft_vocab_stale{true};
+  std::uint64_t subset_blocks{0};
+  bool UseDraftSubset(std::span<const std::int32_t> committed,
+                      std::int32_t anchor) {
+    const auto& model = executor->GetModel();
+    if (model.DraftPrefixRows() == 0)
+      return false;
+    const auto specials =
+        static_cast<std::uint32_t>(model.DraftSpecials().size());
+    if (draft_vocab_stale || draft_vocab.scanned() > committed.size()) {
+      executor->ClearDraftRows(specials);
+      draft_vocab =
+          speculative::DraftVocab(speculative::kDraftVocabExtraRows - specials);
+      draft_vocab_stale = false;
+    }
+    const auto common = [&](std::int32_t token) {
+      return token >= 0 &&
+             model.InDraftSubset(static_cast<tokenization::TokenId>(token));
+    };
+    const auto tabled = static_cast<std::uint32_t>(draft_vocab.rare().size());
+    draft_added.clear();
+    draft_vocab.CatchUp(committed, common, &draft_added);
+    executor->AppendDraftRows(specials + tabled, draft_added);
+    return draft_vocab.Fits(anchor, common);
   }
   std::unique_ptr<hip::QwenDFlashGpuExecutor> executor;
   float* features{nullptr};
@@ -152,8 +180,10 @@ struct Session::DFlashState {
       (void)hipFree(features);
   }
   bool Consume(std::uint32_t position, std::uint32_t rows, std::string* error) {
-    if (position == 0)
+    if (position == 0) {
       executor->Reset();
+      draft_vocab_stale = true;
+    }
     if (position != executor->GetInjectedContextLength() || rows > capacity) {
       AssignError(error, "DFlash feature stream is discontinuous or oversized");
       return false;
@@ -494,6 +524,10 @@ bool Session::EnableDFlash(std::shared_ptr<const hip::QwenDFlashGpuModel> draft,
   }
 }
 
+std::uint64_t Session::DFlashSubsetBlocks() const noexcept {
+  return dflash_ ? dflash_->subset_blocks : 0;
+}
+
 std::optional<std::uint32_t> Session::PlanDFlash(std::size_t max_tokens) const {
   if (!valid_ || !dflash_)
     return std::nullopt;
@@ -782,8 +816,10 @@ void Session::ResetDraftPolicy() {
   if (continuation_hooks_)
     continuation_hooks_->BeforeExecution();
   draft_length_.Reset();
-  if (dflash_)
+  if (dflash_) {
     dflash_->controller.Reset();
+    dflash_->draft_vocab_stale = true;
+  }
   // A fully reused prompt can start decoding without SyncImpl. It still
   // starts a new request: do not inherit a copy cursor or widen its first step.
   lookup_.BeginRequest();
@@ -810,6 +846,7 @@ void Session::ResetImpl(bool reuse_mtp) {
   if (dflash_) {
     dflash_->executor->Reset();
     dflash_->controller.Reset();
+    dflash_->draft_vocab_stale = true;
   }
   tokens_.clear();
   ForgetDraftVocab();
@@ -2353,12 +2390,17 @@ bool Session::DecodeDFlashStep(hip::QwenDFlashGpuExecutor& draft,
     // Match the native policy: a sampled copy may bypass the neural head only
     // after a previous accepted copy established a source and a full match.
     if (!AppendLookup(lookup, stop_at_eos, 3, sampled)) {
+      const bool draft_subset =
+          draft_count != 0 && dflash_ && dflash_->executor.get() == &draft &&
+          dflash_->UseDraftSubset(tokens_, static_cast<std::int32_t>(anchor));
       proposal.tokens = draft.ForwardBlock(
           anchor, Position(), draft_count,
           sampled ? sampler.config().temperature : 0.0F, uniforms, nullptr,
           sampled ? &proposal.candidate_ids : nullptr,
           sampled ? &proposal.candidate_probabilities : nullptr, {},
-          &proposal_sampler);
+          &proposal_sampler, draft_subset);
+      if (draft_subset && !proposal.tokens.empty())
+        ++dflash_->subset_blocks;
       // A copy can establish its source after a retained neural prefix. No
       // neural proposal is kept after the first copied token: those q rows
       // would have been conditioned on a different predecessor history.

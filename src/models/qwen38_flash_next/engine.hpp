@@ -243,6 +243,8 @@ public:
   [[nodiscard]] bool DFlashEnabled() const noexcept {
     return dflash_ != nullptr;
   }
+  /// Diagnostic count; does not affect proposal policy or persisted state.
+  [[nodiscard]] std::uint64_t DFlashSubsetBlocks() const noexcept;
   [[nodiscard]] std::optional<std::uint32_t> PlanDFlash(
       std::size_t max_tokens) const;
   [[nodiscard]] bool DecodeDFlashStep(
