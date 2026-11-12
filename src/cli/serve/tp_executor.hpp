@@ -265,6 +265,12 @@ private:
   class State;
   class SnapshotHandle;
   class CallScope;
+#ifdef GUFO_CACHE_TESTING
+  friend std::unique_ptr<TpSnapshotGate::Pending> ReserveSnapshotForTesting(
+      const TpMirroredRunner& runner) {
+    return std::make_unique<TpSnapshotGate::Pending>(runner.snapshot_gate_);
+  }
+#endif
   /// An open request's share of the instruction stream.
   struct Request {
     std::uint64_t count{0};
