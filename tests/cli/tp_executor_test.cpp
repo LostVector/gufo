@@ -220,7 +220,10 @@ public:
                 ? std::optional<gufo::server::TextRunnerPersistenceDescriptor>(
                       {.compatibility_identity = {'t', 'o', 'y'},
                        .payload_version = 1})
-                : std::nullopt};
+                : std::nullopt,
+        .scheduling = {.pass_tokens = 256,
+                       .max_layer_groups = 1,
+                       .max_yield_decode_width = 1}};
   }
   std::size_t PersistentSnapshotPayloadBytes(
       const gufo::server::TextRunnerSnapshot& snapshot) const override {
@@ -951,6 +954,9 @@ int main() {
   {
     auto toy = std::make_shared<ToyRunner>(ToyOptions{});
     const TpMirroredRunner runner(toy, std::make_shared<CaptureSink>());
+    Require(runner.Descriptor().scheduling == toy->Descriptor().scheduling &&
+                runner.Descriptor().scheduling.pass_tokens == 256,
+            "TP preserves the model scheduling profile");
     const ChatRequest request;
     toy->rendered_prompt = "rendered model-specific prompt";
     Require(runner.RenderPrompt(request) == toy->rendered_prompt &&

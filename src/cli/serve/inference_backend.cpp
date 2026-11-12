@@ -538,7 +538,6 @@ InferenceBackend::~InferenceBackend() = default;
 #if defined(ENGINE_ENABLE_HIP)
 bool InferenceBackend::load(std::shared_ptr<ext::TextModelRunner> runner,
                             std::string* error, std::size_t session_count,
-                            TextPrefillPolicy prefill_policy,
                             TextSchedulerPolicy scheduler_policy,
                             const TextDiskCacheConfig& disk_cache_config,
                             TextRunnerRamCacheOptions ram_cache_config,
@@ -548,12 +547,16 @@ bool InferenceBackend::load(std::shared_ptr<ext::TextModelRunner> runner,
                             : "HTTP session count must be at least one");
     return false;
   }
-  if (prefill_policy.decode_active_tokens >
-      std::numeric_limits<std::uint32_t>::max()) {
-    SetError(error, "HTTP prefill chunk exceeds the TP control range");
+  const auto desc = runner->Descriptor();
+  if (desc.scheduling.pass_tokens == 0 ||
+      desc.scheduling.pass_tokens > std::numeric_limits<std::uint32_t>::max() ||
+      desc.scheduling.max_layer_groups == 0 ||
+      desc.scheduling.max_yield_decode_width == 0) {
+    SetError(
+        error,
+        "Text scheduling profile is invalid or exceeds the TP control range");
     return false;
   }
-  const auto desc = runner->Descriptor();
   const auto max_context = desc.max_context;
   const auto tp_world_size = tp_config.world_size;
   const auto tp_rank = tp_config.rank;
@@ -611,7 +614,7 @@ bool InferenceBackend::load(std::shared_ptr<ext::TextModelRunner> runner,
               multi_token && tp_config.use_dflash && tp_config.dflash_adaptive,
           .auth_token = tp_config.auth_token,
           .prefill_chunk_tokens =
-              static_cast<std::uint32_t>(prefill_policy.decode_active_tokens),
+              static_cast<std::uint32_t>(desc.scheduling.pass_tokens),
           .sessions = static_cast<std::uint32_t>(session_count),
           .vision = has_vision,
           .disk_cache = DiskCacheEnabled(disk_cache_config),
@@ -676,6 +679,8 @@ bool InferenceBackend::load(std::shared_ptr<ext::TextModelRunner> runner,
             .staging_capacity_bytes = disk_cache_config.staging_capacity_bytes,
         };
       }
+      Logger::Info("loader",
+                   "event=load_phase phase=sessions " + Logger::MemoryStatus());
       auto runner_pool = std::make_shared<TextRunnerPool>(
           std::move(pool_runner), session_count, std::move(runner_disk_cache),
           ram_cache_config,
@@ -683,7 +688,7 @@ bool InferenceBackend::load(std::shared_ptr<ext::TextModelRunner> runner,
               ? TextRunnerPool::CheckpointRecordPolicy::kReplaceIdleConversation
               : TextRunnerPool::CheckpointRecordPolicy::kPreserveLastCopies);
       new_state->scheduler = std::make_shared<TextGenerationScheduler>(
-          std::move(runner_pool), prefill_policy, scheduler_policy);
+          std::move(runner_pool), scheduler_policy);
     }
     new_state->control = tp_config.control;
     new_state->communicator = tp_config.runtime;
@@ -707,7 +712,7 @@ bool InferenceBackend::load(std::shared_ptr<ext::TextModelRunner> runner,
 bool InferenceBackend::load(
     const std::string& model_path, std::string* error,
     std::uint32_t max_context, std::size_t session_count,
-    TextPrefillPolicy prefill_policy, TextSchedulerPolicy scheduler_policy,
+    TextSchedulerPolicy scheduler_policy,
     const TextSpeculativeConfig& speculative_config,
     const TextDiskCacheConfig& disk_cache_config,
     const std::string& vision_model_path,
@@ -761,9 +766,8 @@ bool InferenceBackend::load(
   resolved_tp_config.dflash_adaptive =
       resolved_tp_config.use_dflash &&
       speculative_config.dflash_policy == ext::TextDFlashDraftPolicy::kAdaptive;
-  return load(std::move(runner), error, session_count, prefill_policy,
-              scheduler_policy, disk_cache_config, ram_cache_config,
-              resolved_tp_config);
+  return load(std::move(runner), error, session_count, scheduler_policy,
+              disk_cache_config, ram_cache_config, resolved_tp_config);
 }
 bool InferenceBackend::run_worker(std::string* error) {
 #if defined(ENGINE_ENABLE_HIP)
@@ -798,7 +802,7 @@ bool InferenceBackend::run_worker(std::string* error) {
 }
 #else
 bool InferenceBackend::load(std::shared_ptr<ext::TextModelRunner>,
-                            std::string* error, std::size_t, TextPrefillPolicy,
+                            std::string* error, std::size_t,
                             TextSchedulerPolicy, const TextDiskCacheConfig&,
                             TextRunnerRamCacheOptions, const TextTpConfig&) {
   SetError(error, "HIP engine is disabled");
@@ -806,8 +810,8 @@ bool InferenceBackend::load(std::shared_ptr<ext::TextModelRunner>,
 }
 
 bool InferenceBackend::load(const std::string&, std::string* error,
-                            std::uint32_t, std::size_t, TextPrefillPolicy,
-                            TextSchedulerPolicy, const TextSpeculativeConfig&,
+                            std::uint32_t, std::size_t, TextSchedulerPolicy,
+                            const TextSpeculativeConfig&,
                             const TextDiskCacheConfig&, const std::string&,
                             TextRunnerRamCacheOptions, const TextTpConfig&,
                             bool, const PrepareRunnerOptions&) {

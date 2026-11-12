@@ -169,13 +169,12 @@ the
 and [Qwen3.8 Flash-Next](../models/qwen3.8-flash-next.md) for the memory
 cost.
 
-Each model chooses its prefill chunk. Beside decoders, a runner with a
-scheduling profile (every in-tree text model) keeps that width and splits each
-pass by layers, with a decode round between groups; a runner without one gets
-fixed 512-token passes. A lone request keeps the model's own pass width.
-`--prefill-chunk` is deprecated: it is accepted, ignored with a
-`event=deprecated_option` warning, and will be removed together with the
-512-token legacy path (#1028).
+Each model chooses its prefill chunk. Every text runner declares a scheduling
+profile: beside decoders, the host keeps the profile's pass width and splits
+each pass by layers, with a decode round between groups (one group runs it
+unsplit). A lone request keeps the model's own pass width. `--prefill-chunk`
+is deprecated: it is accepted, ignored with a `event=deprecated_option`
+warning, and will be removed at the next breaking release.
 
 Qwen image requests reuse decoded and resized RGB pixels using a fast lookup
 hash and exact encoded-byte comparison under the preprocessing version and
@@ -484,6 +483,7 @@ cache snapshots. HTTP handlers do not implement model kernels.
 | `POST` | `/v1/systemone` | A decision model is configured with `gufo serve decision` |
 | `POST` | `/v1/images/generations` | Qwen-Image-2.1 image serving is configured |
 | `POST` | `/v1/images/edits` | Qwen-Image-2.1 image serving is configured |
+| `GET` | `/sdapi/v1/loras` | Qwen-Image-2.1 image serving is configured; lists `--lora` adapters. A text server answers 501 |
 | `POST` | `/v1/videos` | A validated operator-supplied MiniMax H3 checkpoint is configured |
 | `GET` | `/v1/videos/{id}` | MiniMax H3 video serving is configured |
 | `GET` | `/v1/videos/{id}/content` | The requested MiniMax H3 job completed |
@@ -497,7 +497,9 @@ reference-image conditioning, are refused with 400 rather than dropped.
 Use `gufo serve image --model SNAPSHOT_DIR` for
 [Qwen-Image-2.1](../models/qwen-image-2.1.md). Generation accepts JSON;
 editing accepts multipart PNG/JPEG references. Both return base64 PNG data
-and work through llama-swap's image routes.
+and work through llama-swap's image routes. LoRA adapters registered with
+`--lora NAME=PATH` are selected per request with the `loras` field; see
+[LoRA adapters](../models/qwen-image-2.1.md#lora-adapters).
 
 Qwen3-TTS serving is enabled with a dedicated model process. All three 12Hz
 1.7B variants are supported; the variant is detected from the checkpoint's

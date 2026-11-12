@@ -31,6 +31,7 @@ set(gufo_pr_targets
   component_text_cache_test text_model_runner_test legacy_text_model_runner_test continuation_cache_test continuation_disk_store_test
   bench_cli_test prompt_cli_test text_cli_dispatch_test eval_http_client_test
   tp_control_test tp_disk_store_test tp_snapshot_gate_test
+  extension_diagnostics_test
   # BEGIN GENERATED MODEL PR TARGETS
   deepseek_v4_flash_continuation_identity_test ds4_chat_template_test ds4_cli_test
   ds4_sampling_test embedding_gemma2_batch_scheduler_test embedding_gemma2_config_test
@@ -42,7 +43,7 @@ set(gufo_pr_targets
   qwen38_flash_next_rope_scaling_test qwen38_flash_next_runner_options_test
   qwen38_flash_next_tp_partition_test qwen3_asr_audio_api_test qwen3_asr_config_test
   qwen3_tts_audio_api_test qwen3_tts_config_test qwen_chat_template_test qwen_image_21_test
-  qwen_image_21_weights_test qwen_tokenizer_test video_api_test
+  qwen_image_21_lora_test qwen_image_21_weights_test qwen_tokenizer_test video_api_test
   # END GENERATED MODEL PR TARGETS
 )
 set(gufo_pr_tests ${gufo_pr_targets})
