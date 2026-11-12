@@ -7,12 +7,15 @@ libibverbs and the build option `GUFO_ENABLE_TP2_RDMA` (off by default). Its
 measurements are in [EXPERIMENTS.md](EXPERIMENTS.md#tp2), not in the published
 one-host tables.
 
-## Local upstream reconciliation, November 11, 2026
+## Maintained upstream reconciliation, November 11, 2026
 
-The local `sync/gufo-upstreams-2026-11-11` branch combines canonical
-`0d238d4f` with the maintained fork and reviewed Neuhaus changes through
-`f070a179`. This is semantic intake, not a merge of all Neuhaus history, and
-has not been pushed or deployed. The extension API is 0.3.4. Control wire22
+The maintained `tp2` branch combines canonical `0d238d4f` with the fork and
+reviewed Neuhaus changes through `f070a179`. This is semantic intake, not a
+merge of all Neuhaus history. The consolidation also includes ready-capture
+queue ordering, pending-snapshot priority before TP prefill, and cancellation
+regressions. See the [adoption record](TP2_CONSOLIDATION.md) for source/binary
+identities, scoped timings and remaining limits. This source adoption does not
+replace a running service. The extension API is 0.3.4. Control wire22
 preserves the requested logprobs count, distinguishing absent from explicit
 zero; both ranks need the matching build. See the
 [qualification record](upstream-refresh-data/qualification.json) for exact
@@ -79,7 +82,8 @@ This is not a new speedup or latency-equivalence claim. The
 [previous intake](../../../patches/tp2-adoption/upstream-8ab834a5.md) retains cache
 admission/capacity checks; [earlier records](../../../patches/tp2-adoption/upstream-773a1641.md)
 preserve their actual32K continuation and inconclusive startup timings.
-Independent Q8-reuse and fused-HC drafts remain excluded.
+That earlier checkpoint excluded Q8 reuse and fused-HC changes. Both were
+subsequently merged as fork PRs 14 and 15 and remain in the maintained history.
 
 The previously qualified source `75de9f82` uses control wire21 and registered
 host windows (`dmabuf_verbs=0`). The new control wire22 above requires upgrading

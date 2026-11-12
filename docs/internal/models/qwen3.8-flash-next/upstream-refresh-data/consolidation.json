@@ -1,0 +1,636 @@
+{
+  "adoption_date": "2026-11-11",
+  "previous_maintained_head": "4e30eeeb416622834e9a26a3ff815c0a3e68d6dc",
+  "canonical": "0d238d4f5fee49720d6be45c2c27795100922d5c",
+  "neuhaus_reviewed_through": "f070a179c628a7409a5cee8e07b1ca76f1f7e660",
+  "neuhaus_scope": "selective intake, not full history or semantic parity",
+  "source_before_adoption_docs": "9c79494bfa8fc4f36b7886f41fec364bae66e5e2",
+  "measured_binary": {
+    "source": "6387a35a5ca76e5e9be6dae1bd6c1d9ab276ebf5",
+    "sha256": "b05c12e57753bba941859d56d586aef313374ad5ec649163eb4af53bc2d61030",
+    "production_identity_proof": "Only tests/cli/tp_executor_test.cpp changes from6387a35a to9c79494b; adoption documentation changes no production/build files.",
+    "BUILD_TESTING": false,
+    "extensions": [
+      "qwen38_flash_next"
+    ],
+    "compiler": "private ROCm7.14.1 gfx1151"
+  },
+  "fresh_CPU_tests": {
+    "passed": 5,
+    "elapsed_s": 3.54,
+    "suites": [
+      "tp_executor_test",
+      "tp_snapshot_gate_test",
+      "legacy_text_model_runner_test",
+      "text_model_runner_test",
+      "text_generation_scheduler_test"
+    ],
+    "scope": "CPU focused contracts, not GPU performance"
+  },
+  "production_comparison": {
+    "source": "6387a35a5ca76e5e9be6dae1bd6c1d9ab276ebf5",
+    "baseline_source": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
+    "order": [
+      "baseline-r1",
+      "candidate-r1",
+      "candidate-r2",
+      "baseline-r2"
+    ],
+    "generation_records": 116,
+    "discovery_probes": 20,
+    "result_work_changes": 0,
+    "metric_counts": {
+      "passed": 403,
+      "inconclusive": 10
+    },
+    "settings": "Q4_K_XL target,sharedQ8MTP,64Kcapacity,2slots,1GiBRAMcache,thinkoff,B6hostwindowsTX32poll0",
+    "cold_prefix_note": "Independent ALPHA/BETA begin with0reusedtokens,2927/2929prefilltokens; asynchronous cache capture enabled. These are not warm prefix hits.",
+    "primary": [
+      {
+        "role": "baseline",
+        "replicate": 1,
+        "request_sha256": "1dfcbe8572f0724df6cd4a826c277738a54738b027b4511139ced813c52eda68",
+        "output_sha256": "5e266c63987dce1aadc552c8b46bb8061ff626f469ade0663543d39175b227f8",
+        "ttft_ms": 4014.027467,
+        "wall_ms": 4098.146427000756,
+        "prefill_tokens": 2927,
+        "cached_tokens": 0,
+        "draft_tokens": 2,
+        "draft_tokens_accepted": 1
+      },
+      {
+        "role": "baseline",
+        "replicate": 1,
+        "request_sha256": "cc70f6d04d3f5c3a144af43e4637bb720e2d0f4280c900e4a505ba6152675414",
+        "output_sha256": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+        "ttft_ms": 3992.942724,
+        "wall_ms": 4076.294236998365,
+        "prefill_tokens": 2929,
+        "cached_tokens": 0,
+        "draft_tokens": 2,
+        "draft_tokens_accepted": 1
+      },
+      {
+        "role": "candidate",
+        "replicate": 1,
+        "request_sha256": "1dfcbe8572f0724df6cd4a826c277738a54738b027b4511139ced813c52eda68",
+        "output_sha256": "5e266c63987dce1aadc552c8b46bb8061ff626f469ade0663543d39175b227f8",
+        "ttft_ms": 2523.338093,
+        "wall_ms": 2567.680604999623,
+        "prefill_tokens": 2927,
+        "cached_tokens": 0,
+        "draft_tokens": 2,
+        "draft_tokens_accepted": 1
+      },
+      {
+        "role": "candidate",
+        "replicate": 1,
+        "request_sha256": "cc70f6d04d3f5c3a144af43e4637bb720e2d0f4280c900e4a505ba6152675414",
+        "output_sha256": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+        "ttft_ms": 3832.342978,
+        "wall_ms": 3875.8981419996417,
+        "prefill_tokens": 2929,
+        "cached_tokens": 0,
+        "draft_tokens": 2,
+        "draft_tokens_accepted": 1
+      },
+      {
+        "role": "candidate",
+        "replicate": 2,
+        "request_sha256": "1dfcbe8572f0724df6cd4a826c277738a54738b027b4511139ced813c52eda68",
+        "output_sha256": "5e266c63987dce1aadc552c8b46bb8061ff626f469ade0663543d39175b227f8",
+        "ttft_ms": 2533.705655,
+        "wall_ms": 2578.1499730001087,
+        "prefill_tokens": 2927,
+        "cached_tokens": 0,
+        "draft_tokens": 2,
+        "draft_tokens_accepted": 1
+      },
+      {
+        "role": "candidate",
+        "replicate": 2,
+        "request_sha256": "cc70f6d04d3f5c3a144af43e4637bb720e2d0f4280c900e4a505ba6152675414",
+        "output_sha256": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+        "ttft_ms": 3844.328851,
+        "wall_ms": 3888.0787609996332,
+        "prefill_tokens": 2929,
+        "cached_tokens": 0,
+        "draft_tokens": 2,
+        "draft_tokens_accepted": 1
+      },
+      {
+        "role": "baseline",
+        "replicate": 2,
+        "request_sha256": "1dfcbe8572f0724df6cd4a826c277738a54738b027b4511139ced813c52eda68",
+        "output_sha256": "5e266c63987dce1aadc552c8b46bb8061ff626f469ade0663543d39175b227f8",
+        "ttft_ms": 4361.865739,
+        "wall_ms": 4425.354792001599,
+        "prefill_tokens": 2927,
+        "cached_tokens": 0,
+        "draft_tokens": 2,
+        "draft_tokens_accepted": 1
+      },
+      {
+        "role": "baseline",
+        "replicate": 2,
+        "request_sha256": "cc70f6d04d3f5c3a144af43e4637bb720e2d0f4280c900e4a505ba6152675414",
+        "output_sha256": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+        "ttft_ms": 4340.773596,
+        "wall_ms": 4404.048036001768,
+        "prefill_tokens": 2929,
+        "cached_tokens": 0,
+        "draft_tokens": 2,
+        "draft_tokens_accepted": 1
+      }
+    ],
+    "unresolved_timings": [
+      {
+        "case": "cache-concurrency.requests.json:identical_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "6581088f438074b74f2ebb891a2584465e16b7bc2095d03bc7000975edf405ee",
+          0
+        ],
+        "metric": "wall_ms",
+        "history_sha256": "ff1b532ee8dc2790775a3b460b0d8db4f877cd7ebf6584f68d4084be9ba0db40",
+        "noise_floor": 10,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 2834.170104997611,
+            "candidate": 2864.526991997991,
+            "exceeds_margin": false
+          },
+          {
+            "comparison": 1,
+            "baseline": 2721.111793998716,
+            "candidate": 2711.6090069976053,
+            "exceeds_margin": false
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 2834.170104997611,
+            "candidate": 2721.111793998716,
+            "exceeds_margin": false
+          }
+        ],
+        "baseline_range": [
+          2721.111793998716,
+          2834.170104997611
+        ],
+        "candidate_range": [
+          2711.6090069976053,
+          2864.526991997991
+        ],
+        "flagged_pairs": 0,
+        "control_flags": 0,
+        "baseline_variable": false,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      },
+      {
+        "case": "cache-concurrency.requests.json:identical_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "6581088f438074b74f2ebb891a2584465e16b7bc2095d03bc7000975edf405ee",
+          0
+        ],
+        "metric": "decode_ms",
+        "history_sha256": "ff1b532ee8dc2790775a3b460b0d8db4f877cd7ebf6584f68d4084be9ba0db40",
+        "noise_floor": 10,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 36.62787,
+            "candidate": 57.769914,
+            "exceeds_margin": true
+          },
+          {
+            "comparison": 1,
+            "baseline": 58.627377,
+            "candidate": 36.403028,
+            "exceeds_margin": false
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 36.62787,
+            "candidate": 58.627377,
+            "exceeds_margin": true
+          }
+        ],
+        "baseline_range": [
+          36.62787,
+          58.627377
+        ],
+        "candidate_range": [
+          36.403028,
+          57.769914
+        ],
+        "flagged_pairs": 1,
+        "control_flags": 1,
+        "baseline_variable": true,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      },
+      {
+        "case": "cache-concurrency.requests.json:identical_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "6581088f438074b74f2ebb891a2584465e16b7bc2095d03bc7000975edf405ee",
+          0
+        ],
+        "metric": "decode_ms_per_token",
+        "history_sha256": "ff1b532ee8dc2790775a3b460b0d8db4f877cd7ebf6584f68d4084be9ba0db40",
+        "noise_floor": 10.0,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 36.62787,
+            "candidate": 57.769914,
+            "exceeds_margin": true
+          },
+          {
+            "comparison": 1,
+            "baseline": 58.627377,
+            "candidate": 36.403028,
+            "exceeds_margin": false
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 36.62787,
+            "candidate": 58.627377,
+            "exceeds_margin": true
+          }
+        ],
+        "baseline_range": [
+          36.62787,
+          58.627377
+        ],
+        "candidate_range": [
+          36.403028,
+          57.769914
+        ],
+        "flagged_pairs": 1,
+        "control_flags": 1,
+        "baseline_variable": true,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      },
+      {
+        "case": "cache-concurrency.requests.json:identical_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "6581088f438074b74f2ebb891a2584465e16b7bc2095d03bc7000975edf405ee",
+          0
+        ],
+        "metric": "prefill_ms",
+        "history_sha256": "ff1b532ee8dc2790775a3b460b0d8db4f877cd7ebf6584f68d4084be9ba0db40",
+        "noise_floor": 10,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 2785.625267,
+            "candidate": 2795.319758,
+            "exceeds_margin": false
+          },
+          {
+            "comparison": 1,
+            "baseline": 2650.5366919999997,
+            "candidate": 2663.243264,
+            "exceeds_margin": false
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 2785.625267,
+            "candidate": 2650.5366919999997,
+            "exceeds_margin": false
+          }
+        ],
+        "baseline_range": [
+          2650.5366919999997,
+          2785.625267
+        ],
+        "candidate_range": [
+          2663.243264,
+          2795.319758
+        ],
+        "flagged_pairs": 0,
+        "control_flags": 0,
+        "baseline_variable": true,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      },
+      {
+        "case": "cache-concurrency.requests.json:identical_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "6581088f438074b74f2ebb891a2584465e16b7bc2095d03bc7000975edf405ee",
+          0
+        ],
+        "metric": "prefill_ms_per_token",
+        "history_sha256": "ff1b532ee8dc2790775a3b460b0d8db4f877cd7ebf6584f68d4084be9ba0db40",
+        "noise_floor": 0.0018443378827001106,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 0.513763420693471,
+            "candidate": 0.5155514123939506,
+            "exceeds_margin": false
+          },
+          {
+            "comparison": 1,
+            "baseline": 0.4888485230542235,
+            "candidate": 0.49119204426410923,
+            "exceeds_margin": false
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 0.513763420693471,
+            "candidate": 0.4888485230542235,
+            "exceeds_margin": false
+          }
+        ],
+        "baseline_range": [
+          0.4888485230542235,
+          0.513763420693471
+        ],
+        "candidate_range": [
+          0.49119204426410923,
+          0.5155514123939506
+        ],
+        "flagged_pairs": 0,
+        "control_flags": 0,
+        "baseline_variable": true,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      },
+      {
+        "case": "cache-concurrency.requests.json:identical_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "6581088f438074b74f2ebb891a2584465e16b7bc2095d03bc7000975edf405ee",
+          0
+        ],
+        "metric": "server_duration_ms",
+        "history_sha256": "ff1b532ee8dc2790775a3b460b0d8db4f877cd7ebf6584f68d4084be9ba0db40",
+        "noise_floor": 10,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 2832.9,
+            "candidate": 2863.4,
+            "exceeds_margin": false
+          },
+          {
+            "comparison": 1,
+            "baseline": 2719.8,
+            "candidate": 2710.3,
+            "exceeds_margin": false
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 2832.9,
+            "candidate": 2719.8,
+            "exceeds_margin": false
+          }
+        ],
+        "baseline_range": [
+          2719.8,
+          2832.9
+        ],
+        "candidate_range": [
+          2710.3,
+          2863.4
+        ],
+        "flagged_pairs": 0,
+        "control_flags": 0,
+        "baseline_variable": false,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      },
+      {
+        "case": "cache-concurrency.requests.json:identical_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "6581088f438074b74f2ebb891a2584465e16b7bc2095d03bc7000975edf405ee",
+          0
+        ],
+        "metric": "ttft_ms",
+        "history_sha256": "ff1b532ee8dc2790775a3b460b0d8db4f877cd7ebf6584f68d4084be9ba0db40",
+        "noise_floor": 10,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 2789.096923,
+            "candidate": 2798.693839,
+            "exceeds_margin": false
+          },
+          {
+            "comparison": 1,
+            "baseline": 2654.051967,
+            "candidate": 2666.777,
+            "exceeds_margin": false
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 2789.096923,
+            "candidate": 2654.051967,
+            "exceeds_margin": false
+          }
+        ],
+        "baseline_range": [
+          2654.051967,
+          2789.096923
+        ],
+        "candidate_range": [
+          2666.777,
+          2798.693839
+        ],
+        "flagged_pairs": 0,
+        "control_flags": 0,
+        "baseline_variable": true,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      },
+      {
+        "case": "cache-concurrency.requests.json:fanout_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "ff265e0f5f48126dc673f26c861c6a406108d99ef2f8e93acf424b17bcc1b545",
+          0
+        ],
+        "metric": "decode_ms",
+        "history_sha256": "a3146db4e2417d948243f48080115061fbfc7c24991aa577d7bf431f7888cd58",
+        "noise_floor": 10,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 108.88226399999999,
+            "candidate": 108.945891,
+            "exceeds_margin": false
+          },
+          {
+            "comparison": 1,
+            "baseline": 86.194348,
+            "candidate": 109.274402,
+            "exceeds_margin": true
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 108.88226399999999,
+            "candidate": 86.194348,
+            "exceeds_margin": false
+          }
+        ],
+        "baseline_range": [
+          86.194348,
+          108.88226399999999
+        ],
+        "candidate_range": [
+          108.945891,
+          109.274402
+        ],
+        "flagged_pairs": 1,
+        "control_flags": 0,
+        "baseline_variable": true,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      },
+      {
+        "case": "cache-concurrency.requests.json:fanout_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "ff265e0f5f48126dc673f26c861c6a406108d99ef2f8e93acf424b17bcc1b545",
+          0
+        ],
+        "metric": "decode_ms_per_token",
+        "history_sha256": "a3146db4e2417d948243f48080115061fbfc7c24991aa577d7bf431f7888cd58",
+        "noise_floor": 1.6666666666666667,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 18.147043999999998,
+            "candidate": 18.1576485,
+            "exceeds_margin": false
+          },
+          {
+            "comparison": 1,
+            "baseline": 14.365724666666667,
+            "candidate": 18.21240033333333,
+            "exceeds_margin": true
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 18.147043999999998,
+            "candidate": 14.365724666666667,
+            "exceeds_margin": false
+          }
+        ],
+        "baseline_range": [
+          14.365724666666667,
+          18.147043999999998
+        ],
+        "candidate_range": [
+          18.1576485,
+          18.21240033333333
+        ],
+        "flagged_pairs": 1,
+        "control_flags": 0,
+        "baseline_variable": true,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      },
+      {
+        "case": "cache-concurrency.requests.json:fanout_stem:0",
+        "request_key": [
+          "cache-concurrency.requests.json",
+          "ff265e0f5f48126dc673f26c861c6a406108d99ef2f8e93acf424b17bcc1b545",
+          0
+        ],
+        "metric": "max_inter_token_ms",
+        "history_sha256": "a3146db4e2417d948243f48080115061fbfc7c24991aa577d7bf431f7888cd58",
+        "noise_floor": 10,
+        "samples": [
+          {
+            "comparison": 0,
+            "baseline": 70.889413,
+            "candidate": 70.99772,
+            "exceeds_margin": false
+          },
+          {
+            "comparison": 1,
+            "baseline": 48.195787,
+            "candidate": 70.585742,
+            "exceeds_margin": true
+          }
+        ],
+        "controls": [
+          {
+            "comparison": 2,
+            "baseline": 70.889413,
+            "candidate": 48.195787,
+            "exceeds_margin": false
+          }
+        ],
+        "baseline_range": [
+          48.195787,
+          70.889413
+        ],
+        "candidate_range": [
+          70.585742,
+          70.99772
+        ],
+        "flagged_pairs": 1,
+        "control_flags": 0,
+        "baseline_variable": true,
+        "status": "inconclusive",
+        "reason": "variable or overlapping observations; inspect stalls"
+      }
+    ],
+    "scope": "Two observations per role, exploratory; unchanged5%/10ms range gate is not statistical significance or standalone decode throughput."
+  },
+  "negative_controls": {
+    "requeue": "Original tail and unconditional front both rejected by ordering assertions",
+    "prefill_gate": "Missing guard and guard inside mutex both rejected; final candidate passes",
+    "current_upstream_base_evidence": [
+      "https://github.com/gufo-org/gufo/pull/1181",
+      "https://github.com/neuhaus/gufo/pull/17"
+    ]
+  },
+  "quality_limits": [
+    "Inherited TP2 strict literal-history warning remains failed and unwaived, identically reproduced on pre-refresh deployment",
+    "Broader model quality and all timings unqualified",
+    "Nix/container not rebuilt/run for this head",
+    "No default deployment or system changes"
+  ],
+  "excluded": [
+    "52130313 DFlash vocabulary experiment, GPU correctness/acceptance/timing not qualified",
+    "post-capture notification prototype"
+  ],
+  "local_raw_evidence_root": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1/capture-combined-review",
+  "fresh_repository_checks": {
+    "format": "PASS1015C++files",
+    "extension_API": "PASS0.3.4/132surfacepaths",
+    "documentation": "PASS206markdown/950local_links",
+    "extension_isolation": "PASS;8familylibraries/12edges/acyclic",
+    "diff_check": "PASS"
+  }
+}
