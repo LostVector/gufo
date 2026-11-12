@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <cstdio>
 #include <stdexcept>
 #include <vector>
@@ -165,9 +166,18 @@ int main(int argc, char** argv) {
       text += "A small blue bird rests on a tree.\n";
     const auto long_prompt =
         model->Tokenize(text + "Summarize the scene in one sentence:");
-    Saved boundary;
-    adapter.PrefillThrough(*source, long_prompt, long_prompt.size() - 5,
-                           [&] { boundary = Capture(adapter, *source, pool); });
+    Saved earlier, boundary;
+    const std::array<std::uint32_t, 2> boundaries{
+        static_cast<std::uint32_t>(long_prompt.size() - 17),
+        static_cast<std::uint32_t>(long_prompt.size() - 5)};
+    std::vector<std::size_t> captured;
+    adapter.PrefillThrough(
+        *source, long_prompt, boundaries, [&](std::size_t i) {
+          captured.push_back(i);
+          (i == 0 ? earlier : boundary) = Capture(adapter, *source, pool);
+        });
+    Require(captured == std::vector<std::size_t>{0, 1},
+            "external draft checkpoint order or count changed");
     const auto completed = Capture(adapter, *source, pool);
     Load(adapter, *destination, completed, pool);
     Require(adapter.Validate(*destination, completed.positions),
@@ -176,8 +186,15 @@ int main(int argc, char** argv) {
     Require(adapter.Validate(*destination, boundary.positions),
             "component boundary validation failed");
     Require(b.Sync(long_prompt, &error), error);
-    Require(Generate(a, 0, error) == Generate(b, 0, error),
+    const auto expected = Generate(a, 0, error);
+    Require(expected == Generate(b, 0, error),
             "component boundary+tail changed DFlash output");
+    Load(adapter, *destination, earlier, pool);
+    Require(adapter.Validate(*destination, earlier.positions),
+            "earlier external draft checkpoint validation failed");
+    Require(b.Sync(long_prompt, &error), error);
+    Require(expected == Generate(b, 0, error),
+            "earlier external draft checkpoint+tail changed output");
     for (unsigned mode = 0; mode < 3; ++mode) {
       Require(adapter.Invalidate(*source) && adapter.Invalidate(*destination),
               "slot invalidation failed");
