@@ -2050,7 +2050,14 @@ struct TextGenerationScheduler::Impl {
           request->decode_due = true;
           decoding.push_back(std::move(request));
         } else {
-          prefilling->push_back(std::move(request));
+          // A ready capture has already waited through its peer's turn.
+          // Preserve older waiters, but resume before the last peer repeats.
+          auto next = prefilling->end();
+          if (!prefilling->empty() &&
+              prefilling->back()->id == last_prefill_request_id) {
+            --next;
+          }
+          prefilling->insert(next, std::move(request));
         }
       }
     }
