@@ -1170,10 +1170,19 @@ int main() {
     Require(Count(pair.rank0().Log(), "advance") == 0,
             "capture freezes the state before advance");
     cancelled = true;
+    Require(pending.wait_for(std::chrono::milliseconds(20)) ==
+                std::future_status::timeout,
+            "cancellation cannot settle while capture still borrows state");
     release.set_value();
+    Require(
+        pending.wait_for(std::chrono::seconds(5)) == std::future_status::ready,
+        "cancelled request settles after capture releases its state");
     const auto stopped = pending.get();
     Require(stopped.worker_error.empty(),
             "cancel during capture: " + stopped.worker_error);
+    Require(stopped.result.cancelled ||
+                stopped.result.finish_reason == FinishReason::kCancelled,
+            "capture release preserves the pending cancellation");
     const auto next = pair.Run(prompt, 3, {}, {}, {}, true);
     Require(next.worker_error.empty() && next.result.cached_prompt_tokens > 0,
             "joined capture survives cancellation");
