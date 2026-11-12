@@ -45,6 +45,14 @@ HTTP, cache reuse or MTP. Captured last-row values match between TP2 ranks
 and between paired/serial execution. These checks identify no faulty operator
 and do not qualify all numerical behavior or performance.
 
+The fork retains MTP confidence gates under TP2, unlike Neuhaus's older
+adaptation. Actual traces include scalar, learned sampled and two-request
+batch-drop decisions: both ranks agree on the probability bits and choices.
+GPU oracle cases bracket the 0.85, 0.95 and 0.6 thresholds against an independent
+FP64 reference within the unchanged numerical limits. The
+[review evidence](upstream-refresh-data/qualification.json) records scope and
+limits; no policy change or speedup is claimed.
+
 ## Previously qualified fork checkpoint
 
 The maintained combined branch is `tp2`; fork `main` mirrors `gufo-org/gufo`.

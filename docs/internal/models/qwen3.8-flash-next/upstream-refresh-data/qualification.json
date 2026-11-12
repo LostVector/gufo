@@ -293,10 +293,94 @@
     "Known exact-DONE TP2 failure is retained, not waived even though deployment baseline also fails",
     "DMA-BUF disabled, Windows watch not compiled/run, Nix/container not built",
     "Raw request/trace archives retained on the investigation host; this checked-in summary is not the full reproduction archive",
-    "Remaining structural/native-MTP confidence gating differences need explicit review"
+    "NativeMTP gating retained intentionally after this scoped review; no claim of full Neuhaus semantic/history parity or universal rank agreement"
   ],
   "neuhaus_doc_sources": [
     "2af741d7d167fd03f100ef58f49b83bf06ea9b05",
     "de82d619f0268384bb9d323d6fbf2e47c9013a18"
-  ]
+  ],
+  "confidence_policy_review": {
+    "decision": "Retain current fork policy; intentional difference from Neuhaus e97f6554 disabling TP confidence gates. No policy/kernel change based on this investigation.",
+    "source_base": "8cde20f9df61ca0b8b00ce4d3782158738d1c082",
+    "initial_trace": {
+      "scalar_events_per_rank": [
+        1250,
+        1250
+      ],
+      "probability_bits_decisions_chain_identity_equal": true,
+      "uninstrumented_requests_output_work_equal": true,
+      "uninstrumented_request_records": 35,
+      "sampled_scope": "84sampled values all1.0; lookup untagged in this first trace, not learned-sampled coverage"
+    },
+    "targeted_trace": {
+      "request_records": 4,
+      "scalar_events_per_rank": [
+        531,
+        531
+      ],
+      "batch_events_per_rank": [
+        78,
+        78
+      ],
+      "scalar_and_batch_bits_decisions_order_equal": true,
+      "nonlookup_sampled_evaluations": 92,
+      "nonlookup_sampled_probability_range": [
+        0.04007464647293091,
+        1.0
+      ],
+      "planned_cohort_width": 2,
+      "batch_drops": 35,
+      "batch_retains": 43,
+      "nearest_threshold_probability_distance": {
+        "greedy": 0.0026224851608276367,
+        "sampled_nonlookup": 0.00404965877532959,
+        "planned_batch_drop": 0.0008903145790100098
+      },
+      "semantic_quality": "Only valid API/output/usage and rank mechanism checks, no independent answer oracle or matched performance control"
+    },
+    "gpu_oracle": {
+      "status": "PASS",
+      "confidence_cases": 90,
+      "vocabulary_sizes": [
+        2,
+        10,
+        256,
+        99328,
+        248320
+      ],
+      "policy_thresholds": [
+        0.85,
+        0.95,
+        0.6
+      ],
+      "threshold_bracket_offset": 1e-05,
+      "reference": "Independent CPUF64 confidence from actual logits; production whole/split GPU kernels. Host sums synthetic split payload; actual network covered by model traces.",
+      "existing_tolerances_unchanged": true,
+      "worst_absolute_error": 7.75991e-08,
+      "wall_seconds": 0.46550387300158036,
+      "binary_sha256": "25dc004e1817f8bab384ad25b37802aecc5d59a207f228363d7a99149a4c7492"
+    },
+    "limits": [
+      "Actual gate observations do not exhaust all floating-boundary cases, workloads or hardware",
+      "No inferred equality of TP1/TP2 logits or global model quality",
+      "Instrumented timings not used for performance claims"
+    ],
+    "raw_local_artifacts": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1/confidence-audit",
+    "trace_manifests": {
+      "manifest.json": {
+        "source_commit": "8cde20f9df61ca0b8b00ce4d3782158738d1c082",
+        "patch_sha256": "9ad15c3d0f0f6e25e96e50c7d5147cee9683e198da5ec76051ccd672dc687479",
+        "sha256": "15c1e09267b769351e3439e0a67300555d095f8a800632ad953b68c9f62ec69a",
+        "scope": "Temporary actual GateStops bit/decision logger; same stop expression; no math or tuning changes; no timing qualification",
+        "deployed": false
+      },
+      "manifest-v2.json": {
+        "source_commit": "8cde20f9df61ca0b8b00ce4d3782158738d1c082",
+        "patch_sha256": "c73bd8c09acc127652a9d95547f04a316a46eeed7a58dfab3bad5193fae573fc",
+        "sha256": "41c48688caac0a70037487c4cbe378cf429c698deff9fcfc5d048867856f5e4a",
+        "scope": "Private read-only scalar+batch gate logger with lookup tag; no policy/math changes or performance claims",
+        "deployed": false
+      }
+    }
+  }
 }

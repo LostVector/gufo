@@ -1,6 +1,7 @@
 #include <hip/hip_runtime.h>
 
 #include <algorithm>
+#include <array>
 #include <bit>
 #include <cmath>
 #include <cstdint>
@@ -16,6 +17,7 @@
 #include "src/core/sampling.hpp"
 #include "src/families/qwen/kernels/ops/token.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
+#include "src/models/qwen38_flash_next/mtp_policy.hpp"
 #include "src/models/qwen38_flash_next/mtp_sampling.hpp"
 
 namespace q = gufo::models::qwen38_flash_next::rocm;
@@ -520,8 +522,13 @@ void CheckSplitConfidence(std::uint32_t vocab) {
   auto exchange = Allocate<float>(width);
   auto out = Allocate<std::int32_t>(4);
   auto full = Allocate<std::int32_t>(4);
+  constexpr std::array gates{
+      gufo::models::qwen38_flash_next::kMtpGateProbability,
+      gufo::models::qwen38_flash_next::kMtpSampledGateProbability,
+      gufo::models::qwen38_flash_next::kMtpBatchDropProbability};
+  constexpr auto cases = 12U + 2U * static_cast<std::uint32_t>(gates.size());
   double worst = 0;
-  for (std::uint32_t test = 0; test < 12; ++test) {
+  for (std::uint32_t test = 0; test < cases; ++test) {
     std::vector<float> row(vocab);
     for (std::uint32_t i = 0; i < vocab; ++i)
       row[i] = static_cast<float>(
@@ -561,7 +568,10 @@ void CheckSplitConfidence(std::uint32_t vocab) {
           x -= 10000;
         break;
       default: {
-        const double p = test == 10 ? .9 - 1e-5 : .9 + 1e-5;
+        // Keep the original 0.9 cases and bracket every actual policy gate.
+        // The offset exceeds the unchanged numerical error contract below.
+        const double center = test < 12 ? .9 : gates[(test - 12) / 2];
+        const double p = center + (test % 2 == 0 ? -1e-5 : 1e-5);
         std::fill(row.begin(), row.end(), -inf);
         row[0] = static_cast<float>(std::log((1 - p) / p));
         row[half] = 0;
@@ -634,11 +644,18 @@ void CheckSplitConfidence(std::uint32_t vocab) {
                                  " case=" + std::to_string(test) +
                                  " expected=" + std::to_string(want) +
                                  " actual=" + std::to_string(probability));
+      if (test >= 12) {
+        const float gate = gates[(test - 12) / 2];
+        if ((probability < gate) != (want < gate))
+          throw std::runtime_error(
+              "split/full confidence changed policy gate: vocab=" +
+              std::to_string(vocab) + " case=" + std::to_string(test));
+      }
       worst = std::max(worst, error);
     }
   }
-  std::cout << "split/full confidence vocab=" << vocab
-            << ": 12 cases, worst absolute error " << worst << '\n';
+  std::cout << "split/full confidence vocab=" << vocab << ": " << cases
+            << " cases, worst absolute error " << worst << '\n';
 }
 
 int main() {
