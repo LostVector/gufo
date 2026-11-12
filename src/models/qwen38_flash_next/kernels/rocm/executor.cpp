@@ -2554,13 +2554,15 @@ bool Executor::HcMix(const DeviceMixer& m, const float* res, bool normed,
   half_src_ = nullptr;
   if (xn_half_) {
     if (fused_projection) {
-      if (!HcMixF16Gemm(m.up.data, reinterpret_cast<const __half*>(s_.hc_gate),
-                        s_.xn_half,
-                        fused_inject && !inject_done ? m.inject.f32() : nullptr,
-                        half_only || no_f32 ? nullptr : mixed,
-                        static_cast<__half*>(s_.x_half),
-                        half_only ? nullptr : s_.x_q8t, inject, n_tokens,
-                        c.hidden_size, c.hc_low_rank, stream_)) {
+      // Observers read F32 even when projections consume only F16/Q8.
+      // Materialize that view for diagnostics; ordinary execution omits it.
+      if (!HcMixF16Gemm(
+              m.up.data, reinterpret_cast<const __half*>(s_.hc_gate),
+              s_.xn_half,
+              fused_inject && !inject_done ? m.inject.f32() : nullptr,
+              (half_only || no_f32) && !options_.moe_observer ? nullptr : mixed,
+              static_cast<__half*>(s_.x_half), half_only ? nullptr : s_.x_q8t,
+              inject, n_tokens, c.hidden_size, c.hc_low_rank, stream_)) {
         AssignError(error_msg, "fused HC projection failed");
         return false;
       }

@@ -184,6 +184,29 @@ void CheckFusedProjection(std::uint32_t tokens) {
     throw std::runtime_error("HC F16-only projection rejected");
   exact(d_ref_half, d_out_half, "F16-only mixed row");
   exact(d_ref_inject, d_out_inject, "F16-only inject partials");
+  // The observer additionally materializes F32 on the F16/Q8-only route.
+  // Its store must preserve both consumed representations and inject data.
+  for (const bool observe_f32 : {false, true}) {
+    CheckHip(hipMemset(d_out.get(), 0xa5, d_out.bytes()), "F32 sentinel");
+    if (!q::HcMixF16Gemm(d_up.get(), d_low.get(), d_norm.get(),
+                         d_inject_w.get(), observe_f32 ? d_out.get() : nullptr,
+                         d_out_half.get(), d_out_q8.get(), d_out_inject.get(),
+                         tokens, kHidden, kRank, nullptr))
+      throw std::runtime_error("HC observed projection rejected");
+    exact(d_ref_half, d_out_half, "observed F16 row");
+    exact(d_ref_q8, d_out_q8, "observed Q8 row");
+    exact(d_ref_inject, d_out_inject, "observed inject partials");
+    if (observe_f32) {
+      exact(d_ref, d_out, "observer F32 row");
+    } else {
+      std::vector<std::uint8_t> actual(d_out.bytes());
+      CheckHip(hipMemcpy(actual.data(), d_out.get(), actual.size(),
+                         hipMemcpyDeviceToHost),
+               "unwritten F32 download");
+      if (actual != std::vector<std::uint8_t>(actual.size(), 0xa5))
+        throw std::runtime_error("HC wrote omitted F32 view");
+    }
+  }
   std::cerr << "HC projection fusion exact at " << tokens << " tokens\n";
 }
 
