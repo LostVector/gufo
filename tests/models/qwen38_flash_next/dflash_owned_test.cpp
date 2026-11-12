@@ -249,7 +249,9 @@ int main(int argc, char** argv) {
           Require(bool(saved), error);
           const auto before = session->DFlashSubsetBlocks();
           const auto stats_before = session->Statistics();
-          sampling::SamplerState sampler;
+          sampling::SamplingConfig edge_config;
+          edge_config.seed = 513;
+          sampling::SamplerState sampler(edge_config);
           qfn::Session::DecodeResult actual;
           Require(
               session->DecodeDFlashStep(8, sampler, &actual, &error, false, 7),
@@ -262,7 +264,7 @@ int main(int argc, char** argv) {
           Require(overflow ? after == before : after > before,
                   "rare-table eligibility or full-head fallback changed");
           std::vector<std::int32_t> expected;
-          sampling::SamplerState greedy;
+          sampling::SamplerState greedy(edge_config);
           while (expected.size() < actual.tokens.size()) {
             qfn::Session::DecodeResult step;
             Require(ar->DecodeStep(1, greedy, &step, &error, false), error);
@@ -272,7 +274,7 @@ int main(int argc, char** argv) {
           Require(actual.tokens == expected,
                   "rare-table output differs from AR");
           Require(session->RestoreSnapshot(*saved, &error), error);
-          sampling::SamplerState replay_sampler;
+          sampling::SamplerState replay_sampler(edge_config);
           qfn::Session::DecodeResult replay;
           const auto restored_before = session->DFlashSubsetBlocks();
           Require(session->DecodeDFlashStep(8, replay_sampler, &replay, &error,
