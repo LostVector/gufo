@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "src/families/qwen/dflash/hip/executor.hpp"
+#include "src/families/qwen/draft_vocab/draft_vocab.hpp"
 #include "src/models/qwen38_flash_next/engine.hpp"
 
 namespace {
@@ -63,6 +64,9 @@ int main(int argc, char** argv) {
       owner = model;
       auto draft = model->LoadDFlashDraft(argv[2], &error);
       Require(bool(draft), error);
+      std::printf("owned subset_prefix=%u specials=%zu\n",
+                  draft->DraftPrefixRows(), draft->DraftSpecials().size());
+      std::fflush(stdout);
       // The public shared factory must reject borrowed half tables before
       // packing weights or launching GPU work. Tiny host tables deliberately
       // differ from the artifact geometry, so removal of the donor check
@@ -131,6 +135,8 @@ int main(int argc, char** argv) {
         }
         const auto subset_before = session->DFlashSubsetBlocks();
         const auto first = Generate(*session, config, error);
+        const auto first_subset_blocks =
+            session->DFlashSubsetBlocks() - subset_before;
         if (draft->DraftPrefixRows() != 0)
           Require(session->DFlashSubsetBlocks() > subset_before,
                   "owned DFlash did not execute the shared small head");
@@ -212,9 +218,79 @@ int main(int argc, char** argv) {
         error.clear();
         std::printf(
             "owned mode=%u tokens=%zu borrowed=1 serialized_fork=1 "
-            "incompatible=1 corrupt=1\n",
-            mode, first.tokens.size());
+            "incompatible=1 corrupt=1 subset_blocks_first=%llu\n",
+            mode, first.tokens.size(),
+            static_cast<unsigned long long>(first_subset_blocks));
         std::fflush(stdout);
+      }
+      if (draft->DraftPrefixRows() != 0) {
+        const auto rare_capacity = gufo::speculative::kDraftVocabExtraRows -
+                                   draft->DraftSpecials().size();
+        std::vector<std::int32_t> rare;
+        for (auto id = draft->DraftPrefixRows();
+             id < model->VocabSize() && rare.size() <= rare_capacity; ++id) {
+          if (!draft->InDraftSubset(id))
+            rare.push_back(static_cast<std::int32_t>(id));
+        }
+        Require(rare.size() == rare_capacity + 1,
+                "qualification needs more rare IDs than the draft table holds");
+        for (const bool overflow : {false, true}) {
+          auto edge_prompt = model->Tokenize("Continue the following text:\n");
+          if (overflow)
+            edge_prompt.insert(edge_prompt.end(), rare.begin(), rare.end());
+          else
+            edge_prompt.insert(edge_prompt.end(), 40, rare.front());
+          ar->Reset();
+          session->Reset();
+          Require(ar->Sync(edge_prompt, &error) &&
+                      session->Sync(edge_prompt, &error),
+                  error);
+          auto saved = session->SaveSnapshot(&error);
+          Require(bool(saved), error);
+          const auto before = session->DFlashSubsetBlocks();
+          const auto stats_before = session->Statistics();
+          sampling::SamplerState sampler;
+          qfn::Session::DecodeResult actual;
+          Require(
+              session->DecodeDFlashStep(8, sampler, &actual, &error, false, 7),
+              error);
+          const auto after = session->DFlashSubsetBlocks();
+          const auto stats = session->Statistics();
+          Require(stats.drafted - stats.lookup >
+                      stats_before.drafted - stats_before.lookup,
+                  "edge fixture did not execute neural drafts");
+          Require(overflow ? after == before : after > before,
+                  "rare-table eligibility or full-head fallback changed");
+          std::vector<std::int32_t> expected;
+          sampling::SamplerState greedy;
+          while (expected.size() < actual.tokens.size()) {
+            qfn::Session::DecodeResult step;
+            Require(ar->DecodeStep(1, greedy, &step, &error, false), error);
+            expected.insert(expected.end(), step.tokens.begin(),
+                            step.tokens.end());
+          }
+          Require(actual.tokens == expected,
+                  "rare-table output differs from AR");
+          Require(session->RestoreSnapshot(*saved, &error), error);
+          sampling::SamplerState replay_sampler;
+          qfn::Session::DecodeResult replay;
+          const auto restored_before = session->DFlashSubsetBlocks();
+          Require(session->DecodeDFlashStep(8, replay_sampler, &replay, &error,
+                                            false, 7),
+                  error);
+          Require(replay.tokens == actual.tokens &&
+                      replay_sampler.rng_state() == sampler.rng_state(),
+                  "rare-table snapshot replay changed tokens or RNG");
+          Require(overflow ? session->DFlashSubsetBlocks() == restored_before
+                           : session->DFlashSubsetBlocks() > restored_before,
+                  "restore did not rebuild rare-table eligibility");
+          std::printf(
+              "owned rare_overflow=%u rare_capacity=%zu exact_ar=1 "
+              "replay=1 subset_blocks=%llu\n",
+              overflow, rare_capacity,
+              static_cast<unsigned long long>(after - before));
+          std::fflush(stdout);
+        }
       }
       std::string long_prompt;
       for (unsigned i = 0; i < 500; ++i)
