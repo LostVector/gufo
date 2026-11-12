@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <future>
+#include <limits>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -258,6 +259,22 @@ int main() {
     std::string why;
     Require(!server->SendCommand(invalid, &why) && !why.empty(),
             "TP C1 command with invalid sampling is refused");
+    for (const std::uint32_t count : {0U, 1U, 20U}) {
+      auto with_logprobs = sampled;
+      with_logprobs.sampling.logprobs = count;
+      Require(server->SendCommand(with_logprobs, &server_error), server_error);
+      TpControlCommand decoded;
+      Require(client->ReceiveCommand(&decoded, &client_error), client_error);
+      Require(decoded.sampling.logprobs == count,
+              "TP request preserves explicit logprobs count");
+    }
+    for (const auto count : {21U, std::numeric_limits<std::uint32_t>::max()}) {
+      invalid = sampled;
+      invalid.sampling.logprobs = count;
+      Require(!server->SendCommand(invalid, &why),
+              "TP request refuses out-of-range logprobs");
+    }
+    Require(!got.sampling.logprobs, "TP request preserves absent logprobs");
     Require(!got.constrained, "TP C1 command is unconstrained by default");
 
     // Rank 1 must know a request is constrained: rank 0 then picks every
@@ -541,6 +558,8 @@ int main() {
           }));
   refuses("a sampling configuration",
           with([](auto& bad) { bad.sampling.temperature = 0.5F; }));
+  refuses("logprobs on an instruction",
+          with([](auto& bad) { bad.sampling.logprobs = 0; }));
   refuses("a draw state outside a decode",
           with([](auto& bad) { bad.instruction.rng = 1; }));
   refuses("a pending draw outside a decode",
