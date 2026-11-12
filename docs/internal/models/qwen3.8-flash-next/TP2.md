@@ -10,9 +10,9 @@ one-host tables.
 ## Local upstream reconciliation, November 11, 2026
 
 The local `sync/gufo-upstreams-2026-11-11` branch combines canonical
-`4b030049` with the maintained fork and reviewed Neuhaus changes through
+`0d238d4f` with the maintained fork and reviewed Neuhaus changes through
 `f070a179`. This is semantic intake, not a merge of all Neuhaus history, and
-has not been pushed or deployed. The extension API is 0.3.2. Control wire22
+has not been pushed or deployed. The extension API is 0.3.4. Control wire22
 preserves the requested logprobs count, distinguishing absent from explicit
 zero; both ranks need the matching build. See the
 [qualification record](upstream-refresh-data/qualification.json) for exact
@@ -20,8 +20,20 @@ binary identities, completed checks and remaining failures.
 
 Native tests use the existing private ROCm 7.14.1 toolchain, Q4_K_XL target,
 shared-Q8 MTP or Q8 DFlash2, 64K capacity, two slots and 1 GiB RAM cache.
-The existing container recipes have not been rebuilt or qualified for this
-integration. Neither native qualification nor these notes change the host
+The production build selects only Flash Next with `BUILD_TESTING=OFF`.
+Real AR, native MTP and DFlash2 discovery/long-context histories pass with the
+final request verified to restore 24,640 cached tokens from disk and prefill 7.
+AR and MTP each have two alternating baseline/candidate observations; DFlash
+has one pair. Results, draft work and host fingerprints match. The timing gate
+retains seven AR and nine MTP metrics as inconclusive; DFlash's single pair
+passes 128 metrics. This is no new speedup or full performance qualification.
+The first all-extension/testing-enabled timing controls and RAM-only AR pilot
+are excluded from that disk comparison. See the
+[production controls](upstream-refresh-data/production-controls.json) for every
+remaining flag, source/binary identities and raw evidence locations.
+
+The existing container recipes and Nix build have not been rebuilt or qualified
+for this integration. Neither native qualification nor these notes change the host
 ROCm, kernel, driver or boot configuration.
 
 The approved driver profile deliberately uses host windows with
@@ -100,8 +112,10 @@ cmake --build --preset release --parallel 4
 
 Start rank 0 first, and rank 1 within 30 s. `RANK0_ADDRESS` is where rank 1
 reaches rank 0's TCP bootstrap. Both ranks need the same model files and the
-same `--tp-control-token`, `--context`, `--prefill-chunk`, `--sessions`, MTP
-settings and `--mmproj` use; the handshake names any setting that differs.
+same `--tp-control-token`, `--context`, `--sessions`, MTP settings and
+`--mmproj` use. The handshake also checks the model's declared prefill pass
+size; the deprecated `--prefill-chunk` does not control it. Use the same build
+and model settings on both ranks; the handshake names any setting that differs.
 The ranks prove the token to each other by HMAC-SHA256 over fresh nonces, so
 it never crosses the network, and rank 0 answers only a peer that proved it.
 The channel is not encrypted (prompts cross it in the clear): keep the control

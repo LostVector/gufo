@@ -1,8 +1,8 @@
 {
   "scope": "Local semantic integration checkpoint; not a release or universal-optimal configuration",
-  "canonical_reference": "4b0300496c033ceb2dd45c295e5e1ce792d6de81",
+  "canonical_reference": "0d238d4f5fee49720d6be45c2c27795100922d5c",
   "neuhaus_reference": "f070a179c628a7409a5cee8e07b1ca76f1f7e660",
-  "reviewed_runtime_source": "8c2d9b005678c573867640cd9289ea2571175338",
+  "reviewed_runtime_source": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
   "control_wire_fix_source": "13c0bd02ed699f99dd4279650b7845e6d949f4d1",
   "deployment": "Original pre-refresh server retained; no driver/system/runtime deployment",
   "toolchain": "Existing private ROCm7.14.1/gfx1151",
@@ -382,5 +382,9 @@
         "deployed": false
       }
     }
-  }
+  },
+  "earlier_reviewed_runtime_source": "8c2d9b005678c573867640cd9289ea2571175338",
+  "extension_api": "0.3.4",
+  "latest_production_controls": "production-controls.json",
+  "latest_scope": "Source54cafa78 production-selected real AR/MTP/DFlash histories pass correctness with verified disk restore. AR7/MTP9 timingmetrics inconclusive; DFlash128single-pair metrics pass. Broader quality/performance not qualified."
 }

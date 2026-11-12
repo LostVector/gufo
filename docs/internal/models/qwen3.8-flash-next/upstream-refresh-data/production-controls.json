@@ -1,0 +1,938 @@
+{
+  "runtime_source": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
+  "canonical_reference": "0d238d4f5fee49720d6be45c2c27795100922d5c",
+  "api": "0.3.4",
+  "candidate": {
+    "source_commit": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
+    "sha256": "7957b71efaa8ae23ab2a487a2ecadbdccf92d1a16dd60fd59ecb04583c72df39",
+    "api": "0.3.4",
+    "extensions": [
+      "qwen38_flash_next"
+    ],
+    "BUILD_TESTING": false,
+    "build_type": "RelWithDebInfo",
+    "instrumentation": "none",
+    "compiler_runtime": "existing private ROCm7.14.1 gfx1151",
+    "deployed": false,
+    "qualification": "Actual production-selected AR/nativeMTP/DFlash2 discovery/long-context histories pass correctness with verified disk restoration. AR range gate121pass/7inconclusive, MTP119pass/9inconclusive, DFlash128single-pair pass. Wider cache/quality/matched performance remain unqualified. Original service restored; never default deployed."
+  },
+  "baseline": {
+    "source_commit": "8c2d9b005678c573867640cd9289ea2571175338",
+    "sha256": "579da873f69969fb31ee90b1662081f3a041cdf135ed9326e1096f6ef82f6aae",
+    "api": "0.3.2",
+    "extensions": [
+      "qwen38_flash_next"
+    ],
+    "source_worktree": "clean",
+    "instrumentation": "none; only permanent observer repair, disabled unless actual observer exists",
+    "build_type": "RelWithDebInfo",
+    "BUILD_TESTING": false,
+    "compiler_runtime": "existing private ROCm7.14.1 gfx1151",
+    "deployed": false
+  },
+  "settings": {
+    "target": "UD-Q4_K_XL",
+    "context_capacity": 65536,
+    "largest_actual_prompt": 24767,
+    "slots": 2,
+    "cache_ram_bytes": 1073741824,
+    "cache_disk_bytes": 8589934592,
+    "cache_disk_staging_bytes": 1073741824,
+    "thinking": "off",
+    "mtp": "shared Q8_0",
+    "dflash2": "Q8_0 adaptive"
+  },
+  "scope": "Selected real two-host discovery/long-context histories with verified disk restoration; not full release/model-quality/performance qualification. No source/driver/system/default deployment changed.",
+  "modes": {
+    "ar": {
+      "status": "inconclusive",
+      "measurement_counts": {
+        "passed": 121,
+        "inconclusive": 7
+      },
+      "quality_or_coverage_changes": [],
+      "comparisons": 2,
+      "timing_evidence": "scheduler-qualification/ar-disk-controls-analysis/qualification.json",
+      "timing_evidence_sha256": "48f3eac05b2d5ee7af1fa7716105d39ca070053f5fa7f56fdef10b0442c4af0d",
+      "unqualified_metrics": [
+        {
+          "case": "long-context.requests.json:long_cancel_resume:0",
+          "request_key": [
+            "long-context.requests.json",
+            "46040a9871faab093ee30687e1168bac7561464c89e33d1c3446d3a4751d903e",
+            0
+          ],
+          "metric": "client_ttft_ms",
+          "history_sha256": "a9c31471d167ca3c02ad12f19a3e8a08d33994ca1d24a01507f76aca529aa706",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 141.27345299857552,
+              "candidate": 139.63066100041033,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 128.72907600103645,
+              "candidate": 150.53005699883215,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 141.27345299857552,
+              "candidate": 128.72907600103645,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            128.72907600103645,
+            141.27345299857552
+          ],
+          "candidate_range": [
+            139.63066100041033,
+            150.53005699883215
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": true,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_cancel_resume:0",
+          "request_key": [
+            "long-context.requests.json",
+            "46040a9871faab093ee30687e1168bac7561464c89e33d1c3446d3a4751d903e",
+            0
+          ],
+          "metric": "queue_ms",
+          "history_sha256": "a9c31471d167ca3c02ad12f19a3e8a08d33994ca1d24a01507f76aca529aa706",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 25.288779,
+              "candidate": 30.844333,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 28.074546,
+              "candidate": 48.258456,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 25.288779,
+              "candidate": 28.074546,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            25.288779,
+            28.074546
+          ],
+          "candidate_range": [
+            30.844333,
+            48.258456
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_cancel_resume:0",
+          "request_key": [
+            "long-context.requests.json",
+            "46040a9871faab093ee30687e1168bac7561464c89e33d1c3446d3a4751d903e",
+            0
+          ],
+          "metric": "ttft_ms",
+          "history_sha256": "a9c31471d167ca3c02ad12f19a3e8a08d33994ca1d24a01507f76aca529aa706",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 124.425173,
+              "candidate": 128.149672,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 127.23523,
+              "candidate": 149.526287,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 124.425173,
+              "candidate": 127.23523,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            124.425173,
+            127.23523
+          ],
+          "candidate_range": [
+            128.149672,
+            149.526287
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_schema_cold:0",
+          "request_key": [
+            "long-context.requests.json",
+            "65a54e5081ad3bc509025e9af44f9fea3333184ab389d848e327107aaa56f89f",
+            0
+          ],
+          "metric": "decode_ms",
+          "history_sha256": "51f3ed770f3a1a2e2db6a4eff5ae226a5979f727214374561c79299046b311e0",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 217.77114999999998,
+              "candidate": 238.60472300000004,
+              "exceeds_margin": true
+            },
+            {
+              "comparison": 1,
+              "baseline": 236.158264,
+              "candidate": 219.29196499999995,
+              "exceeds_margin": false
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 217.77114999999998,
+              "candidate": 236.158264,
+              "exceeds_margin": true
+            }
+          ],
+          "baseline_range": [
+            217.77114999999998,
+            236.158264
+          ],
+          "candidate_range": [
+            219.29196499999995,
+            238.60472300000004
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 1,
+          "baseline_variable": true,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_schema_cold:0",
+          "request_key": [
+            "long-context.requests.json",
+            "65a54e5081ad3bc509025e9af44f9fea3333184ab389d848e327107aaa56f89f",
+            0
+          ],
+          "metric": "decode_ms_per_token",
+          "history_sha256": "51f3ed770f3a1a2e2db6a4eff5ae226a5979f727214374561c79299046b311e0",
+          "noise_floor": 1.4285714285714286,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 31.110164285714283,
+              "candidate": 34.086389000000004,
+              "exceeds_margin": true
+            },
+            {
+              "comparison": 1,
+              "baseline": 33.73689485714286,
+              "candidate": 31.327423571428564,
+              "exceeds_margin": false
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 31.110164285714283,
+              "candidate": 33.73689485714286,
+              "exceeds_margin": true
+            }
+          ],
+          "baseline_range": [
+            31.110164285714283,
+            33.73689485714286
+          ],
+          "candidate_range": [
+            31.327423571428564,
+            34.086389000000004
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 1,
+          "baseline_variable": true,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_schema_cold:0",
+          "request_key": [
+            "long-context.requests.json",
+            "65a54e5081ad3bc509025e9af44f9fea3333184ab389d848e327107aaa56f89f",
+            0
+          ],
+          "metric": "max_inter_token_ms",
+          "history_sha256": "51f3ed770f3a1a2e2db6a4eff5ae226a5979f727214374561c79299046b311e0",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 63.830964,
+              "candidate": 87.324676,
+              "exceeds_margin": true
+            },
+            {
+              "comparison": 1,
+              "baseline": 65.535684,
+              "candidate": 65.233772,
+              "exceeds_margin": false
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 63.830964,
+              "candidate": 65.535684,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            63.830964,
+            65.535684
+          ],
+          "candidate_range": [
+            65.233772,
+            87.324676
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "server",
+          "request_key": [
+            "server"
+          ],
+          "metric": "startup_ms",
+          "history_sha256": null,
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 22610.626914000022,
+              "candidate": 21708.851434999815,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 21707.89251399765,
+              "candidate": 22917.101348997676,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 22610.626914000022,
+              "candidate": 21707.89251399765,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            21707.89251399765,
+            22610.626914000022
+          ],
+          "candidate_range": [
+            21708.851434999815,
+            22917.101348997676
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        }
+      ],
+      "runs": [
+        {
+          "name": "scheduler-ar-disklong-baseline-r1",
+          "source": "8c2d9b005678c573867640cd9289ea2571175338",
+          "sha256": "579da873f69969fb31ee90b1662081f3a041cdf135ed9326e1096f6ef82f6aae",
+          "record_count": 14,
+          "draft_proposed": 0,
+          "draft_accepted": 0,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        },
+        {
+          "name": "scheduler-ar-disklong-candidate-r1",
+          "source": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
+          "sha256": "7957b71efaa8ae23ab2a487a2ecadbdccf92d1a16dd60fd59ecb04583c72df39",
+          "record_count": 14,
+          "draft_proposed": 0,
+          "draft_accepted": 0,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        },
+        {
+          "name": "scheduler-ar-disklong-baseline-r2",
+          "source": "8c2d9b005678c573867640cd9289ea2571175338",
+          "sha256": "579da873f69969fb31ee90b1662081f3a041cdf135ed9326e1096f6ef82f6aae",
+          "record_count": 14,
+          "draft_proposed": 0,
+          "draft_accepted": 0,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        },
+        {
+          "name": "scheduler-ar-disklong-candidate-r2",
+          "source": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
+          "sha256": "7957b71efaa8ae23ab2a487a2ecadbdccf92d1a16dd60fd59ecb04583c72df39",
+          "record_count": 14,
+          "draft_proposed": 0,
+          "draft_accepted": 0,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        }
+      ],
+      "hardware_fingerprints_unchanged": true
+    },
+    "mtp": {
+      "status": "inconclusive",
+      "measurement_counts": {
+        "passed": 119,
+        "inconclusive": 9
+      },
+      "quality_or_coverage_changes": [],
+      "comparisons": 2,
+      "timing_evidence": "scheduler-qualification/mtp-disk-controls-analysis/qualification.json",
+      "timing_evidence_sha256": "131b45672b6552505486f873643f8f41121081afdf410bf77577433efcaa9b8d",
+      "unqualified_metrics": [
+        {
+          "case": "long-context.requests.json:long_json_stop:0",
+          "request_key": [
+            "long-context.requests.json",
+            "863c80e58437ed2dc0fc1b9312864aa8b0cc4a8a7d0d98345235c83c0ce619e9",
+            0
+          ],
+          "metric": "wall_ms",
+          "history_sha256": "83c84e6560714fc65df10a3fdc7d51ade210b3dc3d9b6ca6461178690d6cdd92",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 1050.9627159990487,
+              "candidate": 1085.949725998944,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 1084.9179979995824,
+              "candidate": 1153.9258369994059,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 1050.9627159990487,
+              "candidate": 1084.9179979995824,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            1050.9627159990487,
+            1084.9179979995824
+          ],
+          "candidate_range": [
+            1085.949725998944,
+            1153.9258369994059
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_json_stop:0",
+          "request_key": [
+            "long-context.requests.json",
+            "863c80e58437ed2dc0fc1b9312864aa8b0cc4a8a7d0d98345235c83c0ce619e9",
+            0
+          ],
+          "metric": "cache_restore_ms",
+          "history_sha256": "83c84e6560714fc65df10a3fdc7d51ade210b3dc3d9b6ca6461178690d6cdd92",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 845.829751,
+              "candidate": 862.432097,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 869.066793,
+              "candidate": 944.344176,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 845.829751,
+              "candidate": 869.066793,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            845.829751,
+            869.066793
+          ],
+          "candidate_range": [
+            862.432097,
+            944.344176
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_json_stop:0",
+          "request_key": [
+            "long-context.requests.json",
+            "863c80e58437ed2dc0fc1b9312864aa8b0cc4a8a7d0d98345235c83c0ce619e9",
+            0
+          ],
+          "metric": "cache_snapshot_ms",
+          "history_sha256": "83c84e6560714fc65df10a3fdc7d51ade210b3dc3d9b6ca6461178690d6cdd92",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 40.724761,
+              "candidate": 55.755734,
+              "exceeds_margin": true
+            },
+            {
+              "comparison": 1,
+              "baseline": 49.068642,
+              "candidate": 43.923725,
+              "exceeds_margin": false
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 40.724761,
+              "candidate": 49.068642,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            40.724761,
+            49.068642
+          ],
+          "candidate_range": [
+            43.923725,
+            55.755734
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_json_stop:0",
+          "request_key": [
+            "long-context.requests.json",
+            "863c80e58437ed2dc0fc1b9312864aa8b0cc4a8a7d0d98345235c83c0ce619e9",
+            0
+          ],
+          "metric": "client_ttft_ms",
+          "history_sha256": "83c84e6560714fc65df10a3fdc7d51ade210b3dc3d9b6ca6461178690d6cdd92",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 976.2355960010609,
+              "candidate": 1011.0527209981228,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 1010.247807000269,
+              "candidate": 1077.530457998364,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 976.2355960010609,
+              "candidate": 1010.247807000269,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            976.2355960010609,
+            1010.247807000269
+          ],
+          "candidate_range": [
+            1011.0527209981228,
+            1077.530457998364
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_json_stop:0",
+          "request_key": [
+            "long-context.requests.json",
+            "863c80e58437ed2dc0fc1b9312864aa8b0cc4a8a7d0d98345235c83c0ce619e9",
+            0
+          ],
+          "metric": "prefill_ms",
+          "history_sha256": "83c84e6560714fc65df10a3fdc7d51ade210b3dc3d9b6ca6461178690d6cdd92",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 125.294287,
+              "candidate": 142.972622,
+              "exceeds_margin": true
+            },
+            {
+              "comparison": 1,
+              "baseline": 136.418036,
+              "candidate": 128.286007,
+              "exceeds_margin": false
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 125.294287,
+              "candidate": 136.418036,
+              "exceeds_margin": true
+            }
+          ],
+          "baseline_range": [
+            125.294287,
+            136.418036
+          ],
+          "candidate_range": [
+            128.286007,
+            142.972622
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 1,
+          "baseline_variable": true,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_json_stop:0",
+          "request_key": [
+            "long-context.requests.json",
+            "863c80e58437ed2dc0fc1b9312864aa8b0cc4a8a7d0d98345235c83c0ce619e9",
+            0
+          ],
+          "metric": "prefill_ms_per_token",
+          "history_sha256": "83c84e6560714fc65df10a3fdc7d51ade210b3dc3d9b6ca6461178690d6cdd92",
+          "noise_floor": 1.4285714285714286,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 17.899183857142855,
+              "candidate": 20.424660285714285,
+              "exceeds_margin": true
+            },
+            {
+              "comparison": 1,
+              "baseline": 19.488290857142857,
+              "candidate": 18.32657242857143,
+              "exceeds_margin": false
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 17.899183857142855,
+              "candidate": 19.488290857142857,
+              "exceeds_margin": true
+            }
+          ],
+          "baseline_range": [
+            17.899183857142855,
+            19.488290857142857
+          ],
+          "candidate_range": [
+            18.32657242857143,
+            20.424660285714285
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 1,
+          "baseline_variable": true,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_json_stop:0",
+          "request_key": [
+            "long-context.requests.json",
+            "863c80e58437ed2dc0fc1b9312864aa8b0cc4a8a7d0d98345235c83c0ce619e9",
+            0
+          ],
+          "metric": "queue_ms",
+          "history_sha256": "83c84e6560714fc65df10a3fdc7d51ade210b3dc3d9b6ca6461178690d6cdd92",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 849.790673,
+              "candidate": 866.812497,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 872.608928,
+              "candidate": 948.163273,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 849.790673,
+              "candidate": 872.608928,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            849.790673,
+            872.608928
+          ],
+          "candidate_range": [
+            866.812497,
+            948.163273
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_json_stop:0",
+          "request_key": [
+            "long-context.requests.json",
+            "863c80e58437ed2dc0fc1b9312864aa8b0cc4a8a7d0d98345235c83c0ce619e9",
+            0
+          ],
+          "metric": "server_duration_ms",
+          "history_sha256": "83c84e6560714fc65df10a3fdc7d51ade210b3dc3d9b6ca6461178690d6cdd92",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 1050.1,
+              "candidate": 1085.4,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 1084.4,
+              "candidate": 1153.4,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 1050.1,
+              "candidate": 1084.4,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            1050.1,
+            1084.4
+          ],
+          "candidate_range": [
+            1085.4,
+            1153.4
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        },
+        {
+          "case": "long-context.requests.json:long_json_stop:0",
+          "request_key": [
+            "long-context.requests.json",
+            "863c80e58437ed2dc0fc1b9312864aa8b0cc4a8a7d0d98345235c83c0ce619e9",
+            0
+          ],
+          "metric": "ttft_ms",
+          "history_sha256": "83c84e6560714fc65df10a3fdc7d51ade210b3dc3d9b6ca6461178690d6cdd92",
+          "noise_floor": 10,
+          "samples": [
+            {
+              "comparison": 0,
+              "baseline": 975.208747,
+              "candidate": 1009.880537,
+              "exceeds_margin": false
+            },
+            {
+              "comparison": 1,
+              "baseline": 1009.119891,
+              "candidate": 1076.564687,
+              "exceeds_margin": true
+            }
+          ],
+          "controls": [
+            {
+              "comparison": 2,
+              "baseline": 975.208747,
+              "candidate": 1009.119891,
+              "exceeds_margin": false
+            }
+          ],
+          "baseline_range": [
+            975.208747,
+            1009.119891
+          ],
+          "candidate_range": [
+            1009.880537,
+            1076.564687
+          ],
+          "flagged_pairs": 1,
+          "control_flags": 0,
+          "baseline_variable": false,
+          "status": "inconclusive",
+          "reason": "variable or overlapping observations; inspect stalls"
+        }
+      ],
+      "runs": [
+        {
+          "name": "scheduler-mtp-disklong-baseline-r1",
+          "source": "8c2d9b005678c573867640cd9289ea2571175338",
+          "sha256": "579da873f69969fb31ee90b1662081f3a041cdf135ed9326e1096f6ef82f6aae",
+          "record_count": 14,
+          "draft_proposed": 186,
+          "draft_accepted": 134,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        },
+        {
+          "name": "scheduler-mtp-disklong-candidate-r1",
+          "source": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
+          "sha256": "7957b71efaa8ae23ab2a487a2ecadbdccf92d1a16dd60fd59ecb04583c72df39",
+          "record_count": 14,
+          "draft_proposed": 186,
+          "draft_accepted": 134,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        },
+        {
+          "name": "scheduler-mtp-disklong-baseline-r2",
+          "source": "8c2d9b005678c573867640cd9289ea2571175338",
+          "sha256": "579da873f69969fb31ee90b1662081f3a041cdf135ed9326e1096f6ef82f6aae",
+          "record_count": 14,
+          "draft_proposed": 186,
+          "draft_accepted": 134,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        },
+        {
+          "name": "scheduler-mtp-disklong-candidate-r2",
+          "source": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
+          "sha256": "7957b71efaa8ae23ab2a487a2ecadbdccf92d1a16dd60fd59ecb04583c72df39",
+          "record_count": 14,
+          "draft_proposed": 186,
+          "draft_accepted": 134,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        }
+      ],
+      "hardware_fingerprints_unchanged": true
+    },
+    "dflash2": {
+      "status": "passed",
+      "measurement_counts": {
+        "passed": 128
+      },
+      "quality_or_coverage_changes": [],
+      "comparisons": 1,
+      "timing_evidence": "scheduler-qualification/speculative-disk-analysis/dflash2-pair-r1.json",
+      "timing_evidence_sha256": "d47a16c48a4ba85c3e88d1a268780d18727095442c1b55b20f91d95b3116ade2",
+      "unqualified_metrics": [],
+      "runs": [
+        {
+          "name": "scheduler-dflash2-disklong-baseline-r1",
+          "source": "8c2d9b005678c573867640cd9289ea2571175338",
+          "sha256": "579da873f69969fb31ee90b1662081f3a041cdf135ed9326e1096f6ef82f6aae",
+          "record_count": 14,
+          "draft_proposed": 353,
+          "draft_accepted": 151,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        },
+        {
+          "name": "scheduler-dflash2-disklong-candidate-r1",
+          "source": "54cafa78a74007367d75c983af65ecd7f4b6fb20",
+          "sha256": "7957b71efaa8ae23ab2a487a2ecadbdccf92d1a16dd60fd59ecb04583c72df39",
+          "record_count": 14,
+          "draft_proposed": 353,
+          "draft_accepted": 151,
+          "actual_disk_restore_verified": true,
+          "original_restored": true
+        }
+      ],
+      "hardware_fingerprints_unchanged": true
+    }
+  },
+  "limitations": [
+    "Initial all-extension/BUILD_TESTING=ON controls cannot isolate production-source timing changes.",
+    "The first AR RAM-only controls did not exercise disk restoration and are excluded from the disk question.",
+    "Observed-range timing gate at5%/10ms is not a confidence interval or proof about smaller differences.",
+    "All phase durations are application measurements, not isolated GPU or NVMe completion times.",
+    "Inherited literal-history output assertion remains failed and unwaived.",
+    "Private fairness checkpoint remains separate and unported."
+  ],
+  "raw_root": "/home/rkuo/strix-dispatch-investigation/upstream-refresh-2026-11-11-stop-v1",
+  "published": false
+}
