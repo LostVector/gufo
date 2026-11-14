@@ -39,22 +39,23 @@ namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
 
 constexpr std::uint32_t kWireMagic = 0x47554654U;  // "GUFT"
-// Version26 adds compact sampled-MTP candidate exchanges. Mixed versions fail
+// Version27 adds tagged compact target verification. Mixed versions fail
 // closed.
-constexpr std::uint32_t kWireVersion = 26;
+constexpr std::uint32_t kWireVersion = 27;
 constexpr std::uint32_t kPlacementGpuWindows = 1U;
 constexpr std::uint32_t kPlacementTargetHeadGather = 8U;
 constexpr std::uint32_t kPlacementPleOwner = 16U;
 constexpr std::uint32_t kPlacementDraftHeadGather = 32U;
 constexpr std::uint32_t kPlacementMtpCandidateHeadGather = 64U;
 constexpr std::uint32_t kPlacementMtpCandidateMerge = 128U;
+constexpr std::uint32_t kPlacementCompactTargetVerification = 256U;
 constexpr std::uint32_t kPlacementKnownFlags =
     kPlacementGpuWindows | kPlacementTargetHeadGather | kPlacementPleOwner |
     kPlacementDraftHeadGather | kPlacementMtpCandidateHeadGather |
-    kPlacementMtpCandidateMerge;
+    kPlacementMtpCandidateMerge | kPlacementCompactTargetVerification;
 constexpr std::uint32_t kPlacementMagic = 0x4755504CU;   // "GUPL"
 constexpr std::uint32_t kCollectiveMagic = 0x47554348U;  // "GUCH"
-constexpr std::uint32_t kCollectiveVersion = 5;
+constexpr std::uint32_t kCollectiveVersion = 6;
 constexpr std::uint32_t kReadyMagic = 0x47555244U;  // "GURD"
 // Exchanges use the send and receive windows in turn. Three, because the add
 // reading an overlapped exchange's partial may still be queued when the
@@ -504,6 +505,7 @@ struct CollectiveHeader {
   std::uint64_t scope_id{0};
   std::uint64_t operation_id{0};
   std::uint64_t bytes{0};
+  std::uint64_t tag{0};
 };
 
 static_assert(sizeof(CollectiveHeader) <= kDataOffset);
@@ -603,7 +605,8 @@ public:
         .flags = (local_gpu ? kPlacementGpuWindows : 0U) |
                  kPlacementTargetHeadGather | kPlacementPleOwner |
                  kPlacementDraftHeadGather | kPlacementMtpCandidateHeadGather |
-                 kPlacementMtpCandidateMerge};
+                 kPlacementMtpCandidateMerge |
+                 (local_gpu ? 0U : kPlacementCompactTargetVerification)};
     Placement remote_placement{};
     if (!control.SendAll(&local_placement, sizeof(local_placement), error) ||
         !control.RecvAll(&remote_placement, sizeof(remote_placement), error)) {
@@ -626,6 +629,9 @@ public:
          kPlacementMtpCandidateHeadGather) != 0;
     mtp_candidate_merge_ = (local_placement.flags & remote_placement.flags &
                             kPlacementMtpCandidateMerge) != 0;
+    compact_target_verification_ =
+        !gpu_windows_ && (local_placement.flags & remote_placement.flags &
+                          kPlacementCompactTargetVerification) != 0;
     ple_owner_ = (local_placement.flags & remote_placement.flags &
                   kPlacementPleOwner) != 0;
     if (local_gpu && !gpu_windows_) {
@@ -795,6 +801,10 @@ public:
   [[nodiscard]] bool SupportsDraftHeadGather() const noexcept override {
     return draft_head_gather_;
   }
+  [[nodiscard]] bool SupportsCompactTargetVerification()
+      const noexcept override {
+    return compact_target_verification_;
+  }
   [[nodiscard]] bool SupportsMtpCandidateMerge() const noexcept override {
     return mtp_candidate_merge_;
   }
@@ -962,7 +972,17 @@ public:
 
   [[nodiscard]] bool QueuePartial(std::size_t bytes, QueuedPartial* partial,
                                   std::string* error) override {
+    return QueueTaggedPartial(bytes, 0, partial, error);
+  }
+
+  [[nodiscard]] bool QueueTaggedPartial(std::size_t bytes, std::uint64_t tag,
+                                        QueuedPartial* partial,
+                                        std::string* error) override {
     std::lock_guard lock(mutex_);
+    if (!partial || (tag != 0 && gpu_windows_)) {
+      SetError(error, "invalid or unsupported tagged TP exchange");
+      return false;
+    }
     if (!CheckExchange(static_cast<const float*>(send_device_), bytes, error)) {
       return false;
     }
@@ -995,6 +1015,7 @@ public:
       jobs_.push_back({.bytes = bytes,
                        .scope_id = *bound_scope_,
                        .operation_id = operation_id,
+                       .tag = tag,
                        .queued = true});
     }
     ++next_operation_;
@@ -1052,6 +1073,7 @@ private:
     std::size_t bytes{0};
     std::uint64_t scope_id{0};
     std::uint64_t operation_id{0};
+    std::uint64_t tag{0};
     /// A QueuePartial exchange: the GPU stages it and waits for it.
     bool queued{false};
   };
@@ -1306,15 +1328,21 @@ private:
   /// Communicator). Returns the peer's partial on the GPU, or null.
   [[nodiscard]] const float* Transfer(std::uint64_t scope_id,
                                       std::uint64_t operation_id,
-                                      std::size_t bytes, std::string* error) {
+                                      std::size_t bytes, std::string* error,
+                                      std::uint64_t tag = 0) {
     const std::size_t window = (operation_id % kWindows) * kWindowBytes;
     if (gpu_windows_) {
+      if (tag != 0) {
+        SetError(error, "tagged exchanges require host windows");
+        return nullptr;
+      }
       return TransferWindow(scope_id, operation_id, bytes, error);
     }
     const CollectiveHeader outgoing{
         .scope_id = scope_id,
         .operation_id = operation_id,
         .bytes = bytes,
+        .tag = tag,
     };
     std::uint8_t* send = SendWindow(operation_id);
     std::memcpy(send, &outgoing, sizeof(outgoing));
@@ -1347,15 +1375,17 @@ private:
         incoming.version != kCollectiveVersion ||
         incoming.scope_id != outgoing.scope_id ||
         incoming.operation_id != outgoing.operation_id ||
-        incoming.bytes != bytes) {
+        incoming.bytes != bytes || incoming.tag != outgoing.tag) {
       if (error != nullptr) {
         *error = "verbs collective identity or size mismatch: outgoing=" +
                  std::to_string(outgoing.scope_id) + "/" +
                  std::to_string(outgoing.operation_id) + "/" +
                  std::to_string(outgoing.bytes) +
+                 "/tag=" + std::to_string(outgoing.tag) +
                  " incoming=" + std::to_string(incoming.scope_id) + "/" +
                  std::to_string(incoming.operation_id) + "/" +
-                 std::to_string(incoming.bytes);
+                 std::to_string(incoming.bytes) +
+                 "/tag=" + std::to_string(incoming.tag);
       }
       return nullptr;
     }
@@ -1470,7 +1500,7 @@ private:
       } else if (job.queued) {
         if (WaitReady(job.operation_id + 1, &finished.error)) {
           finished.peer = Transfer(job.scope_id, job.operation_id, job.bytes,
-                                   &finished.error);
+                                   &finished.error, job.tag);
         }
       } else if (!device ||
                  hipStreamWaitEvent(copy_stream_, job.ready, 0) != hipSuccess ||
@@ -1851,6 +1881,7 @@ private:
   bool draft_head_gather_{false};
   bool mtp_candidate_head_gather_{false};
   bool mtp_candidate_merge_{false};
+  bool compact_target_verification_{false};
   bool ple_owner_{false};
   std::string gpu_unavailable_;
   std::size_t data_offset_{kDataOffset};

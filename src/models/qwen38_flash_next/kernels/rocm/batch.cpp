@@ -473,6 +473,7 @@ bool Executor::MtpForwardBatch(std::span<const MtpBatchItem> items,
 
 bool Executor::MtpHeads(std::span<const MtpHeadItem> items,
                         std::string* error) const {
+  ClearPartialVerification();
   selected_logits_ = nullptr;
   if (!has_mtp() || items.empty() || items.size() > kBatchSessions ||
       items.size() > options_.max_batch) {
@@ -858,6 +859,7 @@ bool Executor::ForwardWide(Session& session,
 
 bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
                                 std::string* error) const {
+  ClearPartialVerification();
   selected_logits_ = nullptr;
   wide_rows_ = 0;
   DropReadyQ8();
@@ -1413,6 +1415,7 @@ bool Executor::SelectBatchLogits(std::uint32_t offset, std::uint32_t rows,
     return Fail(error, "logit rows outside the completed decode batch");
   }
   const std::size_t vocab = config().vocab_size;
+  ClearPartialVerification();
   selected_logits_ = batch_logits_ + static_cast<std::size_t>(offset) * vocab;
   // The pinned staging buffer holds max_logit_rows rows; a wide
   // verification's rows download through it in pieces.

@@ -396,6 +396,13 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
       exec.mtp_candidate_merge =
           rocm::Executor::TwoRankMtpCandidateMerge(options.communicator);
     }
+    if (options.communicator->SupportsCompactTargetVerification()) {
+      exec.compact_target_candidates =
+          rocm::Executor::TwoRankTargetVerificationCandidates(
+              options.communicator);
+      exec.compact_target_row = rocm::Executor::TwoRankTargetVerificationRow(
+          options.communicator, c.vocab_size);
+    }
     exec.split_reduce =
         rocm::Executor::TwoRankSplitReduce(options.communicator, c.hidden_size);
     if (c.ple_layer >= 0 && options.communicator->SupportsPleOwner()) {
@@ -2132,7 +2139,9 @@ bool Session::DecodeStep(std::size_t max_tokens,
                  *session_, pending.chain, pending.chain.size(), logits,
                  pending.speculative ? rocm::Executor::ForwardMode::kVerify
                                      : rocm::Executor::ForwardMode::kDecode,
-                 error_msg)) {
+                 error_msg, {}, {},
+                 pending.speculative && pending.sampled &&
+                     pending.gpu_verification && !sampler.config().logprobs)) {
     return false;
   }
   const bool ok = FinishDecode(request, pending, error_msg);

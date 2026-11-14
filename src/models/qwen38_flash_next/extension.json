@@ -149,6 +149,18 @@
       "ctest": "qwen38_flash_next\\.rdma_gid",
       "check_pr": true,
       "windows_build": true
+    },
+    {
+      "target": "qwen38_flash_next_deferred_verification_state_test",
+      "ctest": "qwen38_flash_next\\.deferred_verification_state",
+      "check_pr": true,
+      "windows_build": true
+    },
+    {
+      "target": "qwen38_flash_next_deferred_verification_hook_test",
+      "ctest": "qwen38_flash_next\\.deferred_verification_hook",
+      "check_pr": true,
+      "windows_build": true
     }
   ],
   "test_labels": [

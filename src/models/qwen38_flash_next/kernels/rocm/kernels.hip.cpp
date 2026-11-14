@@ -4110,16 +4110,17 @@ __global__ void CopyKernel(const float* src, float* dst, std::size_t count) {
 }
 
 template<bool First>
-__global__ void VerificationCandidateTileKernel(
+__device__ __forceinline__ void VerificationCandidateTileBody(
     const float* logits, GreedyPenaltyRows penalties,
     const std::uint32_t* input, std::uint32_t* output, std::uint32_t size,
-    std::uint32_t vocab, std::uint32_t stride) {
+    std::uint32_t vocab, std::uint32_t stride, std::uint32_t first) {
   using Sort = hipcub::BlockRadixSort<float, kThreads, 4, std::uint32_t>;
   __shared__ Sort::TempStorage scratch;
   __shared__ unsigned excluded[kMtpCandidateTile / 32];
   __shared__ unsigned first_penalty;
   const unsigned row = blockIdx.y;
   const auto begin = blockIdx.x * kMtpCandidateTile;
+  const auto logical_begin = begin + first;
   if constexpr (First) {
     if (threadIdx.x < kMtpCandidateTile / 32)
       excluded[threadIdx.x] = 0;
@@ -4128,7 +4129,7 @@ __global__ void VerificationCandidateTileKernel(
       auto hi = penalties.offsets[row + 1];
       while (lo < hi) {
         const auto mid = lo + (hi - lo) / 2;
-        if (penalties.penalties[mid].token < begin)
+        if (penalties.penalties[mid].token < logical_begin)
           lo = mid + 1;
         else
           hi = mid;
@@ -4139,9 +4140,9 @@ __global__ void VerificationCandidateTileKernel(
     for (auto i = first_penalty + threadIdx.x; i < penalties.offsets[row + 1];
          i += blockDim.x) {
       const auto token = penalties.penalties[i].token;
-      if (token >= begin + kMtpCandidateTile)
+      if (token >= logical_begin + kMtpCandidateTile)
         break;
-      const auto offset = token - begin;
+      const auto offset = token - logical_begin;
       atomicOr(&excluded[offset / 32], 1U << (offset % 32));
     }
     __syncthreads();
@@ -4152,14 +4153,16 @@ __global__ void VerificationCandidateTileKernel(
   for (unsigned j = 0; j < 4; ++j) {
     const auto offset = threadIdx.x * 4 + j;
     const auto i = begin + offset;
-    auto id = i < size ? (First ? i : input[std::size_t(row) * stride + i])
-                       : UINT32_MAX;
+    auto id = i < size
+                  ? (First ? i + first : input[std::size_t(row) * stride + i])
+                  : UINT32_MAX;
     if constexpr (First) {
       if ((excluded[offset / 32] >> (offset % 32)) & 1U)
         id = UINT32_MAX;
     }
-    const float value =
-        id < vocab ? logits[std::size_t(row) * vocab + id] : -INFINITY;
+    const float value = id >= first && id - first < vocab
+                            ? logits[std::size_t(row) * vocab + id - first]
+                            : -INFINITY;
     // Drop the ID too: a subsequent pass must never resurrect an excluded
     // or nonfinite entry by reading its original logit.
     ids[j] = isfinite(value) ? id : UINT32_MAX;
@@ -4172,6 +4175,88 @@ __global__ void VerificationCandidateTileKernel(
     if (rank < kMtpCandidates)
       output[std::size_t(row) * stride + blockIdx.x * kMtpCandidates + rank] =
           ids[j];
+  }
+}
+
+template<bool First>
+__global__ void VerificationCandidateTileKernel(
+    const float* logits, GreedyPenaltyRows penalties,
+    const std::uint32_t* input, std::uint32_t* output, std::uint32_t size,
+    std::uint32_t vocab, std::uint32_t stride) {
+  VerificationCandidateTileBody<First>(logits, penalties, input, output, size,
+                                       vocab, stride, 0);
+}
+
+template<bool First>
+__global__ void PartitionVerificationCandidateTileKernel(
+    const float* logits, GreedyPenaltyRows penalties,
+    const std::uint32_t* input, std::uint32_t* output, std::uint32_t size,
+    std::uint32_t half, std::uint32_t stride, std::uint32_t first) {
+  VerificationCandidateTileBody<First>(logits, penalties, input, output, size,
+                                       half, stride, first);
+}
+
+__global__ void PackPartitionVerificationKernel(
+    const float* logits, GreedyPenaltyRows penalties, const std::uint32_t* ids,
+    std::uint32_t* packed, std::uint32_t half, std::uint32_t first,
+    std::uint32_t stride) {
+  const auto row = blockIdx.x;
+  const auto base = row * (2 * kMtpCandidates) + penalties.offsets[row];
+  if (threadIdx.x < kMtpCandidates) {
+    const auto id = ids[std::size_t(row) * stride + threadIdx.x];
+    const bool owned = id >= first && id - first < half;
+    packed[base + threadIdx.x] = owned ? id : UINT32_MAX;
+    packed[base + kMtpCandidates + threadIdx.x] = __float_as_uint(
+        owned ? logits[std::size_t(row) * half + id - first] : -INFINITY);
+  }
+  const auto count = penalties.offsets[row + 1] - penalties.offsets[row];
+  for (unsigned i = threadIdx.x; i < count; i += blockDim.x) {
+    const auto id = penalties.penalties[penalties.offsets[row] + i].token;
+    const bool owned = id >= first && id - first < half;
+    packed[base + 2 * kMtpCandidates + i] =
+        owned ? __float_as_uint(logits[std::size_t(row) * half + id - first])
+              : 0;
+  }
+}
+
+// Stable rank0/rank1 top64 union, plus every original penalized logit from
+// its unique owner. No local normalization or floating-point reduction.
+__global__ void MergePartitionVerificationKernel(const std::uint32_t* local,
+                                                 const std::uint32_t* peer,
+                                                 GreedyPenaltyRows penalties,
+                                                 sampling::LogitCandidate* out,
+                                                 std::uint32_t vocab,
+                                                 std::uint32_t rank) {
+  constexpr unsigned keep = kMtpCandidates;
+  using Sort = hipcub::BlockRadixSort<float, 2 * keep, 1, std::uint64_t>;
+  __shared__ Sort::TempStorage scratch;
+  const auto row = blockIdx.x;
+  const auto base = row * (2 * keep) + penalties.offsets[row];
+  const auto owner = threadIdx.x / keep;
+  const auto slot = threadIdx.x % keep;
+  const auto* source = (owner == rank ? local : peer) + base;
+  const auto id = source[slot];
+  const auto value = __uint_as_float(source[keep + slot]);
+  const bool valid = id < vocab && isfinite(value);
+  const float score = valid ? value : -INFINITY;
+  float keys[1] = {score == 0.0F ? 0.0F : score};
+  std::uint64_t payload[1] = {(std::uint64_t{__float_as_uint(score)} << 32) |
+                              (valid ? id : UINT32_MAX)};
+  Sort(scratch).SortDescending(keys, payload);
+  auto* destination = out + row * keep + penalties.offsets[row];
+  if (threadIdx.x < keep)
+    destination[threadIdx.x] = {
+        static_cast<std::uint32_t>(payload[0]),
+        __uint_as_float(static_cast<std::uint32_t>(payload[0] >> 32))};
+  const auto count = penalties.offsets[row + 1] - penalties.offsets[row];
+  for (unsigned i = threadIdx.x; i < count; i += blockDim.x) {
+    const auto token = penalties.penalties[penalties.offsets[row] + i].token;
+    const auto* packet = ((token < vocab / 2 ? 0U : 1U) == rank ? local : peer);
+    destination[keep + i] =
+        token < vocab
+            ? sampling::LogitCandidate{token, __uint_as_float(
+                                                  packet[base + 2 * keep + i])}
+            : sampling::LogitCandidate{UINT32_MAX, -INFINITY};
   }
 }
 
@@ -9868,6 +9953,58 @@ void MergeMtpCandidates(std::uint32_t* packed, const std::uint32_t* peer,
     throw std::invalid_argument("invalid MTP candidate merge");
   MergeMtpCandidatesKernel<<<1, 2 * kMtpCandidates, 0, stream>>>(packed, peer,
                                                                  half, rank);
+}
+
+void PartitionVerificationCandidates(
+    const float* logits, GreedyPenaltyRows penalties, std::uint32_t* ids,
+    std::uint32_t* scratch_ids, std::uint32_t* packed, std::uint32_t rows,
+    std::uint32_t vocab, std::uint32_t rank, hipStream_t stream) {
+  if (!logits || !ids || !scratch_ids || !packed || rank > 1 || rows == 0 ||
+      rows > 7 || vocab % 2 != 0 || vocab / 2 < kMtpCandidates ||
+      penalties.offsets[0] != 0 ||
+      (penalties.offsets[rows] != 0 && !penalties.penalties))
+    throw std::invalid_argument("invalid partition verification shape");
+  for (unsigned i = 0; i < rows; ++i)
+    if (penalties.offsets[i + 1] < penalties.offsets[i])
+      throw std::invalid_argument("invalid partition verification offsets");
+  const auto half = vocab / 2;
+  const auto first = rank * half;
+  const auto stride = MtpCandidateWorkspaceSize(half);
+  const auto tiles = [](std::uint32_t n) { return 1U + (n - 1U) / 1024; };
+  auto size = half;
+  auto blocks = tiles(size);
+  PartitionVerificationCandidateTileKernel<true>
+      <<<dim3(blocks, rows), kThreads, 0, stream>>>(
+          logits, penalties, nullptr, ids, size, half, stride, first);
+  auto* source = ids;
+  auto* destination = scratch_ids;
+  while (blocks > 1) {
+    size = blocks * kMtpCandidates;
+    blocks = tiles(size);
+    PartitionVerificationCandidateTileKernel<false>
+        <<<dim3(blocks, rows), kThreads, 0, stream>>>(
+            logits, penalties, source, destination, size, half, stride, first);
+    std::swap(source, destination);
+  }
+  PackPartitionVerificationKernel<<<rows, kThreads, 0, stream>>>(
+      logits, penalties, source, packed, half, first, stride);
+}
+
+void MergePartitionVerificationCandidates(
+    const std::uint32_t* local, const std::uint32_t* peer,
+    GreedyPenaltyRows penalties, sampling::LogitCandidate* out,
+    std::uint32_t rows, std::uint32_t vocab, std::uint32_t rank,
+    hipStream_t stream) {
+  if (!local || !peer || !out || rank > 1 || rows == 0 || rows > 7 ||
+      vocab % 2 != 0 || vocab / 2 < kMtpCandidates ||
+      penalties.offsets[0] != 0 ||
+      (penalties.offsets[rows] != 0 && !penalties.penalties))
+    throw std::invalid_argument("invalid merged verification shape");
+  for (unsigned i = 0; i < rows; ++i)
+    if (penalties.offsets[i + 1] < penalties.offsets[i])
+      throw std::invalid_argument("invalid merged verification offsets");
+  MergePartitionVerificationKernel<<<rows, 2 * kMtpCandidates, 0, stream>>>(
+      local, peer, penalties, out, vocab, rank);
 }
 
 void MtpTopCandidates(const float* logits, std::uint32_t* ids,

@@ -330,6 +330,15 @@ public:
     std::function<bool(float*, std::size_t, std::uint32_t, hipStream_t,
                        std::string*)>
         target_head_gather;
+    /// Exact compact target candidates from parked local verification logits.
+    std::function<bool(std::uint32_t*, GreedyPenaltyRows,
+                       sampling::LogitCandidate*, std::uint32_t, std::uint32_t,
+                       std::uint64_t, hipStream_t, std::string*)>
+        compact_target_candidates;
+    /// Materialize one original full row, tagged with row/count identity.
+    std::function<bool(float*, const float*, std::uint32_t, std::uint32_t,
+                       hipStream_t, std::string*)>
+        compact_target_row;
     /// Negotiated scalar sampled-MTP sharing through the existing head gathers.
     bool mtp_candidate_head_gather{false};
     /// Exact global top64 from each vocabulary partition's top64, before remap.
@@ -377,6 +386,13 @@ public:
   [[nodiscard]] static std::function<bool(std::uint32_t*, std::uint32_t,
                                           hipStream_t, std::string*)>
   TwoRankMtpCandidateMerge(std::shared_ptr<Communicator> communicator);
+
+  [[nodiscard]] static decltype(Options::compact_target_candidates)
+  TwoRankTargetVerificationCandidates(
+      std::shared_ptr<Communicator> communicator);
+  [[nodiscard]] static decltype(Options::compact_target_row)
+  TwoRankTargetVerificationRow(std::shared_ptr<Communicator> communicator,
+                               std::uint32_t vocab);
 
   ~Executor();
   [[nodiscard]] hipStream_t stream() const noexcept { return stream_; }
@@ -434,7 +450,8 @@ public:
       std::uint32_t n_logits, float* logits, ForwardMode mode,
       std::string* error_msg,
       std::span<PrefillCheckpoint* const> checkpoints = {},
-      std::span<const std::int32_t> next = {}) const;
+      std::span<const std::int32_t> next = {},
+      bool compact_target = false) const;
 
   /// Layer boundaries for splitting a prefill pass into at most `groups`
   /// groups of about equal depth, never before the PLE layer has read its
@@ -819,7 +836,8 @@ private:
                    std::uint32_t first_layer, std::uint32_t end_layer,
                    std::string* error_msg,
                    std::span<PrefillCheckpoint* const> checkpoints = {},
-                   bool embeddings_ready = false) const;
+                   bool embeddings_ready = false,
+                   bool compact_target = false) const;
   /// A prefill chunk that PairLead splits after `lead` rows (see Forward):
   /// runs the two trunk batches a layer apart, then the draft block over
   /// both.
@@ -872,7 +890,9 @@ private:
                     shexp_half_ready_, q8t_src_, q8t_rows_, q8t_cols_,
                     half_src_, half_rows_, half_cols_, half_bf16_, xn_half_,
                     inject_parts_, inject_fused_, q8_slot_, xn_q8_ready_,
-                    mixed_q8_ready_, pending_combine_);
+                    mixed_q8_ready_, pending_combine_,
+                    partial_verification_owner_, partial_verification_rows_,
+                    partial_verification_materialized_);
   }
   /// A copy of the DispatchState values, to assign back to it.
   [[nodiscard]] auto SavedDispatch() const {
@@ -1077,6 +1097,17 @@ private:
   [[nodiscard]] std::size_t WideSegmentFloats() const;
   bool ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
                         std::string* error) const;
+  float* partial_verification_logits_{nullptr};
+  std::uint32_t* partial_verification_packet_{nullptr};
+  mutable const Session* partial_verification_owner_{nullptr};
+  mutable std::uint32_t partial_verification_rows_{0};
+  // Rows whose full materialization has been enqueued on stream_.
+  mutable std::uint32_t partial_verification_materialized_{0};
+  bool FailPartialVerification(std::string* error) const;
+  void ClearPartialVerification() const;
+  bool EnsureFullVerificationRows(std::uint32_t row, std::uint32_t count,
+                                  std::string* error,
+                                  const Session* owner = nullptr) const;
   mutable const float* selected_logits_{nullptr};
   [[nodiscard]] const float* VerificationLogits() const {
     return selected_logits_ != nullptr ? selected_logits_ : s_.logits;
