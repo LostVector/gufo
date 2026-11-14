@@ -381,6 +381,8 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
     if (options.communicator->SupportsTargetHeadGather()) {
       exec.target_head_gather =
           rocm::Executor::TwoRankTargetHeadGather(options.communicator);
+      exec.mtp_candidate_head_gather =
+          options.communicator->SupportsMtpCandidateHeadGather();
     }
     if (m->draft_subset_ && options.communicator->SupportsDraftHeadGather() &&
         ((std::size_t{m->device_->draft_output().rows} +

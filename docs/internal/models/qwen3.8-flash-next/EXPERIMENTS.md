@@ -1,5 +1,7 @@
 # Qwen3.8 Flash-Next experiments
 
+[Sampled TP2 MTP head sharing: measured gain and qualification](sampled-tp2-head.md).
+
 ## Host CPU paths (November 9, 2026)
 
 Retained the ideas from [Youry Metlitsky's issue #716 patches](https://github.com/gufo-org/gufo/issues/716):

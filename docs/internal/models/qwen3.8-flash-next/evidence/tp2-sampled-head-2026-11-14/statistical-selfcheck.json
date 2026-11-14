@@ -1,0 +1,32 @@
+{
+  "checks": [
+    {
+      "case": "null",
+      "p": 1.0,
+      "CI": [
+        0.0,
+        0.0
+      ],
+      "passed": true
+    },
+    {
+      "case": "known-positive",
+      "p": 0.007936507936507936,
+      "CI": [
+        1.7000000000000002,
+        1.7000000000000002
+      ],
+      "passed": true
+    },
+    {
+      "case": "balanced-common-drift",
+      "p": 0.007936507936507936,
+      "CI": [
+        1.7000000000000002,
+        1.7000000000000002
+      ],
+      "passed": true
+    }
+  ],
+  "scope": "Actual analyzer statistical block on closed-form null/constant-effect/balanced-common-drift synthetic cases; no inference results inspected or changed."
+}

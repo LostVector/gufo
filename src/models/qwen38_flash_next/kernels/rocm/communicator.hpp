@@ -96,6 +96,11 @@ public:
   [[nodiscard]] virtual bool SupportsDraftHeadGather() const noexcept {
     return false;
   }
+  /// Both peers agreed to gather complete logits for sampled MTP candidates.
+  /// Other communicators retain replicated scoring and collective order.
+  [[nodiscard]] virtual bool SupportsMtpCandidateHeadGather() const noexcept {
+    return false;
+  }
   /// Both peers agreed to the extra ordered PLE owner-read exchange.
   [[nodiscard]] virtual bool SupportsPleOwner() const noexcept { return false; }
   /// Terminates this communicator after local GPU execution failed. Native

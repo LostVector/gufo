@@ -1,0 +1,35 @@
+{
+  "bootstrap": [
+    {
+      "case": "new-new",
+      "expected": "success",
+      "codes": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "new-old",
+      "expected": "reject",
+      "codes": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "old-new",
+      "expected": "reject",
+      "codes": [
+        0,
+        0
+      ]
+    }
+  ],
+  "functional": [
+    "sampled-text",
+    "sampled-tools",
+    "sampled-text-disk",
+    "sampled-tools-disk"
+  ],
+  "scope": "Unmodified sampled cancellation/RAMcontinuation/diskrestore assertions. Functional timings observational, not speed evidence. Exactness only where existing fixture requires it."
+}

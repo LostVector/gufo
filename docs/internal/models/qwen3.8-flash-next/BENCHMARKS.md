@@ -1,5 +1,7 @@
 # Qwen3.8 Flash-Next benchmarks
 
+[Sampled TP2 MTP head sharing: measured gain and qualification](sampled-tp2-head.md).
+
 AMD Strix Halo `gfx1151`, 128 GB unified memory. Unsloth `UD-Q4_K_XL` target
 with shared-Q8_0 MTP; adaptive drafting. HTTP, greedy, thinking off.
 Gufo `fec4759d` (October 18, 2026); llama.cpp `b11069` AR and `6fcaa16f` MTP

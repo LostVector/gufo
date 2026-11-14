@@ -330,6 +330,8 @@ public:
     std::function<bool(float*, std::size_t, std::uint32_t, hipStream_t,
                        std::string*)>
         target_head_gather;
+    /// Negotiated scalar sampled-MTP sharing through the existing head gathers.
+    bool mtp_candidate_head_gather{false};
     /// Negotiated scalar draft-logit gather. Complete original logits before
     /// the unchanged argmax/confidence kernels; no split-softmax rounding.
     std::function<bool(float*, std::size_t, std::uint32_t, hipStream_t,

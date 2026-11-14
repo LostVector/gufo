@@ -3772,8 +3772,11 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   // exchanging only local softmax totals would change rounding at policy gates.
   const std::uint32_t subset_half = rows / 2;
   const bool gather_subset =
-      draft != nullptr && token && !candidates && options_.draft_head_gather &&
-      model_->tp_world_size() == 2 && output.type == GgmlType::kQ8_0 &&
+      draft != nullptr &&
+      ((token && !candidates) ||
+       (!token && candidates && options_.mtp_candidate_head_gather)) &&
+      options_.draft_head_gather && model_->tp_world_size() == 2 &&
+      output.type == GgmlType::kQ8_0 &&
       model_->draft_output().type == output.type &&
       model_->draft_output().cols == output.cols && output.cols % 32 == 0 &&
       rows % 2 == 0 && prefix > subset_half;
@@ -3801,6 +3804,29 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
     }
     if (!options_.draft_head_gather(s_.logits, subset_half, 1, stream_,
                                     error_msg)) {
+      return false;
+    }
+  } else if (draft == nullptr && candidates && !token &&
+             options_.mtp_candidate_head_gather &&
+             options_.target_head_gather && model_->tp_world_size() == 2 &&
+             output.type == GgmlType::kQ8_0 && output.rows == 248320 &&
+             output.cols == 2560 && config().hidden_size == 2560) {
+    // Each rank evaluates disjoint vocabulary rows with the original scalar
+    // projection, then reconstructs every logit before unchanged top-k and
+    // sampling. Gathering local winners or normalization totals would change
+    // the candidate distribution. Subset heads keep their existing route.
+    const auto rank = model_->tp_rank();
+    if (rank > 1) {
+      AssignError(error_msg, "MTP candidate head gather rank out of range");
+      return false;
+    }
+    auto part = output;
+    part.rows /= 2;
+    part.data = static_cast<std::uint8_t*>(part.data) +
+                std::size_t{rank} * part.rows * (part.cols / 32) * 34;
+    if (!Dense(part, s_.mixed, s_.logits, 1, error_msg) ||
+        !options_.target_head_gather(s_.logits, part.rows, 1, stream_,
+                                     error_msg)) {
       return false;
     }
   } else if (!(draft != nullptr

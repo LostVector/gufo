@@ -1,5 +1,7 @@
 # Qwen3.8 Flash-Next quality
 
+[Sampled TP2 MTP head sharing: measured gain and qualification](sampled-tp2-head.md).
+
 ## CPU serving paths, November 9, 2026
 
 The issue #716 adaptation preserves the host arithmetic and keeps portable
