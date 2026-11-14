@@ -392,6 +392,10 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
       exec.draft_head_gather =
           rocm::Executor::TwoRankTargetHeadGather(options.communicator);
     }
+    if (options.communicator->SupportsMtpCandidateMerge()) {
+      exec.mtp_candidate_merge =
+          rocm::Executor::TwoRankMtpCandidateMerge(options.communicator);
+    }
     exec.split_reduce =
         rocm::Executor::TwoRankSplitReduce(options.communicator, c.hidden_size);
     if (c.ple_layer >= 0 && options.communicator->SupportsPleOwner()) {

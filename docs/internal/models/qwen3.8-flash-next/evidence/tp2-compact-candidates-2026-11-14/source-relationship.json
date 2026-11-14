@@ -1,0 +1,49 @@
+{
+  "scope": "Five runtime files byte-identical; executor.cpp comments and kernels.hpp declaration documentation corrected, manually reviewed diff. No production logic changes after measurement.",
+  "files": [
+    {
+      "path": "src/models/qwen38_flash_next/engine.cpp",
+      "measured_sha256": "1097dc5024397dc633bebd7b907f3382f8b92279c83c04c52addd5010c9e34f3",
+      "review_sha256": "1097dc5024397dc633bebd7b907f3382f8b92279c83c04c52addd5010c9e34f3",
+      "relationship": "byte-identical"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/communicator.hpp",
+      "measured_sha256": "72cb8cb1725b64e4db615c6b645d4974df962a40aa146d29bfc02377371300bc",
+      "review_sha256": "72cb8cb1725b64e4db615c6b645d4974df962a40aa146d29bfc02377371300bc",
+      "relationship": "byte-identical"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/executor.cpp",
+      "measured_sha256": "7f8b77fec871ad82207a73414faf6d9effdb21c198364c63ffdf8b92387362f4",
+      "review_sha256": "14a5db95c4fdbd2844f4a03989e940c73e9f76f4d5287c8e848d113206386ac8",
+      "relationship": "comment/documentation-only difference; see retained runtime-review.diff"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/executor.hpp",
+      "measured_sha256": "2cd2abf840d896b71f7b1bf417ca46e92f53dec11f526f297a326a5c5f3bb48e",
+      "review_sha256": "2cd2abf840d896b71f7b1bf417ca46e92f53dec11f526f297a326a5c5f3bb48e",
+      "relationship": "byte-identical"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp",
+      "measured_sha256": "ef25c2c798dd9055211cee1c0634bd1315f8ba87e792df32adc30bcb95df0891",
+      "review_sha256": "ef25c2c798dd9055211cee1c0634bd1315f8ba87e792df32adc30bcb95df0891",
+      "relationship": "byte-identical"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp",
+      "measured_sha256": "46fee8fac393e83c753a2bdd5995e0d9bf51fbf3c623d518565a731e66668d86",
+      "review_sha256": "9dc9636a6b386a2f9f95347e5cade3ff414799afc7602521022fabb01400c6a9",
+      "relationship": "comment/documentation-only difference; see retained runtime-review.diff"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/verbs.cpp",
+      "measured_sha256": "9273a80cd1f707de791d2c04e4cbe2a16a2fc9f971c099a57046706a433d6110",
+      "review_sha256": "9273a80cd1f707de791d2c04e4cbe2a16a2fc9f971c099a57046706a433d6110",
+      "relationship": "byte-identical"
+    }
+  ],
+  "manual_diff": "runtime-review.diff",
+  "discarded_check": "Custom parser of Clang raw-token diagnostic output was unreliable (failed byte-identical input in first attempt); not used as evidence."
+}

@@ -3288,6 +3288,32 @@ Executor::TwoRankTargetHeadGather(std::shared_ptr<Communicator> communicator) {
   };
 }
 
+std::function<bool(std::uint32_t*, std::uint32_t, hipStream_t, std::string*)>
+Executor::TwoRankMtpCandidateMerge(std::shared_ptr<Communicator> communicator) {
+  return [communicator = std::move(communicator)](
+             std::uint32_t* packed, std::uint32_t half, hipStream_t stream,
+             std::string* error) {
+    const auto rank = communicator->rank();
+    if (rank > 1 || half < kMtpCandidates || half > UINT32_MAX / 2) {
+      AssignError(error, "invalid MTP candidate merge shape or rank");
+      return false;
+    }
+    constexpr auto words = 2 * kMtpCandidates;
+    Communicator::QueuedPartial queued;
+    if (!communicator->QueuePartial(words * sizeof(std::uint32_t), &queued,
+                                    error))
+      return false;
+    StagePartial(reinterpret_cast<const float*>(packed), queued.send, words,
+                 queued.arrivals, queued.ready, queued.value, stream);
+    WaitValue(queued.arrived, queued.value, queued.wait_ticks, queued.timed_out,
+              stream);
+    MergeMtpCandidates(packed,
+                       reinterpret_cast<const std::uint32_t*>(queued.peer),
+                       half, rank, stream);
+    return true;
+  };
+}
+
 std::function<bool(std::string*)> Executor::TwoRankReduceStatus(
     std::shared_ptr<Communicator> communicator) {
   return [communicator = std::move(communicator)](std::string* error) {
@@ -3739,7 +3765,7 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   // A greedy draft returns its argmax and normalized confidence. Under TP
   // each rank scores half of the vocabulary and the two candidates cross in
   // one all-reduce row, held in the logits buffer's unused second half. A
-  // request-vocabulary draft is scored whole on both ranks alike.
+  // sampled request-vocabulary path below shares its projection too.
   const std::uint32_t half = output.rows / 2;
   const std::size_t width = config().hidden_size;
   if (draft == nullptr && token && !candidates &&
@@ -3770,6 +3796,7 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   // Restore the original complete subset logits before selection. Copying
   // the two halves retains the ordinary confidence reduction order and bits;
   // exchanging only local softmax totals would change rounding at policy gates.
+  bool candidates_merged = false;
   const std::uint32_t subset_half = rows / 2;
   const bool gather_subset =
       draft != nullptr &&
@@ -3802,8 +3829,16 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
       MaskDraftLogits(s_.logits + part.rows, draft->mtp_.draft_ids,
                       speculative::kDraftVocabExtraRows, stream_);
     }
-    if (!options_.draft_head_gather(s_.logits, subset_half, 1, stream_,
-                                    error_msg)) {
+    if (candidates && !token && options_.mtp_candidate_merge &&
+        subset_half >= kMtpCandidates) {
+      MtpTopCandidates(s_.logits, s_.mtp_ids, s_.mtp_scratch_ids, s_.mtp_scores,
+                       subset_half, stream_);
+      if (!options_.mtp_candidate_merge(s_.mtp_ids, subset_half, stream_,
+                                        error_msg))
+        return false;
+      candidates_merged = true;
+    } else if (!options_.draft_head_gather(s_.logits, subset_half, 1, stream_,
+                                           error_msg)) {
       return false;
     }
   } else if (draft == nullptr && candidates && !token &&
@@ -3812,9 +3847,9 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
              output.type == GgmlType::kQ8_0 && output.rows == 248320 &&
              output.cols == 2560 && config().hidden_size == 2560) {
     // Each rank evaluates disjoint vocabulary rows with the original scalar
-    // projection, then reconstructs every logit before unchanged top-k and
-    // sampling. Gathering local winners or normalization totals would change
-    // the candidate distribution. Subset heads keep their existing route.
+    // projection. Compact exchange merges exact partition top64 sets before
+    // unchanged sampling; the fallback reconstructs complete original logits.
+    // Neither route normalizes local distributions.
     const auto rank = model_->tp_rank();
     if (rank > 1) {
       AssignError(error_msg, "MTP candidate head gather rank out of range");
@@ -3824,9 +3859,17 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
     part.rows /= 2;
     part.data = static_cast<std::uint8_t*>(part.data) +
                 std::size_t{rank} * part.rows * (part.cols / 32) * 34;
-    if (!Dense(part, s_.mixed, s_.logits, 1, error_msg) ||
-        !options_.target_head_gather(s_.logits, part.rows, 1, stream_,
-                                     error_msg)) {
+    if (!Dense(part, s_.mixed, s_.logits, 1, error_msg))
+      return false;
+    if (options_.mtp_candidate_merge && part.rows >= kMtpCandidates) {
+      MtpTopCandidates(s_.logits, s_.mtp_ids, s_.mtp_scratch_ids, s_.mtp_scores,
+                       part.rows, stream_);
+      if (!options_.mtp_candidate_merge(s_.mtp_ids, part.rows, stream_,
+                                        error_msg))
+        return false;
+      candidates_merged = true;
+    } else if (!options_.target_head_gather(s_.logits, part.rows, 1, stream_,
+                                            error_msg)) {
       return false;
     }
   } else if (!(draft != nullptr
@@ -3836,8 +3879,9 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   }
   const auto count = std::min<std::uint32_t>(rows, kMtpCandidates);
   if (candidates) {
-    MtpTopCandidates(s_.logits, s_.mtp_ids, s_.mtp_scratch_ids, s_.mtp_scores,
-                     rows, stream_);
+    if (!candidates_merged)
+      MtpTopCandidates(s_.logits, s_.mtp_ids, s_.mtp_scratch_ids, s_.mtp_scores,
+                       rows, stream_);
     if (draft != nullptr)
       RemapDraftIds(s_.mtp_ids, count, prefix, draft->mtp_.draft_ids,
                     speculative::kDraftVocabExtraRows, stream_);

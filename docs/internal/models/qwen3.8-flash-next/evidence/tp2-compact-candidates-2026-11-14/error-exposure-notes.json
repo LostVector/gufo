@@ -1,0 +1,7 @@
+{
+  "scope": "Exploratory descriptive sensitivity only; primary retains every pair, no new p/CI, no exclusions from decision.",
+  "error_pair": 12,
+  "error_pair_pct": 0.8493901896963265,
+  "other19_descriptive_pct": 0.2432061334804171,
+  "other19_positive": 18
+}

@@ -3,6 +3,8 @@
 Sharing the native-MTP vocabulary projection across two ranks improves sampled
 decode by 1.3409% on the fixed November 14, 2026 Strix Halo experiment.
 
+Follow-on: [compact candidate exchange](compact-tp2-mtp-candidates.md), measured separately.
+
 ## Change
 
 Each rank projects disjoint vocabulary rows, then gathers every original logit

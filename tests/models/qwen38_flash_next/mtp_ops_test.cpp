@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <bit>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -658,8 +659,132 @@ void CheckSplitConfidence(std::uint32_t vocab) {
             << " cases, worst absolute error " << worst << '\n';
 }
 
+// Independent global ordering plus the original full GPU selector. Inputs
+// cross both partition boundaries; output is in-place and peer data immutable.
+void CheckCandidateMerge(std::uint32_t vocab) {
+  const auto started = std::chrono::steady_clock::now();
+  constexpr unsigned keep = gufo::models::qwen38_flash_next::kMtpCandidates;
+  constexpr std::uint32_t guard = 0xfeed1234U;
+  const auto workspace = q::MtpCandidateWorkspaceSize(vocab);
+  auto logits = Allocate<float>(vocab);
+  auto full = Allocate<std::uint32_t>(workspace);
+  auto scratch = Allocate<std::uint32_t>(workspace);
+  auto left = Allocate<std::uint32_t>(workspace);
+  auto right = Allocate<std::uint32_t>(workspace);
+  auto output = Allocate<std::uint32_t>(2 * keep + 2);
+  std::vector<float> input(vocab);
+  std::vector<std::uint32_t> expected(vocab), reference(2 * keep),
+      actual(2 * keep + 2);
+  std::vector<std::uint32_t> peer_before(2 * keep), peer_after(2 * keep);
+  const auto select = [&](const float* values, std::uint32_t* ids, unsigned n) {
+    q::MtpTopCandidates(values, ids, scratch.get(),
+                        reinterpret_cast<float*>(ids + keep), n, nullptr);
+  };
+  for (unsigned mode = 0; mode < 6; ++mode) {
+    for (unsigned i = 0; i < vocab; ++i) {
+      const auto bits = (i + 1) * 0x9e3779b9U;
+      input[i] =
+          mode == 0   ? float(bits % 17)
+          : mode == 1 ? std::bit_cast<float>(i % 2 ? 0x80000000U : 0U)
+          : mode == 2 ? std::bit_cast<float>(i % 3 == 0   ? 0x7fc12345U
+                                             : i % 3 == 1 ? 0x7f800000U
+                                                          : 0xff800000U)
+          : mode == 3 ? (i >= vocab / 2 ? 1.0F : -1.0F)
+          : mode == 4
+              ? (i == 0 || i == vocab / 2 || i == vocab - 1 ? 1.0F : -INFINITY)
+              : std::bit_cast<float>(bits);
+    }
+    const auto score = [&](unsigned i) {
+      return std::isfinite(input[i]) ? input[i] : -INFINITY;
+    };
+    std::iota(expected.begin(), expected.end(), 0);
+    std::partial_sort(expected.begin(), expected.begin() + keep, expected.end(),
+                      [&](auto a, auto b) {
+                        return score(a) == score(b) ? a < b
+                                                    : score(a) > score(b);
+                      });
+    CheckHip(hipMemcpy(logits.get(), input.data(), vocab * sizeof(float),
+                       hipMemcpyHostToDevice),
+             "merge logits upload");
+    select(logits.get(), full.get(), vocab);
+    select(logits.get(), left.get(), vocab / 2);
+    select(logits.get() + vocab / 2, right.get(), vocab / 2);
+    CheckHip(hipMemcpy(reference.data(), full.get(), reference.size() * 4,
+                       hipMemcpyDeviceToHost),
+             "full merge reference");
+    for (unsigned rank = 0; rank < 2; ++rank) {
+      const auto* local = rank == 0 ? left.get() : right.get();
+      const auto* peer = rank == 0 ? right.get() : left.get();
+      CheckHip(hipMemcpy(peer_before.data(), peer, peer_before.size() * 4,
+                         hipMemcpyDeviceToHost),
+               "merge peer before");
+      std::fill(actual.begin(), actual.end(), guard);
+      CheckHip(hipMemcpy(output.get(), actual.data(), actual.size() * 4,
+                         hipMemcpyHostToDevice),
+               "merge output guards");
+      CheckHip(hipMemcpy(output.get() + 1, local, 2 * keep * 4,
+                         hipMemcpyDeviceToDevice),
+               "merge local input");
+      q::MergeMtpCandidates(output.get() + 1, peer, vocab / 2, rank, nullptr);
+      CheckHip(hipMemcpy(actual.data(), output.get(), actual.size() * 4,
+                         hipMemcpyDeviceToHost),
+               "merged output");
+      CheckHip(hipMemcpy(peer_after.data(), peer, peer_after.size() * 4,
+                         hipMemcpyDeviceToHost),
+               "merge peer after");
+      if (actual.front() != guard || actual.back() != guard ||
+          peer_before != peer_after)
+        throw std::runtime_error("MTP merge guard/peer mutation");
+      for (unsigned i = 0; i < keep; ++i) {
+        const auto bits = std::bit_cast<std::uint32_t>(score(expected[i]));
+        if (actual[i + 1] != expected[i] || actual[keep + i + 1] != bits ||
+            actual[i + 1] != reference[i] ||
+            actual[keep + i + 1] != reference[keep + i])
+          throw std::runtime_error(
+              "MTP merge oracle mismatch: vocab=" + std::to_string(vocab) +
+              " mode=" + std::to_string(mode) +
+              " rank=" + std::to_string(rank));
+      }
+    }
+  }
+  // Bad shape/rank/pointers fail before any kernel is submitted.
+  unsigned rejected = 0;
+  for (auto half : {0U, 63U, UINT32_MAX}) {
+    try {
+      q::MergeMtpCandidates(output.get(), left.get(), half, 0, nullptr);
+    } catch (const std::invalid_argument&) {
+      ++rejected;
+    }
+  }
+  try {
+    q::MergeMtpCandidates(output.get(), left.get(), vocab / 2, 2, nullptr);
+  } catch (const std::invalid_argument&) {
+    ++rejected;
+  }
+  try {
+    q::MergeMtpCandidates(nullptr, left.get(), vocab / 2, 0, nullptr);
+  } catch (const std::invalid_argument&) {
+    ++rejected;
+  }
+  try {
+    q::MergeMtpCandidates(output.get(), nullptr, vocab / 2, 0, nullptr);
+  } catch (const std::invalid_argument&) {
+    ++rejected;
+  }
+  if (rejected != 6)
+    throw std::runtime_error("MTP merge argument guards");
+  std::cout << "candidate merge vocab=" << vocab
+            << ": six patterns/both ranks, "
+            << std::chrono::duration<double, std::milli>(
+                   std::chrono::steady_clock::now() - started)
+                   .count()
+            << " ms\n";
+}
+
 int main() {
   try {
+    for (unsigned vocab : {128U, 130U, 99328U, 248320U})
+      CheckCandidateMerge(vocab);
     CheckRemapDraftIds();
     CheckPenaltyArgmax(257);
     CheckPenaltyArgmax(248320);

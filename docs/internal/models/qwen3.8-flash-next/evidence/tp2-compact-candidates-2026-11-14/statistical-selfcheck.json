@@ -1,0 +1,26 @@
+{
+  "checks": [
+    {
+      "case": "null",
+      "p": 1.0,
+      "expected": 1.0
+    },
+    {
+      "case": "constant-positive",
+      "p": 1.082508822446903e-05,
+      "expected": 1.082508822446903e-05
+    },
+    {
+      "case": "constant-negative",
+      "p": 1.082508822446903e-05,
+      "expected": 1.082508822446903e-05
+    },
+    {
+      "case": "balanced-period-drift",
+      "p": 1.0,
+      "expected": 1.0
+    }
+  ],
+  "actual_statistical_block_sha256": "8b3ffd6938e4c645cd08120aec65c367079a85b594706bd11d01071b2a78befc",
+  "scope": "Closed-form null/constant signed effects and balanced period drift on the actual20-pair analysis block; no observed performance data used."
+}

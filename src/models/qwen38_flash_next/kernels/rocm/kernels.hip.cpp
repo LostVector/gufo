@@ -4076,6 +4076,31 @@ __global__ void MtpCandidateTileKernel(const float* logits,
   }
 }
 
+// The global top64 is contained in the union of partition top64s. Stable
+// radix ordering of rank0 then rank1 preserves original logical-row ties.
+// Carry original score bits as payload, including the sign of finite zero.
+__global__ void MergeMtpCandidatesKernel(std::uint32_t* packed,
+                                         const std::uint32_t* peer,
+                                         std::uint32_t half,
+                                         std::uint32_t rank) {
+  constexpr unsigned keep = kMtpCandidates;
+  using Sort = hipcub::BlockRadixSort<float, 2 * keep, 1, std::uint64_t>;
+  __shared__ Sort::TempStorage scratch;
+  const unsigned owner = threadIdx.x / keep;
+  const unsigned slot = threadIdx.x % keep;
+  const auto* source = owner == rank ? packed : peer;
+  const float original = __uint_as_float(source[keep + slot]);
+  const float score = isfinite(original) ? original : -INFINITY;
+  float keys[1] = {score == 0.0F ? 0.0F : score};
+  std::uint64_t values[1] = {(std::uint64_t{__float_as_uint(score)} << 32) |
+                             (source[slot] + owner * half)};
+  Sort(scratch).SortDescending(keys, values);
+  if (threadIdx.x < keep) {
+    packed[threadIdx.x] = static_cast<std::uint32_t>(values[0]);
+    packed[keep + threadIdx.x] = static_cast<std::uint32_t>(values[0] >> 32);
+  }
+}
+
 __global__ void CopyKernel(const float* src, float* dst, std::size_t count) {
   const std::size_t i =
       blockIdx.x * static_cast<std::size_t>(blockDim.x) + threadIdx.x;
@@ -9833,6 +9858,16 @@ void VerificationCandidates(const float* logits, GreedyPenaltyRows penalties,
   }
   GatherVerificationCandidatesKernel<<<rows, kThreads, 0, stream>>>(
       logits, penalties, source, out, vocab, stride);
+}
+
+void MergeMtpCandidates(std::uint32_t* packed, const std::uint32_t* peer,
+                        std::uint32_t half, std::uint32_t rank,
+                        hipStream_t stream) {
+  if (!packed || !peer || rank > 1 || half < kMtpCandidates ||
+      half > UINT32_MAX / 2)
+    throw std::invalid_argument("invalid MTP candidate merge");
+  MergeMtpCandidatesKernel<<<1, 2 * kMtpCandidates, 0, stream>>>(packed, peer,
+                                                                 half, rank);
 }
 
 void MtpTopCandidates(const float* logits, std::uint32_t* ids,

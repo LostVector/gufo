@@ -332,6 +332,10 @@ public:
         target_head_gather;
     /// Negotiated scalar sampled-MTP sharing through the existing head gathers.
     bool mtp_candidate_head_gather{false};
+    /// Exact global top64 from each vocabulary partition's top64, before remap.
+    std::function<bool(std::uint32_t*, std::uint32_t, hipStream_t,
+                       std::string*)>
+        mtp_candidate_merge;
     /// Negotiated scalar draft-logit gather. Complete original logits before
     /// the unchanged argmax/confidence kernels; no split-softmax rounding.
     std::function<bool(float*, std::size_t, std::uint32_t, hipStream_t,
@@ -370,6 +374,9 @@ public:
   [[nodiscard]] static std::function<bool(float*, std::size_t, std::uint32_t,
                                           hipStream_t, std::string*)>
   TwoRankTargetHeadGather(std::shared_ptr<Communicator> communicator);
+  [[nodiscard]] static std::function<bool(std::uint32_t*, std::uint32_t,
+                                          hipStream_t, std::string*)>
+  TwoRankMtpCandidateMerge(std::shared_ptr<Communicator> communicator);
 
   ~Executor();
   [[nodiscard]] hipStream_t stream() const noexcept { return stream_; }

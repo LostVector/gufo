@@ -98,6 +98,9 @@ public:
   }
   /// Both peers agreed to gather complete logits for sampled MTP candidates.
   /// Other communicators retain replicated scoring and collective order.
+  [[nodiscard]] virtual bool SupportsMtpCandidateMerge() const noexcept {
+    return false;
+  }
   [[nodiscard]] virtual bool SupportsMtpCandidateHeadGather() const noexcept {
     return false;
   }

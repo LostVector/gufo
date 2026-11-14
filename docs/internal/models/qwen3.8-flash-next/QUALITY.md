@@ -1,6 +1,7 @@
 # Qwen3.8 Flash-Next quality
 
 [Sampled TP2 MTP head sharing: measured gain and qualification](sampled-tp2-head.md).
+[Compact sampled candidate exchange: incremental gain and limits](compact-tp2-mtp-candidates.md).
 
 ## CPU serving paths, November 9, 2026
 

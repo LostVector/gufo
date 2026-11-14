@@ -758,6 +758,14 @@ void RemapDraftIds(std::uint32_t* ids, std::uint32_t n, std::uint32_t prefix,
 /// Number of IDs in each of the two selection buffers.
 std::uint32_t MtpCandidateWorkspaceSize(std::uint32_t vocab);
 
+/// Merge two sorted partition top64s in stable logical-row order. Each input
+/// packs 64 local row IDs then 64 F32 score bits. `packed` receives global IDs
+/// and original score bits in place; `peer` stays unchanged. Rank is 0 or 1;
+/// each equal partition has at least 64 rows. Kernel-only and graph-safe.
+void MergeMtpCandidates(std::uint32_t* packed, const std::uint32_t* peer,
+                        std::uint32_t half, std::uint32_t rank,
+                        hipStream_t stream);
+
 /// Exact MTP top-64 selection, descending score with lowest-token-ID ties.
 /// Nonfinite scores become -infinity. Both ID buffers have room for
 /// MtpCandidateWorkspaceSize(vocab); scores receives min(vocab, 64) values.
