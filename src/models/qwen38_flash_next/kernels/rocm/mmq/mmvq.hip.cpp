@@ -801,10 +801,110 @@ static void launch_moe(const void* weights, const block_q8_1* input,
           nullptr, dst_slots);
 }
 
+// Dense packed verification reuses the packed row across token accumulators.
+// Every token keeps the scalar vector dot and the same wave reduction.
+template<ggml_type type, int tokens>
+__launch_bounds__(32) static __global__ void mul_mat_vec_quant_batch(
+    const void* weights, const block_q8_1* input, float* output,
+    int k, int rows, int input_stride) {
+  constexpr int qk = ggml_hip_type_traits<type>::qk;
+  constexpr int qi = ggml_hip_type_traits<type>::qi;
+  constexpr int vdr = get_vdr_mmvq(type);
+  constexpr auto dot = get_vec_dot_q_hip(type);
+  constexpr int per_iter = vdr * 32 / qi;
+  const int lane = threadIdx.x;
+  const int row0 = blockIdx.x * 2;
+  const int blocks = k / qk;
+  const int kqs = vdr * (lane % (qi / vdr));
+  float sum[2][tokens] = {};
+  for (int kb = lane / (qi / vdr); kb < blocks; kb += per_iter) {
+#pragma unroll
+    for (int r = 0; r < 2; ++r) {
+      const int offset = min(row0 + r, rows - 1) * blocks + kb;
+#pragma unroll
+      for (int t = 0; t < tokens; ++t)
+        sum[r][t] += dot(
+            weights, input + t * input_stride + kb * (qk / QK8_1),
+            offset, kqs);
+    }
+  }
+#pragma unroll
+  for (int r = 0; r < 2; ++r) {
+#pragma unroll
+    for (int t = 0; t < tokens; ++t) {
+      const float value = warp_reduce_sum<32>(sum[r][t]);
+      if (lane == r && row0 + r < rows)
+        output[t * rows + row0 + r] = isfinite(value) ? value : 0.0f;
+    }
+  }
+}
+
+template<ggml_type type>
+static void launch_dense_batch(const void* weights, const block_q8_1* input,
+                               float* output, int k, int rows, int tokens,
+                               int input_stride, hipStream_t stream) {
+  switch (tokens) {
+    case 2:
+      mul_mat_vec_quant_batch<type, 2><<<dim3((rows + 1) / 2), dim3(32), 0, stream>>>(
+          weights, input, output, k, rows, input_stride);
+      break;
+    case 3:
+      mul_mat_vec_quant_batch<type, 3><<<dim3((rows + 1) / 2), dim3(32), 0, stream>>>(
+          weights, input, output, k, rows, input_stride);
+      break;
+    case 4:
+      mul_mat_vec_quant_batch<type, 4><<<dim3((rows + 1) / 2), dim3(32), 0, stream>>>(
+          weights, input, output, k, rows, input_stride);
+      break;
+    case 5:
+      mul_mat_vec_quant_batch<type, 5><<<dim3((rows + 1) / 2), dim3(32), 0, stream>>>(
+          weights, input, output, k, rows, input_stride);
+      break;
+    case 6:
+      mul_mat_vec_quant_batch<type, 6><<<dim3((rows + 1) / 2), dim3(32), 0, stream>>>(
+          weights, input, output, k, rows, input_stride);
+      break;
+    case 7:
+      mul_mat_vec_quant_batch<type, 7><<<dim3((rows + 1) / 2), dim3(32), 0, stream>>>(
+          weights, input, output, k, rows, input_stride);
+      break;
+    case 8:
+      mul_mat_vec_quant_batch<type, 8><<<dim3((rows + 1) / 2), dim3(32), 0, stream>>>(
+          weights, input, output, k, rows, input_stride);
+      break;
+    default: GGML_ABORT("invalid packed vector batch width");
+  }
+}
+
 void mul_mat_vec_quant_dispatch(const void* weights, ggml_type type,
                                const block_q8_1* input, float* output,
                                int k, int rows, int tokens, int input_stride,
                                hipStream_t stream) {
+  if (tokens > 1) {
+    switch (type) {
+      case GGML_TYPE_Q4_K:
+        launch_dense_batch<GGML_TYPE_Q4_K>(weights, input, output, k, rows,
+            tokens, input_stride, stream);
+        return;
+      case GGML_TYPE_Q5_K:
+        launch_dense_batch<GGML_TYPE_Q5_K>(weights, input, output, k, rows,
+            tokens, input_stride, stream);
+        return;
+      case GGML_TYPE_Q6_K:
+        launch_dense_batch<GGML_TYPE_Q6_K>(weights, input, output, k, rows,
+            tokens, input_stride, stream);
+        return;
+      case GGML_TYPE_IQ4_NL:
+        launch_dense_batch<GGML_TYPE_IQ4_NL>(weights, input, output, k, rows,
+            tokens, input_stride, stream);
+        return;
+      case GGML_TYPE_IQ4_XS:
+        launch_dense_batch<GGML_TYPE_IQ4_XS>(weights, input, output, k, rows,
+            tokens, input_stride, stream);
+        return;
+      default: GGML_ABORT("unsupported dense vector weight format");
+    }
+  }
   switch (type) {
     case GGML_TYPE_Q4_K:
       launch_moe<GGML_TYPE_Q4_K, 2, true>(weights, input, nullptr, output,

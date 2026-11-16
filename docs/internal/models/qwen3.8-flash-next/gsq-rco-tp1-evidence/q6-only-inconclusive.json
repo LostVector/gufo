@@ -1,0 +1,181 @@
+{
+  "complete_pairs": 6,
+  "pairs": [
+    {
+      "pair": 1,
+      "base_decode_ms": 8382.709606,
+      "candidate_decode_ms": 8360.254088,
+      "base_tps": 45.80857718429713,
+      "candidate_tps": 45.93161834054535,
+      "ratio": 1.0026859851104564
+    },
+    {
+      "pair": 2,
+      "base_decode_ms": 9422.389930000001,
+      "candidate_decode_ms": 8616.803718,
+      "base_tps": 40.75399159372297,
+      "candidate_tps": 44.56408809659276,
+      "ratio": 1.0934901430233557
+    },
+    {
+      "pair": 3,
+      "base_decode_ms": 9217.582561000001,
+      "candidate_decode_ms": 8742.812793000001,
+      "base_tps": 41.659512942658196,
+      "candidate_tps": 43.921791429350115,
+      "ratio": 1.054304007101711
+    },
+    {
+      "pair": 4,
+      "base_decode_ms": 9328.277405,
+      "candidate_decode_ms": 9005.359682999999,
+      "base_tps": 41.165156580160684,
+      "candidate_tps": 42.64127292160264,
+      "ratio": 1.0358583924870424
+    },
+    {
+      "pair": 5,
+      "base_decode_ms": 8067.579917999999,
+      "candidate_decode_ms": 8549.892256,
+      "base_tps": 47.59791708331733,
+      "candidate_tps": 44.912846677164026,
+      "ratio": 0.9435884893565143
+    },
+    {
+      "pair": 6,
+      "base_decode_ms": 9294.894032,
+      "candidate_decode_ms": 8615.911994999999,
+      "base_tps": 41.31300461070173,
+      "candidate_tps": 44.56870035613683,
+      "ratio": 1.0788055910266992
+    }
+  ],
+  "cases": {
+    "prose": [
+      {
+        "pair": 1,
+        "base_tps": 44.3894124083903,
+        "candidate_tps": 45.39391094100593,
+        "ratio": 1.0226292369760173
+      },
+      {
+        "pair": 2,
+        "base_tps": 39.176304738265806,
+        "candidate_tps": 42.791201229208546,
+        "ratio": 1.0922725232788957
+      },
+      {
+        "pair": 3,
+        "base_tps": 40.89411155141562,
+        "candidate_tps": 40.453972277210106,
+        "ratio": 0.989237098997685
+      },
+      {
+        "pair": 4,
+        "base_tps": 39.952596244555835,
+        "candidate_tps": 40.183034689916845,
+        "ratio": 1.0057677965144107
+      },
+      {
+        "pair": 5,
+        "base_tps": 49.26560055986599,
+        "candidate_tps": 42.60425129650312,
+        "ratio": 0.8647870078175905
+      },
+      {
+        "pair": 6,
+        "base_tps": 40.57202765509092,
+        "candidate_tps": 41.53859723537304,
+        "ratio": 1.0238235463235674
+      }
+    ],
+    "explain": [
+      {
+        "pair": 1,
+        "base_tps": 48.75060058407127,
+        "candidate_tps": 49.444742342149745,
+        "ratio": 1.0142386298786497
+      },
+      {
+        "pair": 2,
+        "base_tps": 44.90892858902186,
+        "candidate_tps": 47.8286642668059,
+        "ratio": 1.0650145921873047
+      },
+      {
+        "pair": 3,
+        "base_tps": 45.354344613160684,
+        "candidate_tps": 48.529508941925236,
+        "ratio": 1.0700079420361241
+      },
+      {
+        "pair": 4,
+        "base_tps": 44.62436424104051,
+        "candidate_tps": 45.43498029044577,
+        "ratio": 1.0181653243288058
+      },
+      {
+        "pair": 5,
+        "base_tps": 48.95778523363624,
+        "candidate_tps": 50.63614992271675,
+        "ratio": 1.03428187531505
+      },
+      {
+        "pair": 6,
+        "base_tps": 45.361873064799816,
+        "candidate_tps": 48.69018675072818,
+        "ratio": 1.07337249238306
+      }
+    ],
+    "code": [
+      {
+        "pair": 1,
+        "base_tps": 44.54450826887538,
+        "candidate_tps": 43.364191349490696,
+        "ratio": 0.973502526680502
+      },
+      {
+        "pair": 2,
+        "base_tps": 38.73041576102799,
+        "candidate_tps": 43.39990584810863,
+        "ratio": 1.1205639029514178
+      },
+      {
+        "pair": 3,
+        "base_tps": 39.19975879040925,
+        "candidate_tps": 43.52035405461797,
+        "ratio": 1.1102199451611374
+      },
+      {
+        "pair": 4,
+        "base_tps": 39.31092371969821,
+        "candidate_tps": 42.627972730074596,
+        "ratio": 1.0843798287221182
+      },
+      {
+        "pair": 5,
+        "base_tps": 44.83486909993404,
+        "candidate_tps": 42.416987145202995,
+        "ratio": 0.9460713948034121
+      },
+      {
+        "pair": 6,
+        "base_tps": 38.574456013129065,
+        "candidate_tps": 44.053256164473574,
+        "ratio": 1.1420318189187104
+      }
+    ]
+  },
+  "scope": "TP1 native MTP; eval defaults;4slots/1active;262144 capacity;128 generated tokens/case;3 fixed prompts per process. Equal choices and token/draft/cache/lookup work per pair. Trace disabled. Balanced alternating AB/BA order. Exploratory study.",
+  "aggregate": {
+    "geometric_speedup_percent": 3.3543232753281997,
+    "paired_bootstrap_95_percent": [
+      -0.8878918646427229,
+      7.151461099339805
+    ],
+    "two_sided_exact_sign_flip_p": 0.21875,
+    "base_tps_median": 41.48625877667996,
+    "candidate_tps_median": 44.56639422636479,
+    "endpoint": "Completed384 tokens divided by summed engine decode time for the same3prompts per process; each process pair is one sample, not individual tokens."
+  }
+}

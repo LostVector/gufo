@@ -1,0 +1,285 @@
+{
+  "scope": "Diagnostic strace+rocprofv3; pread syscall duration includes host/kernel wait and tracing overhead, NOT NVMe command completion latency. No hardware attribution from this trace alone.",
+  "ngram_reads": 1561,
+  "pread_over_10ms": 0,
+  "pread_over_50ms": 0,
+  "longest_preads": [
+    {
+      "tid": 1247388,
+      "start": 385463024885409,
+      "end": 385463029033409,
+      "ms": 4.148,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247372,
+      "start": 385463024970409,
+      "end": 385463028807409,
+      "ms": 3.837,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247362,
+      "start": 385463024994409,
+      "end": 385463028819409,
+      "ms": 3.825,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247342,
+      "start": 385463025059409,
+      "end": 385463028865409,
+      "ms": 3.806,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247347,
+      "start": 385463025055409,
+      "end": 385463028850409,
+      "ms": 3.795,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247353,
+      "start": 385463025043409,
+      "end": 385463028837409,
+      "ms": 3.794,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247397,
+      "start": 385463024853409,
+      "end": 385463028603409,
+      "ms": 3.75,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247379,
+      "start": 385463024938409,
+      "end": 385463028665409,
+      "ms": 3.727,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247380,
+      "start": 385463024932409,
+      "end": 385463028656409,
+      "ms": 3.724,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247354,
+      "start": 385463025036409,
+      "end": 385463028681409,
+      "ms": 3.645,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247386,
+      "start": 385463024898409,
+      "end": 385463028503409,
+      "ms": 3.605,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247366,
+      "start": 385463024984409,
+      "end": 385463028566409,
+      "ms": 3.582,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247458,
+      "start": 385463025382409,
+      "end": 385463028943409,
+      "ms": 3.561,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247436,
+      "start": 385463025463409,
+      "end": 385463028974409,
+      "ms": 3.511,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247431,
+      "start": 385463025481409,
+      "end": 385463028979409,
+      "ms": 3.498,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247420,
+      "start": 385463024755409,
+      "end": 385463028251409,
+      "ms": 3.496,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247423,
+      "start": 385463025517409,
+      "end": 385463028992409,
+      "ms": 3.475,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247413,
+      "start": 385463025550409,
+      "end": 385463029002409,
+      "ms": 3.452,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247404,
+      "start": 385463025579409,
+      "end": 385463029025409,
+      "ms": 3.446,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    },
+    {
+      "tid": 1247369,
+      "start": 385463025635409,
+      "end": 385463029066409,
+      "ms": 3.431,
+      "file": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf"
+    }
+  ],
+  "largest_gpu_gaps": [
+    {
+      "start": 385463666474165,
+      "end": 385463696554736,
+      "ms": 30.080571,
+      "previous": "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)",
+      "next": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::VerificationCandidateTileKernel<true>(float const*, gufo::models::qwen38_flash_next::rocm::GreedyPenaltyRows, unsigned int const*, unsigned int*, unsigned int, unsigned int, unsigned int)",
+      "overlapping_preads": 0,
+      "longest_overlapping_pread_ms": 0
+    },
+    {
+      "start": 385463348877570,
+      "end": 385463352133569,
+      "ms": 3.255999,
+      "previous": "__amd_rocclr_copyBuffer",
+      "next": "__amd_rocclr_copyBuffer",
+      "overlapping_preads": 1,
+      "longest_overlapping_pread_ms": 1.909
+    },
+    {
+      "start": 385463809427615,
+      "end": 385463812075060,
+      "ms": 2.647445,
+      "previous": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "overlapping_preads": 32,
+      "longest_overlapping_pread_ms": 2.238
+    },
+    {
+      "start": 385463457285678,
+      "end": 385463459546085,
+      "ms": 2.260407,
+      "previous": "__amd_rocclr_copyBuffer",
+      "next": "__amd_rocclr_copyBuffer",
+      "overlapping_preads": 40,
+      "longest_overlapping_pread_ms": 0.295
+    },
+    {
+      "start": 385465129219148,
+      "end": 385465131387394,
+      "ms": 2.168246,
+      "previous": "__amd_rocclr_copyBuffer",
+      "next": "__amd_rocclr_copyBuffer",
+      "overlapping_preads": 56,
+      "longest_overlapping_pread_ms": 0.334
+    },
+    {
+      "start": 385463696627720,
+      "end": 385463698627445,
+      "ms": 1.999725,
+      "previous": "__amd_rocclr_copyBuffer",
+      "next": "__amd_rocclr_copyBuffer",
+      "overlapping_preads": 0,
+      "longest_overlapping_pread_ms": 0
+    },
+    {
+      "start": 385463336742228,
+      "end": 385463338723691,
+      "ms": 1.981463,
+      "previous": "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)",
+      "next": "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)",
+      "overlapping_preads": 0,
+      "longest_overlapping_pread_ms": 0
+    },
+    {
+      "start": 385463449557238,
+      "end": 385463451514220,
+      "ms": 1.956982,
+      "previous": "__amd_rocclr_copyBuffer",
+      "next": "__amd_rocclr_copyBuffer",
+      "overlapping_preads": 0,
+      "longest_overlapping_pread_ms": 0
+    },
+    {
+      "start": 385463804083726,
+      "end": 385463805927448,
+      "ms": 1.843722,
+      "previous": "__amd_rocclr_copyBuffer",
+      "next": "__amd_rocclr_copyBuffer",
+      "overlapping_preads": 0,
+      "longest_overlapping_pread_ms": 0
+    },
+    {
+      "start": 385463620621849,
+      "end": 385463622442545,
+      "ms": 1.820696,
+      "previous": "__amd_rocclr_copyBuffer",
+      "next": "__amd_rocclr_copyBuffer",
+      "overlapping_preads": 0,
+      "longest_overlapping_pread_ms": 0
+    },
+    {
+      "start": 385464660758334,
+      "end": 385464662526872,
+      "ms": 1.768538,
+      "previous": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "overlapping_preads": 2,
+      "longest_overlapping_pread_ms": 1.55
+    },
+    {
+      "start": 385463031295769,
+      "end": 385463033059263,
+      "ms": 1.763494,
+      "previous": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineVec4Kernel<float, false, false>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, float, float*, float const*, float*)",
+      "next": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::NarrowKernel<hip_bfloat16>(float const*, hip_bfloat16*, unsigned long)",
+      "overlapping_preads": 172,
+      "longest_overlapping_pread_ms": 1.985
+    },
+    {
+      "start": 385463453436283,
+      "end": 385463455098903,
+      "ms": 1.66262,
+      "previous": "__amd_rocclr_copyBuffer",
+      "next": "__amd_rocclr_copyBuffer",
+      "overlapping_preads": 0,
+      "longest_overlapping_pread_ms": 0
+    },
+    {
+      "start": 385464124865623,
+      "end": 385464126261242,
+      "ms": 1.395619,
+      "previous": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "overlapping_preads": 16,
+      "longest_overlapping_pread_ms": 1.676
+    },
+    {
+      "start": 385463022920952,
+      "end": 385463024300175,
+      "ms": 1.379223,
+      "previous": "__amd_rocclr_fillBufferAligned",
+      "next": "__amd_rocclr_copyBuffer",
+      "overlapping_preads": 0,
+      "longest_overlapping_pread_ms": 0
+    }
+  ]
+}

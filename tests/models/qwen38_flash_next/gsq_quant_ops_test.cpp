@@ -400,7 +400,18 @@ void PackedDecodeBatch(GgmlType type, int k, int tokens) {
   namespace gpu = gufo::models::qwen38_flash_next::rocm;
   constexpr int rows = 65, guard = 16;
   constexpr float poison = 123456.0F;
-  const auto packed = Weights(type, rows, k, 1);
+  auto packed = Weights(type, rows, k, 1);
+  const auto block = gufo::quant::QuantizedBlockElements(type);
+  const auto bytes = gufo::quant::QuantizedRowBytes(type, block);
+  for (std::size_t off = 0; off < packed.size(); off += bytes) {
+    const std::uint16_t scale = 0x1800 + (off / bytes * 37) % 1024;
+    const auto where = type == GgmlType::kQ6_K ? bytes - 2 : 0;
+    std::memcpy(packed.data() + off + where, &scale, 2);
+    if (type == GgmlType::kQ4_K || type == GgmlType::kQ5_K) {
+      const std::uint16_t minimum = 0x1c00 + (off / bytes * 53) % 1024;
+      std::memcpy(packed.data() + off + 2, &minimum, 2);
+    }
+  }
   std::vector<float> x(std::size_t(tokens) * k);
   for (std::size_t i = 0; i < x.size(); ++i)
     x[i] = static_cast<float>(int(i * 13 % 257) - 128) / 73.0F;
@@ -540,6 +551,14 @@ int main(int argc, char** argv) {
                       GgmlType::kIQ4_NL, GgmlType::kIQ4_XS})
       for (int n : {17, 64})
         PackedDecodeBatch(type, 2560, n);
+    for (auto type : {GgmlType::kQ4_K, GgmlType::kQ5_K, GgmlType::kQ6_K,
+                      GgmlType::kIQ4_NL, GgmlType::kIQ4_XS})
+      for (int n : {1, 2, 3, 4, 5, 6, 7, 8, 17, 64})
+        PackedDecodeBatch(type, 2560, n);
+    for (int n : {1, 2, 3, 4, 5, 6, 7, 8, 17, 64}) {
+      PackedDecodeBatch(GgmlType::kQ6_K, 6144, n);
+      PackedDecodeBatch(GgmlType::kIQ4_NL, 640, n);
+    }
     PackedDecodeBatch(GgmlType::kIQ4_NL, 320, 63);
     for (int streams : {1, 4})
       Embedding(streams);

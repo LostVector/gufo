@@ -1,0 +1,7 @@
+{
+  "cases": 312,
+  "values": 1559000,
+  "max_reported_error": 0.0,
+  "seconds": 3.369625409017317,
+  "scope": "Independent exact-input CPU dequant/FP64 checks and separate bitwise scalar/batch/grouping checks; distinct oracles."
+}

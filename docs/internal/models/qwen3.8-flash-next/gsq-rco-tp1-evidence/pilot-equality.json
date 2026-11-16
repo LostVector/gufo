@@ -1,0 +1,121 @@
+[
+  {
+    "label": "warm",
+    "case": "explain",
+    "repeat": 0,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "decode",
+    "case": "prose",
+    "repeat": 0,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "decode",
+    "case": "explain",
+    "repeat": 0,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "decode",
+    "case": "code",
+    "repeat": 0,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "decode",
+    "case": "prose",
+    "repeat": 1,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "decode",
+    "case": "explain",
+    "repeat": 1,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "decode",
+    "case": "code",
+    "repeat": 1,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "decode",
+    "case": "prose",
+    "repeat": 2,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "decode",
+    "case": "explain",
+    "repeat": 2,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "decode",
+    "case": "code",
+    "repeat": 2,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "prefill-warm",
+    "case": "prose",
+    "repeat": 0,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "prefill",
+    "case": "prose",
+    "repeat": 0,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "prefill",
+    "case": "prose",
+    "repeat": 1,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "prefill",
+    "case": "prose",
+    "repeat": 2,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "greedy",
+    "case": "explain",
+    "repeat": 0,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "greedy",
+    "case": "explain",
+    "repeat": 1,
+    "output_equal": true,
+    "work_equal": true
+  },
+  {
+    "label": "greedy",
+    "case": "explain",
+    "repeat": 2,
+    "output_equal": true,
+    "work_equal": true
+  }
+]

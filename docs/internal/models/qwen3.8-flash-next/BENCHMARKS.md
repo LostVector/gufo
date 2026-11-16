@@ -286,3 +286,7 @@ and tail latency remain unqualified. [Full evidence](../../../patches/native-mtp
 ## GSQ-RCO IQ3_S (November 15, 2026)
 
 Mixed GSQ-RCO IQ3_S TP2/native MTP: 40.37–50.63 tokens/s on three fixed128-token text/code requests;2113-token prefill899.77 tokens/s. Same-runtime Q4:52.57–69.16 and1770.73 tokens/s. Saves12.414GiB GPU allocation per node. [Matched settings, raw timings and limits](gsq-rco-iq3-s.md).
+
+## GSQ-RCO TP1 dense verification (November15,2026)
+
+GSQ-RCO IQ3_S TP1/native MTP,eval defaults,C1:48.33→52.57 tokens/s aggregate median; paired geometric gain8.81%,95% interval8.53–9.09%,exactp=.0078 across eight balanced process pairs. Prefill unchanged. [Settings and raw evidence](gsq-rco-tp1.md).

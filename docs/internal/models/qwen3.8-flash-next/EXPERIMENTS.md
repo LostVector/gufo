@@ -716,3 +716,7 @@ PR publication or driver change. [Report](../../../patches/native-mtp-head.md).
 ## GSQ-RCO IQ3_S (November 15, 2026)
 
 Retained for compatibility/correctness: native mixed IQ/Q2 projections, deterministic BF16/MMQ arithmetic, and rank-local wide TP state geometry. IQ3 saves memory but does not improve speed over Q4. Rejected: unconfirmed F32 injection prototype, removed before final build. [Evidence](gsq-rco-iq3-s.md).
+
+## GSQ-RCO TP1 dense verification (November15,2026)
+
+Retain sharing packed dense weights across verification tokens forQ4_K/Q5_K/Q6_K/IQ4_NL/IQ4_XS: combined eight-pair TP1 study confirms+8.81%. Q6-only six-pair study remains inconclusive; four-row tiles and the unqualified HC vector-load prototype stay out. [All evidence](gsq-rco-tp1.md).

@@ -1505,3 +1505,7 @@ exact output/work identities; C2 has52 exact output/prompt/cache identities but
 ## GSQ-RCO IQ3_S (November 15, 2026)
 
 Mixed GSQ-RCO IQ3_S: packed arithmetic, real-weight checks, BF16/MMQ chunk invariance, TP2 wide state and native-MTP cache/lookup regression pass. [Scope and evidence](gsq-rco-iq3-s.md).
+
+## GSQ-RCO TP1 dense verification (November15,2026)
+
+Mixed dense token sharing retains312 operator cases,6470425 bitwise real-head floats,17 pilot responses,24 paired response/work identities,and cached/cold continuations with110 accepted copied tokens. No tolerance widened. [Contracts and limits](gsq-rco-tp1.md).
