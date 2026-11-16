@@ -59,7 +59,7 @@ negative IDs,fully inactive tokens,NaN/Inf scales,prequantized/fresh inputs,guar
 retain the existing independent CPU-dequant/FP64 checks. No tolerance changed.
 The final712-case source passes in5.274s when compiled against the production
 archives. This is a directly run GPU probe,not a claim that full CTest passed.
-[Operator log](gsq-rco-tp1-routed/operator.log) and [checks](gsq-rco-tp1-routed/checks.json)
+[Operator log](gsq-rco-tp1-routed/operator.txt) and [checks](gsq-rco-tp1-routed/checks.json)
 are retained. Changed-file formatting,docs,generated infrastructure and diff
 checks pass. The repository-wide formatter still flags seven untouched files.
 
