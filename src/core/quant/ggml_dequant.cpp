@@ -172,6 +172,9 @@ std::size_t QuantizedRowBytes(core::GgmlType type,
   switch (type) {
     // GGML storage layouts also used by the DeepSeek runtime. Storage support
     // here does not imply that every model has a compute kernel for the type.
+    case core::GgmlType::kQ2_0:
+      block_bytes = 18;
+      break;
     case core::GgmlType::kQ4_0:
       block_bytes = 18;
       break;
@@ -1070,6 +1073,19 @@ bool DequantizeRow(core::GgmlType type, const void* src, float* dst,
     return false;
   }
   switch (type) {
+    case core::GgmlType::kQ2_0:
+      // GGML Q2_0: one FP16 scale followed by 16 bytes, with four
+      // consecutive low-to-high 2-bit codes per byte. The levels are
+      // {-1, 0, 1, 2}; this is neither Q2_K nor the ternary TQ2_0 layout.
+      for (std::size_t block_index = 0; block_index < k / 64; ++block_index) {
+        const auto* packed = bytes + block_index * 18;
+        const float scale = Fp16ToFloat(LoadU16(packed));
+        for (std::size_t j = 0; j < 64; ++j) {
+          const int code = (packed[2 + j / 4] >> (2 * (j % 4))) & 3;
+          dst[block_index * 64 + j] = static_cast<float>(code - 1) * scale;
+        }
+      }
+      return true;
     case core::GgmlType::kQ4_0:
       DequantizeQ4_0(src, dst, k);
       return true;

@@ -25,13 +25,22 @@ int qfn_mmq_q8_0_dense(
     int           K,
     hipStream_t  stream);
 
+// Packed Q4_K/Q5_K/Q6_K/IQ4_NL/IQ4_XS dense projections. Narrow rows use
+// the native vector path; wider batches use the quantized tiled GEMM.
+// Prefill must force_matrix even for short tails to retain its activation
+// precision and reduction across prompt/checkpoint boundaries.
+int qfn_mmq_dense(int weight_type, const void* weights, const float* input,
+                  float* output, int rows, int tokens, int k,
+                  hipStream_t stream, bool force_matrix = false);
+
 int qfn_mmq_q4_K_moe_pair_unique(const void* W_a, const void* W_b,
                                  const float* X_f32, const int32_t* ids,
                                  float* out_a, float* out_b, int M, int K,
                                  int n_tokens, int n_experts, int n_expert_used,
                                  hipStream_t stream);
 
-// Routed vector projection for GGML Q4_K/Q5_K/Q5_1/Q8_0. Optional paired
+// Routed vector projection for GGML Q2_0/Q4_K/Q5_K/Q5_1/Q6_K/Q8_0,
+// IQ2_S/IQ3_XXS/IQ3_S/IQ4_NL/IQ4_XS. Optional paired
 // weights use the same shape, routing and quantized input; both outputs are
 // [n_tokens][n_expert_used][M]. W_b and out_b must be supplied together.
 int qfn_mmq_moe_vec(int weight_type, const void* W, const float* X_f32,
@@ -69,6 +78,11 @@ int qfn_mmq_q8_0_dense_vec_preq(const void* W_q8_0, const void* W_gate,
 int qfn_mmq_build_ids_maps(
         const int32_t * ids, int32_t * ids_src1, int32_t * ids_dst, int32_t * expert_bounds,
         int n_experts, int n_tokens, int n_expert_used, int nchannels_y, int si1, int sis1, hipStream_t stream);
+
+// Tiled routed projection over the same packed formats as moe_vec.
+int qfn_mmq_moe_raw(int weight_type, const void* weights, const float* input,
+                     const int32_t* ids, float* output, int rows, int k,
+                     int tokens, int experts, int used, hipStream_t stream);
 
 int qfn_mmq_q8_0_moe_raw(
     const void * W, const float * X_f32, const int32_t * ids, float * out,

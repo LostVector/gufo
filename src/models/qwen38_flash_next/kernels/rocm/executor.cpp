@@ -72,6 +72,8 @@ WeightType SmallType(GgmlType type) {
       return WeightType::kF16;
     case GgmlType::kQ8_0:
       return WeightType::kQ8_0;
+    case GgmlType::kIQ4_XS:
+      return WeightType::kIQ4_XS;
     case GgmlType::kF32:
       return WeightType::kF32;
     default:
@@ -1016,6 +1018,13 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
                 "a split reduce needs both halves and distributed execution");
     return nullptr;
   }
+  if (static_cast<bool>(options.compact_target_candidates) !=
+          static_cast<bool>(options.compact_target_row) ||
+      (options.compact_target_candidates && model.tp_world_size() != 2)) {
+    AssignError(error_msg,
+                "compact target verification needs both TP2 callbacks");
+    return nullptr;
+  }
   e->options_.max_batch = std::max<std::uint32_t>(1, options.max_batch);
   e->options_.max_logit_rows = std::clamp<std::uint32_t>(
       options.max_logit_rows, 1, e->options_.max_batch);
@@ -1353,6 +1362,14 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
         return nullptr;
       e->verification_penalty_capacity_ = rows * kCompactPenaltyLimit;
       e->verification_penalty_host_.reserve(e->verification_penalty_capacity_);
+      if (e->options_.compact_target_candidates) {
+        e->partial_verification_logits_ =
+            f32(std::size_t{std::min(8U, e->options_.max_logit_rows)} *
+                (c.vocab_size / 2));
+        e->partial_verification_packet_ = Alloc<std::uint32_t>(
+            a, rows * (2 * kMtpCandidates) + e->verification_penalty_capacity_,
+            error_msg);
+      }
     }
   }
   for (void* p : a) {
@@ -1660,10 +1677,11 @@ bool Executor::EnsureRollback(Session& session, std::uint32_t depth,
 
 std::size_t Executor::WideSegmentFloats() const {
   const auto& c = config();
+  const auto& heads = trunk_heads();
   const std::size_t conv =
-      std::size_t{c.ssm_conv_kernel - 1} * c.SsmConvChannels();
-  const std::size_t full = GdnRollbackRowFloats(
-      0, c.ssm_num_k_heads, c.ssm_num_v_heads, c.ssm_head_dim);
+      std::size_t{c.ssm_conv_kernel - 1} * heads.SsmConvChannels();
+  const std::size_t full =
+      GdnRollbackRowFloats(0, heads.ssm_k, heads.ssm_v, heads.ssm_dim);
   const std::size_t ple =
       c.ple_layer >= 0 ? std::size_t{c.PleConvHistory()} * c.HcDim() : 0;
   constexpr std::uint32_t kRows =
@@ -1674,8 +1692,8 @@ std::size_t Executor::WideSegmentFloats() const {
       continue;
     floats += conv * (kRows + 1) + full;
     for (std::uint32_t row = 0; row < kRows; ++row)
-      floats += GdnRollbackRowFloats(row, c.ssm_num_k_heads, c.ssm_num_v_heads,
-                                     c.ssm_head_dim);
+      floats +=
+          GdnRollbackRowFloats(row, heads.ssm_k, heads.ssm_v, heads.ssm_dim);
   }
   return floats;
 }
@@ -1688,10 +1706,11 @@ bool Executor::EnsureWideSegments(std::uint32_t segments,
              "wide verification controls", error_msg))
     return false;
   const auto& c = config();
+  const auto& heads = trunk_heads();
   const std::size_t conv =
-      std::size_t{c.ssm_conv_kernel - 1} * c.SsmConvChannels();
-  const std::size_t full = GdnRollbackRowFloats(
-      0, c.ssm_num_k_heads, c.ssm_num_v_heads, c.ssm_head_dim);
+      std::size_t{c.ssm_conv_kernel - 1} * heads.SsmConvChannels();
+  const std::size_t full =
+      GdnRollbackRowFloats(0, heads.ssm_k, heads.ssm_v, heads.ssm_dim);
   const std::size_t ple =
       c.ple_layer >= 0 ? std::size_t{c.PleConvHistory()} * c.HcDim() : 0;
   constexpr std::uint32_t kRows =
@@ -1720,8 +1739,8 @@ bool Executor::EnsureWideSegments(std::uint32_t segments,
         seg.conv[il].rows[row] = next;
         next += conv;
         seg.state[il].rows[row] = next;
-        next += GdnRollbackRowFloats(row, c.ssm_num_k_heads, c.ssm_num_v_heads,
-                                     c.ssm_head_dim);
+        next +=
+            GdnRollbackRowFloats(row, heads.ssm_k, heads.ssm_v, heads.ssm_dim);
       }
     }
     if (ple != 0) {
@@ -2111,6 +2130,18 @@ bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
     }
     return true;
   }
+  if (w.type == GgmlType::kQ4_K || w.type == GgmlType::kQ5_K ||
+      w.type == GgmlType::kQ6_K || w.type == GgmlType::kIQ4_NL ||
+      w.type == GgmlType::kIQ4_XS) {
+    if (qfn_mmq_dense(static_cast<int>(w.type), w.data, x, out,
+                      static_cast<int>(w.rows), static_cast<int>(n_tokens),
+                      static_cast<int>(w.cols), stream_,
+                      MatrixRows(n_tokens)) != 0) {
+      AssignError(error_msg, "packed dense projection failed");
+      return false;
+    }
+    return true;
+  }
   if (!MatrixRows(n_tokens)) {
     SmallGemm(w.data, SmallType(w.type), x, out, n_tokens, w.rows, w.cols,
               stream_);
@@ -2238,22 +2269,8 @@ bool Executor::Experts(const DeviceTensor& w, const float* x,
     rc = qfn_mmq_moe_vec(static_cast<int>(w.type), w.data, x, ids, out, M, K, T,
                          E, U, stream_);
   } else {
-    switch (w.type) {
-      case GgmlType::kQ4_K:
-        rc = qfn_mmq_q4_K_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
-        break;
-      case GgmlType::kQ5_K:
-        rc = qfn_mmq_q5_K_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
-        break;
-      case GgmlType::kQ5_1:
-        rc = qfn_mmq_q5_1_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
-        break;
-      case GgmlType::kQ8_0:
-        rc = qfn_mmq_q8_0_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
-        break;
-      default:
-        break;
-    }
+    rc = qfn_mmq_moe_raw(static_cast<int>(w.type), w.data, x, ids, out, M, K, T,
+                         E, U, stream_);
   }
   if (rc != 0) {
     AssignError(error_msg, "expert GEMM failed");
@@ -3288,6 +3305,103 @@ Executor::TwoRankTargetHeadGather(std::shared_ptr<Communicator> communicator) {
   };
 }
 
+std::function<bool(std::uint32_t*, std::uint32_t, hipStream_t, std::string*)>
+Executor::TwoRankMtpCandidateMerge(std::shared_ptr<Communicator> communicator) {
+  return [communicator = std::move(communicator)](
+             std::uint32_t* packed, std::uint32_t half, hipStream_t stream,
+             std::string* error) {
+    const auto rank = communicator->rank();
+    if (rank > 1 || half < kMtpCandidates || half > UINT32_MAX / 2) {
+      AssignError(error, "invalid MTP candidate merge shape or rank");
+      return false;
+    }
+    constexpr auto words = 2 * kMtpCandidates;
+    Communicator::QueuedPartial queued;
+    if (!communicator->QueuePartial(words * sizeof(std::uint32_t), &queued,
+                                    error))
+      return false;
+    StagePartial(reinterpret_cast<const float*>(packed), queued.send, words,
+                 queued.arrivals, queued.ready, queued.value, stream);
+    WaitValue(queued.arrived, queued.value, queued.wait_ticks, queued.timed_out,
+              stream);
+    MergeMtpCandidates(packed,
+                       reinterpret_cast<const std::uint32_t*>(queued.peer),
+                       half, rank, stream);
+    return true;
+  };
+}
+
+decltype(Executor::Options::compact_target_candidates)
+Executor::TwoRankTargetVerificationCandidates(
+    std::shared_ptr<Communicator> communicator) {
+  return [communicator = std::move(communicator)](
+             std::uint32_t* packed, GreedyPenaltyRows penalties,
+             sampling::LogitCandidate* out, std::uint32_t rows,
+             std::uint32_t vocab, std::uint64_t tag, hipStream_t stream,
+             std::string* error) {
+    if (!packed || !out || rows == 0 || rows > 7 || vocab % 2 != 0 ||
+        vocab / 2 < kMtpCandidates || communicator->rank() > 1 || tag == 0) {
+      AssignError(error, "invalid compact target exchange");
+      return false;
+    }
+    const auto words =
+        std::size_t{rows} * (2 * kMtpCandidates) + penalties.offsets[rows];
+    Communicator::QueuedPartial queued;
+    if (!communicator->QueueTaggedPartial(words * sizeof(std::uint32_t), tag,
+                                          &queued, error))
+      return false;
+    StagePartial(reinterpret_cast<const float*>(packed), queued.send, words,
+                 queued.arrivals, queued.ready, queued.value, stream);
+    WaitValue(queued.arrived, queued.value, queued.wait_ticks, queued.timed_out,
+              stream);
+    MergePartitionVerificationCandidates(
+        packed, reinterpret_cast<const std::uint32_t*>(queued.peer), penalties,
+        out, rows, vocab, communicator->rank(), stream);
+    return true;
+  };
+}
+
+decltype(Executor::Options::compact_target_row)
+Executor::TwoRankTargetVerificationRow(
+    std::shared_ptr<Communicator> communicator, std::uint32_t vocab) {
+  return [communicator = std::move(communicator), vocab](
+             float* destination, const float* local, std::uint32_t row,
+             std::uint32_t total_rows, hipStream_t stream, std::string* error) {
+    const auto rank = communicator->rank();
+    if (!destination || !local || rank > 1 || vocab % 2 != 0 || vocab == 0 ||
+        total_rows == 0 || total_rows > 8 || row >= total_rows) {
+      AssignError(error, "invalid deferred target row");
+      return false;
+    }
+    const std::size_t half = vocab / 2;
+    const auto tag =
+        0xF100000000000000ULL | (std::uint64_t{total_rows} << 8) | row;
+    Communicator::QueuedPartial queued;
+    if (!communicator->QueueTaggedPartial(half * sizeof(float), tag, &queued,
+                                          error))
+      return false;
+    StagePartial(local, queued.send, half, queued.arrivals, queued.ready,
+                 queued.value, stream);
+    WaitValue(queued.arrived, queued.value, queued.wait_ticks, queued.timed_out,
+              stream);
+    const auto checked = [error](hipError_t status, const char* what) {
+      if (status == hipSuccess)
+        return true;
+      if (error)
+        *error = std::string(what) + ": " + hipGetErrorString(status);
+      return false;
+    };
+    return checked(hipMemcpyAsync(destination + std::size_t{rank} * half, local,
+                                  half * sizeof(float), hipMemcpyDeviceToDevice,
+                                  stream),
+                   "deferred target local row") &&
+           checked(hipMemcpyAsync(destination + std::size_t{1 - rank} * half,
+                                  queued.peer, half * sizeof(float),
+                                  hipMemcpyDeviceToDevice, stream),
+                   "deferred target peer row");
+  };
+}
+
 std::function<bool(std::string*)> Executor::TwoRankReduceStatus(
     std::shared_ptr<Communicator> communicator) {
   return [communicator = std::move(communicator)](std::string* error) {
@@ -3739,7 +3853,7 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   // A greedy draft returns its argmax and normalized confidence. Under TP
   // each rank scores half of the vocabulary and the two candidates cross in
   // one all-reduce row, held in the logits buffer's unused second half. A
-  // request-vocabulary draft is scored whole on both ranks alike.
+  // sampled request-vocabulary path below shares its projection too.
   const std::uint32_t half = output.rows / 2;
   const std::size_t width = config().hidden_size;
   if (draft == nullptr && token && !candidates &&
@@ -3770,10 +3884,14 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   // Restore the original complete subset logits before selection. Copying
   // the two halves retains the ordinary confidence reduction order and bits;
   // exchanging only local softmax totals would change rounding at policy gates.
+  bool candidates_merged = false;
   const std::uint32_t subset_half = rows / 2;
   const bool gather_subset =
-      draft != nullptr && token && !candidates && options_.draft_head_gather &&
-      model_->tp_world_size() == 2 && output.type == GgmlType::kQ8_0 &&
+      draft != nullptr &&
+      ((token && !candidates) ||
+       (!token && candidates && options_.mtp_candidate_head_gather)) &&
+      options_.draft_head_gather && model_->tp_world_size() == 2 &&
+      output.type == GgmlType::kQ8_0 &&
       model_->draft_output().type == output.type &&
       model_->draft_output().cols == output.cols && output.cols % 32 == 0 &&
       rows % 2 == 0 && prefix > subset_half;
@@ -3799,8 +3917,47 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
       MaskDraftLogits(s_.logits + part.rows, draft->mtp_.draft_ids,
                       speculative::kDraftVocabExtraRows, stream_);
     }
-    if (!options_.draft_head_gather(s_.logits, subset_half, 1, stream_,
-                                    error_msg)) {
+    if (candidates && !token && options_.mtp_candidate_merge &&
+        subset_half >= kMtpCandidates) {
+      MtpTopCandidates(s_.logits, s_.mtp_ids, s_.mtp_scratch_ids, s_.mtp_scores,
+                       subset_half, stream_);
+      if (!options_.mtp_candidate_merge(s_.mtp_ids, subset_half, stream_,
+                                        error_msg))
+        return false;
+      candidates_merged = true;
+    } else if (!options_.draft_head_gather(s_.logits, subset_half, 1, stream_,
+                                           error_msg)) {
+      return false;
+    }
+  } else if (draft == nullptr && candidates && !token &&
+             options_.mtp_candidate_head_gather &&
+             options_.target_head_gather && model_->tp_world_size() == 2 &&
+             output.type == GgmlType::kQ8_0 && output.rows == 248320 &&
+             output.cols == 2560 && config().hidden_size == 2560) {
+    // Each rank evaluates disjoint vocabulary rows with the original scalar
+    // projection. Compact exchange merges exact partition top64 sets before
+    // unchanged sampling; the fallback reconstructs complete original logits.
+    // Neither route normalizes local distributions.
+    const auto rank = model_->tp_rank();
+    if (rank > 1) {
+      AssignError(error_msg, "MTP candidate head gather rank out of range");
+      return false;
+    }
+    auto part = output;
+    part.rows /= 2;
+    part.data = static_cast<std::uint8_t*>(part.data) +
+                std::size_t{rank} * part.rows * (part.cols / 32) * 34;
+    if (!Dense(part, s_.mixed, s_.logits, 1, error_msg))
+      return false;
+    if (options_.mtp_candidate_merge && part.rows >= kMtpCandidates) {
+      MtpTopCandidates(s_.logits, s_.mtp_ids, s_.mtp_scratch_ids, s_.mtp_scores,
+                       part.rows, stream_);
+      if (!options_.mtp_candidate_merge(s_.mtp_ids, part.rows, stream_,
+                                        error_msg))
+        return false;
+      candidates_merged = true;
+    } else if (!options_.target_head_gather(s_.logits, part.rows, 1, stream_,
+                                            error_msg)) {
       return false;
     }
   } else if (!(draft != nullptr
@@ -3810,8 +3967,9 @@ bool Executor::MtpHead(const DeviceMixer& head, const float* res, bool token,
   }
   const auto count = std::min<std::uint32_t>(rows, kMtpCandidates);
   if (candidates) {
-    MtpTopCandidates(s_.logits, s_.mtp_ids, s_.mtp_scratch_ids, s_.mtp_scores,
-                     rows, stream_);
+    if (!candidates_merged)
+      MtpTopCandidates(s_.logits, s_.mtp_ids, s_.mtp_scratch_ids, s_.mtp_scores,
+                       rows, stream_);
     if (draft != nullptr)
       RemapDraftIds(s_.mtp_ids, count, prefix, draft->mtp_.draft_ids,
                     speculative::kDraftVocabExtraRows, stream_);
@@ -3946,7 +4104,8 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
                        std::uint32_t n_logits, float* logits, ForwardMode mode,
                        std::string* error_msg,
                        std::span<PrefillCheckpoint* const> checkpoints,
-                       std::span<const std::int32_t> next) const {
+                       std::span<const std::int32_t> next,
+                       bool compact_target) const {
   // Only this call's PLE layer, or its first layer hook, may start the
   // prefetch of `next`.
   struct NextHint {
@@ -3960,6 +4119,7 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
   if (mode == ForwardMode::kPrefill) {
     prefetch_next_ = next;
   }
+  ClearPartialVerification();
   const bool speculative = mode == ForwardMode::kVerify;
   PrefillPhase phase(mode == ForwardMode::kPrefill);
   selected_logits_ = nullptr;
@@ -4126,7 +4286,7 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
     return ForwardBody(session, n, n_logits, logits != nullptr, speculative,
                        sparse, start_pos, graph ? graph_pool_grid : pool_grid,
                        first_layer, c.num_layers, error_msg, checkpoints,
-                       ple_split);
+                       ple_split, compact_target);
   };
   // The prefix is already queued. Wait once before the suffix so recording
   // its graph can reuse these pinned rows while the eager pass executes.
@@ -4177,6 +4337,12 @@ std::vector<std::uint32_t> Executor::LayerHookBoundaries(
 }
 
 bool Executor::RunLayerHook(Session& session, std::string* error_msg) const {
+  // Hooks suspend an in-progress layer pass, before target logits exist.
+  // Never let a nested decode overwrite a live deferred verification.
+  if (partial_verification_rows_ != 0) {
+    AssignError(error_msg, "layer hook cannot suspend deferred verification");
+    return FailPartialVerification(error_msg);
+  }
   // The host may read pinned buffers this pass still copies from (the PLE
   // rows), and `between` rewrites them: finish the queued layers first.
   if (!Check(hipStreamSynchronize(stream_), "layer hook sync", error_msg))
@@ -4266,6 +4432,9 @@ bool Executor::RunLayerHook(Session& session, std::string* error_msg) const {
     PrefillPhase decode_phase(false);
     hook();
   }
+  // A completed nested decode may leave its most recent target row view.
+  // It does not belong to the prefill pass whose scratch resumes below.
+  ClearPartialVerification();
   hook_ = std::move(hook);
   prefill_phase = phase;
   UseScratch(base);
@@ -4312,7 +4481,7 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
                            std::uint32_t first_layer, std::uint32_t end_layer,
                            std::string* error_msg,
                            std::span<PrefillCheckpoint* const> checkpoints,
-                           bool embeddings_ready) const {
+                           bool embeddings_ready, bool compact_target) const {
   UseYarn(session);
   const Config& c = config();
   if (first_layer == 0) {
@@ -4570,7 +4739,8 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
     // Share the existing Q8 output rows for native MTP verification rows
     // two through eight, or guarded four/eight-row external verification.
     // Wider native rows fit the capacity required at model setup.
-    // AR, prefill and other shapes keep their route. Reconstruct every logit.
+    // Ordinary routes reconstruct every logit immediately. An eligible scalar
+    // sampled cycle parks local logits and materializes full rows on demand.
     const bool gather_head =
         target_head_decode &&
         ((session.mtp_enabled_ && n_logits == 2) ||
@@ -4593,9 +4763,22 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
       }
       part.data = static_cast<std::uint8_t*>(part.data) +
                   std::size_t{rank} * part.rows * (part.cols / 32) * 34;
-      if (!Dense(part, s_.mixed, s_.logits, n_logits, error_msg) ||
-          !options_.target_head_gather(s_.logits, part.rows, n_logits, stream_,
-                                       error_msg)) {
+      const bool deferred =
+          compact_target && speculative && !download_logits &&
+          session.mtp_enabled_ && n_logits >= 2 && n_logits <= 8 &&
+          options_.compact_target_candidates && options_.compact_target_row &&
+          partial_verification_logits_ && partial_verification_packet_ &&
+          c.vocab_size == output.rows;
+      if (deferred) {
+        if (!Dense(part, s_.mixed, partial_verification_logits_, n_logits,
+                   error_msg))
+          return false;
+        partial_verification_owner_ = &session;
+        partial_verification_rows_ = n_logits;
+        partial_verification_materialized_ = 0;
+      } else if (!Dense(part, s_.mixed, s_.logits, n_logits, error_msg) ||
+                 !options_.target_head_gather(s_.logits, part.rows, n_logits,
+                                              stream_, error_msg)) {
         return false;
       }
     } else if (!Dense(output, s_.mixed, s_.logits, n_logits, error_msg)) {
@@ -4988,6 +5171,13 @@ bool Executor::Rollback(Session& session, std::uint32_t keep,
         false, end, session.position_,
         std::min(session.blocks_, end / c.compress_ratio), session.blocks_);
   }
+  if (partial_verification_rows_ != 0 &&
+      partial_verification_owner_ != &session) {
+    AssignError(error_msg, "deferred verification rollback owner mismatch");
+    return FailPartialVerification(error_msg);
+  }
+  if (logits && !EnsureFullVerificationRows(keep - 1, 1, error_msg, &session))
+    return false;
   session.spec_tokens_ = 0;
   if (logits != nullptr &&
       !Check(hipMemcpyAsync(
@@ -5078,8 +5268,9 @@ bool Executor::Rollback(Session& session, std::uint32_t keep,
             ? 0
             : std::min(session.blocks_, session.position_ / c.compress_ratio);
   }
-  if (!Check(hipStreamSynchronize(stream_), "rollback", error_msg)) {
-    return false;
+  if (!Drain("rollback", error_msg)) {
+    return partial_verification_rows_ ? FailPartialVerification(error_msg)
+                                      : false;
   }
   if (logits != nullptr) {
     std::copy_n(logits_host_, c.vocab_size, logits);
@@ -5795,6 +5986,56 @@ bool Executor::RestoreSnapshot(Session& session,
   return true;
 }
 
+bool Executor::FailPartialVerification(std::string* error) const {
+  if (options_.abort)
+    options_.abort(error ? *error : std::string{});
+  // This path can run after Forward's normal Drain. Release peer/GPU waits
+  // before draining, and retain pinned penalty/staging sources until then.
+  (void)hipStreamSynchronize(stream_);
+  return false;
+}
+
+void Executor::ClearPartialVerification() const {
+  partial_verification_owner_ = nullptr;
+  partial_verification_rows_ = 0;
+  partial_verification_materialized_ = 0;
+}
+
+bool Executor::EnsureFullVerificationRows(std::uint32_t row,
+                                          std::uint32_t count,
+                                          std::string* error,
+                                          const Session* owner) const {
+  if (partial_verification_rows_ == 0)
+    return true;
+  if ((owner && owner != partial_verification_owner_) || selected_logits_ ||
+      wide_rows_ != 0 || row >= partial_verification_rows_ || count == 0 ||
+      count > partial_verification_rows_ - row ||
+      !options_.compact_target_row || !partial_verification_logits_) {
+    AssignError(error, "deferred verification row owner/view/range mismatch");
+    return FailPartialVerification(error);
+  }
+  const auto vocab = config().vocab_size;
+  for (auto i = row; i < row + count; ++i) {
+    const auto bit = std::uint32_t{1} << i;
+    if ((partial_verification_materialized_ & bit) != 0)
+      continue;
+    bool queued;
+    try {
+      queued = options_.compact_target_row(
+          s_.logits + std::size_t{i} * vocab,
+          partial_verification_logits_ + std::size_t{i} * (vocab / 2), i,
+          partial_verification_rows_, stream_, error);
+    } catch (...) {
+      (void)FailPartialVerification(error);
+      throw;
+    }
+    if (!queued)
+      return FailPartialVerification(error);
+    partial_verification_materialized_ |= bit;
+  }
+  return true;
+}
+
 bool Executor::ReadVerificationRows(std::uint32_t row, std::span<float> logits,
                                     std::string* error_msg) const {
   const auto vocab = config().vocab_size;
@@ -5804,12 +6045,18 @@ bool Executor::ReadVerificationRows(std::uint32_t row, std::span<float> logits,
     AssignError(error_msg, "invalid verification row");
     return false;
   }
-  return Check(hipMemcpyAsync(logits.data(), VerificationLogits() + row * vocab,
-                              logits.size_bytes(), hipMemcpyDeviceToHost,
-                              stream_),
-               "constrained verification row download", error_msg) &&
-         Check(hipStreamSynchronize(stream_), "constrained verification",
-               error_msg);
+  if (!EnsureFullVerificationRows(
+          row, static_cast<std::uint32_t>(logits.size() / vocab), error_msg))
+    return false;
+  const bool copied =
+      Check(hipMemcpyAsync(logits.data(), VerificationLogits() + row * vocab,
+                           logits.size_bytes(), hipMemcpyDeviceToHost, stream_),
+            "constrained verification row download", error_msg);
+  const bool completed = Drain("constrained verification", error_msg);
+  if (!copied || !completed)
+    return partial_verification_rows_ ? FailPartialVerification(error_msg)
+                                      : false;
+  return true;
 }
 
 bool Executor::GreedyMtpPredictions(std::span<ArgmaxCandidate> predictions,
@@ -5817,6 +6064,9 @@ bool Executor::GreedyMtpPredictions(std::span<ArgmaxCandidate> predictions,
                                     std::span<const std::int32_t> drafts,
                                     std::string* error_msg) const {
   const auto rows = predictions.size();
+  if (!EnsureFullVerificationRows(0, static_cast<std::uint32_t>(rows),
+                                  error_msg))
+    return false;
   if (rows > 7 && rows < wide_rows_ && drafts.size() == rows &&
       selected_logits_ != nullptr) {
     // A wide copy verification: rows of at most seven at a time, each with
@@ -5897,9 +6147,11 @@ bool Executor::GreedyMtpPredictions(std::span<ArgmaxCandidate> predictions,
                      predictions.size_bytes(), hipMemcpyDeviceToHost, stream_),
       "greedy MTP predictions download", error_msg);
   // Drain even after a failed download before releasing the upload source.
-  const bool completed = Check(hipStreamSynchronize(stream_),
-                               "greedy MTP verification", error_msg);
-  return copied && completed;
+  const bool completed = Drain("greedy MTP verification", error_msg);
+  if (!copied || !completed)
+    return partial_verification_rows_ ? FailPartialVerification(error_msg)
+                                      : false;
+  return true;
 }
 
 bool Executor::CanCompactWideVerification(const sampling::SamplerState& sampler,
@@ -5973,19 +6225,58 @@ bool Executor::SampledMtpCandidates(
                             hipMemcpyHostToDevice, stream_),
              "compact verification penalties", error_msg))
     return false;
-  VerificationCandidates(VerificationLogits(), batch, verification_ids_,
-                         verification_scratch_ids_, verification_candidates_,
-                         rows, config().vocab_size, stream_);
+  if (partial_verification_rows_ != 0) {
+    if (selected_logits_ || wide_rows_ != 0 ||
+        rows + 1 != partial_verification_rows_ ||
+        !options_.compact_target_candidates || !partial_verification_packet_) {
+      AssignError(error_msg, "invalid deferred compact verification view");
+      return FailPartialVerification(error_msg);
+    }
+    // Pointers and padding never enter the tag. Equal-sized but semantically
+    // different penalty layouts must fail before a peer releases GPU work.
+    std::uint64_t hash = 14695981039346656037ULL;
+    const auto mix = [&hash](std::uint64_t v) {
+      hash = (hash ^ v) * 1099511628211ULL;
+    };
+    mix(rows);
+    mix(config().vocab_size);
+    for (std::size_t i = 0; i <= rows; ++i)
+      mix(batch.offsets[i]);
+    for (const auto& penalty : penalties)
+      mix(penalty.token);
+    const auto tag = 0xC100000000000000ULL | (hash & 0x00FFFFFFFFFFFFFFULL);
+    PartitionVerificationCandidates(
+        partial_verification_logits_, batch, verification_ids_,
+        verification_scratch_ids_, partial_verification_packet_,
+        static_cast<std::uint32_t>(rows), config().vocab_size,
+        model_->tp_rank(), stream_);
+    bool queued;
+    try {
+      queued = options_.compact_target_candidates(
+          partial_verification_packet_, batch, verification_candidates_,
+          static_cast<std::uint32_t>(rows), config().vocab_size, tag, stream_,
+          error_msg);
+    } catch (...) {
+      (void)FailPartialVerification(error_msg);
+      throw;
+    }
+    if (!queued)
+      return FailPartialVerification(error_msg);
+  } else {
+    VerificationCandidates(VerificationLogits(), batch, verification_ids_,
+                           verification_scratch_ids_, verification_candidates_,
+                           rows, config().vocab_size, stream_);
+  }
   const auto count = rows * kMtpCandidates + penalties.size();
   const bool copied = Check(
       hipMemcpyAsync(verification_candidates_host_, verification_candidates_,
                      count * sizeof(sampling::LogitCandidate),
                      hipMemcpyDeviceToHost, stream_),
       "compact verification candidates", error_msg);
-  const bool completed =
-      Check(hipStreamSynchronize(stream_), "compact verification", error_msg);
+  const bool completed = Drain("compact verification", error_msg);
   if (!copied || !completed)
-    return false;
+    return partial_verification_rows_ ? FailPartialVerification(error_msg)
+                                      : false;
   for (std::size_t row = 0; row < rows; ++row)
     output[row] = {
         verification_candidates_host_ + row * kMtpCandidates +
@@ -5999,6 +6290,7 @@ bool Executor::MtpForward(Session& session,
                           std::int32_t hidden_row, MtpOutput output,
                           std::string* error_msg,
                           const float* hidden_source) const {
+  ClearPartialVerification();
   DropReadyQ8();
   const auto n = static_cast<std::uint32_t>(tokens.size());
   if (session.owner_ != this ||

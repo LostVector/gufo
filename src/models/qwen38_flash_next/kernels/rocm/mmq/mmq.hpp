@@ -66,6 +66,7 @@ static_assert(sizeof(block_fp4_mmq)  == sizeof(block_q8_1_mmq),    "Unexpected b
 
 static mmq_q8_1_ds_layout mmq_get_q8_1_ds_layout(const ggml_type type_x) {
     switch (type_x) {
+        case GGML_TYPE_Q2_0:
         case GGML_TYPE_Q1_0:
             return MMQ_Q8_1_DS_LAYOUT_D4;
         case GGML_TYPE_Q4_0:
@@ -179,6 +180,7 @@ static constexpr __device__ int get_mmq_y_device() {
 
 static constexpr __host__ __device__ tile_x_sizes mmq_get_dp4a_tile_x_sizes(ggml_type type, int mmq_y) {
     switch (type) {
+        case GGML_TYPE_Q2_0:    return MMQ_DP4A_TXS_Q8_0;
         case GGML_TYPE_Q1_0:    return MMQ_DP4A_TXS_Q8_0;
         case GGML_TYPE_Q4_0:    return MMQ_DP4A_TXS_Q4_0;
         case GGML_TYPE_Q4_1:    return MMQ_DP4A_TXS_Q4_1;
@@ -224,6 +226,7 @@ static_assert(MMQ_MMA_TILE_X_K_NVFP4 % 8 == 4, "Wrong padding.");
 
 static constexpr __host__ __device__ int mmq_get_mma_tile_x_k(ggml_type type) {
     switch (type) {
+        case GGML_TYPE_Q2_0:    return MMQ_MMA_TILE_X_K_Q8_0;
         case GGML_TYPE_Q1_0:    return MMQ_MMA_TILE_X_K_Q8_0;
         case GGML_TYPE_Q4_0:    return MMQ_MMA_TILE_X_K_Q8_0;
         case GGML_TYPE_Q4_1:    return MMQ_MMA_TILE_X_K_Q8_1;
@@ -852,6 +855,77 @@ template <int mmq_y, bool need_check> static __device__ __forceinline__ void loa
     }
 }
 
+// Expand only the current Q2_0 tile into the existing signed-int8 LDS
+// layout. Persistent model weights remain packed at 18 bytes per 64 values.
+template <int mmq_y, bool need_check> static __device__ __forceinline__ void load_tiles_q2_0(
+    const char * __restrict__ x, int * __restrict__ x_tile, const int kbx0, const int i_max, const int stride) {
+    constexpr int nwarps = mmq_get_nwarps_device();
+    constexpr int warp_size = ggml_hip_get_physical_warp_size();
+
+#if defined(AMD_MFMA_AVAILABLE) || defined(AMD_WMMA_AVAILABLE)
+    int   * x_qs = (int   *)  x_tile;
+    float * x_df = (float *) (x_tile + 2*MMQ_TILE_NE_K);
+#else
+    constexpr tile_x_sizes txs = mmq_get_dp4a_tile_x_sizes(GGML_TYPE_Q8_0, mmq_y);
+    int   * x_qs = (int   *)  x_tile;
+    float * x_df = (float *) (x_qs + txs.qs);
+#endif // defined(AMD_MFMA_AVAILABLE) || defined(AMD_WMMA_AVAILABLE)
+
+    // MMQ_ITER_K / (4 * QR8_0) == 64 required. but NV has only 32 threads per warp
+    constexpr int threads_per_row = 32;
+    constexpr int nrows = warp_size / threads_per_row;
+    const int txi = warp_size > threads_per_row ? threadIdx.x % threads_per_row : threadIdx.x;
+
+#pragma unroll
+    for (int i0 = 0; i0 < mmq_y; i0 += nrows*nwarps) {
+        int i = i0 + (nrows == 1 ? threadIdx.y : threadIdx.y*nrows + threadIdx.x/threads_per_row);
+
+        if (need_check) {
+            i = min(i, i_max);
+        }
+
+        const block_q2_0* bxi = reinterpret_cast<const block_q2_0*>(x) +
+                                kbx0 + i*stride + txi/16;
+        const auto expand = [](uint32_t q) {
+            const uint32_t selectors = (q & 3) | ((q & 12) << 6) |
+                                       ((q & 48) << 12) | ((q & 192) << 18);
+            return __builtin_amdgcn_perm(0x020100FF, 0x020100FF, selectors);
+        };
+        const int lo = expand(bxi[0].qs[txi % 16]);
+        const int hi = expand(bxi[2].qs[txi % 16]);
+#if defined(AMD_MFMA_AVAILABLE) || defined(AMD_WMMA_AVAILABLE)
+        x_qs[i*MMQ_MMA_TILE_X_K_Q8_0 + txi] = lo;
+        x_qs[i*MMQ_MMA_TILE_X_K_Q8_0 + MMQ_TILE_NE_K + txi] = hi;
+#else
+        x_qs[i*(2*MMQ_TILE_NE_K + 1) + txi] = lo;
+        x_qs[i*(2*MMQ_TILE_NE_K + 1) + MMQ_TILE_NE_K + txi] = hi;
+#endif
+    }
+
+    constexpr int blocks_per_tile_x_row = 2*MMQ_TILE_NE_K / QI8_0;
+    constexpr int rows_per_warp = warp_size / blocks_per_tile_x_row;
+    const int kbxd = threadIdx.x % blocks_per_tile_x_row;
+
+#pragma unroll
+    for (int i0 = 0; i0 < mmq_y; i0 += nwarps * rows_per_warp) {
+        int i = i0 + threadIdx.y * rows_per_warp + threadIdx.x / blocks_per_tile_x_row;
+
+        if (need_check) {
+            i = min(i, i_max);
+        }
+
+        // One Q2_0 scale covers two adjacent 32-value activation blocks.
+        const block_q2_0* bxi = reinterpret_cast<const block_q2_0*>(x) +
+                                kbx0 + i*stride + kbxd/2;
+
+#if defined(AMD_MFMA_AVAILABLE) || defined(AMD_WMMA_AVAILABLE)
+        x_df[i*MMQ_MMA_TILE_X_K_Q8_0                 + kbxd] = bxi->d;
+#else
+        x_df[i*(2*MMQ_TILE_NE_K/QI8_0) + i/(QI8_0/2) + kbxd] = bxi->d;
+#endif // defined(AMD_MFMA_AVAILABLE) || defined(AMD_WMMA_AVAILABLE)
+    }
+}
+
 template <int mmq_y, bool need_check> static __device__ __forceinline__ void load_tiles_mxfp4(
     const char * __restrict__ x, int * __restrict__ x_tile, const int kbx0, const int i_max, const int stride) {
     constexpr int nwarps = mmq_get_nwarps_device();
@@ -1055,6 +1129,12 @@ static __device__ __forceinline__ void vec_dot_q8_0_q8_1_dp4a(
 template <int mmq_x, int mmq_y, mmq_q8_1_ds_layout ds_layout>
 static __device__ __forceinline__ void vec_dot_q8_0_q8_1_mma(
     const int * __restrict__ x, const int * __restrict__ y, float * __restrict__ sum, const int k00) {
+#if defined(__clang__)
+    // Mixed-format prefill must retain one FP32 accumulation order at every
+    // token position/tile width. Reassociation changes checkpoint histories.
+#pragma clang fp reassociate(off) contract(off)
+#endif
+
 #if defined(AMD_MFMA_AVAILABLE) || defined(AMD_WMMA_AVAILABLE)
     constexpr data_layout input_layout = get_input_data_layout();
     typedef tile<16,  8, int, input_layout>        tile_A;
@@ -1239,6 +1319,12 @@ static __device__ __forceinline__ void vec_dot_q8_1_q8_1_dp4a(
 template <int mmq_x, int mmq_y>
 static __device__ __forceinline__ void vec_dot_q8_1_q8_1_mma(
     const int * __restrict__ x, const int * __restrict__ y, float * __restrict__ sum, const int k00) {
+#if defined(__clang__)
+    // Mixed-format prefill must retain one FP32 accumulation order at every
+    // token position/tile width. Reassociation changes checkpoint histories.
+#pragma clang fp reassociate(off) contract(off)
+#endif
+
 #if defined(AMD_MFMA_AVAILABLE) || defined(AMD_WMMA_AVAILABLE)
     constexpr data_layout input_layout = get_input_data_layout();
     typedef tile<16,  8, int, input_layout>        tile_A;
@@ -1413,6 +1499,12 @@ static __device__ __forceinline__ void vec_dot_q8_0_16_q8_1_dp4a(
 template <int mmq_x, int mmq_y>
 static __device__ __forceinline__ void vec_dot_q8_0_16_q8_1_mma(
     const int * __restrict__ x, const int * __restrict__ y, float * __restrict__ sum, const int k00) {
+#if defined(__clang__)
+    // IQ2_S has per-16-value scales and uses this separate accumulator.
+    // Preserve its K-order just as for the per-32 scale matrix variants.
+#pragma clang fp reassociate(off) contract(off)
+#endif
+
 #if defined(AMD_MFMA_AVAILABLE) || defined(AMD_WMMA_AVAILABLE)
     constexpr data_layout input_layout = get_input_data_layout();
     typedef tile<16,  4, int, input_layout>        tile_A;
@@ -2354,6 +2446,12 @@ static __device__ __forceinline__ void vec_dot_q6_K_q8_1_dp4a(
 template <int mmq_x, int mmq_y>
 static __device__ __forceinline__ void vec_dot_q6_K_q8_1_mma(
     const int * __restrict__ x, const int * __restrict__ y, float * __restrict__ sum, const int k00) {
+#if defined(__clang__)
+    // Mixed-format prefill must retain one FP32 accumulation order at every
+    // token position/tile width. Reassociation changes checkpoint histories.
+#pragma clang fp reassociate(off) contract(off)
+#endif
+
 #if defined(AMD_MFMA_AVAILABLE) || defined(AMD_WMMA_AVAILABLE)
     constexpr data_layout input_layout = get_input_data_layout();
     typedef tile<16,  4, int, input_layout>        tile_A;
@@ -3223,6 +3321,14 @@ static __device__ __forceinline__ void mmq_write_back_mma(
 
 template <int mmq_x, int mmq_y, bool need_check, ggml_type type>
 struct mmq_type_traits;
+
+template <int mmq_x, int mmq_y, bool need_check>
+struct mmq_type_traits<mmq_x, mmq_y, need_check, GGML_TYPE_Q2_0> {
+    static constexpr int vdr = VDR_Q8_0_Q8_1_MMQ;
+    static constexpr load_tiles_mmq_t load_tiles = load_tiles_q2_0<mmq_y, need_check>;
+    static constexpr vec_dot_mmq_t vec_dot_mma = vec_dot_q8_0_q8_1_mma<mmq_x, mmq_y, MMQ_Q8_1_DS_LAYOUT_D4>;
+    static constexpr vec_dot_mmq_t vec_dot_dp4a = vec_dot_q8_0_q8_1_dp4a<mmq_x, mmq_y>;
+};
 
 template <int mmq_x, int mmq_y, bool need_check>
 struct mmq_type_traits<mmq_x, mmq_y, need_check, GGML_TYPE_Q1_0> {

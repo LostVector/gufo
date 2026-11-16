@@ -1,0 +1,259 @@
+{
+  "q4": {
+    "runtime_sha256": "c8fae77b9557a68faeaf3dbc99a0abde9ae2c22e6115a6fb44def557d766dba7",
+    "groups": {
+      "decode-prose": {
+        "prompt_per_second": {
+          "median": 304.4932358265546,
+          "min": 301.5741348889391,
+          "max": 305.88025043095837
+        },
+        "predicted_per_second": {
+          "median": 54.3227393467991,
+          "min": 54.300954555249874,
+          "max": 54.70769030986216
+        },
+        "ttft_ms": {
+          "median": 182.7,
+          "min": 181.1,
+          "max": 184.1
+        },
+        "client_wall_ms": {
+          "median": 2540.85115,
+          "min": 2526.058728,
+          "max": 2543.91733
+        },
+        "prompt_n": 54,
+        "predicted_n": 128,
+        "repetitions": 3,
+        "draft_proposed": 249,
+        "draft_accepted": 150
+      },
+      "decode-explain": {
+        "prompt_per_second": {
+          "median": 287.58443772667437,
+          "min": 184.48965746829214,
+          "max": 317.85509180256327
+        },
+        "predicted_per_second": {
+          "median": 52.57441464796796,
+          "min": 52.24864606379249,
+          "max": 52.71724201620054
+        },
+        "ttft_ms": {
+          "median": 212.7,
+          "min": 192.9,
+          "max": 328.4
+        },
+        "client_wall_ms": {
+          "median": 2646.199439,
+          "min": 2644.561407,
+          "max": 2766.474936
+        },
+        "prompt_n": 60,
+        "predicted_n": 128,
+        "repetitions": 3,
+        "draft_proposed": 249,
+        "draft_accepted": 144
+      },
+      "decode-code": {
+        "prompt_per_second": {
+          "median": 277.85421084027644,
+          "min": 262.1592666201478,
+          "max": 291.77371382251766
+        },
+        "predicted_per_second": {
+          "median": 69.16029569992322,
+          "min": 68.25280690588215,
+          "max": 69.26256909978855
+        },
+        "ttft_ms": {
+          "median": 185.3,
+          "min": 175.0,
+          "max": 193.7
+        },
+        "client_wall_ms": {
+          "median": 2036.566118,
+          "min": 2029.807027,
+          "max": 2072.701471
+        },
+        "prompt_n": 50,
+        "predicted_n": 128,
+        "repetitions": 3,
+        "draft_proposed": 303,
+        "draft_accepted": 225
+      },
+      "prefill-prose": {
+        "prompt_per_second": {
+          "median": 1770.731072234675,
+          "min": 1747.7754047064732,
+          "max": 1772.9333939499231
+        },
+        "predicted_per_second": {
+          "median": 54.064638645443985,
+          "min": 54.035586548045224,
+          "max": 54.120102519710215
+        },
+        "ttft_ms": {
+          "median": 1202.4,
+          "min": 1195.4,
+          "max": 1212.8
+        },
+        "client_wall_ms": {
+          "median": 3575.091498,
+          "min": 3564.066583,
+          "max": 3583.959626
+        },
+        "prompt_n": 2113,
+        "predicted_n": 128,
+        "repetitions": 3,
+        "draft_proposed": 252,
+        "draft_accepted": 159
+      }
+    },
+    "gpu_device_used_mib_by_rank": [
+      53103,
+      52113
+    ],
+    "quality": {
+      "repeated_greedy": {
+        "prose": true,
+        "explain": true,
+        "code": true
+      },
+      "cache_repeat_equal": true,
+      "continuation_cached_uncached_equal": true
+    },
+    "controller_phase": "finished",
+    "baseline_restored": true
+  },
+  "iq3": {
+    "runtime_sha256": "c8fae77b9557a68faeaf3dbc99a0abde9ae2c22e6115a6fb44def557d766dba7",
+    "groups": {
+      "decode-prose": {
+        "prompt_per_second": {
+          "median": 230.88214693922168,
+          "min": 229.30994539484735,
+          "max": 237.7760028435192
+        },
+        "predicted_per_second": {
+          "median": 40.37206599538993,
+          "min": 40.280250560768515,
+          "max": 41.28094212573589
+        },
+        "ttft_ms": {
+          "median": 237.6,
+          "min": 231.6,
+          "max": 243.2
+        },
+        "client_wall_ms": {
+          "median": 3418.760392,
+          "min": 3335.845142,
+          "max": 3420.057854
+        },
+        "prompt_n": 54,
+        "predicted_n": 128,
+        "repetitions": 3,
+        "draft_proposed": 180,
+        "draft_accepted": 114
+      },
+      "decode-explain": {
+        "prompt_per_second": {
+          "median": 241.23166034794508,
+          "min": 228.84204365968273,
+          "max": 252.37397047508887
+        },
+        "predicted_per_second": {
+          "median": 50.6261249683635,
+          "min": 50.61221564099985,
+          "max": 52.12332838017156
+        },
+        "ttft_ms": {
+          "median": 252.7,
+          "min": 240.8,
+          "max": 266.5
+        },
+        "client_wall_ms": {
+          "median": 2786.035046,
+          "min": 2698.998668,
+          "max": 2799.056292
+        },
+        "prompt_n": 60,
+        "predicted_n": 128,
+        "repetitions": 3,
+        "draft_proposed": 264,
+        "draft_accepted": 201
+      },
+      "decode-code": {
+        "prompt_per_second": {
+          "median": 209.83693739464613,
+          "min": 194.43227471233433,
+          "max": 223.14653484002469
+        },
+        "predicted_per_second": {
+          "median": 48.999526350289436,
+          "min": 48.95819955768261,
+          "max": 49.14053992289086
+        },
+        "ttft_ms": {
+          "median": 241.8,
+          "min": 227.6,
+          "max": 264.8
+        },
+        "client_wall_ms": {
+          "median": 2858.865975,
+          "min": 2836.756848,
+          "max": 2883.465147
+        },
+        "prompt_n": 50,
+        "predicted_n": 128,
+        "repetitions": 3,
+        "draft_proposed": 279,
+        "draft_accepted": 198
+      },
+      "prefill-prose": {
+        "prompt_per_second": {
+          "median": 899.7708742623955,
+          "min": 896.9495247139391,
+          "max": 900.2313659369173
+        },
+        "predicted_per_second": {
+          "median": 40.85254542557537,
+          "min": 40.644119612061,
+          "max": 40.91150118926281
+        },
+        "ttft_ms": {
+          "median": 2352.0,
+          "min": 2351.0,
+          "max": 2364.2
+        },
+        "client_wall_ms": {
+          "median": 5489.685296,
+          "min": 5484.13536,
+          "max": 5517.704479
+        },
+        "prompt_n": 2113,
+        "predicted_n": 128,
+        "repetitions": 3,
+        "draft_proposed": 258,
+        "draft_accepted": 144
+      }
+    },
+    "gpu_device_used_mib_by_rank": [
+      40391,
+      39401
+    ],
+    "quality": {
+      "repeated_greedy": {
+        "prose": true,
+        "explain": true,
+        "code": true
+      },
+      "cache_repeat_equal": true,
+      "continuation_cached_uncached_equal": true
+    },
+    "controller_phase": "finished",
+    "baseline_restored": true
+  },
+  "scope": "TP2, native MTP, identical runtime/settings/prompts,64K capacity,2slots/1active; three repeats; no broad statistical speedup claim; quant weights/output/acceptance differ"
+}

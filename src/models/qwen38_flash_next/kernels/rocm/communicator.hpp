@@ -83,6 +83,22 @@ public:
   [[nodiscard]] virtual bool QueuePartial(std::size_t bytes,
                                           QueuedPartial* partial,
                                           std::string* error) = 0;
+  /// Semantic identity for dynamic equal-sized exchanges. Unsupported
+  /// communicators accept tag0 only; nonzero tags fail before queueing.
+  [[nodiscard]] virtual bool QueueTaggedPartial(std::size_t bytes,
+                                                std::uint64_t tag,
+                                                QueuedPartial* partial,
+                                                std::string* error) {
+    if (tag == 0)
+      return QueuePartial(bytes, partial, error);
+    if (error)
+      *error = "tagged TP exchanges are unsupported";
+    return false;
+  }
+  [[nodiscard]] virtual bool SupportsCompactTargetVerification()
+      const noexcept {
+    return false;
+  }
   /// After the stream has drained: false with the first failure of a queued
   /// exchange.
   [[nodiscard]] virtual bool CheckQueued(std::string* error) = 0;
@@ -94,6 +110,14 @@ public:
   /// Both peers agreed to exact scalar request-vocabulary draft-logit gathers.
   /// Unsupported communicators retain replicated scoring/collective order.
   [[nodiscard]] virtual bool SupportsDraftHeadGather() const noexcept {
+    return false;
+  }
+  /// Both peers agreed to gather complete logits for sampled MTP candidates.
+  /// Other communicators retain replicated scoring and collective order.
+  [[nodiscard]] virtual bool SupportsMtpCandidateMerge() const noexcept {
+    return false;
+  }
+  [[nodiscard]] virtual bool SupportsMtpCandidateHeadGather() const noexcept {
     return false;
   }
   /// Both peers agreed to the extra ordered PLE owner-read exchange.

@@ -1,0 +1,74 @@
+{
+  "engine_sha256": "d697d9bba14225edf87aa3736db2fe347502f616c83c56eb0bc9ddb3d171bb54",
+  "randomization_seed": 202611140133,
+  "pairs": [
+    {
+      "pair": 1,
+      "baseline_first": true,
+      "baseline_leg": 1,
+      "candidate_leg": 2
+    },
+    {
+      "pair": 2,
+      "baseline_first": false,
+      "baseline_leg": 4,
+      "candidate_leg": 3
+    },
+    {
+      "pair": 3,
+      "baseline_first": false,
+      "baseline_leg": 6,
+      "candidate_leg": 5
+    },
+    {
+      "pair": 4,
+      "baseline_first": false,
+      "baseline_leg": 8,
+      "candidate_leg": 7
+    },
+    {
+      "pair": 5,
+      "baseline_first": true,
+      "baseline_leg": 9,
+      "candidate_leg": 10
+    },
+    {
+      "pair": 6,
+      "baseline_first": true,
+      "baseline_leg": 11,
+      "candidate_leg": 12
+    },
+    {
+      "pair": 7,
+      "baseline_first": true,
+      "baseline_leg": 13,
+      "candidate_leg": 14
+    },
+    {
+      "pair": 8,
+      "baseline_first": false,
+      "baseline_leg": 16,
+      "candidate_leg": 15
+    },
+    {
+      "pair": 9,
+      "baseline_first": true,
+      "baseline_leg": 17,
+      "candidate_leg": 18
+    },
+    {
+      "pair": 10,
+      "baseline_first": false,
+      "baseline_leg": 20,
+      "candidate_leg": 19
+    }
+  ],
+  "primary": "For eachpair mean log(candidate/base predicted_per_second) over c1scene,c1explain,pp2kscene; primary estimate mean over10pairs, report100*(exp(mean)-1). One primary hypothesis.",
+  "exact_test": "Two-sided balanced-order randomization over all252assignments of5baseline-first signs to10chronological second-minus-first pair lograte differences. Countabs(stat)>=abs(observed), tolerance1e-14. No posthoccase/endpoints.",
+  "interval": "20,000order-stratified paired-process bootstrap draws,5resampled pairs per order stratum; percentile95%linear interpolation on meanlogeffects then transformpercent; seed202611140134. Conditional interval, not between-workload generality.",
+  "secondary": "Unaffectedgreedy, percaseabsolute/paired rates, clientwall, prompt/predicted phaseflags descriptive. No separate significanceclaims.",
+  "flags": "Report every matched non-warm request phase>5%and>10msslower; all recoveredtransporterror starts retained. All request/output/workparitystrict includingwarm; aftercounters beforeguard. A failure stops/retains and no restartingthiscohort.",
+  "workload": "Unchanged5requests/start and APIconfig from qualifiedpilot:sampledseed513,temp0.8,topk40,topp.95;greedytemperature0;EOSnatural;2slots/1active,64Kcapacity,chunk512,draft7,Q4KL/sharedQ8,cache/persistoff. No fulltablewarm.",
+  "baseline": "ff855 from maintained2d4ebb;201normalizedcompilecommandsmatch. Candidate d08source-v2; wire25bothpeers. Pilot/component/activation data excludedfromconfidence.",
+  "completion": "After20starts and successful restoration, run frozenanalysis once,retain allrawdata. Positivepilotdoesnotestablishclaim;do not stop early."
+}

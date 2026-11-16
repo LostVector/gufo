@@ -26,6 +26,29 @@ function(add_qwen38_flash_next_test name library labels)
   add_dependencies(qwen38_flash_next_tests ${target})
 endfunction()
 
+# State/order contracts use real extracted method bodies with fake HIP calls.
+# These CPU-only fixtures do not construct an Executor or claim GPU coverage.
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+foreach(mode IN ITEMS state hook)
+  set(target qwen38_flash_next_deferred_verification_${mode}_test)
+  set(fixture_dir ${CMAKE_CURRENT_BINARY_DIR}/deferred-verification-${mode})
+  set(methods ${fixture_dir}/methods.inc)
+  add_custom_command(OUTPUT ${methods}
+    COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/extract_deferred_verification.py
+      --source ${PROJECT_SOURCE_DIR}/src/models/qwen38_flash_next/kernels/rocm/executor.cpp
+      --mode ${mode} --output ${methods}
+    DEPENDS extract_deferred_verification.py
+      ${PROJECT_SOURCE_DIR}/src/models/qwen38_flash_next/kernels/rocm/executor.cpp
+    VERBATIM)
+  add_executable(${target} deferred_verification_${mode}_test.cpp ${methods})
+  target_include_directories(${target} PRIVATE ${fixture_dir})
+  add_test(NAME qwen38_flash_next.deferred_verification_${mode} COMMAND ${target})
+  set_tests_properties(qwen38_flash_next.deferred_verification_${mode} PROPERTIES
+    LABELS "cpu;qwen38_flash_next;tp;correctness")
+  add_dependencies(qwen38_flash_next_tests ${target})
+endforeach()
+
 add_qwen38_flash_next_test(runner_options gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(probe gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(config gufo_qwen38_flash_next "cpu")
@@ -86,9 +109,11 @@ if (ENGINE_ENABLE_HIP)
   target_compile_definitions(qwen38_flash_next_test_hip INTERFACE ENGINE_ENABLE_HIP=1)
   foreach(name IN ITEMS mtp_ops blaslt_ops hc_mix_ops hc_route_ops gdn_ops
       attention_ops moe_epilogue_ops moe_ids_ops projection_ops routed_wmma_ops
+      gsq_quant_ops tp_rollback_layout
       select_ops snapshot_copy verification_sampling wide_verification)
     add_qwen38_flash_next_test(${name} qwen38_flash_next_test_hip "hip;gpu;gfx1151")
   endforeach()
+  target_link_libraries(qwen38_flash_next_gsq_quant_ops_test PRIVATE gufo_core)
   target_link_libraries(qwen38_flash_next_mtp_ops_test PRIVATE
     gufo_qwen_kernels)
   target_link_libraries(qwen38_flash_next_hc_mix_ops_test PRIVATE
@@ -194,6 +219,10 @@ endif()
 
 # Requires two real native RDMA peers; intentionally outside automatic CTest.
 if (ENGINE_ENABLE_HIP AND GUFO_ENABLE_TP2_RDMA)
+  add_executable(qwen38_flash_next_tp_target_verification_probe EXCLUDE_FROM_ALL
+    tp_target_verification_probe.cpp)
+  target_link_libraries(qwen38_flash_next_tp_target_verification_probe PRIVATE
+    qwen38_flash_next_test_hip gufo_qwen38_flash_next_rdma)
   add_executable(qwen38_flash_next_ple_owner_probe EXCLUDE_FROM_ALL ple_owner_probe.cpp)
   target_link_libraries(qwen38_flash_next_ple_owner_probe PRIVATE
     qwen38_flash_next_test_hip gufo_qwen38_flash_next_rdma)

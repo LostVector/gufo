@@ -44,6 +44,7 @@ enum class WeightType : std::uint32_t {
   kQ8_0 = 8,
   kQ4_K = 12,
   kQ5_K = 13,
+  kIQ4_XS = 23,
   kBF16 = 30,
 };
 
@@ -757,6 +758,34 @@ void RemapDraftIds(std::uint32_t* ids, std::uint32_t n, std::uint32_t prefix,
 
 /// Number of IDs in each of the two selection buffers.
 std::uint32_t MtpCandidateWorkspaceSize(std::uint32_t vocab);
+
+/// Exact per-partition target top64 excluding every globally penalized ID.
+/// Local logits have [rows][vocab/2] layout. Packet words per row are 64 global
+/// IDs, 64 original score bits, then one original score for each penalty;
+/// unowned penalty slots are zero. Total words: rows*128+offsets[rows].
+/// ID scratch needs rows*MtpCandidateWorkspaceSize(vocab/2). Penalties are
+/// sorted global IDs as in VerificationCandidates. No transport is performed.
+void PartitionVerificationCandidates(
+    const float* logits, GreedyPenaltyRows penalties, std::uint32_t* ids,
+    std::uint32_t* scratch_ids, std::uint32_t* packed, std::uint32_t rows,
+    std::uint32_t vocab, std::uint32_t rank, hipStream_t stream);
+
+/// Merge exact nonpenalized global top64 and every original penalized score
+/// from its unique owner. Output matches VerificationCandidates; input packets
+/// remain unchanged. Vocab is even, partitions contain at least64 rows.
+void MergePartitionVerificationCandidates(
+    const std::uint32_t* local, const std::uint32_t* peer,
+    GreedyPenaltyRows penalties, sampling::LogitCandidate* out,
+    std::uint32_t rows, std::uint32_t vocab, std::uint32_t rank,
+    hipStream_t stream);
+
+/// Merge two sorted partition top64s in stable logical-row order. Each input
+/// packs 64 local row IDs then 64 F32 score bits. `packed` receives global IDs
+/// and original score bits in place; `peer` stays unchanged. Rank is 0 or 1;
+/// each equal partition has at least 64 rows. Kernel-only and graph-safe.
+void MergeMtpCandidates(std::uint32_t* packed, const std::uint32_t* peer,
+                        std::uint32_t half, std::uint32_t rank,
+                        hipStream_t stream);
 
 /// Exact MTP top-64 selection, descending score with lowest-token-ID ties.
 /// Nonfinite scores become -infinity. Both ID buffers have room for

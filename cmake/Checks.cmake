@@ -39,6 +39,7 @@ set(gufo_pr_targets
   embedding_gemma2_video_processor_test minimax_h3_runtime_test minimax_h3_sampling_test
   qwen27b_continuation_identity_test qwen27b_continuation_layout_test qwen38_flash_next_config_test
   qwen38_flash_next_continuation_identity_test qwen38_flash_next_continuation_layout_test
+  qwen38_flash_next_deferred_verification_hook_test qwen38_flash_next_deferred_verification_state_test
   qwen38_flash_next_mtp_sampling_test qwen38_flash_next_probe_test qwen38_flash_next_rdma_gid_test
   qwen38_flash_next_rope_scaling_test qwen38_flash_next_runner_options_test
   qwen38_flash_next_tp_partition_test qwen3_asr_audio_api_test qwen3_asr_config_test
@@ -55,12 +56,14 @@ endif()
 # BEGIN GENERATED MODEL CTEST OVERRIDES
 list(REMOVE_ITEM gufo_pr_tests
   ds4_chat_template_test ds4_cli_test ds4_sampling_test qwen38_flash_next_config_test
-  qwen38_flash_next_continuation_layout_test qwen38_flash_next_mtp_sampling_test
+  qwen38_flash_next_continuation_layout_test qwen38_flash_next_deferred_verification_hook_test
+  qwen38_flash_next_deferred_verification_state_test qwen38_flash_next_mtp_sampling_test
   qwen38_flash_next_probe_test qwen38_flash_next_rdma_gid_test qwen38_flash_next_rope_scaling_test
   qwen38_flash_next_runner_options_test qwen38_flash_next_tp_partition_test)
 list(APPEND gufo_pr_tests
   "ds4\.template" "ds4\.cli" "ds4\.sampling" "qwen38_flash_next\.config"
-  "qwen38_flash_next\.continuation_layout" "qwen38_flash_next\.mtp_sampling"
+  "qwen38_flash_next\.continuation_layout" "qwen38_flash_next\.deferred_verification_hook"
+  "qwen38_flash_next\.deferred_verification_state" "qwen38_flash_next\.mtp_sampling"
   "qwen38_flash_next\.probe" "qwen38_flash_next\.rdma_gid" "qwen38_flash_next\.rope_scaling"
   "qwen38_flash_next\.runner_options" "qwen38_flash_next\.tp_partition")
 # END GENERATED MODEL CTEST OVERRIDES

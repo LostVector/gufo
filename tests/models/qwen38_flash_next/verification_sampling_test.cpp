@@ -89,7 +89,8 @@ void Compare(std::span<const float> full, std::span<const float> compact,
   }
 }
 
-void Run(unsigned vocab, unsigned rows, unsigned mode, bool bench) {
+void Run(unsigned vocab, unsigned rows, unsigned mode, bool bench,
+         bool partition = false) {
   constexpr auto keep = q::kMtpCandidates;
   const auto stride = q::rocm::MtpCandidateWorkspaceSize(vocab);
   const float inf = std::numeric_limits<float>::infinity();
@@ -162,6 +163,61 @@ void Run(unsigned vocab, unsigned rows, unsigned mode, bool bench) {
                     hipMemcpyDeviceToHost));
   };
   select();
+  if (partition) {
+    Require(vocab % 2 == 0 && vocab / 2 >= keep, "partition shape");
+    const auto half = vocab / 2;
+    const auto words = rows * (2 * keep) + penalties.size();
+    auto left = Allocate<float>(std::size_t(rows) * half);
+    auto right = Allocate<float>(std::size_t(rows) * half);
+    // Packet guards directly surround the promised allocation extent.
+    auto left_packet = Allocate<std::uint32_t>(words + 2);
+    auto right_packet = Allocate<std::uint32_t>(words + 2);
+    constexpr std::uint32_t guard = 0xfeed1234U;
+    std::vector<std::uint32_t> poison(words + 2, guard);
+    Check(hipMemcpy(left_packet.get(), poison.data(), poison.size() * 4,
+                    hipMemcpyHostToDevice));
+    Check(hipMemcpy(right_packet.get(), poison.data(), poison.size() * 4,
+                    hipMemcpyHostToDevice));
+    Check(hipMemcpy2D(left.get(), half * 4, gpu_logits.get(), vocab * 4,
+                      half * 4, rows, hipMemcpyDeviceToDevice));
+    Check(hipMemcpy2D(right.get(), half * 4, gpu_logits.get() + half, vocab * 4,
+                      half * 4, rows, hipMemcpyDeviceToDevice));
+    q::rocm::PartitionVerificationCandidates(
+        left.get(), batch, ids.get(), scratch.get(), left_packet.get() + 1,
+        rows, vocab, 0, nullptr);
+    q::rocm::PartitionVerificationCandidates(
+        right.get(), batch, ids.get(), scratch.get(), right_packet.get() + 1,
+        rows, vocab, 1, nullptr);
+    const auto reference = output;
+    std::vector<std::uint32_t> left_before(words + 2), right_before(words + 2);
+    Check(hipMemcpy(left_before.data(), left_packet.get(), (words + 2) * 4,
+                    hipMemcpyDeviceToHost));
+    Check(hipMemcpy(right_before.data(), right_packet.get(), (words + 2) * 4,
+                    hipMemcpyDeviceToHost));
+    Require(left_before.front() == guard && left_before.back() == guard &&
+                right_before.front() == guard && right_before.back() == guard,
+            "partition packet guard changed");
+    for (unsigned rank = 0; rank < 2; ++rank) {
+      q::rocm::MergePartitionVerificationCandidates(
+          (rank == 0 ? left_packet.get() : right_packet.get()) + 1,
+          (rank == 0 ? right_packet.get() : left_packet.get()) + 1, batch,
+          gpu_output.get(), rows, vocab, rank, nullptr);
+      Check(hipMemcpy(output.data(), gpu_output.get(),
+                      count * sizeof(output[0]), hipMemcpyDeviceToHost));
+      for (unsigned i = 0; i < count; ++i)
+        Require(output[i].token == reference[i].token &&
+                    std::bit_cast<std::uint32_t>(output[i].value) ==
+                        std::bit_cast<std::uint32_t>(reference[i].value),
+                "partition verification candidate bits differ");
+    }
+    std::vector<std::uint32_t> after(words + 2);
+    Check(hipMemcpy(after.data(), left_packet.get(), after.size() * 4,
+                    hipMemcpyDeviceToHost));
+    Require(after == left_before, "merge modified local/peer packet");
+    Check(hipMemcpy(after.data(), right_packet.get(), after.size() * 4,
+                    hipMemcpyDeviceToHost));
+    Require(after == right_before, "merge modified local/peer packet");
+  }
   std::vector<float> compact(logits.size(), -inf);
   for (unsigned row = 0; row < rows; ++row) {
     const auto full =
@@ -244,7 +300,17 @@ void Run(unsigned vocab, unsigned rows, unsigned mode, bool bench) {
 
 int main(int argc, char** argv) {
   try {
-    if (argc == 2 && std::string(argv[1]) == "--bench") {
+    if (argc == 2 && std::string(argv[1]) == "--partition-only") {
+      for (unsigned vocab : {130U, 1024U, 248320U})
+        for (unsigned rows : {1U, 3U, 7U})
+          for (unsigned mode = 0; mode < 7; ++mode)
+            Run(vocab, rows, mode, false, true);
+      Run(67, 3, 5, false);
+      Run(1023, 7, 4, false);
+      Run(1025, 1, 3, false);
+      std::cout << "Partition/full target union and FP64 "
+                   "distribution/rejection RNG passed\n";
+    } else if (argc == 2 && std::string(argv[1]) == "--bench") {
       for (unsigned rows : {1, 3, 7})
         Run(248320, rows, 1, true);
     } else {
@@ -252,6 +318,8 @@ int main(int argc, char** argv) {
         for (unsigned rows = 1; rows <= 7; ++rows)
           for (unsigned mode = 0; mode < 7; ++mode)
             Run(vocab, rows, mode, false);
+      Run(130, 3, 3, false, true);
+      Run(248320, 3, 5, false, true);
       std::cout
           << "Exact candidate union, target probabilities and rejection "
              "RNG: ragged vocabularies, widths 1..7, penalties and ties\n";

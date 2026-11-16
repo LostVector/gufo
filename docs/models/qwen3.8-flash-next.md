@@ -1,7 +1,7 @@
 # Qwen3.8 Flash-Next
 
 Qwen3.8 Flash-Next is a mixture-of-experts model that reads text and images and
-writes text. Gufo runs its Q4 GGUF, optionally sped up with its own
+writes text. Gufo runs its Q4 GGUF and GSQ-RCO IQ3_S text weights, optionally sped up with its own
 multi-token prediction (MTP) head.
 
 ## Files
@@ -9,6 +9,7 @@ multi-token prediction (MTP) head.
 | File | Needed for |
 | --- | --- |
 | `UD-Q4_K_XL/*` (four shards) | Text |
+| `IQ3_S/*` from ISTA-DASLab (two shards) | Text, with mixed IQ/Q2_0 formats |
 | `MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf` | MTP |
 | `mmproj-BF16.gguf` | Images |
 
@@ -20,6 +21,18 @@ hf download unsloth/Qwen3.8-Flash-Next-GGUF \
   --include "mmproj-BF16.gguf" \
   --local-dir models/qwen3.8-flash-next
 ```
+
+For the GSQ-RCO IQ3_S text weights, keep the MTP file above and download:
+
+```sh
+hf download ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF \
+  --revision ed59f92082b1e93c0e96d60a8b11aab089b52f09 \
+  --include "IQ3_S/*" --local-dir models/qwen3.8-flash-next-gsq-rco
+```
+
+The IQ3_S release mixes several packed formats; its label does not describe
+every tensor. Weights stay packed and the n-gram table stays on disk.
+See the [IQ3_S qualification](../internal/models/qwen3.8-flash-next/gsq-rco-iq3-s.md).
 
 ## Run
 

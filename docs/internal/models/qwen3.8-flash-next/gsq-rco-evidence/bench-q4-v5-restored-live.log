@@ -1,0 +1,52 @@
+{
+  "utc": "2026-11-16T02:36:16Z",
+  "ranks": {
+    "0": {
+      "pid": 1218412,
+      "binary": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/dflash2-flash-next-port-v1/tp2-lookup-candidate-runtime-2026-11-05/bin/gufo",
+      "sha256": "d697d9bba14225edf87aa3736db2fe347502f616c83c56eb0bc9ddb3d171bb54",
+      "options": {
+        "--speculative": "mtp",
+        "--context": "65536",
+        "--sessions": "2"
+      },
+      "env": {
+        "DEBUG_HIP_GRAPH_SEGMENT_SCHEDULING": null,
+        "LD_PRELOAD": null,
+        "ROCPROF_KERNEL_TRACE": null
+      },
+      "driver": {
+        "sourceversion": "B6C332F34D27E163651EE38",
+        "poll": "0",
+        "full": "N"
+      }
+    },
+    "1": {
+      "pid": 1211378,
+      "binary": "/home/rkuo/strix-dispatch-investigation/tp-cache-retention/dflash2-flash-next-port-v1/tp2-lookup-candidate-runtime-2026-11-05/bin/gufo",
+      "sha256": "d697d9bba14225edf87aa3736db2fe347502f616c83c56eb0bc9ddb3d171bb54",
+      "options": {
+        "--speculative": "mtp",
+        "--context": "65536",
+        "--sessions": "2"
+      },
+      "env": {
+        "DEBUG_HIP_GRAPH_SEGMENT_SCHEDULING": null,
+        "LD_PRELOAD": null,
+        "ROCPROF_KERNEL_TRACE": null
+      },
+      "driver": {
+        "sourceversion": "B6C332F34D27E163651EE38",
+        "poll": "0",
+        "full": "N"
+      }
+    }
+  },
+  "health": {
+    "status": "ok"
+  },
+  "service": "active",
+  "working_source": "2d4ebb483fec889d7a91d48ed8f3b5662a062c5d",
+  "restored_build_sha256": "ff85589337889357b6af9900cc9099a7eeba7ad011824911842630309d8663e9",
+  "experiment": "C1 driver polling off/adaptive100/full100 pilot and eight-pair off/full100 confirmation, no driver code change"
+}

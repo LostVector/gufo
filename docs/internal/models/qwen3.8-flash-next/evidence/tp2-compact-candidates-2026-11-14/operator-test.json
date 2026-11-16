@@ -1,0 +1,26 @@
+{
+  "suite": "qwen38_flash_next_mtp_ops_test",
+  "exit_code": 0,
+  "new_shapes": [
+    128,
+    130,
+    99328,
+    248320
+  ],
+  "patterns_per_shape": 6,
+  "ranks_per_pattern": 2,
+  "both_rank_oracle_comparisons": 48,
+  "argument_guards_per_shape": 6,
+  "measured_new_body_ms": [
+    70.7066,
+    0.636711,
+    6.06031,
+    4.82389
+  ],
+  "sum_new_body_ms": 82.22751099999999,
+  "timing_scope": "Observed new test bodies, including first-launch startup, not a measured net old/new suite difference. No inference speed claim.",
+  "test_sha256": "3276e8a402426288c8470e0a546b006953cee61c991a024df028faa0c777ed16",
+  "binary_sha256": "b87c7eb96948a838c3638e3ef5c7eaa1a02af2d8bafd755f8647156d8e53813c",
+  "runtime_library": "frozen9c8production kernel library; review runtime differs only in comments/documentation",
+  "baseline_restored": true
+}

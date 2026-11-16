@@ -1,0 +1,146 @@
+{
+  "engine_sha256": "d697d9bba14225edf87aa3736db2fe347502f616c83c56eb0bc9ddb3d171bb54",
+  "pairs": [
+    {
+      "pair": 1,
+      "baseline_first": true,
+      "baseline_leg": 1,
+      "candidate_leg": 2
+    },
+    {
+      "pair": 2,
+      "baseline_first": false,
+      "baseline_leg": 4,
+      "candidate_leg": 3
+    },
+    {
+      "pair": 3,
+      "baseline_first": false,
+      "baseline_leg": 6,
+      "candidate_leg": 5
+    },
+    {
+      "pair": 4,
+      "baseline_first": false,
+      "baseline_leg": 8,
+      "candidate_leg": 7
+    },
+    {
+      "pair": 5,
+      "baseline_first": true,
+      "baseline_leg": 9,
+      "candidate_leg": 10
+    },
+    {
+      "pair": 6,
+      "baseline_first": true,
+      "baseline_leg": 11,
+      "candidate_leg": 12
+    },
+    {
+      "pair": 7,
+      "baseline_first": false,
+      "baseline_leg": 14,
+      "candidate_leg": 13
+    },
+    {
+      "pair": 8,
+      "baseline_first": true,
+      "baseline_leg": 15,
+      "candidate_leg": 16
+    },
+    {
+      "pair": 9,
+      "baseline_first": true,
+      "baseline_leg": 17,
+      "candidate_leg": 18
+    },
+    {
+      "pair": 10,
+      "baseline_first": true,
+      "baseline_leg": 19,
+      "candidate_leg": 20
+    },
+    {
+      "pair": 11,
+      "baseline_first": true,
+      "baseline_leg": 21,
+      "candidate_leg": 22
+    },
+    {
+      "pair": 12,
+      "baseline_first": false,
+      "baseline_leg": 24,
+      "candidate_leg": 23
+    },
+    {
+      "pair": 13,
+      "baseline_first": false,
+      "baseline_leg": 26,
+      "candidate_leg": 25
+    },
+    {
+      "pair": 14,
+      "baseline_first": true,
+      "baseline_leg": 27,
+      "candidate_leg": 28
+    },
+    {
+      "pair": 15,
+      "baseline_first": false,
+      "baseline_leg": 30,
+      "candidate_leg": 29
+    },
+    {
+      "pair": 16,
+      "baseline_first": false,
+      "baseline_leg": 32,
+      "candidate_leg": 31
+    },
+    {
+      "pair": 17,
+      "baseline_first": true,
+      "baseline_leg": 33,
+      "candidate_leg": 34
+    },
+    {
+      "pair": 18,
+      "baseline_first": false,
+      "baseline_leg": 36,
+      "candidate_leg": 35
+    },
+    {
+      "pair": 19,
+      "baseline_first": true,
+      "baseline_leg": 37,
+      "candidate_leg": 38
+    },
+    {
+      "pair": 20,
+      "baseline_first": false,
+      "baseline_leg": 40,
+      "candidate_leg": 39
+    }
+  ],
+  "randomization_seed": 202611141431,
+  "bootstrap_seed": 202611141432,
+  "primary": "Mean across20 independent process pairs of within-pair mean log candidate/base predicted_per_second over unchanged3sampled cases. Transform100*expm1(mean). One primary hypothesis.",
+  "exact_test": "Two-sided balanced-order label reference: enumerate all184756 assignments of10plus signs to20chronological second-minus-first differences. Absolute threshold tolerance1e-14.",
+  "interval": "20000 order-stratified bootstrap draws,10 resampled process pairs per order, percentile95 linear interpolation then percent transform. Conditional on fixed tasks/settings/machines.",
+  "secondary": "Greedy control, percase/client rates and all matched phaseflags descriptive; no extra significance claims.",
+  "gates": "All200 output/work records exact against frozen reference, counters collected before parity guard; failures stop and retain, no replacing starts. All80 selected transport windows retained including errors. All per-request >5%and>10ms flags retained; prefill flags unresolved from earlier work remain separate.",
+  "planning": "Pilot pair effects-.0314/+.3678% are not pooled. Actual common-head cost saves65-67us/proposal, giving rough .13-.26% application expectation at56-80proposals.20pairs chosen prospectively for repeatability of a small effect; two-pair variance is uncertain and power is not guaranteed. No dismissal solely for small size.",
+  "workload": {
+    "sessions": 2,
+    "capacity": 65536,
+    "prefill_chunk": 512,
+    "draft_tokens": 7,
+    "cache_bytes": 1073741824,
+    "thinking": "off",
+    "quant": "UD-Q4_K_XL/sharedQ8MTP"
+  },
+  "sampling": "seed513,temp.8,topk40,topp.95;greedy0;naturalEOS; prompts46/2106 completions121/115/128; warm retained for correctness only; no cache_prompt/cache_persist or table warming.",
+  "baseline": "d08 confirmed full-logit gather, wire25; candidate9c8compact wire26. Matching binary on both nodes in each start. 201normalized compilecommands match.",
+  "publication": "local only; no serving adoption, defaults or upstream updates.",
+  "completion": "Finish all40 starts and successful restoration before analysis. No interim speed inspection, no optional extension."
+}

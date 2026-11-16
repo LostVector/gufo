@@ -1,0 +1,7 @@
+{
+  "cases": 242,
+  "values": 1505765,
+  "max_abs_error": 0.0,
+  "packed_batch_decode_cases": 11,
+  "routed_tile_width_cases": 28
+}

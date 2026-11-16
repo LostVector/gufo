@@ -672,6 +672,46 @@ static __device__ __forceinline__ float vec_dot_q1_0_q8_1(
     return d1 * d8 * sumi;
 }
 
+// Q2_0 HIP arm from ggml-org/llama.cpp 1719dbb0 (MIT).
+#define VDR_Q2_0_Q8_1_MMVQ 1
+static __device__ __forceinline__ float vec_dot_q2_0_q8_1(
+    const void * __restrict__ vbq, const block_q8_1 * __restrict__ bq8_1, const int & kbx, const int & iqs) {
+
+    const block_q2_0 * bq2_0 = (const block_q2_0 *) vbq + kbx;
+
+    // Q2_0 (group 64): 64 elements with ONE scale, 2 bits per element (4 elements per byte)
+    // Q8_1: 32 elements per block with individual scales
+    // iqs selects which of the 2 chunks of 32 elements to process (0-1)
+
+    const float     d2 = bq2_0->d;
+    const int16_t * qs = (const int16_t *) bq2_0->qs + iqs * 4;
+
+    // Process only the chunk specified by iqs
+    const block_q8_1 * bq8_1_chunk = bq8_1 + iqs;
+
+    int sumi = 0;
+#pragma unroll
+    for (int j = 0; j < 4; ++j) {
+        const int q  = qs[j];
+        const int u  = get_int_b4(bq8_1_chunk->qs, j*2+0);
+        const int v  = get_int_b4(bq8_1_chunk->qs, j*2+1);
+
+        const uint32_t qx_indices = (q & 0x03) | ((q & 0x0C) << 6) | ((q & 0x30) << 12) | ((q & 0xC0) << 18);
+        const uint32_t qy_bits    = q >> 8;
+        const uint32_t qy_indices = (qy_bits & 0x03) | ((qy_bits & 0x0C) << 6) | ((qy_bits & 0x30) << 12) | ((qy_bits & 0xC0) << 18);
+        const int      qx         = __builtin_amdgcn_perm(0x020100FF, 0x020100FF, qx_indices);
+        const int      qy         = __builtin_amdgcn_perm(0x020100FF, 0x020100FF, qy_indices);
+
+
+        sumi = ggml_hip_dp4a(u, qx, sumi);
+        sumi = ggml_hip_dp4a(v, qy, sumi);
+    }
+
+    // Apply Q2_0's single scale and this chunk's Q8_1 scale
+    const float d8 = __low2float(bq8_1_chunk->ds);
+    return d2 * d8 * sumi;
+}
+
 static __device__ __forceinline__ float vec_dot_q4_0_q8_1(
     const void * __restrict__ vbq, const block_q8_1 * __restrict__ bq8_1, const int & kbx, const int & iqs) {
 
@@ -1064,10 +1104,11 @@ static __device__ __forceinline__ float vec_dot_iq2_s_q8_1(
             sumi1 = ggml_hip_dp4a(grid_h, u1, sumi1);
         }
     }
-    const int sumi = (sumi0*ls0 + sumi1*ls1 + (sumi0 + sumi1)/2)/4;
-
+    // Keep the exact eighths represented by IQ2_S scales. Integer division
+    // would truncate before applying d, biasing even exactly encoded inputs.
+    const int numerator = (2*ls0 + 1)*sumi0 + (2*ls1 + 1)*sumi1;
     const float d = __half2float(bq2->d) * __low2float(bq8_1[iqs/2].ds);
-    return d * sumi;
+    return d * (0.125f * numerator);
 }
 
 #define VDR_IQ3_XXS_Q8_1_MMVQ 2
@@ -1103,9 +1144,10 @@ static __device__ __forceinline__ float vec_dot_iq3_xxs_q8_1(
     }
 
     const int ls = aux32 >> 28;
-    sumi = (ls*sumi + sumi/2)/2;
+    // The encoded multiplier is (ls + 1/2)/2, including its quarters.
+    const int numerator = (2*ls + 1)*sumi;
     const float d = __half2float(bq3->d) * __low2float(bq8_1[iqs/2].ds);
-    return d * sumi;
+    return d * (0.25f * numerator);
 }
 
 #define VDR_IQ3_S_Q8_1_MMVQ 2

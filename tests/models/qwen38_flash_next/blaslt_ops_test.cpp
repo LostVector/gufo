@@ -52,8 +52,11 @@ int main() {
          {std::tuple{HIP_R_16F, 96, 2560}, std::tuple{HIP_R_16F, 513, 2560},
           std::tuple{HIP_R_16F, 17, 2560}, std::tuple{HIP_R_16F, 33, 96},
           std::tuple{HIP_R_16BF, 64, 2560}, std::tuple{HIP_R_16BF, 128, 2560},
-          std::tuple{HIP_R_16BF, 256, 2560},
-          std::tuple{HIP_R_16BF, 512, 2560}}) {
+          std::tuple{HIP_R_16BF, 256, 2560}, std::tuple{HIP_R_16BF, 512, 2560},
+          // GSQ-RCO stores HC mixers, routers and recurrent gates as BF16.
+          std::tuple{HIP_R_16BF, 320, 10240},
+          std::tuple{HIP_R_16BF, 10240, 320}, std::tuple{HIP_R_16BF, 513, 2560},
+          std::tuple{HIP_R_16BF, 48, 2560}, std::tuple{HIP_R_16BF, 96, 2560}}) {
       // Prepare before inputs exist, then compare against lazy plan creation
       // in a fresh instance, including ragged shapes after the prepared one.
       Require(warmed->Prepare(type, m, max_n, k, &error), error);
@@ -82,7 +85,7 @@ int main() {
                       hipMemcpyHostToDevice));
       Check(hipMemcpy(b.data, input.data(), input.size() * sizeof(__half),
                       hipMemcpyHostToDevice));
-      if (k == 2560) {
+      if (k == 2560 || type == HIP_R_16BF) {
         // Exercise an unaligned cache boundary, a wide prefill split and the
         // short tails a checkpoint restore finishes a prompt with. A row's
         // sums must not depend on its position in the batch: the indexer's

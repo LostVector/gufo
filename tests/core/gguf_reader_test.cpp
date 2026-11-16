@@ -244,9 +244,10 @@ void TestQuantizationLabel() {
     // public mix fails at the model's binder (if at all), not at open.
     struct Format {
       gufo::core::GgmlType type;
-      std::uint64_t block_bytes;
+      std::uint64_t bytes_per_256;
     };
-    for (const Format f : {Format{gufo::core::GgmlType::kIQ2_XXS, 66},
+    for (const Format f : {Format{gufo::core::GgmlType::kQ2_0, 72},
+                           Format{gufo::core::GgmlType::kIQ2_XXS, 66},
                            Format{gufo::core::GgmlType::kIQ2_XS, 74},
                            Format{gufo::core::GgmlType::kIQ2_S, 82},
                            Format{gufo::core::GgmlType::kIQ3_XXS, 98},
@@ -264,7 +265,7 @@ void TestQuantizationLabel() {
       Expect(reader != nullptr, name + " tensor opens: " + err);
       const auto* t = reader->FindTensor("blk.0.ffn_up.weight");
       Expect(t != nullptr && t->type == f.type &&
-                 t->size_bytes == 2 * 3 * f.block_bytes,
+                 t->size_bytes == 2 * 3 * f.bytes_per_256,
              name + " tensor keeps its type and block size");
     }
   }

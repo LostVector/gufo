@@ -1,0 +1,7 @@
+{
+  "prefix_repeat_equal": true,
+  "continuation_cached_uncached_equal": true,
+  "lookup_proposed": 109,
+  "lookup_accepted": 109,
+  "scope": "Pinned request that exposed TP2 wide-copy bounds and stride failures; exact output checks, no retries"
+}

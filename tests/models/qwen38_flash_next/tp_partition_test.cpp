@@ -121,6 +121,102 @@ int main() {
   RequireError(TpPartition::Create(640, 2, 2, &error),
                "reject an out-of-range rank");
 
+  // Mixed GSQ-RCO projections keep their formats. The GDN output gathers
+  // three disjoint 1024-column spans; attention gathers 3072 columns.
+  ModelWeights mixed;
+  auto& c = mixed.config;
+  c.expert_ff = 640;
+  c.hidden_size = 2560;
+  c.ssm_num_k_heads = 16;
+  c.ssm_num_v_heads = 48;
+  c.ssm_head_dim = 128;
+  c.num_heads = 24;
+  c.num_kv_heads = 2;
+  c.head_dim = 256;
+  mixed.layers.resize(2);
+  const auto tensor = [&](GgmlType type, unsigned cols, unsigned rows) {
+    return TensorRef{data, type, cols, rows, 1, 0, 0, "mixed"};
+  };
+  auto& g = mixed.layers[0];
+  g.linear = true;
+  g.ssm_qkv = tensor(GgmlType::kQ6_K, 2560, 10240);
+  g.ssm_gate = tensor(GgmlType::kIQ4_XS, 2560, 6144);
+  g.ssm_out = tensor(GgmlType::kQ6_K, 6144, 2560);
+  g.ssm_alpha = g.ssm_beta = tensor(GgmlType::kBF16, 2560, 48);
+  g.ssm_conv1d = tensor(GgmlType::kF32, 4, 10240);
+  g.ssm_dt = g.ssm_a = tensor(GgmlType::kF32, 48, 1);
+  auto& a = mixed.layers[1];
+  a.linear = false;
+  a.attn_q = tensor(GgmlType::kQ4_K, 2560, 12288);
+  a.attn_k = tensor(GgmlType::kIQ4_XS, 2560, 512);
+  a.attn_v = tensor(GgmlType::kQ5_K, 2560, 512);
+  a.attn_out = tensor(GgmlType::kQ6_K, 6144, 2560);
+  using gufo::models::qwen38_flash_next::distributed::MixerSplitFits;
+  for (const auto split : {*first, *second})
+    Require(MixerSplitFits(mixed, split, &error), error.c_str());
+  {
+    auto bad = mixed;
+    bad.config.ssm_num_k_heads = 2;
+    bad.config.ssm_num_v_heads = 6;
+    Require(!MixerSplitFits(bad, *first, &error),
+            "reject 128-column Q6_K GDN share");
+    bad = mixed;
+    bad.config.num_heads = 2;
+    bad.config.head_dim = 128;
+    Require(!MixerSplitFits(bad, *first, &error),
+            "reject 128-column Q6_K attention share");
+    bad = mixed;
+    bad.config.ssm_num_k_heads = 0;
+    Require(!MixerSplitFits(bad, *first, &error),
+            "reject zero GDN key heads before division");
+    bad = mixed;
+    bad.layers[0].ssm_beta.type = GgmlType::kF32;
+    Require(!MixerSplitFits(bad, *first, &error),
+            "reject mixed alpha/beta stack formats");
+    bad = mixed;
+    bad.layers[0].ssm_qkv.type = GgmlType::kQ2_0;
+    Require(!MixerSplitFits(bad, *first, &error),
+            "reject a format without a dense compute path");
+    bad = mixed;
+    bad.layers[1].attn_v.data = nullptr;
+    Require(!MixerSplitFits(bad, *first, &error),
+            "reject missing attention projection");
+    bad = mixed;
+    bad.layers[0].ssm_out.cols = 256;
+    Require(!MixerSplitFits(bad, *first, &error),
+            "reject GDN column gather beyond a row");
+    auto invalid_split = *first;
+    invalid_split.world_size = 0;
+    Require(!MixerSplitFits(mixed, invalid_split, &error),
+            "reject invalid split before division");
+  }
+  {
+    auto legacy = mixed;
+    for (auto& l : legacy.layers) {
+      for (auto* t : {&l.ssm_qkv, &l.ssm_gate, &l.ssm_out, &l.attn_q, &l.attn_k,
+                      &l.attn_v, &l.attn_out})
+        if (!t->empty())
+          t->type = GgmlType::kQ8_0;
+      l.ssm_alpha.type = l.ssm_beta.type = GgmlType::kF32;
+    }
+    for (const auto split : {*first, *second})
+      Require(MixerSplitFits(legacy, split, &error),
+              "preserve legacy Q8 mixer splitting");
+  }
+  {
+    const auto low_gate = tensor(GgmlType::kIQ2_S, 2560, 640);
+    auto lg = low_gate;
+    lg.experts = 4;
+    const TensorRef low_down{data, GgmlType::kQ2_0, 640, 2560, 4, 0,
+                             0,    "Q2_0 down"};
+    const auto plan =
+        PlanRoutedBytes(OneLayer(lg, lg, low_down), *second, nullptr, &error);
+    Require(plan.has_value(), error.c_str());
+    Require(
+        plan->local_encoded_bytes == 2 * 10 * 82 * 320 * 4 + 90 * 2560 * 4,
+        "IQ2_S rows and Q2_0 64-value column shares keep exact encoded bytes");
+  }
+
   std::puts("PASS: TP=2 intermediate split and Q4_K/Q5_1/Q8_0 shares");
   return 0;
 }

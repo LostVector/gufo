@@ -20,6 +20,65 @@
 
 namespace {
 
+void TestQ2_0Exact() {
+  using gufo::core::GgmlType;
+  constexpr auto type = GgmlType::kQ2_0;
+  if (gufo::core::ToString(type) != "Q2_0" ||
+      gufo::quant::QuantizedBlockElements(type) != 64 ||
+      gufo::quant::QuantizedRowBytes(type, 640) != 180 ||
+      gufo::quant::QuantizedRowBytes(type, 320) != 90 ||
+      gufo::quant::QuantizedRowBytes(type, 63) != 0)
+    std::exit(1);
+
+  // GGML Q2_0 at 1719dbb0: 0xe4 packs {-1,0,1,2} in consecutive
+  // positions, unlike the split-half packing of Q4_0. Exhaust all FP16
+  // scales, with unaligned input and output guards, including nonfinites.
+  constexpr std::array<float, 4> levels{-1.0F, 0.0F, 1.0F, 2.0F};
+  for (std::uint32_t bits = 0; bits < 65536; ++bits) {
+    std::array<std::uint8_t, 19> packed{};
+    const auto half = static_cast<std::uint16_t>(bits);
+    std::memcpy(packed.data() + 1, &half, 2);
+    std::fill(packed.begin() + 3, packed.end(), 0xe4);
+    std::array<float, 66> out{};
+    out.front() = out.back() = 123.0F;
+    if (!gufo::quant::DequantizeRow(type, packed.data() + 1, out.data() + 1,
+                                    64))
+      std::exit(1);
+    const float scale = gufo::quant::Fp16ToFloat(half);
+    for (std::size_t i = 0; i < 64; ++i) {
+      const float expected = levels[i % 4] * scale;
+      if (std::bit_cast<std::uint32_t>(out[i + 1]) !=
+          std::bit_cast<std::uint32_t>(expected)) {
+        std::cerr << "Q2_0 scale/packing mismatch at " << bits << '\n';
+        std::exit(1);
+      }
+    }
+    if (out.front() != 123.0F || out.back() != 123.0F)
+      std::exit(1);
+  }
+
+  // Two adjacent blocks must use independent scales and 18-byte strides.
+  std::array<std::uint8_t, 36> packed{};
+  packed[1] = 0x3c;   // +1
+  packed[19] = 0xc0;  // -2
+  std::fill(packed.begin() + 2, packed.begin() + 18, 0xe4);
+  std::fill(packed.begin() + 20, packed.end(), 0x1b);
+  std::array<float, 130> out{};
+  out.front() = out.back() = 123.0F;
+  if (!gufo::quant::DequantizeRow(type, packed.data(), out.data() + 1, 128))
+    std::exit(1);
+  for (std::size_t i = 0; i < 64; ++i) {
+    if (out[1 + i] != levels[i % 4] || out[65 + i] != -2.0F * levels[3 - i % 4])
+      std::exit(1);
+  }
+  if (out.front() != 123.0F || out.back() != 123.0F)
+    std::exit(1);
+  const auto before = out;
+  if (gufo::quant::DequantizeRow(type, packed.data(), out.data(), 65) ||
+      out != before)
+    std::exit(1);
+}
+
 void TestIq4NlExact() {
   // Independent GGML codebook. Exhaust half scales and every low/high code.
   constexpr std::array<int, 16> codes{-127, -104, -83, -65, -49, -35, -22, -10,
@@ -584,6 +643,7 @@ void TestDequantizeRowMatchesGgufPy() {
 }  // namespace
 
 int main() {
+  TestQ2_0Exact();
   TestIq4NlExact();
   TestQ4();
   TestQ6();

@@ -1,0 +1,16 @@
+tensor,type,k,values,max_abs_error,max_error_over_roundoff_bound
+vector:output.weight,Q6_K,2560,528,3.45707e-06,2.79713e-05
+tiled:output.weight,Q6_K,2560,528,6.25849e-06,4.58729e-05
+vector:blk.0.ffn_down_exps.weight,IQ4_NL,640,528,9.53674e-07,0.000126805
+tiled:blk.0.ffn_down_exps.weight,IQ4_NL,640,528,1.54972e-06,0.00018138
+vector:blk.0.ffn_gate_exps.weight,IQ3_XXS,2560,528,2.89083e-06,2.29235e-05
+tiled:blk.0.ffn_gate_exps.weight,IQ3_XXS,2560,528,6.4075e-06,5.38873e-05
+vector:blk.1.ffn_down_exps.weight,Q2_0,640,528,0,0
+tiled:blk.1.ffn_down_exps.weight,Q2_0,640,528,0,0
+vector:blk.1.ffn_gate_exps.weight,IQ2_S,2560,528,3.45707e-06,2.60607e-05
+tiled:blk.1.ffn_gate_exps.weight,IQ2_S,2560,528,1.56164e-05,0.000117723
+vector:blk.17.ffn_gate_exps.weight,IQ3_S,2560,528,2.02656e-06,1.62182e-05
+tiled:blk.17.ffn_gate_exps.weight,IQ3_S,2560,528,6.07967e-06,5.21225e-05
+vector:blk.47.ffn_gate_exps.weight,IQ4_XS,2560,528,2.5034e-06,1.65332e-05
+tiled:blk.47.ffn_gate_exps.weight,IQ4_XS,2560,528,1.3411e-05,9.67296e-05
+PASS actual model weights; vector and tiled; conservative FP32 summation bound, no tolerance tuning

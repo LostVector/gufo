@@ -228,6 +228,13 @@ typedef float (*vec_dot_q_hip_t)(const void * __restrict__ vbq, const block_q8_1
 
 static constexpr __device__ vec_dot_q_hip_t get_vec_dot_q_hip(ggml_type type) {
     switch (type) {
+        case GGML_TYPE_Q2_0: return vec_dot_q2_0_q8_1;
+        case GGML_TYPE_Q6_K: return vec_dot_q6_K_q8_1;
+        case GGML_TYPE_IQ2_S: return vec_dot_iq2_s_q8_1;
+        case GGML_TYPE_IQ3_XXS: return vec_dot_iq3_xxs_q8_1;
+        case GGML_TYPE_IQ3_S: return vec_dot_iq3_s_q8_1;
+        case GGML_TYPE_IQ4_NL: return vec_dot_iq4_nl_q8_1;
+        case GGML_TYPE_IQ4_XS: return vec_dot_iq4_xs_q8_1;
         case GGML_TYPE_Q5_1:    return vec_dot_q5_1_q8_1;
         case GGML_TYPE_Q8_0:    return vec_dot_q8_0_q8_1;
         case GGML_TYPE_Q4_K:    return vec_dot_q4_K_q8_1;
@@ -238,6 +245,13 @@ static constexpr __device__ vec_dot_q_hip_t get_vec_dot_q_hip(ggml_type type) {
 
 static constexpr __host__ __device__ int get_vdr_mmvq(ggml_type type) {
     switch (type) {
+        case GGML_TYPE_Q2_0: return VDR_Q2_0_Q8_1_MMVQ;
+        case GGML_TYPE_Q6_K: return VDR_Q6_K_Q8_1_MMVQ;
+        case GGML_TYPE_IQ2_S: return VDR_IQ2_S_Q8_1_MMVQ;
+        case GGML_TYPE_IQ3_XXS: return VDR_IQ3_XXS_Q8_1_MMVQ;
+        case GGML_TYPE_IQ3_S: return VDR_IQ3_S_Q8_1_MMVQ;
+        case GGML_TYPE_IQ4_NL: return VDR_IQ4_NL_Q8_1_MMVQ;
+        case GGML_TYPE_IQ4_XS: return VDR_IQ4_XS_Q8_1_MMVQ;
         case GGML_TYPE_Q5_1:    return VDR_Q5_1_Q8_1_MMVQ;
         case GGML_TYPE_Q8_0:    return VDR_Q8_0_Q8_1_MMVQ;
         case GGML_TYPE_Q4_K:    return VDR_Q4_K_Q8_1_MMVQ;
@@ -246,7 +260,8 @@ static constexpr __host__ __device__ int get_vdr_mmvq(ggml_type type) {
     }
 }
 
-template<ggml_type type, int c_rows_per_block, bool gated = false>
+template<ggml_type type, int c_rows_per_block, bool gated = false,
+         bool dense = false>
 __launch_bounds__(mmvq_moe_max_batch(type) * (gated ? 64 : 32),
                   1) static __global__
     void mul_mat_vec_q_moe(const void* __restrict__ weights,
@@ -284,7 +299,8 @@ __launch_bounds__(mmvq_moe_max_batch(type) * (gated ? 64 : 32),
 
   // Inactive experts still write zero to every output row. The expert ID
   // and its validity are uniform within a wave.
-  const int32_t id_raw = ids[channel_dst + token_idx * ids_stride];
+  const int32_t id_raw =
+      dense ? 0 : ids[channel_dst + token_idx * ids_stride];
   const bool invalid_id = id_raw < 0;
   // Expert-ordered slot rows store to their source slot; the load is issued
   // with the expert's, not after the dot product.
@@ -766,7 +782,7 @@ void mul_mat_vec_q8_dispatch(const void* weights, const void* gate,
   }
 }
 
-template<ggml_type type, int rows_per_wave = 2>
+template<ggml_type type, int rows_per_wave = 2, bool dense = false>
 static void launch_moe(const void* weights, const block_q8_1* input,
                        const int32_t* ids, float* output, int k, int rows,
                        int tokens, int experts_used, int input_stride,
@@ -776,13 +792,43 @@ static void launch_moe(const void* weights, const block_q8_1* input,
   GGML_ASSERT(tokens > 0);
   const int block_tokens = std::min(tokens, mmvq_moe_max_batch(type));
   const int row_stride = k / ggml_blck_size(type);
-  mul_mat_vec_q_moe<type, rows_per_wave>
+  mul_mat_vec_q_moe<type, rows_per_wave, false, dense>
       <<<dim3((rows + rows_per_wave - 1) / rows_per_wave, experts_used,
               (tokens + block_tokens - 1) / block_tokens),
          dim3(32, block_tokens), 0, stream>>>(
           weights, input, ids, output, k, rows, row_stride, input_stride,
           rows * experts_used, rows * row_stride, rows, tokens, experts_used,
           nullptr, dst_slots);
+}
+
+void mul_mat_vec_quant_dispatch(const void* weights, ggml_type type,
+                               const block_q8_1* input, float* output,
+                               int k, int rows, int tokens, int input_stride,
+                               hipStream_t stream) {
+  switch (type) {
+    case GGML_TYPE_Q4_K:
+      launch_moe<GGML_TYPE_Q4_K, 2, true>(weights, input, nullptr, output,
+          k, rows, tokens, 1, input_stride, stream);
+      break;
+    case GGML_TYPE_Q5_K:
+      launch_moe<GGML_TYPE_Q5_K, 2, true>(weights, input, nullptr, output,
+          k, rows, tokens, 1, input_stride, stream);
+      break;
+    case GGML_TYPE_Q6_K:
+      launch_moe<GGML_TYPE_Q6_K, 2, true>(weights, input, nullptr, output,
+          k, rows, tokens, 1, input_stride, stream);
+      break;
+    case GGML_TYPE_IQ4_NL:
+      launch_moe<GGML_TYPE_IQ4_NL, 2, true>(weights, input, nullptr, output,
+          k, rows, tokens, 1, input_stride, stream);
+      break;
+    case GGML_TYPE_IQ4_XS:
+      launch_moe<GGML_TYPE_IQ4_XS, 2, true>(weights, input, nullptr, output,
+          k, rows, tokens, 1, input_stride, stream);
+      break;
+    default:
+      GGML_ABORT("unsupported dense vector weight format");
+  }
 }
 
 void mul_mat_vec_moe_dispatch(const void* weights, ggml_type type,
@@ -832,6 +878,27 @@ void mul_mat_vec_moe_dispatch(const void* weights, ggml_type type,
         case GGML_TYPE_Q5_K:
             launch_moe<GGML_TYPE_Q5_K>(weights, input, ids, output, k, rows, tokens,
                                           experts_used, input_stride, stream);
+            break;
+        case GGML_TYPE_Q2_0:
+            launch_moe<GGML_TYPE_Q2_0>(weights, input, ids, output, k, rows, tokens, experts_used, input_stride, stream, dst_slots);
+            break;
+        case GGML_TYPE_Q6_K:
+            launch_moe<GGML_TYPE_Q6_K>(weights, input, ids, output, k, rows, tokens, experts_used, input_stride, stream, dst_slots);
+            break;
+        case GGML_TYPE_IQ2_S:
+            launch_moe<GGML_TYPE_IQ2_S>(weights, input, ids, output, k, rows, tokens, experts_used, input_stride, stream, dst_slots);
+            break;
+        case GGML_TYPE_IQ3_XXS:
+            launch_moe<GGML_TYPE_IQ3_XXS>(weights, input, ids, output, k, rows, tokens, experts_used, input_stride, stream, dst_slots);
+            break;
+        case GGML_TYPE_IQ3_S:
+            launch_moe<GGML_TYPE_IQ3_S>(weights, input, ids, output, k, rows, tokens, experts_used, input_stride, stream, dst_slots);
+            break;
+        case GGML_TYPE_IQ4_NL:
+            launch_moe<GGML_TYPE_IQ4_NL>(weights, input, ids, output, k, rows, tokens, experts_used, input_stride, stream, dst_slots);
+            break;
+        case GGML_TYPE_IQ4_XS:
+            launch_moe<GGML_TYPE_IQ4_XS>(weights, input, ids, output, k, rows, tokens, experts_used, input_stride, stream, dst_slots);
             break;
         default: GGML_ABORT("unsupported vector weight format");
     }

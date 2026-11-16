@@ -3,6 +3,7 @@
 #include <bit>
 #include <cstring>
 #include <gufo/ext/experimental/managed_alloc.hpp>
+#include <source_location>
 #include <stdexcept>
 
 #include "qfn_mmq.h"
@@ -26,9 +27,13 @@ bool Fail(std::string* error, const std::string& message) {
   return false;
 }
 
-bool Check(hipError_t status, std::string* error) {
-  return status == hipSuccess || Fail(error, std::string("batched forward: ") +
-                                                 hipGetErrorString(status));
+bool Check(
+    hipError_t status, std::string* error,
+    const std::source_location location = std::source_location::current()) {
+  return status == hipSuccess ||
+         Fail(error, std::string("batched forward: ") +
+                         hipGetErrorString(status) + " at line " +
+                         std::to_string(location.line()));
 }
 
 // A cancelled row stops touching its private state. Shared projections retain
@@ -51,6 +56,8 @@ WeightType EmbeddingType(core::GgmlType type) {
       return WeightType::kQ8_0;
     case core::GgmlType::kF32:
       return WeightType::kF32;
+    case core::GgmlType::kIQ4_XS:
+      return WeightType::kIQ4_XS;
     default:
       throw std::logic_error("unsupported Flash-Next embedding format");
   }
@@ -473,6 +480,7 @@ bool Executor::MtpForwardBatch(std::span<const MtpBatchItem> items,
 
 bool Executor::MtpHeads(std::span<const MtpHeadItem> items,
                         std::string* error) const {
+  ClearPartialVerification();
   selected_logits_ = nullptr;
   if (!has_mtp() || items.empty() || items.size() > kBatchSessions ||
       items.size() > options_.max_batch) {
@@ -710,6 +718,21 @@ bool Executor::QuantizeBatch(const float* x, std::uint32_t rows,
 
 bool Executor::DenseBatch(const DeviceTensor& w, const float* x, float* out,
                           std::uint32_t rows, std::string* error) const {
+  if (w.type != core::GgmlType::kQ8_0 && w.type != core::GgmlType::kF32 &&
+      w.type != core::GgmlType::kF16 && w.type != core::GgmlType::kBF16) {
+    // Copied-token verification can exceed eight rows. Keep each packed
+    // projection's single-token quantization/reduction; a wide MMQ call
+    // would silently switch to prefill arithmetic.
+    for (std::uint32_t first = 0; first < rows; first += kDecodeRows) {
+      const auto count = std::min(kDecodeRows, rows - first);
+      if (qfn_mmq_dense(static_cast<int>(w.type), w.data,
+                        x + std::size_t{first} * w.cols,
+                        out + std::size_t{first} * w.rows, w.rows, count,
+                        w.cols, stream_, false) != 0)
+        return Fail(error, "batched packed vector projection failed");
+    }
+    return true;
+  }
   if (rows <= kDecodeRows)
     return Dense(w, x, out, rows, error);
   if (w.type != core::GgmlType::kQ8_0) {
@@ -858,6 +881,7 @@ bool Executor::ForwardWide(Session& session,
 
 bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
                                 std::string* error) const {
+  ClearPartialVerification();
   selected_logits_ = nullptr;
   wide_rows_ = 0;
   DropReadyQ8();
@@ -1202,12 +1226,13 @@ bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
         if (l.linear && wide) {
           const auto segs = segments_of(i);
           const std::size_t conv_bytes = std::size_t{c.ssm_conv_kernel - 1} *
-                                         c.SsmConvChannels() * sizeof(float);
-          const std::size_t state_bytes = std::size_t{c.ssm_num_v_heads} *
-                                          c.ssm_head_dim * c.ssm_head_dim *
-                                          sizeof(float);
+                                         heads.SsmConvChannels() *
+                                         sizeof(float);
+          const std::size_t state_bytes =
+              GdnRollbackRowFloats(0, heads.ssm_k, heads.ssm_v, heads.ssm_dim) *
+              sizeof(float);
           for (std::size_t s = 0; s < segs.size(); ++s) {
-            UseScratch(RowScratch(base, segs[s].offset));
+            UseScratch(RowScratch(base, segs[s].offset, heads));
             auto state = session.linear_[il];
             if (s != 0) {
               // Keep the segment's starting state for a rollback that keeps
@@ -1251,10 +1276,10 @@ bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
           }
         } else if (wide) {
           for (const auto& seg : segments_of(i)) {
-            auto seg_view = RowScratch(base, seg.offset);
+            auto seg_view = RowScratch(base, seg.offset, heads);
             if (l.attn_qkv.empty()) {
               seg_view.qg = base.qg + static_cast<std::size_t>(seg.offset) * 2 *
-                                          c.AttentionQDim();
+                                          heads.AttentionQDim();
             }
             UseScratch(seg_view);
             const auto pool = seg.sparse && seg.complete > seg.blocks
@@ -1413,6 +1438,7 @@ bool Executor::SelectBatchLogits(std::uint32_t offset, std::uint32_t rows,
     return Fail(error, "logit rows outside the completed decode batch");
   }
   const std::size_t vocab = config().vocab_size;
+  ClearPartialVerification();
   selected_logits_ = batch_logits_ + static_cast<std::size_t>(offset) * vocab;
   // The pinned staging buffer holds max_logit_rows rows; a wide
   // verification's rows download through it in pieces.

@@ -1,0 +1,36 @@
+{
+  "shared_exit": 1,
+  "changed_exit": 0,
+  "source_relationship": [
+    {
+      "path": "src/models/qwen38_flash_next/engine.cpp",
+      "tested_sha256": "d605dd06cd10374665d7d4dc89a52fba5841e2728a011af29df01796655b8755",
+      "review_sha256": "d605dd06cd10374665d7d4dc89a52fba5841e2728a011af29df01796655b8755",
+      "change": "clang-format only; executor.hpp also corrects callback comment, no code change"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/communicator.hpp",
+      "tested_sha256": "af39a6a5bde7ba5f0a71d8d6423b6790096cd099e8989ddf41606e641e430fca",
+      "review_sha256": "af39a6a5bde7ba5f0a71d8d6423b6790096cd099e8989ddf41606e641e430fca",
+      "change": "clang-format only; executor.hpp also corrects callback comment, no code change"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/executor.cpp",
+      "tested_sha256": "34e57b241c23310e31bb899cdbc4debcb6358d62acaaada915205c36cd15b2ae",
+      "review_sha256": "4d2b9265d8ab30e5b8a81f012c61fde1f49ed8accab383a2110fceb6e2a0061d",
+      "change": "clang-format only; executor.hpp also corrects callback comment, no code change"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/executor.hpp",
+      "tested_sha256": "abd97ab786d4e1ead559809c0d65d5f02b120c7592a686b03a97cbdb7905f655",
+      "review_sha256": "a6045b46d882d7b3edc334cd3ae571beefe519699cd13fa09c86eae8119dfd30",
+      "change": "clang-format only; executor.hpp also corrects callback comment, no code change"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/verbs.cpp",
+      "tested_sha256": "deb8288706e959e387222715360be6df279946cfc26bfd64ba60ddef5fd67854",
+      "review_sha256": "af1e29bd03968585aef598e34ad8c60fa1de3aa056de11dcfd76edc900a6206a",
+      "change": "clang-format only; executor.hpp also corrects callback comment, no code change"
+    }
+  ]
+}

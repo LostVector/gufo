@@ -1,5 +1,6 @@
 #include "src/models/qwen38_flash_next/weights.hpp"
 
+#include <gufo/ext/experimental/ggml_dequant.hpp>
 #include <initializer_list>
 #include <string>
 #include <utility>
@@ -35,6 +36,16 @@ struct Format {
       return {256, 176};
     case GgmlType::kQ6_K:
       return {256, 210};
+    case GgmlType::kQ2_0:
+    case GgmlType::kIQ2_S:
+    case GgmlType::kIQ3_XXS:
+    case GgmlType::kIQ3_S:
+    case GgmlType::kIQ4_XS: {
+      const auto block = gufo::quant::QuantizedBlockElements(type);
+      return {static_cast<std::uint32_t>(block),
+              static_cast<std::uint32_t>(
+                  gufo::quant::QuantizedRowBytes(type, block))};
+    }
     default:
       return {0, 0};
   }
@@ -138,10 +149,14 @@ struct Binder {
     const std::string p = "blk." + std::to_string(il) + ".";
     const std::uint64_t hidden = c.hidden_size;
     const std::uint64_t hc_dim = c.HcDim();
-    const auto dense = {GgmlType::kQ8_0, GgmlType::kBF16, GgmlType::kF16,
-                        GgmlType::kF32};
-    const auto experts = {GgmlType::kQ4_K, GgmlType::kQ5_K, GgmlType::kQ6_K,
-                          GgmlType::kQ5_1, GgmlType::kQ8_0};
+    const auto dense = {GgmlType::kQ8_0, GgmlType::kQ4_K,   GgmlType::kQ5_K,
+                        GgmlType::kQ6_K, GgmlType::kIQ4_NL, GgmlType::kIQ4_XS,
+                        GgmlType::kBF16, GgmlType::kF16,    GgmlType::kF32};
+    const auto experts = {
+        GgmlType::kQ4_K,   GgmlType::kQ5_K,    GgmlType::kQ6_K,
+        GgmlType::kQ5_1,   GgmlType::kQ8_0,    GgmlType::kQ2_0,
+        GgmlType::kIQ2_S,  GgmlType::kIQ3_XXS, GgmlType::kIQ3_S,
+        GgmlType::kIQ4_NL, GgmlType::kIQ4_XS};
 
     l.hc_attn = Mixer(p + "hc_attn", c, true);
     l.hc_ffn = Mixer(p + "hc_ffn", c, true);
@@ -195,19 +210,19 @@ struct Binder {
       l.ple_norm_conv =
           Get(p + "ple_norm_conv.weight", hc_dim, 1, 1, {GgmlType::kF32});
       l.ple_conv1d = Get(p + "ple_conv1d.weight", c.ple_conv_kernel, hc_dim, 1,
-                         {GgmlType::kF32});
+                         {GgmlType::kF32, GgmlType::kF16});
     }
 
     l.router = Get(p + "ffn_gate_inp.weight", hidden, c.num_experts, 1,
-                   {GgmlType::kF32});
+                   {GgmlType::kF32, GgmlType::kBF16});
     l.ffn_gate_exps = Get(p + "ffn_gate_exps.weight", hidden, c.expert_ff,
                           c.num_experts, experts);
     l.ffn_up_exps = Get(p + "ffn_up_exps.weight", hidden, c.expert_ff,
                         c.num_experts, experts);
     l.ffn_down_exps = Get(p + "ffn_down_exps.weight", c.expert_ff, hidden,
                           c.num_experts, experts);
-    l.shexp_gate_inp =
-        Get(p + "ffn_gate_inp_shexp.weight", hidden, 1, 1, {GgmlType::kF32});
+    l.shexp_gate_inp = Get(p + "ffn_gate_inp_shexp.weight", hidden, 1, 1,
+                           {GgmlType::kF32, GgmlType::kBF16});
     l.shexp_gate =
         Get(p + "ffn_gate_shexp.weight", hidden, c.shared_expert_ff, 1, dense);
     l.shexp_up =
@@ -248,8 +263,8 @@ std::optional<ModelWeights> ModelWeights::Bind(const core::GgufReader& reader,
   ModelWeights w;
   w.config = *config;
   const Config& c = w.config;
-  const auto dense = {GgmlType::kQ8_0, GgmlType::kQ6_K, GgmlType::kBF16,
-                      GgmlType::kF16, GgmlType::kF32};
+  const auto dense = {GgmlType::kQ8_0, GgmlType::kQ6_K, GgmlType::kIQ4_XS,
+                      GgmlType::kBF16, GgmlType::kF16,  GgmlType::kF32};
 
   {
     // The vocabulary is the embedding row count; no metadata key carries it.

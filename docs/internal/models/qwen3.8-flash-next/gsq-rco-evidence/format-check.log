@@ -1,0 +1,30 @@
+src/cli/extension/modules.cpp:43:52: error: code should be clang-formatted [-Wclang-format-violations]
+          {"decision", ext::Capability::kDecision},
+                                                   ^
+src/cli/serve/audio_tts_api.cpp:473:36: error: code should be clang-formatted [-Wclang-format-violations]
+                          : check()                         ? "cancelled"
+                                   ^
+tests/cli/http_server_test.cpp:936:35: error: code should be clang-formatted [-Wclang-format-violations]
+          .available_bytes = 3072,
+                                  ^
+tests/cli/openai_chat_test.cpp:6750:25: error: code should be clang-formatted [-Wclang-format-violations]
+              : implicit                   ? std::string("Check tags.\n\n")
+                        ^
+tests/cli/text_cli_dispatch_test.cpp:343:81: error: code should be clang-formatted [-Wclang-format-violations]
+           {"--speculative", "mtp", "--mtp-model", "x", "--draft-tokens", "1"}},
+                                                                                ^
+tests/models/deepseek_v4_flash/serving_test.cpp:360:51: error: code should be clang-formatted [-Wclang-format-violations]
+                        "blue, red, blue, blue,"},
+                                                  ^
+tests/models/deepseek_v4_flash/serving_test.cpp:596:70: error: code should be clang-formatted [-Wclang-format-violations]
+              {.role = "user", .content = "Name one primary color."},
+                                                                     ^
+tests/models/deepseek_v4_flash/serving_test.cpp:707:30: error: code should be clang-formatted [-Wclang-format-violations]
+                   "three,"},
+                             ^
+tests/models/deepseek_v4_flash/serving_test.cpp:714:29: error: code should be clang-formatted [-Wclang-format-violations]
+                   "blue,"},
+                            ^
+tests/models/qwen/cpu/generator_test.cpp:72:36: error: code should be clang-formatted [-Wclang-format-violations]
+          {std::string(kImEnd), 7},
+                                   ^

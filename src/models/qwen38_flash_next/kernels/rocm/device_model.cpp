@@ -35,44 +35,6 @@ struct Conversion {
   std::size_t source_bytes{0};
 };
 
-/// Whether every trunk layer's GDN or attention heads split evenly across
-/// `world` ranks with whole query groups, and every piece is whole rows or
-/// whole quantization blocks of Q8_0 projections.
-bool SplitMixersFit(const ModelWeights& w, std::uint32_t world,
-                    std::string* why) {
-  const Config& c = w.config;
-  if (c.ssm_num_k_heads == 0 || c.ssm_num_k_heads % world != 0 ||
-      c.ssm_num_v_heads % c.ssm_num_k_heads != 0 || c.num_kv_heads == 0 ||
-      c.num_kv_heads % world != 0 || c.num_heads % c.num_kv_heads != 0 ||
-      c.ssm_head_dim % 32 != 0 || c.head_dim % 32 != 0) {
-    *why = "head counts";
-    return false;
-  }
-  const auto q8 = [](const TensorRef& t) {
-    return !t.empty() && t.type == core::GgmlType::kQ8_0;
-  };
-  for (const auto& l : w.layers) {
-    const bool fits =
-        l.linear ? q8(l.ssm_qkv) && q8(l.ssm_gate) && q8(l.ssm_out) &&
-                       l.ssm_qkv.cols == l.ssm_gate.cols &&
-                       (l.ssm_alpha.type == core::GgmlType::kF32 ||
-                        l.ssm_alpha.type == core::GgmlType::kQ8_0) &&
-                       l.ssm_beta.type == l.ssm_alpha.type &&
-                       l.ssm_beta.cols == l.ssm_alpha.cols &&
-                       l.ssm_conv1d.type == core::GgmlType::kF32 &&
-                       l.ssm_dt.type == core::GgmlType::kF32 &&
-                       l.ssm_a.type == core::GgmlType::kF32
-                 : q8(l.attn_q) && q8(l.attn_k) && q8(l.attn_v) &&
-                       q8(l.attn_out) && l.attn_q.cols == l.attn_k.cols &&
-                       l.attn_q.cols == l.attn_v.cols;
-    if (!fits) {
-      *why = "projection types of a trunk layer";
-      return false;
-    }
-  }
-  return true;
-}
-
 /// The trunk and the optional MTP block as one traversal's output.
 struct Uploaded {
   DeviceTensor token_embd;
@@ -275,7 +237,16 @@ struct Uploader {
     allocations.push_back(f32);
     bytes += count * sizeof(float) + kTailMargin;
     std::vector<float> host(count);
-    WidenBF16(static_cast<const std::uint16_t*>(t.data), host.data(), count);
+    if (t.type == core::GgmlType::kBF16) {
+      WidenBF16(static_cast<const std::uint16_t*>(t.data), host.data(), count);
+    } else if (t.type == core::GgmlType::kF16) {
+      const auto* values = static_cast<const std::uint16_t*>(t.data);
+      for (std::size_t i = 0; i < count; ++i)
+        host[i] = gufo::quant::Fp16ToFloat(values[i]);
+    } else {
+      Fail("widening requires BF16 or F16: " + std::string(t.name));
+      return {};
+    }
     if (hipMemcpy(f32, host.data(), count * sizeof(float),
                   hipMemcpyHostToDevice) != hipSuccess ||
         hipMemset(static_cast<std::uint8_t*>(f32) + count * sizeof(float), 0,
@@ -560,7 +531,12 @@ struct Uploader {
     }
     std::vector<Span> in = qkv;
     in.insert(in.end(), z.begin(), z.end());
-    d.ssm_in = GatherRows(in, false);
+    if (l.ssm_qkv.type == l.ssm_gate.type) {
+      d.ssm_in = GatherRows(in, false);
+    } else {
+      d.ssm_qkv = GatherRows(qkv, false);
+      d.ssm_gate = GatherRows(z, false);
+    }
     std::vector<Span> alpha_beta = alpha;
     alpha_beta.insert(alpha_beta.end(), beta.begin(), beta.end());
     // As in Stack: F32 rows become F16, Q8_0 rows stay as they are.
@@ -588,10 +564,17 @@ struct Uploader {
     const std::uint64_t kv_first = kv_local * partition->rank;
     const std::uint64_t q_first = q_local * partition->rank;
     // Query rows interleave each head's query and output gate.
-    d.attn_qkv = GatherRows({{&l.attn_q, q_first * 2 * dim, q_local * 2 * dim},
-                             {&l.attn_k, kv_first * dim, kv_local * dim},
-                             {&l.attn_v, kv_first * dim, kv_local * dim}},
-                            false);
+    if (l.attn_q.type == l.attn_k.type && l.attn_q.type == l.attn_v.type) {
+      d.attn_qkv =
+          GatherRows({{&l.attn_q, q_first * 2 * dim, q_local * 2 * dim},
+                      {&l.attn_k, kv_first * dim, kv_local * dim},
+                      {&l.attn_v, kv_first * dim, kv_local * dim}},
+                     false);
+    } else {
+      d.attn_q = CopyRows(l.attn_q, q_first * 2 * dim, q_local * 2 * dim);
+      d.attn_k = CopyRows(l.attn_k, kv_first * dim, kv_local * dim);
+      d.attn_v = CopyRows(l.attn_v, kv_first * dim, kv_local * dim);
+    }
     d.attn_out =
         CopyColumns(l.attn_out, static_cast<std::uint32_t>(q_first * dim),
                     static_cast<std::uint32_t>(q_local * dim));
@@ -685,8 +668,10 @@ struct Uploader {
     const core::GgmlType type = (*parts.begin())->type;
     for (const TensorRef* t : parts) {
       if (t->empty() || t->type != type || t->cols != (*parts.begin())->cols ||
-          (type != core::GgmlType::kF32 && type != core::GgmlType::kQ8_0)) {
-        Fail("stacked upload needs F32 or Q8_0 tensors of one shape");
+          (type != core::GgmlType::kF32 && type != core::GgmlType::kQ8_0 &&
+           type != core::GgmlType::kBF16 && type != core::GgmlType::kF16)) {
+        Fail(
+            "stacked upload needs F32, F16, BF16 or Q8_0 tensors of one shape");
         return d;
       }
       rows += t->rows;
@@ -710,7 +695,8 @@ struct Uploader {
         offset += t->SizeBytes();
       }
     }
-    if (type == core::GgmlType::kQ8_0 && !expand_q8) {
+    if ((type == core::GgmlType::kQ8_0 && !expand_q8) ||
+        type == core::GgmlType::kBF16 || type == core::GgmlType::kF16) {
       if (Measuring()) {
         return d;
       }
@@ -720,7 +706,10 @@ struct Uploader {
       d.type = type;
       d.cols = static_cast<std::uint32_t>((*parts.begin())->cols);
       d.rows = static_cast<std::uint32_t>(rows);
-      max_q8_cols = std::max<std::size_t>(max_q8_cols, d.cols);
+      if (type == core::GgmlType::kQ8_0)
+        max_q8_cols = std::max<std::size_t>(max_q8_cols, d.cols);
+      else
+        max_half_cols = std::max<std::size_t>(max_half_cols, d.cols);
       return d;
     }
     void* f32 = ptr;
@@ -827,7 +816,9 @@ struct Uploader {
     d.ple_norm_key = Copy(l.ple_norm_key);
     d.ple_norm_query = Copy(l.ple_norm_query);
     d.ple_norm_conv = Copy(l.ple_norm_conv);
-    d.ple_conv1d = Copy(l.ple_conv1d);
+    d.ple_conv1d = l.ple_conv1d.type == core::GgmlType::kF16
+                       ? UploadWidened(l.ple_conv1d)
+                       : Copy(l.ple_conv1d);
     d.router = Stack({&l.router, &l.shexp_gate_inp});
     d.ffn_gate_exps = CopyExpertRows(l.ffn_gate_exps);
     d.ffn_up_exps = CopyExpertRows(l.ffn_up_exps);
@@ -912,22 +903,11 @@ std::unique_ptr<DeviceModel> DeviceModel::Upload(
     const ModelWeights& w, const core::GgufReader& reader,
     const MtpWeights* mtp, const core::GgufReader* mtp_reader,
     std::string* error_msg, const distributed::TpPartition* partition) {
-  // The CPU reference also reads Q6_K, but the production embedding, dense
-  // and routed kernels do not. Reject it before allocating device weights.
-  const auto supported = [&](const TensorRef& t) {
-    if (t.type != core::GgmlType::kQ6_K)
-      return true;
-    if (error_msg != nullptr)
-      *error_msg = "unsupported HIP tensor format Q6_K: " + std::string(t.name);
-    return false;
-  };
-  const auto layer_supported = [&](const LayerWeights& l) {
-    return supported(l.ffn_gate_exps) && supported(l.ffn_up_exps) &&
-           supported(l.ffn_down_exps);
-  };
-  if (!supported(w.token_embd) || !supported(w.output) ||
-      !std::all_of(w.layers.begin(), w.layers.end(), layer_supported) ||
-      (mtp != nullptr && !layer_supported(mtp->block))) {
+  // Q6_K projections now have packed dense/routed kernels. Embedding
+  // lookup is a separate path and deliberately retains its format guard.
+  if (w.token_embd.type == core::GgmlType::kQ6_K) {
+    if (error_msg)
+      *error_msg = "unsupported HIP embedding format Q6_K";
     return nullptr;
   }
   std::unique_ptr<DeviceModel> m(new DeviceModel());
@@ -966,7 +946,7 @@ std::unique_ptr<DeviceModel> DeviceModel::Upload(
   m->trunk_heads_ = all;
   if (m->trunk_split_) {
     std::string why;
-    if (!SplitMixersFit(w, partition->world_size, &why)) {
+    if (!distributed::MixerSplitFits(w, *partition, &why)) {
       if (error_msg != nullptr) {
         *error_msg = "TP head split does not fit the model: " + why;
       }
