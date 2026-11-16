@@ -22,9 +22,11 @@ bool OwnF16(hipDataType type, int k) {
 }
 
 bool OwnBf16(hipDataType type, int m, int k) {
-  // The indexer query and key projections, and a TP2 rank's halves.
-  return type == HIP_R_16BF && k == 2560 &&
-         (m == 512 || m == 256 || m == 128 || m == 64);
+  // Indexers and mixed-format checkpoints' HC, router and recurrent-gate
+  // projections need one K-ordered chain per output. Library kernels can
+  // rotate their K loop by the token tile, changing the same prefix when
+  // prefill is split at a cache boundary. DenseBf16Gemm masks ragged rows.
+  return type == HIP_R_16BF && m > 0 && k > 0 && k % 32 == 0;
 }
 
 }  // namespace

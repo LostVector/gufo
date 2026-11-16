@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <type_traits>
 
+#include "src/families/qwen/hip_common/quant_ops.hpp"
 #include "src/models/qwen38_flash_next/mtp_sampling.hpp"
 
 // HIP kernels follow the layouts and operator formulas in reference.cpp.
@@ -120,6 +121,8 @@ __device__ __forceinline__ float RowElement(const void* row, WeightType type,
       return Bf16ToF32(static_cast<const std::uint16_t*>(row)[i]);
     case WeightType::kF16:
       return __half2float(static_cast<const __half*>(row)[i]);
+    case WeightType::kIQ4_XS:
+      return gufo::hip::QuantBlockElement(core::GgmlType::kIQ4_XS, row, i);
     case WeightType::kQ8_0: {
       const auto* blk = static_cast<const std::uint8_t*>(row) + (i / 32) * 34;
       const __half d = *reinterpret_cast<const __half*>(blk);
@@ -141,6 +144,8 @@ __device__ __forceinline__ std::size_t RowBytes(WeightType type,
       return static_cast<std::size_t>(k) * 2;
     case WeightType::kQ8_0:
       return static_cast<std::size_t>(k / 32) * 34;
+    case WeightType::kIQ4_XS:
+      return static_cast<std::size_t>(k / 256) * 136;
   }
   return 0;
 }

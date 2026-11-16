@@ -109,6 +109,8 @@ inline constexpr std::int8_t kValuesIq4Nl[16] = {
 [[nodiscard]] constexpr std::size_t QuantizedBlockElements(
     core::GgmlType type) noexcept {
   switch (type) {
+    case core::GgmlType::kQ2_0:
+      return 64;
     case core::GgmlType::kQ4_0:
     case core::GgmlType::kQ4_1:
     case core::GgmlType::kQ5_0:

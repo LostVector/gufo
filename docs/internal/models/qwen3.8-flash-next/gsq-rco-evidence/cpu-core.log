@@ -1,0 +1,16 @@
+Test project /home/rkuo/strix-dispatch-investigation/iq3-s-gsq-rco-2026-11-15/cpu-build
+    Start  93: gguf_reader_test
+1/2 Test  #93: gguf_reader_test .................   Passed    0.01 sec
+    Start 109: ggml_dequant_test
+2/2 Test #109: ggml_dequant_test ................   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Label Time Summary:
+core            =   0.03 sec*proc (2 tests)
+cpu             =   0.03 sec*proc (2 tests)
+gguf            =   0.01 sec*proc (1 test)
+model_config    =   0.01 sec*proc (1 test)
+quant           =   0.01 sec*proc (1 test)
+
+Total Test time (real) =   0.03 sec

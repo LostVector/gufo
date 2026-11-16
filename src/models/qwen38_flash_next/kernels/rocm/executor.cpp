@@ -72,6 +72,8 @@ WeightType SmallType(GgmlType type) {
       return WeightType::kF16;
     case GgmlType::kQ8_0:
       return WeightType::kQ8_0;
+    case GgmlType::kIQ4_XS:
+      return WeightType::kIQ4_XS;
     case GgmlType::kF32:
       return WeightType::kF32;
     default:
@@ -1675,10 +1677,11 @@ bool Executor::EnsureRollback(Session& session, std::uint32_t depth,
 
 std::size_t Executor::WideSegmentFloats() const {
   const auto& c = config();
+  const auto& heads = trunk_heads();
   const std::size_t conv =
-      std::size_t{c.ssm_conv_kernel - 1} * c.SsmConvChannels();
-  const std::size_t full = GdnRollbackRowFloats(
-      0, c.ssm_num_k_heads, c.ssm_num_v_heads, c.ssm_head_dim);
+      std::size_t{c.ssm_conv_kernel - 1} * heads.SsmConvChannels();
+  const std::size_t full =
+      GdnRollbackRowFloats(0, heads.ssm_k, heads.ssm_v, heads.ssm_dim);
   const std::size_t ple =
       c.ple_layer >= 0 ? std::size_t{c.PleConvHistory()} * c.HcDim() : 0;
   constexpr std::uint32_t kRows =
@@ -1689,8 +1692,8 @@ std::size_t Executor::WideSegmentFloats() const {
       continue;
     floats += conv * (kRows + 1) + full;
     for (std::uint32_t row = 0; row < kRows; ++row)
-      floats += GdnRollbackRowFloats(row, c.ssm_num_k_heads, c.ssm_num_v_heads,
-                                     c.ssm_head_dim);
+      floats +=
+          GdnRollbackRowFloats(row, heads.ssm_k, heads.ssm_v, heads.ssm_dim);
   }
   return floats;
 }
@@ -1703,10 +1706,11 @@ bool Executor::EnsureWideSegments(std::uint32_t segments,
              "wide verification controls", error_msg))
     return false;
   const auto& c = config();
+  const auto& heads = trunk_heads();
   const std::size_t conv =
-      std::size_t{c.ssm_conv_kernel - 1} * c.SsmConvChannels();
-  const std::size_t full = GdnRollbackRowFloats(
-      0, c.ssm_num_k_heads, c.ssm_num_v_heads, c.ssm_head_dim);
+      std::size_t{c.ssm_conv_kernel - 1} * heads.SsmConvChannels();
+  const std::size_t full =
+      GdnRollbackRowFloats(0, heads.ssm_k, heads.ssm_v, heads.ssm_dim);
   const std::size_t ple =
       c.ple_layer >= 0 ? std::size_t{c.PleConvHistory()} * c.HcDim() : 0;
   constexpr std::uint32_t kRows =
@@ -1735,8 +1739,8 @@ bool Executor::EnsureWideSegments(std::uint32_t segments,
         seg.conv[il].rows[row] = next;
         next += conv;
         seg.state[il].rows[row] = next;
-        next += GdnRollbackRowFloats(row, c.ssm_num_k_heads, c.ssm_num_v_heads,
-                                     c.ssm_head_dim);
+        next +=
+            GdnRollbackRowFloats(row, heads.ssm_k, heads.ssm_v, heads.ssm_dim);
       }
     }
     if (ple != 0) {
@@ -2126,6 +2130,18 @@ bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
     }
     return true;
   }
+  if (w.type == GgmlType::kQ4_K || w.type == GgmlType::kQ5_K ||
+      w.type == GgmlType::kQ6_K || w.type == GgmlType::kIQ4_NL ||
+      w.type == GgmlType::kIQ4_XS) {
+    if (qfn_mmq_dense(static_cast<int>(w.type), w.data, x, out,
+                      static_cast<int>(w.rows), static_cast<int>(n_tokens),
+                      static_cast<int>(w.cols), stream_,
+                      MatrixRows(n_tokens)) != 0) {
+      AssignError(error_msg, "packed dense projection failed");
+      return false;
+    }
+    return true;
+  }
   if (!MatrixRows(n_tokens)) {
     SmallGemm(w.data, SmallType(w.type), x, out, n_tokens, w.rows, w.cols,
               stream_);
@@ -2253,22 +2269,8 @@ bool Executor::Experts(const DeviceTensor& w, const float* x,
     rc = qfn_mmq_moe_vec(static_cast<int>(w.type), w.data, x, ids, out, M, K, T,
                          E, U, stream_);
   } else {
-    switch (w.type) {
-      case GgmlType::kQ4_K:
-        rc = qfn_mmq_q4_K_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
-        break;
-      case GgmlType::kQ5_K:
-        rc = qfn_mmq_q5_K_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
-        break;
-      case GgmlType::kQ5_1:
-        rc = qfn_mmq_q5_1_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
-        break;
-      case GgmlType::kQ8_0:
-        rc = qfn_mmq_q8_0_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
-        break;
-      default:
-        break;
-    }
+    rc = qfn_mmq_moe_raw(static_cast<int>(w.type), w.data, x, ids, out, M, K, T,
+                         E, U, stream_);
   }
   if (rc != 0) {
     AssignError(error_msg, "expert GEMM failed");

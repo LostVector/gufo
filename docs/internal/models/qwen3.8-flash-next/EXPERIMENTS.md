@@ -712,3 +712,7 @@ C1 study resolves +1.487% decode, CI[1.298,1.684]%, p=.007937. No new kernel,
 allocation, public flag, math or controller policy. Retain as an isolated C1
 review candidate; C2 results and tail latency remain unqualified. No deployment,
 PR publication or driver change. [Report](../../../patches/native-mtp-head.md).
+
+## GSQ-RCO IQ3_S (November 15, 2026)
+
+Retained for compatibility/correctness: native mixed IQ/Q2 projections, deterministic BF16/MMQ arithmetic, and rank-local wide TP state geometry. IQ3 saves memory but does not improve speed over Q4. Rejected: unconfirmed F32 injection prototype, removed before final build. [Evidence](gsq-rco-iq3-s.md).

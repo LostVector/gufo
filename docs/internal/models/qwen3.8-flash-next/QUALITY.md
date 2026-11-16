@@ -1501,3 +1501,7 @@ mutation; diagnostic sync is not asynchronous-lifetime proof. Unmodified HTTP
 stop/long-context/state-edge/cancel/cache/disk-restart fixtures pass. C1 has120
 exact output/work identities; C2 has52 exact output/prompt/cache identities but
 38 adaptive-work differences. [Scope and retained flags](../../../patches/native-mtp-head.md).
+
+## GSQ-RCO IQ3_S (November 15, 2026)
+
+Mixed GSQ-RCO IQ3_S: packed arithmetic, real-weight checks, BF16/MMQ chunk invariance, TP2 wide state and native-MTP cache/lookup regression pass. [Scope and evidence](gsq-rco-iq3-s.md).

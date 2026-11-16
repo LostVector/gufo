@@ -1,0 +1,6 @@
+{
+  "binary_sha256": "c8fae77b9557a68faeaf3dbc99a0abde9ae2c22e6115a6fb44def557d766dba7",
+  "build": "gpu-build-v17",
+  "peer_sha256_verified": true,
+  "scope": "isolated candidate; not adopted serving"
+}

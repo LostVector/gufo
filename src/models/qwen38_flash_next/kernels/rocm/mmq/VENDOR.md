@@ -21,3 +21,10 @@ under `tests/models/qwen38_flash_next/` plus the AR/MTP session replay.
 The routed GEMM test compares supported formats against a floating-point
 reference and checks the paired adapter against two separate projections.
 Build and validate through Nix as described in `AGENTS.md`.
+
+Q2_0 block geometry and the HIP vector dot-product arm are additionally adapted
+from `ggml-org/llama.cpp` at
+`1719dbb0ee7bdaf56de083079d3613bb670160a5` (MIT). The imported arm retains
+its packed-code mapping, DP4A grouping and scale order; the CUDA-only arm is
+omitted and the DP4A call uses the local HIP name. This is a scoped import,
+not a replacement of the original vendoring pin.

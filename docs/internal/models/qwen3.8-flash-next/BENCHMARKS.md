@@ -282,3 +282,7 @@ tasks use held-out seeds2001..2010. Six phase flags and four transport-error
 starts remain. C2 screen has mixed descriptive points (+0.454% natural, −0.455%
 coding), 38 adaptive-work differences and nine phase flags: concurrent speedup
 and tail latency remain unqualified. [Full evidence](../../../patches/native-mtp-head.md).
+
+## GSQ-RCO IQ3_S (November 15, 2026)
+
+Mixed GSQ-RCO IQ3_S TP2/native MTP: 40.37–50.63 tokens/s on three fixed128-token text/code requests;2113-token prefill899.77 tokens/s. Same-runtime Q4:52.57–69.16 and1770.73 tokens/s. Saves12.414GiB GPU allocation per node. [Matched settings, raw timings and limits](gsq-rco-iq3-s.md).

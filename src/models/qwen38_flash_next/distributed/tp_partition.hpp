@@ -43,6 +43,13 @@ struct RoutedWeightPlan {
   std::size_t local_encoded_bytes;
 };
 
+/// Whether every trunk mixer's head/column shares retain complete quantized
+/// blocks. Input projections may use different supported formats: upload
+/// keeps them separate when concatenating their packed rows would be invalid.
+[[nodiscard]] bool MixerSplitFits(const ModelWeights& weights,
+                                  const TpPartition& partition,
+                                  std::string* error = nullptr);
+
 /// Computes the encoded bytes of the routed tensors and of this rank's share.
 /// Fails when a down projection's share does not fall on a quantization-block
 /// boundary, since the share is taken without re-encoding any weight. This is

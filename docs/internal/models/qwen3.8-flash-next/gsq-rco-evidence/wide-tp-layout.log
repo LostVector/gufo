@@ -1,0 +1,2 @@
+PASS wide recurrent layout world=1 conv_floats=30720 state_floats=786432
+PASS wide recurrent layout world=2 conv_floats=15360 state_floats=393216

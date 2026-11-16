@@ -181,6 +181,19 @@ greedy and sampled copies. These cases require accepted lookup tokens before
 client cancellation, confirm the server observed cancellation, and replay the
 same output from the cached image prompt without prefill.
 
+The mixed GSQ-RCO Flash-Next quant has a focused native-MTP regression for an
+already running server. It checks repeated greedy output, cached versus cold
+continuation equality, actual cache reuse, and more than eight prompt-lookup
+proposals to exercise the wide TP state path:
+
+```sh
+python3 tests/functional/flash_next_mixed_quant.py \
+  http://127.0.0.1:8080 /tmp/flash-next-mixed-quant
+```
+
+The runner discovers a sole served model or accepts `--model NAME`. It retains
+requests, responses and failures; it does not start or stop the server.
+
 `generation_quality.py` validates reviewed coding responses from the sampled
 Qwen27B generation controls. It checks generated interval tests plus independent
 coverage/input-preservation cases, and retry call counts, delay caps and error behavior.
