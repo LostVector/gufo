@@ -48,7 +48,8 @@ int qfn_mmq_moe_vec(int weight_type, const void* W, const float* X_f32,
                     int n_experts, int n_expert_used, hipStream_t stream,
                     const void* W_b = nullptr, float* out_b = nullptr);
 
-// Q4_K/Q5_K/Q8_0 gate/up for 1–8 tokens, with the SwiGLU result in out.
+// Q4_K/Q5_K/Q8_0/IQ2_S/IQ3_XXS/IQ3_S/IQ4_XS gate/up for 1–8 tokens,
+// with the SwiGLU result in out.
 // Q4_K also accepts up to 64 independent rows, grouped by expert.
 int qfn_mmq_moe_gated_vec(int weight_type, const void* gate, const void* up,
                           const float* x, const int32_t* ids, float* out, int m,

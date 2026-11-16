@@ -33,3 +33,9 @@ Local packed dense verification shares weight unpacking across2–8 token
 accumulators. It retains the vendored format-specific vector dot, K traversal
 and wave reduction; Q8 and routed dispatch are unchanged. See the GSQ-RCO TP1
 quality/performance evidence under docs/internal/models/qwen3.8-flash-next/.
+
+Local IQ2_S/IQ3_XXS/IQ3_S/IQ4_XS gate/up dispatch instantiates the existing
+fused scalar and grouped2–8-token kernels. Format-specific dots and SwiGLU
+retain their arithmetic; wider IQ batches use the previous path. This changes
+no vendoring pin or public extension API. See gsq-rco-tp1-routed.md in the
+model internal documentation for exact arithmetic and model qualification.

@@ -1025,38 +1025,79 @@ void mul_mat_vec_moe_gated(const void* gate, const void* up, ggml_type type,
     group_moe_slots<<<1, (anchors + 31) / 32 * 32, 0, stream>>>(
         ids, groups, tokens, experts_used,
         type == GGML_TYPE_Q4_K && tokens >= 3);
-    if (type == GGML_TYPE_Q4_K) {
-      launch_moe_grouped<GGML_TYPE_Q4_K>(gate, up, input, groups, output, k,
-                                         rows, tokens, experts_used,
-                                         input_stride, stream);
-    } else if (type == GGML_TYPE_Q8_0) {
-      launch_moe_grouped<GGML_TYPE_Q8_0>(gate, up, input, groups, output, k,
-                                         rows, tokens, experts_used,
-                                         input_stride, stream);
-    } else {
-      GGML_ASSERT(type == GGML_TYPE_Q5_K);
-      launch_moe_grouped<GGML_TYPE_Q5_K>(gate, up, input, groups, output, k,
-                                         rows, tokens, experts_used,
-                                         input_stride, stream);
+    switch (type) {
+      case GGML_TYPE_Q4_K:
+        launch_moe_grouped<GGML_TYPE_Q4_K>(gate, up, input, groups, output, k,
+            rows, tokens, experts_used, input_stride, stream);
+        break;
+      case GGML_TYPE_Q5_K:
+        launch_moe_grouped<GGML_TYPE_Q5_K>(gate, up, input, groups, output, k,
+            rows, tokens, experts_used, input_stride, stream);
+        break;
+      case GGML_TYPE_Q8_0:
+        launch_moe_grouped<GGML_TYPE_Q8_0>(gate, up, input, groups, output, k,
+            rows, tokens, experts_used, input_stride, stream);
+        break;
+      case GGML_TYPE_IQ2_S:
+        launch_moe_grouped<GGML_TYPE_IQ2_S>(gate, up, input, groups, output, k,
+            rows, tokens, experts_used, input_stride, stream);
+        break;
+      case GGML_TYPE_IQ3_XXS:
+        launch_moe_grouped<GGML_TYPE_IQ3_XXS>(gate, up, input, groups, output, k,
+            rows, tokens, experts_used, input_stride, stream);
+        break;
+      case GGML_TYPE_IQ3_S:
+        launch_moe_grouped<GGML_TYPE_IQ3_S>(gate, up, input, groups, output, k,
+            rows, tokens, experts_used, input_stride, stream);
+        break;
+      case GGML_TYPE_IQ4_XS:
+        launch_moe_grouped<GGML_TYPE_IQ4_XS>(gate, up, input, groups, output, k,
+            rows, tokens, experts_used, input_stride, stream);
+        break;
+      default: GGML_ABORT("unsupported gated vector weight format");
     }
     return;
   }
   const int row_stride = k / ggml_blck_size(type);
   const dim3 grid((rows + 1) / 2, experts_used);
   const dim3 block(32, 2);
-  if (type == GGML_TYPE_Q4_K) {
-    mul_mat_vec_q_moe<GGML_TYPE_Q4_K, 2, true><<<grid, block, 0, stream>>>(
-        gate, input, ids, output, k, rows, row_stride, input_stride,
-        rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
-  } else if (type == GGML_TYPE_Q8_0) {
-    mul_mat_vec_q_moe<GGML_TYPE_Q8_0, 2, true><<<grid, block, 0, stream>>>(
-        gate, input, ids, output, k, rows, row_stride, input_stride,
-        rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
-  } else {
-    GGML_ASSERT(type == GGML_TYPE_Q5_K);
-    mul_mat_vec_q_moe<GGML_TYPE_Q5_K, 2, true><<<grid, block, 0, stream>>>(
-        gate, input, ids, output, k, rows, row_stride, input_stride,
-        rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
+  switch (type) {
+    case GGML_TYPE_Q4_K:
+      mul_mat_vec_q_moe<GGML_TYPE_Q4_K, 2, true><<<grid, block, 0, stream>>>(
+          gate, input, ids, output, k, rows, row_stride, input_stride,
+          rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
+      break;
+    case GGML_TYPE_Q5_K:
+      mul_mat_vec_q_moe<GGML_TYPE_Q5_K, 2, true><<<grid, block, 0, stream>>>(
+          gate, input, ids, output, k, rows, row_stride, input_stride,
+          rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
+      break;
+    case GGML_TYPE_Q8_0:
+      mul_mat_vec_q_moe<GGML_TYPE_Q8_0, 2, true><<<grid, block, 0, stream>>>(
+          gate, input, ids, output, k, rows, row_stride, input_stride,
+          rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
+      break;
+    case GGML_TYPE_IQ2_S:
+      mul_mat_vec_q_moe<GGML_TYPE_IQ2_S, 2, true><<<grid, block, 0, stream>>>(
+          gate, input, ids, output, k, rows, row_stride, input_stride,
+          rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
+      break;
+    case GGML_TYPE_IQ3_XXS:
+      mul_mat_vec_q_moe<GGML_TYPE_IQ3_XXS, 2, true><<<grid, block, 0, stream>>>(
+          gate, input, ids, output, k, rows, row_stride, input_stride,
+          rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
+      break;
+    case GGML_TYPE_IQ3_S:
+      mul_mat_vec_q_moe<GGML_TYPE_IQ3_S, 2, true><<<grid, block, 0, stream>>>(
+          gate, input, ids, output, k, rows, row_stride, input_stride,
+          rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
+      break;
+    case GGML_TYPE_IQ4_XS:
+      mul_mat_vec_q_moe<GGML_TYPE_IQ4_XS, 2, true><<<grid, block, 0, stream>>>(
+          gate, input, ids, output, k, rows, row_stride, input_stride,
+          rows * experts_used, rows * row_stride, rows, 1, experts_used, up);
+      break;
+    default: GGML_ABORT("unsupported gated vector weight format");
   }
 }
 

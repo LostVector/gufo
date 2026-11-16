@@ -1509,3 +1509,7 @@ Mixed GSQ-RCO IQ3_S: packed arithmetic, real-weight checks, BF16/MMQ chunk invar
 ## GSQ-RCO TP1 dense verification (November15,2026)
 
 Mixed dense token sharing retains312 operator cases,6470425 bitwise real-head floats,17 pilot responses,24 paired response/work identities,and cached/cold continuations with110 accepted copied tokens. No tolerance widened. [Contracts and limits](gsq-rco-tp1.md).
+
+## GSQ-RCO TP1 routed fusion (November15,2026)
+
+Four hundred new exact fused gate/up cases cover all verification widths,routing,prequantized inputs,finite sanitation and guards. All17 pilot and72 confirmation outputs/work match;cache/lookup and C2/C4 replay pass. These fusion comparisons retain the old GPU arithmetic;existing independent packed-dot CPU references remain. [Limits and evidence](gsq-rco-tp1-routed.md).

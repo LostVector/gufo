@@ -1,0 +1,68 @@
+{
+  "scope": "One paired C2/C4 pilot, no speed significance claim; adaptive batching may change draft work.",
+  "requests": [
+    {
+      "label": "warm",
+      "same_output": true,
+      "base_tps": 62.36626030533021,
+      "candidate_tps": 64.62393543703725,
+      "base_wall_ms": 852.450216,
+      "candidate_wall_ms": 835.415951,
+      "work_changes": {}
+    },
+    {
+      "label": "c2-0",
+      "same_output": true,
+      "base_tps": 33.627580123899214,
+      "candidate_tps": 34.930140421398576,
+      "base_wall_ms": 3457.384752,
+      "candidate_wall_ms": 3418.02155,
+      "work_changes": {}
+    },
+    {
+      "label": "c2-1",
+      "same_output": true,
+      "base_tps": 33.2149679890227,
+      "candidate_tps": 34.269546415519514,
+      "base_wall_ms": 3492.126371,
+      "candidate_wall_ms": 3452.923915,
+      "work_changes": {}
+    },
+    {
+      "label": "c4-0",
+      "same_output": true,
+      "base_tps": 18.910551229992837,
+      "candidate_tps": 19.457698372103405,
+      "base_wall_ms": 6269.654366,
+      "candidate_wall_ms": 6399.063456,
+      "work_changes": {}
+    },
+    {
+      "label": "c4-1",
+      "same_output": true,
+      "base_tps": 18.704531475919325,
+      "candidate_tps": 18.660374523665002,
+      "base_wall_ms": 6424.049575,
+      "candidate_wall_ms": 6346.135387,
+      "work_changes": {}
+    },
+    {
+      "label": "c4-2",
+      "same_output": true,
+      "base_tps": 17.100456981176436,
+      "candidate_tps": 17.23978664881919,
+      "base_wall_ms": 6807.334602,
+      "candidate_wall_ms": 6769.528204,
+      "work_changes": {}
+    },
+    {
+      "label": "c4-3",
+      "same_output": true,
+      "base_tps": 19.275208292990676,
+      "candidate_tps": 19.144444121153725,
+      "base_wall_ms": 6423.920418,
+      "candidate_wall_ms": 6346.304021,
+      "work_changes": {}
+    }
+  ]
+}

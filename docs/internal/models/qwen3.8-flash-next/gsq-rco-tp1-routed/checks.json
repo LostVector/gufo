@@ -1,0 +1,28 @@
+{
+  "operator": {
+    "state": {
+      "rc": 0,
+      "seconds": 5.274385254946537,
+      "service_left_stopped": true
+    },
+    "cases": 712,
+    "new_fusion_cases": 400
+  },
+  "build": {
+    "rc": 0,
+    "seconds": 126.15159049100475
+  },
+  "production_binary_identical_to_timed_candidate": true,
+  "format_changed_files": "pass",
+  "format_repository": "fails only the seven untouched pre-existing files recorded in README",
+  "docs": "pass",
+  "generated_infrastructure": "pass",
+  "diff_check": "pass",
+  "cache": {
+    "prefix_repeat_equal": true,
+    "cached_cold_copy_equal": true,
+    "lookup_proposed": 110,
+    "lookup_accepted": 110
+  },
+  "source_only": "No API declarations,driver,boot,ROCm or system changes; no public service restart."
+}
