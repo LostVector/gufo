@@ -1,0 +1,426 @@
+{
+  "complete_blocks": 8,
+  "blocks": [
+    {
+      "block": 1,
+      "order": [
+        "base",
+        "gated",
+        "sorted"
+      ],
+      "variants": {
+        "base": {
+          "ms": 7317.834894000001,
+          "tps": 52.474537286274,
+          "cases": {
+            "prose": 55.409241345299215,
+            "explain": 53.900653749491205,
+            "code": 48.61353362751291
+          }
+        },
+        "gated": {
+          "ms": 7067.411716,
+          "tps": 54.33389413703714,
+          "cases": {
+            "prose": 57.222708469207085,
+            "explain": 56.068913597336774,
+            "code": 50.24272383529032
+          }
+        },
+        "sorted": {
+          "ms": 7047.733792999999,
+          "tps": 54.485599382513456,
+          "cases": {
+            "prose": 57.56310947246928,
+            "explain": 56.18973672685161,
+            "code": 50.273137629034146
+          }
+        }
+      }
+    },
+    {
+      "block": 2,
+      "order": [
+        "base",
+        "sorted",
+        "gated"
+      ],
+      "variants": {
+        "base": {
+          "ms": 7277.4710620000005,
+          "tps": 52.765582539392305,
+          "cases": {
+            "prose": 56.05736935003664,
+            "explain": 54.33691459220864,
+            "code": 48.51382752141331
+          }
+        },
+        "sorted": {
+          "ms": 7051.688966,
+          "tps": 54.45503933192053,
+          "cases": {
+            "prose": 57.516725978498656,
+            "explain": 55.99558321188493,
+            "code": 50.38666286164958
+          }
+        },
+        "gated": {
+          "ms": 7069.863915999999,
+          "tps": 54.31504828982058,
+          "cases": {
+            "prose": 57.39416304581278,
+            "explain": 55.93349661419273,
+            "code": 50.17168051371863
+          }
+        }
+      }
+    },
+    {
+      "block": 3,
+      "order": [
+        "gated",
+        "base",
+        "sorted"
+      ],
+      "variants": {
+        "gated": {
+          "ms": 7049.565084,
+          "tps": 54.47144546144317,
+          "cases": {
+            "prose": 57.6009702077018,
+            "explain": 56.34823141509712,
+            "code": 50.08232881439202
+          }
+        },
+        "base": {
+          "ms": 7324.21082,
+          "tps": 52.42885676521255,
+          "cases": {
+            "prose": 55.50230843792016,
+            "explain": 53.9146713094275,
+            "code": 48.413721172970725
+          }
+        },
+        "sorted": {
+          "ms": 7050.972501,
+          "tps": 54.460572629596754,
+          "cases": {
+            "prose": 58.025767770156214,
+            "explain": 55.66727518623701,
+            "code": 50.28126250125255
+          }
+        }
+      }
+    },
+    {
+      "block": 4,
+      "order": [
+        "gated",
+        "sorted",
+        "base"
+      ],
+      "variants": {
+        "gated": {
+          "ms": 7071.038164,
+          "tps": 54.3060284916884,
+          "cases": {
+            "prose": 57.17900507170493,
+            "explain": 56.16071391457408,
+            "code": 50.131576569571266
+          }
+        },
+        "sorted": {
+          "ms": 7060.9197970000005,
+          "tps": 54.383849560669354,
+          "cases": {
+            "prose": 57.23732238629478,
+            "explain": 56.241052751520385,
+            "code": 50.22169829220192
+          }
+        },
+        "base": {
+          "ms": 7305.100440999999,
+          "tps": 52.56601235005525,
+          "cases": {
+            "prose": 55.44049909851932,
+            "explain": 54.257469822235855,
+            "code": 48.536386295086075
+          }
+        }
+      }
+    },
+    {
+      "block": 5,
+      "order": [
+        "sorted",
+        "base",
+        "gated"
+      ],
+      "variants": {
+        "sorted": {
+          "ms": 7077.401661,
+          "tps": 54.25720036719561,
+          "cases": {
+            "prose": 57.198277447599224,
+            "explain": 55.920169355316325,
+            "code": 50.18437462832321
+          }
+        },
+        "base": {
+          "ms": 7300.215270999999,
+          "tps": 52.601188560210616,
+          "cases": {
+            "prose": 56.104608943919565,
+            "explain": 53.74583128962364,
+            "code": 48.53664445690614
+          }
+        },
+        "gated": {
+          "ms": 7098.370627999999,
+          "tps": 54.09692169147751,
+          "cases": {
+            "prose": 57.002949891523514,
+            "explain": 55.66118734691521,
+            "code": 50.13227771592554
+          }
+        }
+      }
+    },
+    {
+      "block": 6,
+      "order": [
+        "sorted",
+        "gated",
+        "base"
+      ],
+      "variants": {
+        "sorted": {
+          "ms": 7067.973279,
+          "tps": 54.329577212879556,
+          "cases": {
+            "prose": 57.20839211428582,
+            "explain": 56.1476055664766,
+            "code": 50.17966869579396
+          }
+        },
+        "gated": {
+          "ms": 7078.145450999999,
+          "tps": 54.251498878954024,
+          "cases": {
+            "prose": 57.0902256892809,
+            "explain": 56.005243998516896,
+            "code": 50.1846613028446
+          }
+        },
+        "base": {
+          "ms": 7317.937743999999,
+          "tps": 52.47379978257438,
+          "cases": {
+            "prose": 55.455828597651795,
+            "explain": 54.09686182832413,
+            "code": 48.41757246964182
+          }
+        }
+      }
+    },
+    {
+      "block": 7,
+      "order": [
+        "base",
+        "gated",
+        "sorted"
+      ],
+      "variants": {
+        "base": {
+          "ms": 7297.884341999999,
+          "tps": 52.617989269855165,
+          "cases": {
+            "prose": 55.93030674439716,
+            "explain": 54.06983719479933,
+            "code": 48.447904846982574
+          }
+        },
+        "gated": {
+          "ms": 7072.457552000001,
+          "tps": 54.29512968818168,
+          "cases": {
+            "prose": 57.09995506612715,
+            "explain": 56.05365868203435,
+            "code": 50.25030353391599
+          }
+        },
+        "sorted": {
+          "ms": 7066.10894,
+          "tps": 54.343911657835264,
+          "cases": {
+            "prose": 57.366842059317555,
+            "explain": 56.02723236194781,
+            "code": 50.19112690939918
+          }
+        }
+      }
+    },
+    {
+      "block": 8,
+      "order": [
+        "sorted",
+        "gated",
+        "base"
+      ],
+      "variants": {
+        "sorted": {
+          "ms": 7091.290858,
+          "tps": 54.15093072466384,
+          "cases": {
+            "prose": 56.928905532277795,
+            "explain": 55.896696637197344,
+            "code": 50.13839189137201
+          }
+        },
+        "gated": {
+          "ms": 7074.939901999999,
+          "tps": 54.27607941820791,
+          "cases": {
+            "prose": 57.19082847787332,
+            "explain": 55.922891671507905,
+            "code": 50.236407490385425
+          }
+        },
+        "base": {
+          "ms": 7307.314752,
+          "tps": 52.550083448218764,
+          "cases": {
+            "prose": 55.86153958743721,
+            "explain": 53.90104918830191,
+            "code": 48.4625786633171
+          }
+        }
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "base": "base",
+      "candidate": "gated",
+      "geometric_gain_pct": 3.298171691316555,
+      "bootstrap95_marginal_pct": [
+        3.089946733487391,
+        3.521400879325085
+      ],
+      "exact_sign_flip_p": 0.0078125,
+      "pair_gains_pct": [
+        3.5433506361751244,
+        2.936508375078617,
+        3.8959245389953,
+        3.3101543446852677,
+        2.8435348557852125,
+        3.3877841965810562,
+        3.1873897912084503,
+        3.284478076404751
+      ],
+      "base_tps_median": 52.55804789913701,
+      "candidate_tps_median": 54.30057908993504,
+      "holm_p": 0.0234375
+    },
+    {
+      "base": "gated",
+      "candidate": "sorted",
+      "geometric_gain_pct": 0.11983211759951952,
+      "bootstrap95_marginal_pct": [
+        -0.004373442492813326,
+        0.2236654567980729
+      ],
+      "exact_sign_flip_p": 0.09375,
+      "pair_gains_pct": [
+        0.27920922636925916,
+        0.2577389627879345,
+        -0.019960608267888258,
+        0.14330097623114213,
+        0.2962805843781391,
+        0.14391921981684597,
+        0.08984594002028334,
+        -0.23057799105159482
+      ],
+      "base_tps_median": 54.30057908993504,
+      "candidate_tps_median": 54.363880609252305,
+      "holm_p": 0.09375
+    },
+    {
+      "base": "base",
+      "candidate": "sorted",
+      "geometric_gain_pct": 3.4219560778958464,
+      "bootstrap95_marginal_pct": [
+        3.228110055091174,
+        3.6315828354447826
+      ],
+      "exact_sign_flip_p": 0.0078125,
+      "pair_gains_pct": [
+        3.8324532244431886,
+        3.2018158640946703,
+        3.8751862804917714,
+        3.4581988044070977,
+        3.148240281851078,
+        3.5365790889827053,
+        3.2800994715487475,
+        3.0463268017880463
+      ],
+      "base_tps_median": 52.55804789913701,
+      "candidate_tps_median": 54.363880609252305,
+      "holm_p": 0.0234375
+    }
+  ],
+  "plan": {
+    "orders": [
+      [
+        "base",
+        "gated",
+        "sorted"
+      ],
+      [
+        "base",
+        "sorted",
+        "gated"
+      ],
+      [
+        "gated",
+        "base",
+        "sorted"
+      ],
+      [
+        "gated",
+        "sorted",
+        "base"
+      ],
+      [
+        "sorted",
+        "base",
+        "gated"
+      ],
+      [
+        "sorted",
+        "gated",
+        "base"
+      ],
+      [
+        "base",
+        "gated",
+        "sorted"
+      ],
+      [
+        "sorted",
+        "gated",
+        "base"
+      ]
+    ],
+    "blocks": 8,
+    "primary": "384 tokens / summed engine decode ms; one process per variant per block",
+    "comparisons": [
+      "gated vs base",
+      "sorted vs gated",
+      "sorted vs base"
+    ],
+    "no_optional_stopping": true,
+    "multiplicity": "Holm adjustment over all three comparisons"
+  },
+  "scope": "TP1 native MTP C1,4 configured slots,262144 capacity; fixed short prompts,128 output tokens per prompt. One 384-token process cycle is one observation. All outputs and algorithmic work matched. No trace. Confidence intervals marginal; three p-values Holm adjusted. Exploratory same-day hardware study."
+}

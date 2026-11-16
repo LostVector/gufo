@@ -720,3 +720,7 @@ Retained for compatibility/correctness: native mixed IQ/Q2 projections, determin
 ## GSQ-RCO TP1 dense verification (November15,2026)
 
 Retain sharing packed dense weights across verification tokens forQ4_K/Q5_K/Q6_K/IQ4_NL/IQ4_XS: combined eight-pair TP1 study confirms+8.81%. Q6-only six-pair study remains inconclusive; four-row tiles and the unqualified HC vector-load prototype stay out. [All evidence](gsq-rco-tp1.md).
+
+## GSQ-RCO TP1 routed fusion (November15,2026)
+
+Retain existing fused/grouped kernels for IQ2_S/IQ3_XXS/IQ3_S/IQ4_XS at1..8tokens:confirmed+3.298% TP1 C1. Keep down-view IQ4_NL/Q2_0 expert ordering out:incremental+0.120%,95%interval crosses0,p=.09375,so direction is inconclusive rather than below an arbitrary size cutoff. [All observations](gsq-rco-tp1-routed.md).

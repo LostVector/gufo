@@ -1,0 +1,2931 @@
+{
+  "base": {
+    "decode": {
+      "request_wall_ms": 2762.040154,
+      "kernel_launches": 88010,
+      "kernel_active_union_ms": 2509.480573,
+      "kernel_free_wall_ms": 252.559581,
+      "largest_kernel_free_gap_ms": 2.974282,
+      "families": {
+        "quantize_q8_1(": {
+          "launches": 17003,
+          "summed_gpu_ms": 22.339011
+        },
+        "SwigluKernel(": {
+          "launches": 4031,
+          "summed_gpu_ms": 5.89842
+        },
+        "mul_mat_vec_q_moe<": {
+          "launches": 6204,
+          "summed_gpu_ms": 918.497997
+        },
+        "mul_mat_vec_moe_grouped<": {
+          "launches": 30,
+          "summed_gpu_ms": 7.707213
+        },
+        "group_moe_slots(": {
+          "launches": 30,
+          "summed_gpu_ms": 0.081917
+        }
+      },
+      "kernels": {
+        "__amd_rocclr_fillBufferAligned": {
+          "launches": 421,
+          "summed_gpu_ms": 0.947289
+        },
+        "__amd_rocclr_copyBuffer": {
+          "launches": 1128,
+          "summed_gpu_ms": 2.173378
+        },
+        "void gufo::models::qwen38_flash_next::rocm::DenseF16GEMMKernel<64, 128, 2, 2, 4, 1, false, false, false, false, true, false, false>(void const*, __half const*, float*, unsigned long, unsigned long, unsigned long, __half const*, __half*, void*, float const*, float*, gufo::models::qwen38_flash_next::rocm::AttentionProjectionOutput, gufo::models::qwen38_flash_next::rocm::PassCheckpoints, unsigned long, unsigned int, unsigned int)": {
+          "launches": 290,
+          "summed_gpu_ms": 38.442948
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixEpilogueVec4Kernel<float>(float const*, float const*, float const*, float*, float*, unsigned int)": {
+          "launches": 96,
+          "summed_gpu_ms": 1.695354
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 47,
+          "summed_gpu_ms": 1.796385
+        },
+        "qfn_mmq::qfn_mmq_sanitize_f32_kernel(float*, unsigned long)": {
+          "launches": 299,
+          "summed_gpu_ms": 1.131609
+        },
+        "qfn_mmq::mm_ids_bounds_kernel(int*, int*, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 1.101003
+        },
+        "void qfn_mmq::quantize_mmq_q8_1<(qfn_mmq::mmq_q8_1_ds_layout)0>(float const*, int const*, void*, long, long, long, long, long, int, int)": {
+          "launches": 361,
+          "summed_gpu_ms": 2.848988
+        },
+        "qfn_mmq::mm_ids_scatter_kernel(int const*, int const*, int const*, int const*, int*, int*, int, int, int, int, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 0.222554
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 39,
+          "summed_gpu_ms": 51.729188
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MoeEpilogueVec4Kernel<float>(float const*, float const*, float const*, float const*, unsigned int, float*, unsigned int, unsigned int)": {
+          "launches": 48,
+          "summed_gpu_ms": 2.223614
+        },
+        "qfn_mmq::mm_ids_rank_kernel(int const*, int*, int*, int, int, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 0.436985
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::NarrowKernel<hip_bfloat16>(float const*, hip_bfloat16*, unsigned long)": {
+          "launches": 289,
+          "summed_gpu_ms": 1.954422
+        },
+        "qfn_mmq::qfn_mmq_clear_inactive(int const*, float*, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 0.272029
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)42, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 9,
+          "summed_gpu_ms": 10.422529
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)21, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 20,
+          "summed_gpu_ms": 26.066066
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SwigluHalfKernel(float const*, float const*, __half*, unsigned long)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.00192
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixEpilogueKernel<4u>(float const*, float const*, float const*, float*, float*, unsigned int, unsigned int, void*)": {
+          "launches": 4147,
+          "summed_gpu_ms": 13.675069
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 1u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 54,
+          "summed_gpu_ms": 0.356471
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineVec4Kernel<float, false, false>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, float, float*, float const*, float*)": {
+          "launches": 96,
+          "summed_gpu_ms": 3.145471
+        },
+        "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)": {
+          "launches": 17003,
+          "summed_gpu_ms": 22.339011
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SiluScaleKernel(float*, float, unsigned long)": {
+          "launches": 4161,
+          "summed_gpu_ms": 4.427778
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)23, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 2.038699
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RouterTopKKernel<512u>(float const*, unsigned int, int*, float*, unsigned int, unsigned int)": {
+          "launches": 2098,
+          "summed_gpu_ms": 9.074797
+        },
+        "void qfn_mmq::quantize_mmq_q8_1<(qfn_mmq::mmq_q8_1_ds_layout)1>(float const*, int const*, void*, long, long, long, long, long, int, int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.311555
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::StoreRowsKernel(float const*, float*, unsigned int, unsigned int const*, unsigned int)": {
+          "launches": 590,
+          "summed_gpu_ms": 0.863456
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::StoreKvKernel(float const*, __half*, unsigned int, unsigned int const*)": {
+          "launches": 1008,
+          "summed_gpu_ms": 1.352327
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RopeKernel<false>(float*, unsigned int, unsigned int, unsigned int, unsigned int const*, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 1008,
+          "summed_gpu_ms": 1.731198
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::UnpackQGateKernel(float const*, unsigned int, float*, float*, float*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 504,
+          "summed_gpu_ms": 5.29704
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)18, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 34,
+          "summed_gpu_ms": 43.890138
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HistoryShiftKernel(float const*, unsigned int, float const*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 115,
+          "summed_gpu_ms": 0.232153
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)13, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 35,
+          "summed_gpu_ms": 6.645045
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SwigluKernel(float*, float const*, unsigned long)": {
+          "launches": 4031,
+          "summed_gpu_ms": 5.89842
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)14, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 128,
+          "summed_gpu_ms": 32.020124
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::CopyKernel(float const*, float*, unsigned long)": {
+          "launches": 78,
+          "summed_gpu_ms": 0.119632
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::WmmaCausalAttentionKernel<16u, 16u, false, false, 2u>(float const*, float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 24,
+          "summed_gpu_ms": 0.963533
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)12, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 47,
+          "summed_gpu_ms": 5.379322
+        },
+        "gufo::models::qwen38_flash_next::rocm::ExpertCountsKernel(int const*, unsigned int*, unsigned long)": {
+          "launches": 48,
+          "summed_gpu_ms": 0.063357
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnPrefillKernel<(gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnOutput)0>(float const*, float const*, float const*, float const*, float const*, unsigned int, float const*, float*, float*, void*, __half*, void*, unsigned int, unsigned int, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnCheckpoint)": {
+          "launches": 36,
+          "summed_gpu_ms": 4.166867
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SsmConv4Kernel<false, false>(float const*, unsigned int, float const*, float*, float*, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::RollbackRows, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.584781
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)23, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 42,
+          "summed_gpu_ms": 4.355669
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)22, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 40,
+          "summed_gpu_ms": 56.733309
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormKernel(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 1008,
+          "summed_gpu_ms": 1.915344
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormCachedKernel<10u>(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 507,
+          "summed_gpu_ms": 1.122039
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 1u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.062718
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::EmbedKernel(void const*, gufo::models::qwen38_flash_next::rocm::WeightType, int const*, float*, unsigned int, unsigned int)": {
+          "launches": 128,
+          "summed_gpu_ms": 0.800928
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleGateKernel(float const*, float const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.185076
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleConvKernel(float const*, float const*, float const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.225676
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleInjectKernel(float*, float const*, float const*, unsigned long)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.099477
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)14, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 166,
+          "summed_gpu_ms": 79.592834
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormCachedKernel<40u>(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 86,
+          "summed_gpu_ms": 0.257513
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<2, false, true>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 4,
+          "summed_gpu_ms": 0.698578
+        },
+        "void qfn_mmq::mul_mat_vec_q8<3, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 15,
+          "summed_gpu_ms": 0.535386
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PrepareAttentionKernel<4u, false>(float const*, unsigned int, float const*, float const*, float*, float*, __half*, __half*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, float, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.00428
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 3u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1173,
+          "summed_gpu_ms": 38.018472
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpAddEmbeddingVec4Kernel(HIP_vector_type<float, 4u> const*, HIP_vector_type<float, 4u>*, unsigned int, unsigned int)": {
+          "launches": 86,
+          "summed_gpu_ms": 0.128075
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<8, true>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.096037
+        },
+        "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)": {
+          "launches": 226,
+          "summed_gpu_ms": 3.599976
+        },
+        "void gufo::models::qwen38_flash_next::rocm::DenseF16GEMMKernel<256, 128, 1, 4, 2, 1, false, false, false, false, false, false, false>(void const*, __half const*, float*, unsigned long, unsigned long, unsigned long, __half const*, __half*, void*, float const*, float*, gufo::models::qwen38_flash_next::rocm::AttentionProjectionOutput, gufo::models::qwen38_flash_next::rocm::PassCheckpoints, unsigned long, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.034319
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<1, true, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 3,
+          "summed_gpu_ms": 0.098717
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<3, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 3,
+          "summed_gpu_ms": 0.041599
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 8u, true, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.059598
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpHiddenVec4Kernel(HIP_vector_type<float, 4u> const*, HIP_vector_type<float, 4u> const*, int const*, HIP_vector_type<float, 4u>*, unsigned int)": {
+          "launches": 85,
+          "summed_gpu_ms": 0.202154
+        },
+        "void qfn_mmq::mul_mat_vec_q8<1, false, 1, false, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 342,
+          "summed_gpu_ms": 17.180553
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<1, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 134,
+          "summed_gpu_ms": 2.345811
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixQ8FusedKernel<1>(gufo::models::qwen38_flash_next::rocm::HcFusedMix, gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcFusedState*)": {
+          "launches": 52,
+          "summed_gpu_ms": 2.270091
+        },
+        "gufo::models::qwen38_flash_next::rocm::RemapDraftIdsKernel(unsigned int*, unsigned int, unsigned int, int const*, unsigned int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.08664
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpCandidateTileKernel<64u>(float const*, unsigned int const*, unsigned int*, float*, unsigned int, unsigned int)": {
+          "launches": 246,
+          "summed_gpu_ms": 2.310251
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)8, 4, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 82,
+          "summed_gpu_ms": 7.922608
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SiluScaleQ8Kernel(float*, float, unsigned long, unsigned int, unsigned int, void*)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.171395
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionKernel<2u>(float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, float*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, unsigned int const*, unsigned int, unsigned int)": {
+          "launches": 348,
+          "summed_gpu_ms": 5.483982
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PrepareAttentionKernel<1u, false>(float const*, unsigned int, float const*, float const*, float*, float*, __half*, __half*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, float, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 85,
+          "summed_gpu_ms": 0.317474
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MoeEpilogueKernel(float const*, float const*, float const*, float const*, unsigned int, float*, unsigned int, unsigned int)": {
+          "launches": 2050,
+          "summed_gpu_ms": 4.884456
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)8, 2, true, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 52,
+          "summed_gpu_ms": 8.439795
+        },
+        "void qfn_mmq::mul_mat_vec_q8<1, true, 1, false, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 52,
+          "summed_gpu_ms": 0.924697
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionMergeKernel(float const*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 574,
+          "summed_gpu_ms": 1.938144
+        },
+        "void qfn_mmq::mul_mat_vec_q8<4, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 57,
+          "summed_gpu_ms": 2.118858
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SigmoidMulQ8Kernel(float*, float const*, unsigned long, void*)": {
+          "launches": 72,
+          "summed_gpu_ms": 0.110077
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)1, 1u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 52,
+          "summed_gpu_ms": 0.749743
+        },
+        "qfn_mmq::quantize_q8_1_by_expert(float const*, int const*, void*, int*, int*, long, long, long, int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.140995
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)": {
+          "launches": 4018,
+          "summed_gpu_ms": 27.288198
+        },
+        "gufo::models::qwen38_flash_next::rocm::MaskDraftLogitsKernel(float*, int const*, unsigned int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.138032
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 47,
+          "summed_gpu_ms": 0.454985
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 5u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 197,
+          "summed_gpu_ms": 7.476023
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)20, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 1599,
+          "summed_gpu_ms": 194.572028
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)23, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 82,
+          "summed_gpu_ms": 9.09977
+        },
+        "void qfn_mmq::mul_mat_vec_q8<5, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 7,
+          "summed_gpu_ms": 0.509068
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 35,
+          "summed_gpu_ms": 2.976195
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionKernel<4u>(float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, float*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, unsigned int const*, unsigned int, unsigned int)": {
+          "launches": 226,
+          "summed_gpu_ms": 5.22937
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 129,
+          "summed_gpu_ms": 9.57943
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 47,
+          "summed_gpu_ms": 1.317679
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnKernel<false>(float const*, float const*, float const*, float const*, float const*, float const*, float*, float*, gufo::models::qwen38_flash_next::rocm::RollbackRows, unsigned int, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int, gufo::models::qwen38_flash_next::rocm::GdnCheckpoint)": {
+          "launches": 1476,
+          "summed_gpu_ms": 46.655642
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 5u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 97,
+          "summed_gpu_ms": 4.89214
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)21, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 820,
+          "summed_gpu_ms": 127.433188
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnEpilogueKernel<false>(float const*, float const*, unsigned int, float const*, float*, void*, __half*, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int, void*, unsigned int)": {
+          "launches": 1476,
+          "summed_gpu_ms": 3.937738
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SsmConv4Kernel<true, false>(float const*, unsigned int, float const*, float*, float*, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::RollbackRows, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 1476,
+          "summed_gpu_ms": 5.20033
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnPrepKernel<false>(float const*, float*, float*, unsigned int, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 1476,
+          "summed_gpu_ms": 1.953344
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)18, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 1394,
+          "summed_gpu_ms": 212.855403
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)22, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 1640,
+          "summed_gpu_ms": 247.634451
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SigmoidMulKernel(float*, float const*, unsigned long)": {
+          "launches": 502,
+          "summed_gpu_ms": 0.632428
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.992527
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)42, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 369,
+          "summed_gpu_ms": 30.94792
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RollingSnapshotKernel(float const*, unsigned int, float const*, gufo::models::qwen38_flash_next::rocm::RollbackRows, unsigned int, unsigned int, unsigned int)": {
+          "launches": 41,
+          "summed_gpu_ms": 0.28679
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::VerificationCandidateTileKernel<false>(float const*, gufo::models::qwen38_flash_next::rocm::GreedyPenaltyRows, unsigned int const*, unsigned int*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.810377
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<5, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.04376
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)1, 2u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 30,
+          "summed_gpu_ms": 0.444986
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)8, 2, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 30,
+          "summed_gpu_ms": 7.707213
+        },
+        "void qfn_mmq::mul_mat_vec_q8<2, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 143,
+          "summed_gpu_ms": 7.498189
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 1081,
+          "summed_gpu_ms": 24.264166
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 2u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 4505,
+          "summed_gpu_ms": 139.533767
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 805,
+          "summed_gpu_ms": 43.510078
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 2u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 2231,
+          "summed_gpu_ms": 80.15404
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 2967,
+          "summed_gpu_ms": 201.90573
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 1081,
+          "summed_gpu_ms": 8.383216
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 966,
+          "summed_gpu_ms": 20.49622
+        },
+        "qfn_mmq::group_moe_slots(int const*, int*, int, int, bool)": {
+          "launches": 30,
+          "summed_gpu_ms": 0.081917
+        },
+        "void qfn_mmq::mul_mat_vec_q8<2, true, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 30,
+          "summed_gpu_ms": 0.549939
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::VerificationCandidateTileKernel<true>(float const*, gufo::models::qwen38_flash_next::rocm::GreedyPenaltyRows, unsigned int const*, unsigned int*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 41,
+          "summed_gpu_ms": 3.959122
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GatherVerificationCandidatesKernel(float const*, gufo::models::qwen38_flash_next::rocm::GreedyPenaltyRows, unsigned int const*, gufo::sampling::LogitCandidate*, unsigned int, unsigned int)": {
+          "launches": 41,
+          "summed_gpu_ms": 0.063555
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<2, true, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 5,
+          "summed_gpu_ms": 0.266032
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixQ8FusedKernel<2>(gufo::models::qwen38_flash_next::rocm::HcFusedMix, gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcFusedState*)": {
+          "launches": 30,
+          "summed_gpu_ms": 1.377238
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RestoreGdnStateKernel(float*, gufo::models::qwen38_flash_next::rocm::RollbackRows, unsigned int, unsigned int, unsigned int)": {
+          "launches": 504,
+          "summed_gpu_ms": 16.06051
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<2, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 20,
+          "summed_gpu_ms": 0.38235
+        },
+        "void qfn_mmq::mul_mat_vec_q8<8, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 41,
+          "summed_gpu_ms": 1.490597
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 8u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 582,
+          "summed_gpu_ms": 37.342838
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 282,
+          "summed_gpu_ms": 9.937899
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 252,
+          "summed_gpu_ms": 6.636919
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 210,
+          "summed_gpu_ms": 26.515339
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 8u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1175,
+          "summed_gpu_ms": 61.902241
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 774,
+          "summed_gpu_ms": 62.922703
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 282,
+          "summed_gpu_ms": 3.261704
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<2, false, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 5,
+          "summed_gpu_ms": 0.243511
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<8, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 5,
+          "summed_gpu_ms": 0.090915
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 4u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 391,
+          "summed_gpu_ms": 13.518844
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 4u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 194,
+          "summed_gpu_ms": 8.507301
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 84,
+          "summed_gpu_ms": 1.894225
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 258,
+          "summed_gpu_ms": 18.430413
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 94,
+          "summed_gpu_ms": 0.8537
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 70,
+          "summed_gpu_ms": 4.992328
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 94,
+          "summed_gpu_ms": 2.257451
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 3u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 582,
+          "summed_gpu_ms": 22.646935
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 774,
+          "summed_gpu_ms": 53.582128
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 282,
+          "summed_gpu_ms": 2.322038
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 210,
+          "summed_gpu_ms": 12.978333
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 282,
+          "summed_gpu_ms": 6.411364
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 252,
+          "summed_gpu_ms": 5.448716
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 7u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 194,
+          "summed_gpu_ms": 11.411141
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 7u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 391,
+          "summed_gpu_ms": 14.847838
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 258,
+          "summed_gpu_ms": 19.731894
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 94,
+          "summed_gpu_ms": 1.037451
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 70,
+          "summed_gpu_ms": 7.799168
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 94,
+          "summed_gpu_ms": 2.961147
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 84,
+          "summed_gpu_ms": 1.921181
+        },
+        "void qfn_mmq::mul_mat_vec_q8<7, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 5,
+          "summed_gpu_ms": 0.252312
+        },
+        "void qfn_mmq::mul_mat_vec_q8<6, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 7,
+          "summed_gpu_ms": 0.508663
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<6, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.045358
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 6u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 197,
+          "summed_gpu_ms": 11.14575
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<7, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.018119
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<1, false, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.040039
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<4, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.017999
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 47,
+          "summed_gpu_ms": 1.322642
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 129,
+          "summed_gpu_ms": 9.462119
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 6u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 97,
+          "summed_gpu_ms": 5.145813
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 47,
+          "summed_gpu_ms": 0.473264
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 35,
+          "summed_gpu_ms": 3.268425
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 42,
+          "summed_gpu_ms": 1.116925
+        }
+      },
+      "hip_apis": {
+        "hipMemsetAsync": {
+          "calls": 420,
+          "summed_api_ms": 2.029315
+        },
+        "hipStreamSynchronize": {
+          "calls": 913,
+          "summed_api_ms": 2061.287384
+        },
+        "hipMemcpyAsync": {
+          "calls": 823,
+          "summed_api_ms": 11.565499
+        },
+        "__hipPushCallConfiguration": {
+          "calls": 37184,
+          "summed_api_ms": 8.721555
+        },
+        "__hipPopCallConfiguration": {
+          "calls": 37184,
+          "summed_api_ms": 1.618162
+        },
+        "hipLaunchKernel": {
+          "calls": 37184,
+          "summed_api_ms": 124.293963
+        },
+        "hipGetDevice": {
+          "calls": 15716,
+          "summed_api_ms": 0.581197
+        },
+        "hipGetLastError": {
+          "calls": 16421,
+          "summed_api_ms": 0.524789
+        },
+        "hipEventRecord": {
+          "calls": 282,
+          "summed_api_ms": 0.561221
+        },
+        "hipEventSynchronize": {
+          "calls": 282,
+          "summed_api_ms": 287.942771
+        },
+        "hipHostGetDevicePointer": {
+          "calls": 452,
+          "summed_api_ms": 0.089624
+        },
+        "hipPointerGetAttribute": {
+          "calls": 452,
+          "summed_api_ms": 0.057118
+        },
+        "hipStreamBeginCapture": {
+          "calls": 18,
+          "summed_api_ms": 0.039709
+        },
+        "hipStreamEndCapture": {
+          "calls": 18,
+          "summed_api_ms": 0.104025
+        },
+        "hipGraphInstantiate": {
+          "calls": 18,
+          "summed_api_ms": 20.751545
+        },
+        "hipGraphDestroy": {
+          "calls": 18,
+          "summed_api_ms": 3.093569
+        },
+        "hipGraphLaunch": {
+          "calls": 138,
+          "summed_api_ms": 161.658941
+        },
+        "hipMemGetInfo": {
+          "calls": 7,
+          "summed_api_ms": 0.01185
+        },
+        "hipMalloc": {
+          "calls": 7,
+          "summed_api_ms": 3.202796
+        }
+      },
+      "timings": {
+        "prompt_n": 100,
+        "prompt_ms": 322.328256,
+        "prompt_per_token_ms": 3.22328256,
+        "prompt_per_second": 310.24273590212334,
+        "predicted_n": 128,
+        "predicted_ms": 2431.5618490000006,
+        "predicted_per_token_ms": 18.996576945312505,
+        "predicted_per_second": 52.64106280193573,
+        "cache_n": 0,
+        "cache_restore_ms": 0,
+        "cache_snapshot_ms": 8.065431,
+        "cache_disk_enqueue_ms": 0,
+        "draft_rounds": 41,
+        "draft_n": 104,
+        "draft_n_accepted": 87,
+        "component_cache": {
+          "schema": "component-cache-v1",
+          "reuse": "none",
+          "selection_reason": 4,
+          "deepest_live_tokens": 0,
+          "deepest_ram_tokens": 0,
+          "deepest_disk_tokens": 0,
+          "selected_tokens": 0,
+          "restored_bytes": 0,
+          "prefilled_tokens": 100,
+          "captures": 2,
+          "captured_capacity_bytes": 273940480,
+          "borrowed_capacity_bytes": 0,
+          "copied_payload_bytes": 271172672,
+          "captured_checkpoint_ids": [
+            5,
+            6
+          ],
+          "global_spill": {
+            "idle_bytes": 0,
+            "foreground_bytes": 0,
+            "idle_copy_ms": 0,
+            "foreground_copy_ms": 0,
+            "stream_wait_ms": 0,
+            "residual_wait_ms": 2.018651,
+            "reassignments": 2,
+            "idle_failures": 0
+          },
+          "global_ledger_bytes": 962654877,
+          "global_ram_bytes": 962654877,
+          "global_peak_ledger_bytes": 962707749,
+          "global_peak_ram_bytes": 962707749,
+          "global_persistence_pinned_bytes": 0,
+          "global_peak_persistence_pinned_bytes": 0,
+          "global_categories": {
+            "backing_free": {
+              "bytes": 673775616,
+              "reserved_bytes": 0,
+              "peak_bytes": 947716096
+            },
+            "backing_assigned": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            },
+            "backing_materialized": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            },
+            "private_state": {
+              "bytes": 266993664,
+              "reserved_bytes": 0,
+              "peak_bytes": 400490496
+            },
+            "private_tail": {
+              "bytes": 6946816,
+              "reserved_bytes": 0,
+              "peak_bytes": 10420224
+            },
+            "metadata": {
+              "bytes": 14938781,
+              "reserved_bytes": 0,
+              "peak_bytes": 14991653
+            },
+            "transfer_staging": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            }
+          }
+        },
+        "lookup_n": 22,
+        "lookup_n_accepted": 20
+      }
+    },
+    "prefill": {
+      "request_wall_ms": 3152.528138,
+      "kernel_launches": 6505,
+      "kernel_active_union_ms": 3108.105826,
+      "kernel_free_wall_ms": 44.422312,
+      "largest_kernel_free_gap_ms": 4.144637,
+      "families": {
+        "quantize_q8_1(": {
+          "launches": 409,
+          "summed_gpu_ms": 1.98062
+        },
+        "SwigluKernel(": {
+          "launches": 191,
+          "summed_gpu_ms": 33.186128
+        },
+        "mul_mat_vec_q_moe<": {
+          "launches": 446,
+          "summed_gpu_ms": 24.420727
+        },
+        "mul_mat_vec_moe_grouped<": {
+          "launches": 0,
+          "summed_gpu_ms": 0.0
+        },
+        "group_moe_slots(": {
+          "launches": 0,
+          "summed_gpu_ms": 0.0
+        }
+      },
+      "kernels": {
+        "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)": {
+          "launches": 272,
+          "summed_gpu_ms": 3.411902
+        },
+        "__amd_rocclr_fillBufferAligned": {
+          "launches": 701,
+          "summed_gpu_ms": 1.263246
+        },
+        "__amd_rocclr_copyBuffer": {
+          "launches": 120,
+          "summed_gpu_ms": 0.234593
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::EmbedKernel(void const*, gufo::models::qwen38_flash_next::rocm::WeightType, int const*, float*, unsigned int, unsigned int)": {
+          "launches": 4,
+          "summed_gpu_ms": 0.608341
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormCachedKernel<10u>(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 17,
+          "summed_gpu_ms": 5.148087
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::NarrowKernel<hip_bfloat16>(float const*, hip_bfloat16*, unsigned long)": {
+          "launches": 289,
+          "summed_gpu_ms": 75.448403
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixEpilogueVec4Kernel<float>(float const*, float const*, float const*, float*, float*, unsigned int)": {
+          "launches": 96,
+          "summed_gpu_ms": 103.819798
+        },
+        "void qfn_mmq::quantize_mmq_q8_1<(qfn_mmq::mmq_q8_1_ds_layout)0>(float const*, int const*, void*, long, long, long, long, long, int, int)": {
+          "launches": 361,
+          "summed_gpu_ms": 106.751043
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 47,
+          "summed_gpu_ms": 19.937879
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 48, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 17.84087
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineVec4Kernel<float, false, false>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, float, float*, float const*, float*)": {
+          "launches": 96,
+          "summed_gpu_ms": 127.170665
+        },
+        "qfn_mmq::qfn_mmq_sanitize_f32_kernel(float*, unsigned long)": {
+          "launches": 299,
+          "summed_gpu_ms": 40.645695
+        },
+        "void gufo::models::qwen38_flash_next::rocm::DenseF16GEMMKernel<64, 128, 2, 2, 4, 1, false, false, false, false, true, false, false>(void const*, __half const*, float*, unsigned long, unsigned long, unsigned long, __half const*, __half*, void*, float const*, float*, gufo::models::qwen38_flash_next::rocm::AttentionProjectionOutput, gufo::models::qwen38_flash_next::rocm::PassCheckpoints, unsigned long, unsigned int, unsigned int)": {
+          "launches": 302,
+          "summed_gpu_ms": 342.613272
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SwigluKernel(float*, float const*, unsigned long)": {
+          "launches": 191,
+          "summed_gpu_ms": 33.186128
+        },
+        "gufo::models::qwen38_flash_next::rocm::ExpertCountsKernel(int const*, unsigned int*, unsigned long)": {
+          "launches": 48,
+          "summed_gpu_ms": 0.114516
+        },
+        "void gufo::models::qwen38_flash_next::rocm::DenseF16GEMMKernel<256, 128, 1, 4, 2, 2, false, false, false, false, false, false, false>(void const*, __half const*, float*, unsigned long, unsigned long, unsigned long, __half const*, __half*, void*, float const*, float*, gufo::models::qwen38_flash_next::rocm::AttentionProjectionOutput, gufo::models::qwen38_flash_next::rocm::PassCheckpoints, unsigned long, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.244073
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixEpilogueKernel<4u>(float const*, float const*, float const*, float*, float*, unsigned int, unsigned int, void*)": {
+          "launches": 101,
+          "summed_gpu_ms": 2.262209
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 1u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 210,
+          "summed_gpu_ms": 6.542202
+        },
+        "qfn_mmq::mm_ids_rank_kernel(int const*, int*, int*, int, int, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 1.038529
+        },
+        "qfn_mmq::mm_ids_scatter_kernel(int const*, int const*, int const*, int const*, int*, int*, int, int, int, int, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 0.524702
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RouterTopKKernel<512u>(float const*, unsigned int, int*, float*, unsigned int, unsigned int)": {
+          "launches": 96,
+          "summed_gpu_ms": 3.532582
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SiluScaleKernel(float*, float, unsigned long)": {
+          "launches": 197,
+          "summed_gpu_ms": 1.218007
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::WmmaCausalAttentionKernel<4u, 16u, true, false, 2u>(float const*, float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 24,
+          "summed_gpu_ms": 6.190816
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SelectMarkKernel<256u>(unsigned int*, float const*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 60,
+          "summed_gpu_ms": 0.457584
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SelectScoreKernel(float const*, __half const*, float*, unsigned int, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 72,
+          "summed_gpu_ms": 0.340788
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RopeKernel<false>(float*, unsigned int, unsigned int, unsigned int, unsigned int const*, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 72,
+          "summed_gpu_ms": 6.873475
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::StoreRowsKernel(float const*, float*, unsigned int, unsigned int const*, unsigned int)": {
+          "launches": 26,
+          "summed_gpu_ms": 0.085916
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::StoreKvKernel(float const*, __half*, unsigned int, unsigned int const*)": {
+          "launches": 48,
+          "summed_gpu_ms": 0.826816
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::UnpackQGateKernel(float const*, unsigned int, float*, float*, float*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 24,
+          "summed_gpu_ms": 12.51131
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 37,
+          "summed_gpu_ms": 393.336566
+        },
+        "qfn_mmq::mm_ids_bounds_kernel(int*, int*, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 10.724645
+        },
+        "qfn_mmq::qfn_mmq_clear_inactive(int const*, float*, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 3.57425
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)18, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 32,
+          "summed_gpu_ms": 241.805704
+        },
+        "void qfn_mmq::quantize_mmq_q8_1<(qfn_mmq::mmq_q8_1_ds_layout)1>(float const*, int const*, void*, long, long, long, long, long, int, int)": {
+          "launches": 82,
+          "summed_gpu_ms": 11.592129
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HistoryShiftKernel(float const*, unsigned int, float const*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 75,
+          "summed_gpu_ms": 0.136679
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)13, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 35,
+          "summed_gpu_ms": 89.427666
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MoeEpilogueVec4Kernel<float>(float const*, float const*, float const*, float const*, unsigned int, float*, unsigned int, unsigned int)": {
+          "launches": 48,
+          "summed_gpu_ms": 58.334589
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)21, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 20,
+          "summed_gpu_ms": 159.053599
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)14, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 128,
+          "summed_gpu_ms": 473.900176
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::CopyKernel(float const*, float*, unsigned long)": {
+          "launches": 38,
+          "summed_gpu_ms": 0.055357
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)12, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 47,
+          "summed_gpu_ms": 65.023918
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnPrefillKernel<(gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnOutput)0>(float const*, float const*, float const*, float const*, float const*, unsigned int, float const*, float*, float*, void*, __half*, void*, unsigned int, unsigned int, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnCheckpoint)": {
+          "launches": 36,
+          "summed_gpu_ms": 79.137736
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SsmConv4Kernel<false, false>(float const*, unsigned int, float const*, float*, float*, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::RollbackRows, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 29.127779
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)23, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 42,
+          "summed_gpu_ms": 54.403547
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)22, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 36,
+          "summed_gpu_ms": 278.265941
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)42, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 8,
+          "summed_gpu_ms": 73.254664
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)14, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 131,
+          "summed_gpu_ms": 13.326409
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 1u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 99,
+          "summed_gpu_ms": 3.327303
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)23, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 13.508199
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormKernel(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 72,
+          "summed_gpu_ms": 6.987155
+        },
+        "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)": {
+          "launches": 409,
+          "summed_gpu_ms": 1.98062
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormCachedKernel<40u>(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.962571
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 4u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.0038
+        },
+        "void qfn_mmq::mul_mat_vec_q8<4, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 4,
+          "summed_gpu_ms": 0.082756
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PrepareAttentionKernel<4u, false>(float const*, unsigned int, float const*, float const*, float*, float*, __half*, __half*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, float, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.047319
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<2, false, true>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 4,
+          "summed_gpu_ms": 15.315427
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpAddEmbeddingVec4Kernel(HIP_vector_type<float, 4u> const*, HIP_vector_type<float, 4u>*, unsigned int, unsigned int)": {
+          "launches": 2,
+          "summed_gpu_ms": 1.156325
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<8, true>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 2.134457
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)22, 48, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 4,
+          "summed_gpu_ms": 28.579751
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)18, 48, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 12.14004
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PoolBlocksKernel<false>(float const*, float const*, __half*, unsigned int const*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, float, float, unsigned int, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 26,
+          "summed_gpu_ms": 0.122475
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::WmmaCausalAttentionKernel<16u, 16u, false, false, 2u>(float const*, float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 39.571943
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)42, 48, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 1,
+          "summed_gpu_ms": 7.908485
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleInjectKernel(float*, float const*, float const*, unsigned long)": {
+          "launches": 2,
+          "summed_gpu_ms": 1.600232
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleConvKernel(float const*, float const*, float const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 2,
+          "summed_gpu_ms": 1.103926
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleGateKernel(float const*, float const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 2,
+          "summed_gpu_ms": 1.936462
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SwigluHalfKernel(float const*, float const*, __half*, unsigned long)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.01992
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<1, false, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.02536
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<4, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.0082
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 8u, true, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 1.145686
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpHiddenVec4Kernel(HIP_vector_type<float, 4u> const*, HIP_vector_type<float, 4u> const*, int const*, HIP_vector_type<float, 4u>*, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.00192
+        },
+        "void qfn_mmq::mul_mat_vec_q8<1, false, 1, false, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 4,
+          "summed_gpu_ms": 0.109277
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<1, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.026439
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PrepareAttentionKernel<1u, false>(float const*, unsigned int, float const*, float const*, float*, float*, __half*, __half*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, float, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.00316
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)20, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 47,
+          "summed_gpu_ms": 0.323399
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)20, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 39,
+          "summed_gpu_ms": 1.929622
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SigmoidMulKernel(float*, float const*, unsigned long)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.012599
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)22, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 40,
+          "summed_gpu_ms": 2.084376
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MoeEpilogueKernel(float const*, float const*, float const*, float const*, unsigned int, float*, unsigned int, unsigned int)": {
+          "launches": 48,
+          "summed_gpu_ms": 0.093678
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)": {
+          "launches": 96,
+          "summed_gpu_ms": 0.628977
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)23, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.086837
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::CompactSelectionKernel(unsigned int const*, unsigned int, unsigned int const*, unsigned int, unsigned int*, unsigned int*, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.075839
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)12, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 47,
+          "summed_gpu_ms": 1.000012
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)13, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 35,
+          "summed_gpu_ms": 1.676311
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnKernel<false>(float const*, float const*, float const*, float const*, float const*, float const*, float*, float*, gufo::models::qwen38_flash_next::rocm::RollbackRows, unsigned int, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int, gufo::models::qwen38_flash_next::rocm::GdnCheckpoint)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.941054
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)21, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 20,
+          "summed_gpu_ms": 1.083726
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnEpilogueKernel<false>(float const*, float const*, unsigned int, float const*, float*, void*, __half*, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int, void*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.089595
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SsmConv4Kernel<true, false>(float const*, unsigned int, float const*, float*, float*, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::RollbackRows, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.098479
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnPrepKernel<false>(float const*, float*, float*, unsigned int, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.048197
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionMergeKernel(float const*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.03064
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SelectMarkKernel<1024u>(unsigned int*, float const*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.107477
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)18, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 34,
+          "summed_gpu_ms": 1.762189
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)23, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.869535
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionKernel<2u>(float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, float*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, unsigned int const*, unsigned int, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.382948
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)42, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 9,
+          "summed_gpu_ms": 0.278311
+        }
+      },
+      "hip_apis": {
+        "__hipPopCallConfiguration": {
+          "calls": 5685,
+          "summed_api_ms": 0.788902
+        },
+        "hipLaunchKernel": {
+          "calls": 5685,
+          "summed_api_ms": 48.199374
+        },
+        "hipGetLastError": {
+          "calls": 2173,
+          "summed_api_ms": 0.258121
+        },
+        "hipEventRecord": {
+          "calls": 362,
+          "summed_api_ms": 1.170762
+        },
+        "hipEventSynchronize": {
+          "calls": 362,
+          "summed_api_ms": 2971.265228
+        },
+        "hipStreamSynchronize": {
+          "calls": 947,
+          "summed_api_ms": 42.707631
+        },
+        "hipHostGetDevicePointer": {
+          "calls": 570,
+          "summed_api_ms": 0.277493
+        },
+        "hipPointerGetAttribute": {
+          "calls": 570,
+          "summed_api_ms": 0.187394
+        },
+        "__hipPushCallConfiguration": {
+          "calls": 5684,
+          "summed_api_ms": 1.748741
+        },
+        "hipMemsetAsync": {
+          "calls": 413,
+          "summed_api_ms": 6.255192
+        },
+        "hipMemcpyAsync": {
+          "calls": 123,
+          "summed_api_ms": 35.581608
+        },
+        "hipGetDevice": {
+          "calls": 3000,
+          "summed_api_ms": 0.365559
+        }
+      },
+      "timings": {
+        "prompt_n": 2149,
+        "prompt_ms": 3099.154602,
+        "prompt_per_token_ms": 1.4421380186133086,
+        "prompt_per_second": 693.4149069598433,
+        "predicted_n": 1,
+        "predicted_ms": 38.41241,
+        "predicted_per_token_ms": 38.41241,
+        "predicted_per_second": 26.03325331579039,
+        "cache_n": 0,
+        "cache_restore_ms": 0,
+        "cache_snapshot_ms": 18.691746000000002,
+        "cache_disk_enqueue_ms": 0,
+        "draft_rounds": 0,
+        "draft_n": 0,
+        "draft_n_accepted": 0,
+        "component_cache": {
+          "schema": "component-cache-v1",
+          "reuse": "none",
+          "selection_reason": 4,
+          "deepest_live_tokens": 0,
+          "deepest_ram_tokens": 0,
+          "deepest_disk_tokens": 0,
+          "selected_tokens": 0,
+          "restored_bytes": 0,
+          "prefilled_tokens": 2149,
+          "captures": 2,
+          "captured_capacity_bytes": 332398592,
+          "borrowed_capacity_bytes": 56229888,
+          "copied_payload_bytes": 271476820,
+          "captured_checkpoint_ids": [
+            253,
+            496
+          ],
+          "global_spill": {
+            "idle_bytes": 14286848,
+            "foreground_bytes": 0,
+            "idle_copy_ms": 3.112458,
+            "foreground_copy_ms": 0,
+            "stream_wait_ms": 0.023919,
+            "residual_wait_ms": 4.299753,
+            "reassignments": 4,
+            "idle_failures": 0
+          },
+          "global_ledger_bytes": 963112723,
+          "global_ram_bytes": 963112723,
+          "global_peak_ledger_bytes": 963197687,
+          "global_peak_ram_bytes": 963197687,
+          "global_persistence_pinned_bytes": 0,
+          "global_peak_persistence_pinned_bytes": 0,
+          "global_categories": {
+            "backing_free": {
+              "bytes": 341114880,
+              "reserved_bytes": 0,
+              "peak_bytes": 947716096
+            },
+            "backing_assigned": {
+              "bytes": 56492032,
+              "reserved_bytes": 56492032,
+              "peak_bytes": 98697216
+            },
+            "backing_materialized": {
+              "bytes": 524288,
+              "reserved_bytes": 0,
+              "peak_bytes": 15335424
+            },
+            "private_state": {
+              "bytes": 533987328,
+              "reserved_bytes": 0,
+              "peak_bytes": 667484160
+            },
+            "private_tail": {
+              "bytes": 15597568,
+              "reserved_bytes": 0,
+              "peak_bytes": 19922944
+            },
+            "metadata": {
+              "bytes": 15396627,
+              "reserved_bytes": 0,
+              "peak_bytes": 15481591
+            },
+            "transfer_staging": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            }
+          }
+        }
+      }
+    }
+  },
+  "selected": {
+    "decode": {
+      "request_wall_ms": 2672.89109,
+      "kernel_launches": 84074,
+      "kernel_active_union_ms": 2429.826313,
+      "kernel_free_wall_ms": 243.064777,
+      "largest_kernel_free_gap_ms": 3.215054,
+      "families": {
+        "quantize_q8_1(": {
+          "launches": 15035,
+          "summed_gpu_ms": 21.08648
+        },
+        "SwigluKernel(": {
+          "launches": 2063,
+          "summed_gpu_ms": 3.328489
+        },
+        "mul_mat_vec_q_moe<": {
+          "launches": 2268,
+          "summed_gpu_ms": 320.170691
+        },
+        "mul_mat_vec_moe_grouped<": {
+          "launches": 1998,
+          "summed_gpu_ms": 529.028509
+        },
+        "group_moe_slots(": {
+          "launches": 1998,
+          "summed_gpu_ms": 5.880005
+        }
+      },
+      "kernels": {
+        "__amd_rocclr_fillBufferAligned": {
+          "launches": 421,
+          "summed_gpu_ms": 1.141004
+        },
+        "__amd_rocclr_copyBuffer": {
+          "launches": 1128,
+          "summed_gpu_ms": 2.253363
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SiluScaleKernel(float*, float, unsigned long)": {
+          "launches": 4161,
+          "summed_gpu_ms": 4.688693
+        },
+        "void gufo::models::qwen38_flash_next::rocm::DenseF16GEMMKernel<64, 128, 2, 2, 4, 1, false, false, false, false, true, false, false>(void const*, __half const*, float*, unsigned long, unsigned long, unsigned long, __half const*, __half*, void*, float const*, float*, gufo::models::qwen38_flash_next::rocm::AttentionProjectionOutput, gufo::models::qwen38_flash_next::rocm::PassCheckpoints, unsigned long, unsigned int, unsigned int)": {
+          "launches": 290,
+          "summed_gpu_ms": 40.669891
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 47,
+          "summed_gpu_ms": 1.757669
+        },
+        "qfn_mmq::qfn_mmq_sanitize_f32_kernel(float*, unsigned long)": {
+          "launches": 299,
+          "summed_gpu_ms": 1.091523
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)18, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 34,
+          "summed_gpu_ms": 42.822597
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SwigluKernel(float*, float const*, unsigned long)": {
+          "launches": 2063,
+          "summed_gpu_ms": 3.328489
+        },
+        "void qfn_mmq::quantize_mmq_q8_1<(qfn_mmq::mmq_q8_1_ds_layout)0>(float const*, int const*, void*, long, long, long, long, long, int, int)": {
+          "launches": 361,
+          "summed_gpu_ms": 2.781225
+        },
+        "qfn_mmq::mm_ids_rank_kernel(int const*, int*, int*, int, int, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 0.424954
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MoeEpilogueVec4Kernel<float>(float const*, float const*, float const*, float const*, unsigned int, float*, unsigned int, unsigned int)": {
+          "launches": 48,
+          "summed_gpu_ms": 2.218496
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::NarrowKernel<hip_bfloat16>(float const*, hip_bfloat16*, unsigned long)": {
+          "launches": 289,
+          "summed_gpu_ms": 1.662473
+        },
+        "qfn_mmq::mm_ids_bounds_kernel(int*, int*, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 1.068682
+        },
+        "qfn_mmq::mm_ids_scatter_kernel(int const*, int const*, int const*, int const*, int*, int*, int, int, int, int, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 0.215436
+        },
+        "qfn_mmq::qfn_mmq_clear_inactive(int const*, float*, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 0.265387
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 39,
+          "summed_gpu_ms": 51.029509
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)22, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 40,
+          "summed_gpu_ms": 55.866484
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SwigluHalfKernel(float const*, float const*, __half*, unsigned long)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.00172
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixEpilogueKernel<4u>(float const*, float const*, float const*, float*, float*, unsigned int, unsigned int, void*)": {
+          "launches": 4147,
+          "summed_gpu_ms": 13.674021
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 1u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 54,
+          "summed_gpu_ms": 0.368148
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineVec4Kernel<float, false, false>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, float, float*, float const*, float*)": {
+          "launches": 96,
+          "summed_gpu_ms": 3.153188
+        },
+        "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)": {
+          "launches": 15035,
+          "summed_gpu_ms": 21.08648
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)23, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 2.056099
+        },
+        "void qfn_mmq::quantize_mmq_q8_1<(qfn_mmq::mmq_q8_1_ds_layout)1>(float const*, int const*, void*, long, long, long, long, long, int, int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.30715
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)14, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 128,
+          "summed_gpu_ms": 31.131948
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::WmmaCausalAttentionKernel<16u, 16u, false, false, 2u>(float const*, float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 24,
+          "summed_gpu_ms": 0.952131
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RopeKernel<false>(float*, unsigned int, unsigned int, unsigned int, unsigned int const*, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 1008,
+          "summed_gpu_ms": 1.732184
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormKernel(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 1008,
+          "summed_gpu_ms": 1.900543
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)13, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 35,
+          "summed_gpu_ms": 6.481167
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::CopyKernel(float const*, float*, unsigned long)": {
+          "launches": 78,
+          "summed_gpu_ms": 0.123794
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HistoryShiftKernel(float const*, unsigned int, float const*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 115,
+          "summed_gpu_ms": 0.239229
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixEpilogueVec4Kernel<float>(float const*, float const*, float const*, float*, float*, unsigned int)": {
+          "launches": 96,
+          "summed_gpu_ms": 1.771828
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)12, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 47,
+          "summed_gpu_ms": 5.361916
+        },
+        "gufo::models::qwen38_flash_next::rocm::ExpertCountsKernel(int const*, unsigned int*, unsigned long)": {
+          "launches": 48,
+          "summed_gpu_ms": 0.062239
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnPrefillKernel<(gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnOutput)0>(float const*, float const*, float const*, float const*, float const*, unsigned int, float const*, float*, float*, void*, __half*, void*, unsigned int, unsigned int, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnCheckpoint)": {
+          "launches": 36,
+          "summed_gpu_ms": 4.092759
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SsmConv4Kernel<false, false>(float const*, unsigned int, float const*, float*, float*, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::RollbackRows, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.585063
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RouterTopKKernel<512u>(float const*, unsigned int, int*, float*, unsigned int, unsigned int)": {
+          "launches": 2098,
+          "summed_gpu_ms": 8.990515
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::StoreRowsKernel(float const*, float*, unsigned int, unsigned int const*, unsigned int)": {
+          "launches": 590,
+          "summed_gpu_ms": 0.848848
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::StoreKvKernel(float const*, __half*, unsigned int, unsigned int const*)": {
+          "launches": 1008,
+          "summed_gpu_ms": 1.362479
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::UnpackQGateKernel(float const*, unsigned int, float*, float*, float*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 504,
+          "summed_gpu_ms": 5.267089
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)21, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 20,
+          "summed_gpu_ms": 25.732548
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)23, 64, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 42,
+          "summed_gpu_ms": 4.295671
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)42, 16, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 9,
+          "summed_gpu_ms": 10.183333
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormCachedKernel<10u>(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 507,
+          "summed_gpu_ms": 1.101252
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 1u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.067878
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::EmbedKernel(void const*, gufo::models::qwen38_flash_next::rocm::WeightType, int const*, float*, unsigned int, unsigned int)": {
+          "launches": 128,
+          "summed_gpu_ms": 0.783297
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleGateKernel(float const*, float const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.201195
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleConvKernel(float const*, float const*, float const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.220076
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleInjectKernel(float*, float const*, float const*, unsigned long)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.103638
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)14, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 166,
+          "summed_gpu_ms": 79.656778
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormCachedKernel<40u>(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 86,
+          "summed_gpu_ms": 0.25407
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<2, false, true>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 4,
+          "summed_gpu_ms": 0.684739
+        },
+        "void qfn_mmq::mul_mat_vec_q8<3, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 15,
+          "summed_gpu_ms": 0.539386
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 3u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1173,
+          "summed_gpu_ms": 38.238567
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PrepareAttentionKernel<4u, false>(float const*, unsigned int, float const*, float const*, float*, float*, __half*, __half*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, float, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.00496
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpAddEmbeddingVec4Kernel(HIP_vector_type<float, 4u> const*, HIP_vector_type<float, 4u>*, unsigned int, unsigned int)": {
+          "launches": 86,
+          "summed_gpu_ms": 0.131914
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<8, true>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.092997
+        },
+        "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)": {
+          "launches": 226,
+          "summed_gpu_ms": 3.744648
+        },
+        "void gufo::models::qwen38_flash_next::rocm::DenseF16GEMMKernel<256, 128, 1, 4, 2, 1, false, false, false, false, false, false, false>(void const*, __half const*, float*, unsigned long, unsigned long, unsigned long, __half const*, __half*, void*, float const*, float*, gufo::models::qwen38_flash_next::rocm::AttentionProjectionOutput, gufo::models::qwen38_flash_next::rocm::PassCheckpoints, unsigned long, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.0324
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<1, true, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 3,
+          "summed_gpu_ms": 0.095237
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<3, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 3,
+          "summed_gpu_ms": 0.040878
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 8u, true, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.060958
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpHiddenVec4Kernel(HIP_vector_type<float, 4u> const*, HIP_vector_type<float, 4u> const*, int const*, HIP_vector_type<float, 4u>*, unsigned int)": {
+          "launches": 85,
+          "summed_gpu_ms": 0.200236
+        },
+        "void qfn_mmq::mul_mat_vec_q8<1, false, 1, false, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 342,
+          "summed_gpu_ms": 17.154786
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PrepareAttentionKernel<1u, false>(float const*, unsigned int, float const*, float const*, float*, float*, __half*, __half*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, float, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 85,
+          "summed_gpu_ms": 0.312709
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionMergeKernel(float const*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 574,
+          "summed_gpu_ms": 1.916935
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<1, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 134,
+          "summed_gpu_ms": 2.34012
+        },
+        "gufo::models::qwen38_flash_next::rocm::RemapDraftIdsKernel(unsigned int*, unsigned int, unsigned int, int const*, unsigned int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.082835
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpCandidateTileKernel<64u>(float const*, unsigned int const*, unsigned int*, float*, unsigned int, unsigned int)": {
+          "launches": 246,
+          "summed_gpu_ms": 2.302929
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)8, 4, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 82,
+          "summed_gpu_ms": 7.964241
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionKernel<2u>(float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, float*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, unsigned int const*, unsigned int, unsigned int)": {
+          "launches": 348,
+          "summed_gpu_ms": 5.469524
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixQ8FusedKernel<1>(gufo::models::qwen38_flash_next::rocm::HcFusedMix, gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcFusedState*)": {
+          "launches": 52,
+          "summed_gpu_ms": 2.267853
+        },
+        "void qfn_mmq::mul_mat_vec_q8<1, true, 1, false, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 52,
+          "summed_gpu_ms": 0.91341
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)8, 2, true, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 52,
+          "summed_gpu_ms": 8.452789
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MoeEpilogueKernel(float const*, float const*, float const*, float const*, unsigned int, float*, unsigned int, unsigned int)": {
+          "launches": 2050,
+          "summed_gpu_ms": 4.776554
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SiluScaleQ8Kernel(float*, float, unsigned long, unsigned int, unsigned int, void*)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.104795
+        },
+        "void qfn_mmq::mul_mat_vec_q8<4, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 57,
+          "summed_gpu_ms": 2.09794
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SigmoidMulQ8Kernel(float*, float const*, unsigned long, void*)": {
+          "launches": 72,
+          "summed_gpu_ms": 0.114439
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)1, 1u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 52,
+          "summed_gpu_ms": 0.743373
+        },
+        "qfn_mmq::quantize_q8_1_by_expert(float const*, int const*, void*, int*, int*, long, long, long, int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.136996
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)": {
+          "launches": 4018,
+          "summed_gpu_ms": 27.327161
+        },
+        "gufo::models::qwen38_flash_next::rocm::MaskDraftLogitsKernel(float*, int const*, unsigned int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.131357
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 5u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 97,
+          "summed_gpu_ms": 4.837127
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 129,
+          "summed_gpu_ms": 9.654027
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)20, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 1599,
+          "summed_gpu_ms": 193.273673
+        },
+        "qfn_mmq::group_moe_slots(int const*, int*, int, int, bool)": {
+          "launches": 1998,
+          "summed_gpu_ms": 5.880005
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 47,
+          "summed_gpu_ms": 1.356561
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 5u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 197,
+          "summed_gpu_ms": 7.51222
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 47,
+          "summed_gpu_ms": 0.44767
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnPrepKernel<false>(float const*, float*, float*, unsigned int, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 1476,
+          "summed_gpu_ms": 1.924179
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 35,
+          "summed_gpu_ms": 3.030228
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)21, 5, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 10,
+          "summed_gpu_ms": 3.823046
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnEpilogueKernel<false>(float const*, float const*, unsigned int, float const*, float*, void*, __half*, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int, void*, unsigned int)": {
+          "launches": 1476,
+          "summed_gpu_ms": 3.822526
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SsmConv4Kernel<true, false>(float const*, unsigned int, float const*, float*, float*, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::RollbackRows, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 1476,
+          "summed_gpu_ms": 5.162697
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnKernel<false>(float const*, float const*, float const*, float const*, float const*, float const*, float*, float*, gufo::models::qwen38_flash_next::rocm::RollbackRows, unsigned int, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int, gufo::models::qwen38_flash_next::rocm::GdnCheckpoint)": {
+          "launches": 1476,
+          "summed_gpu_ms": 46.46418
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionKernel<4u>(float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, float*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, unsigned int const*, unsigned int, unsigned int)": {
+          "launches": 226,
+          "summed_gpu_ms": 5.18868
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)18, 5, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 17,
+          "summed_gpu_ms": 6.337253
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 5>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.990651
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)22, 5, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 20,
+          "summed_gpu_ms": 7.370059
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SigmoidMulKernel(float*, float const*, unsigned long)": {
+          "launches": 502,
+          "summed_gpu_ms": 0.650458
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)42, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 369,
+          "summed_gpu_ms": 30.82321
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RollingSnapshotKernel(float const*, unsigned int, float const*, gufo::models::qwen38_flash_next::rocm::RollbackRows, unsigned int, unsigned int, unsigned int)": {
+          "launches": 41,
+          "summed_gpu_ms": 0.30215
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)23, 5, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.307151
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::VerificationCandidateTileKernel<false>(float const*, gufo::models::qwen38_flash_next::rocm::GreedyPenaltyRows, unsigned int const*, unsigned int*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 82,
+          "summed_gpu_ms": 0.800337
+        },
+        "void qfn_mmq::mul_mat_vec_q8<5, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 7,
+          "summed_gpu_ms": 0.510267
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)8, 2, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 30,
+          "summed_gpu_ms": 7.741124
+        },
+        "void qfn_mmq::mul_mat_vec_q8<2, true, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 30,
+          "summed_gpu_ms": 0.542106
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<5, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.044919
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 2u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 4505,
+          "summed_gpu_ms": 138.382432
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 1081,
+          "summed_gpu_ms": 24.066474
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 2u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 2231,
+          "summed_gpu_ms": 80.164489
+        },
+        "void qfn_mmq::mul_mat_vec_q8<2, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 143,
+          "summed_gpu_ms": 7.62685
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 805,
+          "summed_gpu_ms": 43.347493
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 2967,
+          "summed_gpu_ms": 201.590127
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)18, 2, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 391,
+          "summed_gpu_ms": 56.68409
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 1081,
+          "summed_gpu_ms": 8.250391
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)21, 2, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 230,
+          "summed_gpu_ms": 34.809718
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 2>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 966,
+          "summed_gpu_ms": 20.50119
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)22, 2, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 460,
+          "summed_gpu_ms": 69.411678
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)1, 2u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 30,
+          "summed_gpu_ms": 0.469902
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::VerificationCandidateTileKernel<true>(float const*, gufo::models::qwen38_flash_next::rocm::GreedyPenaltyRows, unsigned int const*, unsigned int*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 41,
+          "summed_gpu_ms": 3.920121
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GatherVerificationCandidatesKernel(float const*, gufo::models::qwen38_flash_next::rocm::GreedyPenaltyRows, unsigned int const*, gufo::sampling::LogitCandidate*, unsigned int, unsigned int)": {
+          "launches": 41,
+          "summed_gpu_ms": 0.0622
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<2, true, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 5,
+          "summed_gpu_ms": 0.260072
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixQ8FusedKernel<2>(gufo::models::qwen38_flash_next::rocm::HcFusedMix, gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcFusedState*)": {
+          "launches": 30,
+          "summed_gpu_ms": 1.401923
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)23, 2, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 23,
+          "summed_gpu_ms": 3.382102
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RestoreGdnStateKernel(float*, gufo::models::qwen38_flash_next::rocm::RollbackRows, unsigned int, unsigned int, unsigned int)": {
+          "launches": 504,
+          "summed_gpu_ms": 15.929168
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<2, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 20,
+          "summed_gpu_ms": 0.433785
+        },
+        "void qfn_mmq::mul_mat_vec_q8<8, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 41,
+          "summed_gpu_ms": 1.504072
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 8u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1175,
+          "summed_gpu_ms": 62.786243
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 8u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 582,
+          "summed_gpu_ms": 37.047013
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 282,
+          "summed_gpu_ms": 9.795836
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 210,
+          "summed_gpu_ms": 26.097549
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 774,
+          "summed_gpu_ms": 61.966065
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)18, 8, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 102,
+          "summed_gpu_ms": 62.749762
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 252,
+          "summed_gpu_ms": 6.612079
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 8>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 282,
+          "summed_gpu_ms": 3.224466
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)21, 8, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 60,
+          "summed_gpu_ms": 37.194926
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)22, 8, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 120,
+          "summed_gpu_ms": 72.632059
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)23, 8, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 6,
+          "summed_gpu_ms": 2.6648
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<8, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 5,
+          "summed_gpu_ms": 0.090679
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<2, false, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 5,
+          "summed_gpu_ms": 0.240314
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 4u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 391,
+          "summed_gpu_ms": 13.798872
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 258,
+          "summed_gpu_ms": 18.196899
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)22, 4, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 40,
+          "summed_gpu_ms": 11.843482
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 70,
+          "summed_gpu_ms": 4.964411
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)18, 4, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 34,
+          "summed_gpu_ms": 9.904342
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 4u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 194,
+          "summed_gpu_ms": 8.433306
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 94,
+          "summed_gpu_ms": 2.226653
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 84,
+          "summed_gpu_ms": 1.858626
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 4>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 94,
+          "summed_gpu_ms": 0.842656
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)21, 4, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 20,
+          "summed_gpu_ms": 5.96142
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)23, 4, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.579223
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 282,
+          "summed_gpu_ms": 2.29376
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 774,
+          "summed_gpu_ms": 53.506705
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 282,
+          "summed_gpu_ms": 6.383404
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 210,
+          "summed_gpu_ms": 13.114774
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 3u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 582,
+          "summed_gpu_ms": 22.664321
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)21, 3, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 60,
+          "summed_gpu_ms": 13.473319
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)18, 3, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 102,
+          "summed_gpu_ms": 22.029023
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 3>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 252,
+          "summed_gpu_ms": 5.44573
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)22, 3, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 120,
+          "summed_gpu_ms": 26.59629
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)23, 3, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 6,
+          "summed_gpu_ms": 1.121525
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 7u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 391,
+          "summed_gpu_ms": 15.748803
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)22, 7, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 40,
+          "summed_gpu_ms": 21.225525
+        },
+        "void qfn_mmq::mul_mat_vec_q8<7, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 5,
+          "summed_gpu_ms": 0.250113
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 70,
+          "summed_gpu_ms": 7.822163
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 94,
+          "summed_gpu_ms": 2.96247
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 258,
+          "summed_gpu_ms": 19.657494
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 7u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 194,
+          "summed_gpu_ms": 11.41194
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 94,
+          "summed_gpu_ms": 1.031653
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)21, 7, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 20,
+          "summed_gpu_ms": 10.852396
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)18, 7, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 34,
+          "summed_gpu_ms": 18.093062
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 7>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 84,
+          "summed_gpu_ms": 1.926183
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)23, 7, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.810376
+        },
+        "void qfn_mmq::mul_mat_vec_q8<6, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 7,
+          "summed_gpu_ms": 0.510625
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<6, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.045199
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 6u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 197,
+          "summed_gpu_ms": 11.065423
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<7, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.018279
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<1, false, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.035919
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<4, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.017279
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)14, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 129,
+          "summed_gpu_ms": 9.492319
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)13, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 35,
+          "summed_gpu_ms": 3.300137
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)12, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 47,
+          "summed_gpu_ms": 1.338679
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)18, 6, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 17,
+          "summed_gpu_ms": 7.613133
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 6u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 97,
+          "summed_gpu_ms": 5.170831
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)23, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 42,
+          "summed_gpu_ms": 1.122086
+        },
+        "void qfn_mmq::mul_mat_vec_quant_batch<(qfn_mmq::ggml_type)20, 6>(void const*, qfn_mmq::block_q8_1 const*, float*, int, int, int)": {
+          "launches": 47,
+          "summed_gpu_ms": 0.467711
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)21, 6, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 10,
+          "summed_gpu_ms": 4.521543
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)22, 6, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 20,
+          "summed_gpu_ms": 8.939532
+        },
+        "void qfn_mmq::mul_mat_vec_moe_grouped<(qfn_mmq::ggml_type)23, 6, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, int const*, int const*, float*, int, int, int, int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.35655
+        }
+      },
+      "hip_apis": {
+        "hipMemsetAsync": {
+          "calls": 420,
+          "summed_api_ms": 1.993375
+        },
+        "hipStreamSynchronize": {
+          "calls": 913,
+          "summed_api_ms": 1982.090792
+        },
+        "hipMemcpyAsync": {
+          "calls": 823,
+          "summed_api_ms": 11.343664
+        },
+        "__hipPushCallConfiguration": {
+          "calls": 35562,
+          "summed_api_ms": 8.889984
+        },
+        "__hipPopCallConfiguration": {
+          "calls": 35562,
+          "summed_api_ms": 1.584935
+        },
+        "hipLaunchKernel": {
+          "calls": 35562,
+          "summed_api_ms": 122.559816
+        },
+        "hipGetDevice": {
+          "calls": 15716,
+          "summed_api_ms": 0.594896
+        },
+        "hipGetLastError": {
+          "calls": 14799,
+          "summed_api_ms": 0.485577
+        },
+        "hipEventRecord": {
+          "calls": 282,
+          "summed_api_ms": 0.560741
+        },
+        "hipEventSynchronize": {
+          "calls": 282,
+          "summed_api_ms": 283.182067
+        },
+        "hipHostGetDevicePointer": {
+          "calls": 452,
+          "summed_api_ms": 0.081937
+        },
+        "hipPointerGetAttribute": {
+          "calls": 452,
+          "summed_api_ms": 0.051597
+        },
+        "hipStreamBeginCapture": {
+          "calls": 18,
+          "summed_api_ms": 0.03621
+        },
+        "hipStreamEndCapture": {
+          "calls": 18,
+          "summed_api_ms": 0.089358
+        },
+        "hipGraphInstantiate": {
+          "calls": 18,
+          "summed_api_ms": 18.387233
+        },
+        "hipGraphDestroy": {
+          "calls": 18,
+          "summed_api_ms": 2.435779
+        },
+        "hipGraphLaunch": {
+          "calls": 138,
+          "summed_api_ms": 160.272698
+        },
+        "hipMemGetInfo": {
+          "calls": 7,
+          "summed_api_ms": 0.012059
+        },
+        "hipMalloc": {
+          "calls": 7,
+          "summed_api_ms": 3.497787
+        }
+      },
+      "timings": {
+        "prompt_n": 100,
+        "prompt_ms": 319.397113,
+        "prompt_per_token_ms": 3.19397113,
+        "prompt_per_second": 313.0898681604552,
+        "predicted_n": 128,
+        "predicted_ms": 2343.6344910000003,
+        "predicted_per_token_ms": 18.309644460937502,
+        "predicted_per_second": 54.616025020771886,
+        "cache_n": 0,
+        "cache_restore_ms": 0,
+        "cache_snapshot_ms": 9.062501,
+        "cache_disk_enqueue_ms": 0,
+        "draft_rounds": 41,
+        "draft_n": 104,
+        "draft_n_accepted": 87,
+        "component_cache": {
+          "schema": "component-cache-v1",
+          "reuse": "none",
+          "selection_reason": 4,
+          "deepest_live_tokens": 0,
+          "deepest_ram_tokens": 0,
+          "deepest_disk_tokens": 0,
+          "selected_tokens": 0,
+          "restored_bytes": 0,
+          "prefilled_tokens": 100,
+          "captures": 2,
+          "captured_capacity_bytes": 273940480,
+          "borrowed_capacity_bytes": 0,
+          "copied_payload_bytes": 271172672,
+          "captured_checkpoint_ids": [
+            5,
+            6
+          ],
+          "global_spill": {
+            "idle_bytes": 0,
+            "foreground_bytes": 0,
+            "idle_copy_ms": 0,
+            "foreground_copy_ms": 0,
+            "stream_wait_ms": 0,
+            "residual_wait_ms": 2.508896,
+            "reassignments": 2,
+            "idle_failures": 0
+          },
+          "global_ledger_bytes": 962654877,
+          "global_ram_bytes": 962654877,
+          "global_peak_ledger_bytes": 962707749,
+          "global_peak_ram_bytes": 962707749,
+          "global_persistence_pinned_bytes": 0,
+          "global_peak_persistence_pinned_bytes": 0,
+          "global_categories": {
+            "backing_free": {
+              "bytes": 673775616,
+              "reserved_bytes": 0,
+              "peak_bytes": 947716096
+            },
+            "backing_assigned": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            },
+            "backing_materialized": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            },
+            "private_state": {
+              "bytes": 266993664,
+              "reserved_bytes": 0,
+              "peak_bytes": 400490496
+            },
+            "private_tail": {
+              "bytes": 6946816,
+              "reserved_bytes": 0,
+              "peak_bytes": 10420224
+            },
+            "metadata": {
+              "bytes": 14938781,
+              "reserved_bytes": 0,
+              "peak_bytes": 14991653
+            },
+            "transfer_staging": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            }
+          }
+        },
+        "lookup_n": 22,
+        "lookup_n_accepted": 20
+      }
+    },
+    "prefill": {
+      "request_wall_ms": 3158.625537,
+      "kernel_launches": 6363,
+      "kernel_active_union_ms": 3115.852927,
+      "kernel_free_wall_ms": 42.77261,
+      "largest_kernel_free_gap_ms": 3.918853,
+      "families": {
+        "quantize_q8_1(": {
+          "launches": 361,
+          "summed_gpu_ms": 1.904381
+        },
+        "SwigluKernel(": {
+          "launches": 143,
+          "summed_gpu_ms": 33.010128
+        },
+        "mul_mat_vec_q_moe<": {
+          "launches": 398,
+          "summed_gpu_ms": 23.809652
+        },
+        "mul_mat_vec_moe_grouped<": {
+          "launches": 0,
+          "summed_gpu_ms": 0.0
+        },
+        "group_moe_slots(": {
+          "launches": 0,
+          "summed_gpu_ms": 0.0
+        }
+      },
+      "kernels": {
+        "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)": {
+          "launches": 274,
+          "summed_gpu_ms": 3.527938
+        },
+        "__amd_rocclr_fillBufferAligned": {
+          "launches": 701,
+          "summed_gpu_ms": 1.26688
+        },
+        "__amd_rocclr_copyBuffer": {
+          "launches": 120,
+          "summed_gpu_ms": 0.230755
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::EmbedKernel(void const*, gufo::models::qwen38_flash_next::rocm::WeightType, int const*, float*, unsigned int, unsigned int)": {
+          "launches": 4,
+          "summed_gpu_ms": 0.603981
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormCachedKernel<10u>(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 17,
+          "summed_gpu_ms": 5.180844
+        },
+        "void gufo::models::qwen38_flash_next::rocm::DenseF16GEMMKernel<64, 128, 2, 2, 4, 1, false, false, false, false, true, false, false>(void const*, __half const*, float*, unsigned long, unsigned long, unsigned long, __half const*, __half*, void*, float const*, float*, gufo::models::qwen38_flash_next::rocm::AttentionProjectionOutput, gufo::models::qwen38_flash_next::rocm::PassCheckpoints, unsigned long, unsigned int, unsigned int)": {
+          "launches": 302,
+          "summed_gpu_ms": 350.519296
+        },
+        "void qfn_mmq::quantize_mmq_q8_1<(qfn_mmq::mmq_q8_1_ds_layout)0>(float const*, int const*, void*, long, long, long, long, long, int, int)": {
+          "launches": 361,
+          "summed_gpu_ms": 106.705503
+        },
+        "qfn_mmq::qfn_mmq_sanitize_f32_kernel(float*, unsigned long)": {
+          "launches": 299,
+          "summed_gpu_ms": 40.536462
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MoeEpilogueVec4Kernel<float>(float const*, float const*, float const*, float const*, unsigned int, float*, unsigned int, unsigned int)": {
+          "launches": 48,
+          "summed_gpu_ms": 58.786688
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineVec4Kernel<float, false, false>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, float, float*, float const*, float*)": {
+          "launches": 96,
+          "summed_gpu_ms": 127.950231
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 47,
+          "summed_gpu_ms": 19.922031
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)23, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 42,
+          "summed_gpu_ms": 54.638006
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::WmmaCausalAttentionKernel<4u, 16u, true, false, 2u>(float const*, float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 24,
+          "summed_gpu_ms": 6.144094
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SwigluKernel(float*, float const*, unsigned long)": {
+          "launches": 143,
+          "summed_gpu_ms": 33.010128
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::WmmaCausalAttentionKernel<16u, 16u, false, false, 2u>(float const*, float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 39.593059
+        },
+        "gufo::models::qwen38_flash_next::rocm::ExpertCountsKernel(int const*, unsigned int*, unsigned long)": {
+          "launches": 48,
+          "summed_gpu_ms": 0.111717
+        },
+        "void qfn_mmq::quantize_mmq_q8_1<(qfn_mmq::mmq_q8_1_ds_layout)1>(float const*, int const*, void*, long, long, long, long, long, int, int)": {
+          "launches": 82,
+          "summed_gpu_ms": 11.31446
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixEpilogueVec4Kernel<float>(float const*, float const*, float const*, float*, float*, unsigned int)": {
+          "launches": 96,
+          "summed_gpu_ms": 104.787684
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SwigluHalfKernel(float const*, float const*, __half*, unsigned long)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.018639
+        },
+        "void gufo::models::qwen38_flash_next::rocm::DenseF16GEMMKernel<256, 128, 1, 4, 2, 2, false, false, false, false, false, false, false>(void const*, __half const*, float*, unsigned long, unsigned long, unsigned long, __half const*, __half*, void*, float const*, float*, gufo::models::qwen38_flash_next::rocm::AttentionProjectionOutput, gufo::models::qwen38_flash_next::rocm::PassCheckpoints, unsigned long, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.246713
+        },
+        "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)": {
+          "launches": 361,
+          "summed_gpu_ms": 1.904381
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SiluScaleKernel(float*, float, unsigned long)": {
+          "launches": 197,
+          "summed_gpu_ms": 1.209634
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 37,
+          "summed_gpu_ms": 392.864431
+        },
+        "qfn_mmq::mm_ids_bounds_kernel(int*, int*, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 10.815709
+        },
+        "qfn_mmq::qfn_mmq_clear_inactive(int const*, float*, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 3.5425
+        },
+        "qfn_mmq::mm_ids_rank_kernel(int const*, int*, int*, int, int, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 1.034169
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)23, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 13.512796
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::NarrowKernel<hip_bfloat16>(float const*, hip_bfloat16*, unsigned long)": {
+          "launches": 289,
+          "summed_gpu_ms": 75.372831
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)14, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 128,
+          "summed_gpu_ms": 473.865218
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SelectScoreKernel(float const*, __half const*, float*, unsigned int, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 72,
+          "summed_gpu_ms": 0.341151
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SelectMarkKernel<256u>(unsigned int*, float const*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 60,
+          "summed_gpu_ms": 0.473184
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PoolBlocksKernel<false>(float const*, float const*, __half*, unsigned int const*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, float, float, unsigned int, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 26,
+          "summed_gpu_ms": 0.127955
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RopeKernel<false>(float*, unsigned int, unsigned int, unsigned int, unsigned int const*, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 72,
+          "summed_gpu_ms": 6.824434
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormKernel(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 72,
+          "summed_gpu_ms": 7.003753
+        },
+        "qfn_mmq::mm_ids_scatter_kernel(int const*, int const*, int const*, int const*, int*, int*, int, int, int, int, int, int)": {
+          "launches": 144,
+          "summed_gpu_ms": 0.527505
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)18, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 32,
+          "summed_gpu_ms": 241.988733
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)13, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 35,
+          "summed_gpu_ms": 89.046383
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::CopyKernel(float const*, float*, unsigned long)": {
+          "launches": 38,
+          "summed_gpu_ms": 0.051318
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HistoryShiftKernel(float const*, unsigned int, float const*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 75,
+          "summed_gpu_ms": 0.133833
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)12, 80, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 47,
+          "summed_gpu_ms": 64.938781
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnPrefillKernel<(gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnOutput)0>(float const*, float const*, float const*, float const*, float const*, unsigned int, float const*, float*, float*, void*, __half*, void*, unsigned int, unsigned int, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnCheckpoint)": {
+          "launches": 36,
+          "summed_gpu_ms": 79.137317
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SsmConv4Kernel<false, false>(float const*, unsigned int, float const*, float*, float*, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::RollbackRows, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 29.08849
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)21, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 20,
+          "summed_gpu_ms": 159.155248
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RouterTopKKernel<512u>(float const*, unsigned int, int*, float*, unsigned int, unsigned int)": {
+          "launches": 96,
+          "summed_gpu_ms": 3.512936
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)22, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 36,
+          "summed_gpu_ms": 278.275493
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)42, 32, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 8,
+          "summed_gpu_ms": 73.139256
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)14, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 131,
+          "summed_gpu_ms": 13.243767
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 1u, false, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 99,
+          "summed_gpu_ms": 3.256982
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::StoreKvKernel(float const*, __half*, unsigned int, unsigned int const*)": {
+          "launches": 48,
+          "summed_gpu_ms": 0.822939
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 1u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 210,
+          "summed_gpu_ms": 6.502128
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcMixEpilogueKernel<4u>(float const*, float const*, float const*, float*, float*, unsigned int, unsigned int, void*)": {
+          "launches": 101,
+          "summed_gpu_ms": 2.235134
+        },
+        "void qfn_mmq::mul_mat_vec_q8<4, false, 1, false, true>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 4,
+          "summed_gpu_ms": 0.078398
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpAddEmbeddingVec4Kernel(HIP_vector_type<float, 4u> const*, HIP_vector_type<float, 4u>*, unsigned int, unsigned int)": {
+          "launches": 2,
+          "summed_gpu_ms": 1.147966
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 4u, false, true>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.0038
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<2, false, true>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 4,
+          "summed_gpu_ms": 15.234106
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SmallGemmKernel<(gufo::models::qwen38_flash_next::rocm::WeightType)30, 8u, true, false>(void const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 1.140286
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<4, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.00784
+        },
+        "void qfn_mmq::mul_mat_q8_decode_batch<1, false, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*, int, int, int, int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.021919
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)42, 48, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 1,
+          "summed_gpu_ms": 7.947842
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)22, 48, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 4,
+          "summed_gpu_ms": 28.555987
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleInjectKernel(float*, float const*, float const*, unsigned long)": {
+          "launches": 2,
+          "summed_gpu_ms": 1.613231
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleConvKernel(float const*, float const*, float const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 2,
+          "summed_gpu_ms": 1.116287
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PleGateKernel(float const*, float const*, float const*, float*, unsigned int, unsigned int)": {
+          "launches": 2,
+          "summed_gpu_ms": 1.99858
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)18, 48, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 12.0244
+        },
+        "void qfn_mmq::mul_mat_q<(qfn_mmq::ggml_type)20, 48, false, false, false>(char const*, int const*, int const*, int const*, float*, float*, HIP_vector_type<unsigned int, 3u>, int, int, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, HIP_vector_type<unsigned int, 3u>, int, int, int, HIP_vector_type<unsigned int, 3u>, char const*, long, float const*, float const*, float*, __half*, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 17.562436
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::UnpackQGateKernel(float const*, unsigned int, float*, float*, float*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 24,
+          "summed_gpu_ms": 12.536628
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::StoreRowsKernel(float const*, float*, unsigned int, unsigned int const*, unsigned int)": {
+          "launches": 26,
+          "summed_gpu_ms": 0.085635
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::RmsNormCachedKernel<40u>(float const*, float const*, float*, unsigned int, unsigned int, float)": {
+          "launches": 2,
+          "summed_gpu_ms": 0.948091
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<8, true>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 2.122537
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PrepareAttentionKernel<4u, false>(float const*, unsigned int, float const*, float const*, float*, float*, __half*, __half*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, float, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.046839
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MtpHiddenVec4Kernel(HIP_vector_type<float, 4u> const*, HIP_vector_type<float, 4u> const*, int const*, HIP_vector_type<float, 4u>*, unsigned int)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.00192
+        },
+        "void qfn_mmq::mul_mat_vec_q8<1, false, 1, false, false>(void const*, void const*, qfn_mmq::block_q8_1 const*, float*, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 4,
+          "summed_gpu_ms": 0.109796
+        },
+        "void qfn_mmq::qfn_q8_hc_down_kernel<1, false>(qfn_mmq::block_q8_0 const*, qfn_mmq::block_q8_1 const*, float*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.027159
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::PrepareAttentionKernel<1u, false>(float const*, unsigned int, float const*, float const*, float*, float*, __half*, __half*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, float, float, gufo::models::qwen::vision::DeviceRope const*, gufo::models::qwen38_flash_next::YarnRope)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.00296
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)12, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 47,
+          "summed_gpu_ms": 1.01109
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnEpilogueKernel<false>(float const*, float const*, unsigned int, float const*, float*, void*, __half*, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int, void*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.084157
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)20, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 47,
+          "summed_gpu_ms": 0.325634
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)": {
+          "launches": 96,
+          "summed_gpu_ms": 0.629059
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionMergeKernel(float const*, float*, unsigned int, unsigned int, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.030637
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)13, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 35,
+          "summed_gpu_ms": 1.670748
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)42, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 9,
+          "summed_gpu_ms": 0.279072
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)20, 2, false, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 39,
+          "summed_gpu_ms": 1.934904
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::AttentionKernel<2u>(float const*, __half const*, __half const*, unsigned int const*, unsigned int, float*, float*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int const*, unsigned int const*, unsigned int, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.383428
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SsmConv4Kernel<true, false>(float const*, unsigned int, float const*, float*, float*, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::RollbackRows, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.094078
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnPrepKernel<false>(float const*, float*, float*, unsigned int, unsigned int, unsigned int, float, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.044758
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::MoeEpilogueKernel(float const*, float const*, float const*, float const*, unsigned int, float*, unsigned int, unsigned int)": {
+          "launches": 48,
+          "summed_gpu_ms": 0.095717
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)21, 2, true, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 10,
+          "summed_gpu_ms": 0.957531
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::GdnKernel<false>(float const*, float const*, float const*, float const*, float const*, float const*, float*, float*, gufo::models::qwen38_flash_next::rocm::RollbackRows, unsigned int, unsigned int, unsigned int, gufo::models::qwen38_flash_next::rocm::GdnBatchItem const*, unsigned int, gufo::models::qwen38_flash_next::rocm::GdnCheckpoint)": {
+          "launches": 36,
+          "summed_gpu_ms": 0.906653
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SigmoidMulKernel(float*, float const*, unsigned long)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.014199
+        },
+        "gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::CompactSelectionKernel(unsigned int const*, unsigned int, unsigned int const*, unsigned int, unsigned int*, unsigned int*, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.07616
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)18, 2, true, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 17,
+          "summed_gpu_ms": 1.536994
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)23, 2, false, true>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 42,
+          "summed_gpu_ms": 0.845052
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)22, 2, true, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 20,
+          "summed_gpu_ms": 1.916622
+        },
+        "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::SelectMarkKernel<1024u>(unsigned int*, float const*, unsigned int const*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)": {
+          "launches": 12,
+          "summed_gpu_ms": 0.106236
+        },
+        "void qfn_mmq::mul_mat_vec_q_moe<(qfn_mmq::ggml_type)23, 2, true, false>(void const*, void const*, int const*, float*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, void const*, int const*)": {
+          "launches": 1,
+          "summed_gpu_ms": 0.088238
+        }
+      },
+      "hip_apis": {
+        "hipGetLastError": {
+          "calls": 2079,
+          "summed_api_ms": 0.213986
+        },
+        "hipEventRecord": {
+          "calls": 364,
+          "summed_api_ms": 1.199347
+        },
+        "hipEventSynchronize": {
+          "calls": 364,
+          "summed_api_ms": 2981.707874
+        },
+        "hipStreamSynchronize": {
+          "calls": 953,
+          "summed_api_ms": 42.539726
+        },
+        "hipHostGetDevicePointer": {
+          "calls": 573,
+          "summed_api_ms": 0.297055
+        },
+        "hipPointerGetAttribute": {
+          "calls": 572,
+          "summed_api_ms": 0.189773
+        },
+        "__hipPushCallConfiguration": {
+          "calls": 5541,
+          "summed_api_ms": 1.715267
+        },
+        "__hipPopCallConfiguration": {
+          "calls": 5541,
+          "summed_api_ms": 0.751624
+        },
+        "hipLaunchKernel": {
+          "calls": 5541,
+          "summed_api_ms": 46.654141
+        },
+        "hipMemsetAsync": {
+          "calls": 413,
+          "summed_api_ms": 5.911111
+        },
+        "hipMemcpyAsync": {
+          "calls": 123,
+          "summed_api_ms": 35.008342
+        },
+        "hipGetDevice": {
+          "calls": 2952,
+          "summed_api_ms": 0.335565
+        }
+      },
+      "timings": {
+        "prompt_n": 2149,
+        "prompt_ms": 3107.61395,
+        "prompt_per_token_ms": 1.4460744299674266,
+        "prompt_per_second": 691.527337235695,
+        "predicted_n": 1,
+        "predicted_ms": 37.136658,
+        "predicted_per_token_ms": 37.136658,
+        "predicted_per_second": 26.927571134699306,
+        "cache_n": 0,
+        "cache_restore_ms": 0,
+        "cache_snapshot_ms": 18.211899000000003,
+        "cache_disk_enqueue_ms": 0,
+        "draft_rounds": 0,
+        "draft_n": 0,
+        "draft_n_accepted": 0,
+        "component_cache": {
+          "schema": "component-cache-v1",
+          "reuse": "none",
+          "selection_reason": 4,
+          "deepest_live_tokens": 0,
+          "deepest_ram_tokens": 0,
+          "deepest_disk_tokens": 0,
+          "selected_tokens": 0,
+          "restored_bytes": 0,
+          "prefilled_tokens": 2149,
+          "captures": 2,
+          "captured_capacity_bytes": 332398592,
+          "borrowed_capacity_bytes": 56229888,
+          "copied_payload_bytes": 271476820,
+          "captured_checkpoint_ids": [
+            253,
+            496
+          ],
+          "global_spill": {
+            "idle_bytes": 15597568,
+            "foreground_bytes": 0,
+            "idle_copy_ms": 3.232443,
+            "foreground_copy_ms": 0,
+            "stream_wait_ms": 0.024628,
+            "residual_wait_ms": 4.71048,
+            "reassignments": 4,
+            "idle_failures": 0
+          },
+          "global_ledger_bytes": 963112723,
+          "global_ram_bytes": 963112723,
+          "global_peak_ledger_bytes": 963197687,
+          "global_peak_ram_bytes": 963197687,
+          "global_persistence_pinned_bytes": 0,
+          "global_peak_persistence_pinned_bytes": 0,
+          "global_categories": {
+            "backing_free": {
+              "bytes": 341114880,
+              "reserved_bytes": 0,
+              "peak_bytes": 947716096
+            },
+            "backing_assigned": {
+              "bytes": 56492032,
+              "reserved_bytes": 56492032,
+              "peak_bytes": 97386496
+            },
+            "backing_materialized": {
+              "bytes": 524288,
+              "reserved_bytes": 0,
+              "peak_bytes": 16646144
+            },
+            "private_state": {
+              "bytes": 533987328,
+              "reserved_bytes": 0,
+              "peak_bytes": 667484160
+            },
+            "private_tail": {
+              "bytes": 15597568,
+              "reserved_bytes": 0,
+              "peak_bytes": 19922944
+            },
+            "metadata": {
+              "bytes": 15396627,
+              "reserved_bytes": 0,
+              "peak_bytes": 15481591
+            },
+            "transfer_staging": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            }
+          }
+        }
+      }
+    }
+  },
+  "scope": "Diagnostic rocprofv3 traces, separate from unprofiled speed study. Decode window includes prompt processing and client/server overhead. Kernel-active union is not hardware utilization. Kernel-free wall time can include CPU work, communication with client, waiting and disk input; it is not pure dispatch overhead. Summed API durations may overlap across threads and include waiting. No subtraction of wait time from engine timings."
+}

@@ -501,6 +501,126 @@ void Embedding(int streams) {
             << streams << ',' << count << ",0\n";
 }
 
+// Fusion must retain the original GPU dot products and SwiGLU exactly.
+// The Run cases independently check packed arithmetic against CPU references;
+// this check isolates fusion, grouping, inactive slots and input reuse.
+void GatedCase(GgmlType type, int rows, int pattern, int used = 10) {
+  constexpr int k = 2560, tokens = 8, guard = 16;
+  const int experts = std::max(80, used * tokens);
+  auto gate = Weights(type, rows, k, experts), up = gate;
+  for (size_t i = 0; i < up.size(); ++i)
+    up[i] ^= static_cast<uint8_t>((i * 17 + 31) % 251);
+  const auto block = gufo::quant::QuantizedBlockElements(type);
+  const auto bytes = gufo::quant::QuantizedRowBytes(type, block);
+  for (size_t off = 0; off < gate.size(); off += bytes) {
+    uint16_t a = 0x1800 + (off / bytes * 37) % 1024,
+             b = 0x1c00 + (off / bytes * 53) % 1024;
+    if (off / bytes % 193 == 0)
+      a = 0x7c00;
+    if (off / bytes % 197 == 0)
+      b = 0x7e00;
+    memcpy(gate.data() + off, &a, 2);
+    memcpy(up.data() + off, &b, 2);
+  }
+  std::vector<float> x(tokens * k);
+  for (size_t i = 0; i < x.size(); ++i)
+    x[i] = float(int(i * 13 % 257) - 128) / 73.f;
+  std::vector<int32_t> ids(tokens * used);
+  for (int t = 0; t < tokens; ++t)
+    for (int j = 0; j < used; ++j) {
+      const int slot = j == 6 ? 2 : j;
+      ids[t * used + j] = pattern == 0   ? slot
+                          : pattern == 1 ? t * used + slot
+                                         : (t * 3 + slot) % experts;
+      if (j == 3 && t % 3 == 0)
+        ids[t * used + j] = -7;
+      if (pattern == 2 && t == 3)
+        ids[t * used + j] = -1;
+    }
+  const size_t count = size_t(tokens) * used * rows + 2 * guard;
+  const std::vector<float> poison(count, 123456.f);
+  Buffer wg(gate.size()), wu(up.size()), dx(x.size() * 4), di(ids.size() * 4),
+      ref(count * 4), tmp(count * 4), out(count * 4),
+      qx(qfn_mmq_q8_1_bytes(tokens, k));
+  Check(hipMemcpy(wg.data, gate.data(), gate.size(), hipMemcpyHostToDevice));
+  Check(hipMemcpy(wu.data, up.data(), up.size(), hipMemcpyHostToDevice));
+  Check(hipMemcpy(dx.data, x.data(), x.size() * 4, hipMemcpyHostToDevice));
+  Check(hipMemcpy(di.data, ids.data(), ids.size() * 4, hipMemcpyHostToDevice));
+  auto old = [&](int n) {
+    if (qfn_mmq_moe_vec(int(type), wg.data, static_cast<float*>(dx.data),
+                        static_cast<int32_t*>(di.data),
+                        static_cast<float*>(ref.data) + guard, rows, k, n,
+                        experts, used, nullptr, wu.data,
+                        static_cast<float*>(tmp.data) + guard))
+      throw std::runtime_error("paired ref failed");
+    gufo::models::qwen38_flash_next::rocm::Swiglu(
+        static_cast<float*>(ref.data) + guard,
+        static_cast<float*>(tmp.data) + guard, size_t(n) * used * rows,
+        nullptr);
+  };
+  auto fused = [&](int n, bool preq) {
+    int rc =
+        preq ? qfn_mmq_moe_gated_vec_preq(int(type), wg.data, wu.data, qx.data,
+                                          static_cast<int32_t*>(di.data),
+                                          static_cast<float*>(out.data) + guard,
+                                          rows, k, n, experts, used, nullptr)
+             : qfn_mmq_moe_gated_vec(int(type), wg.data, wu.data,
+                                     static_cast<float*>(dx.data),
+                                     static_cast<int32_t*>(di.data),
+                                     static_cast<float*>(out.data) + guard,
+                                     rows, k, n, experts, used, nullptr);
+    if (rc)
+      throw std::runtime_error("gated failed");
+  };
+  for (int n = 1; n <= tokens; ++n) {
+    Check(hipMemcpy(ref.data, poison.data(), count * 4, hipMemcpyHostToDevice));
+    old(n);
+    std::vector<float> expected(count);
+    Check(
+        hipMemcpy(expected.data(), ref.data, count * 4, hipMemcpyDeviceToHost));
+    for (bool preq : {false, true}) {
+      Check(
+          hipMemcpy(out.data, poison.data(), count * 4, hipMemcpyHostToDevice));
+      if (preq && qfn_mmq_quantize_q8_1(static_cast<float*>(dx.data), qx.data,
+                                        n, k, nullptr))
+        throw std::runtime_error("preq failed");
+      fused(n, preq);
+      std::vector<float> actual(count);
+      Check(
+          hipMemcpy(actual.data(), out.data, count * 4, hipMemcpyDeviceToHost));
+      if (memcmp(expected.data(), actual.data(), count * 4)) {
+        size_t first = 0;
+        while (first < count && std::bit_cast<uint32_t>(expected[first]) ==
+                                    std::bit_cast<uint32_t>(actual[first]))
+          ++first;
+        throw std::runtime_error(
+            std::string(gufo::core::ToString(type)) + " gated parity M" +
+            std::to_string(rows) + " N" + std::to_string(n) + " pattern" +
+            std::to_string(pattern) + " preq" + std::to_string(preq) +
+            " index" + std::to_string(first) +
+            " ref=" + std::to_string(expected[first]) +
+            " actual=" + std::to_string(actual[first]));
+      }
+      for (size_t i = guard; i < guard + size_t(n) * used * rows; ++i)
+        if (!std::isfinite(actual[i]))
+          throw std::runtime_error("nonfinite gated output");
+      std::cout << "gated:p" << pattern << ":q" << preq << ":u" << used << ":"
+                << gufo::core::ToString(type) << ',' << rows << ',' << k << ','
+                << n << ',' << pattern << ',' << n * used * rows << ",0\n";
+    }
+  }
+  Check(hipMemcpy(out.data, poison.data(), count * 4, hipMemcpyHostToDevice));
+  if (qfn_mmq_moe_gated_vec(
+          int(type), wg.data, wu.data, static_cast<float*>(dx.data),
+          static_cast<int32_t*>(di.data), static_cast<float*>(out.data) + guard,
+          rows, k, 9, experts, used, nullptr) == 0)
+    throw std::runtime_error("invalid IQ width accepted");
+  std::vector<float> rejected(count);
+  Check(hipMemcpy(rejected.data(), out.data, count * 4, hipMemcpyDeviceToHost));
+  if (memcmp(rejected.data(), poison.data(), count * 4))
+    throw std::runtime_error("rejected gated width changed output");
+}
+
 }  // namespace
 int main(int argc, char** argv) {
   try {
@@ -512,6 +632,12 @@ int main(int argc, char** argv) {
     const bool dense_only =
         argc == 2 && std::string(argv[1]) == "--dense-embedding-only";
     if (!dense_only) {
+      for (auto type : {GgmlType::kIQ2_S, GgmlType::kIQ3_XXS, GgmlType::kIQ3_S,
+                        GgmlType::kIQ4_XS})
+        for (int rows : {65, 640})
+          for (int pattern : {0, 1, 2})
+            GatedCase(type, rows, pattern);
+      GatedCase(GgmlType::kIQ4_XS, 65, 1, 32);
       for (auto type : {GgmlType::kQ2_0, GgmlType::kQ6_K, GgmlType::kIQ2_S,
                         GgmlType::kIQ3_XXS, GgmlType::kIQ3_S, GgmlType::kIQ4_NL,
                         GgmlType::kIQ4_XS})

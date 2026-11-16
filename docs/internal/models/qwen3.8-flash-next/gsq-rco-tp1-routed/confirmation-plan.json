@@ -1,0 +1,53 @@
+{
+  "orders": [
+    [
+      "base",
+      "gated",
+      "sorted"
+    ],
+    [
+      "base",
+      "sorted",
+      "gated"
+    ],
+    [
+      "gated",
+      "base",
+      "sorted"
+    ],
+    [
+      "gated",
+      "sorted",
+      "base"
+    ],
+    [
+      "sorted",
+      "base",
+      "gated"
+    ],
+    [
+      "sorted",
+      "gated",
+      "base"
+    ],
+    [
+      "base",
+      "gated",
+      "sorted"
+    ],
+    [
+      "sorted",
+      "gated",
+      "base"
+    ]
+  ],
+  "blocks": 8,
+  "primary": "384 tokens / summed engine decode ms; one process per variant per block",
+  "comparisons": [
+    "gated vs base",
+    "sorted vs gated",
+    "sorted vs base"
+  ],
+  "no_optional_stopping": true,
+  "multiplicity": "Holm adjustment over all three comparisons"
+}
