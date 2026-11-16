@@ -1,0 +1,233 @@
+{
+  "complete_pairs": 8,
+  "pairs": [
+    {
+      "pair": 1,
+      "base_decode_ms": 7924.925205000001,
+      "candidate_decode_ms": 7290.494180999998,
+      "base_tps": 48.454715983657024,
+      "candidate_tps": 52.67132658863583,
+      "ratio": 1.0870216762059033
+    },
+    {
+      "pair": 2,
+      "base_decode_ms": 7958.808979999998,
+      "candidate_decode_ms": 7288.966311,
+      "base_tps": 48.24842523108277,
+      "candidate_tps": 52.68236724053642,
+      "ratio": 1.0918981705251014
+    },
+    {
+      "pair": 3,
+      "base_decode_ms": 7930.715241,
+      "candidate_decode_ms": 7307.599235,
+      "base_tps": 48.419340290369654,
+      "candidate_tps": 52.54803768668904,
+      "ratio": 1.085269592100175
+    },
+    {
+      "pair": 4,
+      "base_decode_ms": 7900.293460000001,
+      "candidate_decode_ms": 7308.201254999999,
+      "base_tps": 48.60578938544898,
+      "candidate_tps": 52.543708992316205,
+      "ratio": 1.0810175013441117
+    },
+    {
+      "pair": 5,
+      "base_decode_ms": 7934.508743000002,
+      "candidate_decode_ms": 7306.949046,
+      "base_tps": 48.39619092218825,
+      "candidate_tps": 52.55271353099292,
+      "ratio": 1.0858853254688485
+    },
+    {
+      "pair": 6,
+      "base_decode_ms": 7961.831547999999,
+      "candidate_decode_ms": 7308.706940000001,
+      "base_tps": 48.23010857300294,
+      "candidate_tps": 52.54007352496199,
+      "ratio": 1.0893625388679216
+    },
+    {
+      "pair": 7,
+      "base_decode_ms": 7994.243641999999,
+      "candidate_decode_ms": 7301.235999,
+      "base_tps": 48.034563017637886,
+      "candidate_tps": 52.59383480448979,
+      "ratio": 1.0949164830577884
+    },
+    {
+      "pair": 8,
+      "base_decode_ms": 7956.058781,
+      "candidate_decode_ms": 7302.932745,
+      "base_tps": 48.26510343501194,
+      "candidate_tps": 52.58161527817822,
+      "ratio": 1.0894333905029
+    }
+  ],
+  "cases": {
+    "prose": [
+      {
+        "pair": 1,
+        "base_tps": 50.399112779058534,
+        "candidate_tps": 56.03917102329558,
+        "ratio": 1.1119078875249677
+      },
+      {
+        "pair": 2,
+        "base_tps": 50.21618272628479,
+        "candidate_tps": 55.95563739145241,
+        "ratio": 1.114294921548535
+      },
+      {
+        "pair": 3,
+        "base_tps": 50.48460852134512,
+        "candidate_tps": 55.422265416161345,
+        "ratio": 1.09780519329428
+      },
+      {
+        "pair": 4,
+        "base_tps": 51.07409322814476,
+        "candidate_tps": 55.98868185996767,
+        "ratio": 1.0962246869439218
+      },
+      {
+        "pair": 5,
+        "base_tps": 50.46877424152242,
+        "candidate_tps": 55.47629961941203,
+        "ratio": 1.0992202694269073
+      },
+      {
+        "pair": 6,
+        "base_tps": 50.45085630429567,
+        "candidate_tps": 55.68570479386216,
+        "ratio": 1.1037613406993998
+      },
+      {
+        "pair": 7,
+        "base_tps": 49.73876033434366,
+        "candidate_tps": 55.350999642123796,
+        "ratio": 1.112834322167555
+      },
+      {
+        "pair": 8,
+        "base_tps": 50.145755278110755,
+        "candidate_tps": 55.73516386282738,
+        "ratio": 1.1114632445701036
+      }
+    ],
+    "explain": [
+      {
+        "pair": 1,
+        "base_tps": 49.630017813628626,
+        "candidate_tps": 54.01485532755675,
+        "ratio": 1.0883505125949005
+      },
+      {
+        "pair": 2,
+        "base_tps": 49.47562296611246,
+        "candidate_tps": 54.412149231739896,
+        "ratio": 1.099776940029813
+      },
+      {
+        "pair": 3,
+        "base_tps": 49.50179155859167,
+        "candidate_tps": 54.21866769908048,
+        "ratio": 1.0952869783491732
+      },
+      {
+        "pair": 4,
+        "base_tps": 49.602187914687235,
+        "candidate_tps": 53.81804714463454,
+        "ratio": 1.084993412734098
+      },
+      {
+        "pair": 5,
+        "base_tps": 49.54584986978488,
+        "candidate_tps": 54.250934774334226,
+        "ratio": 1.0949642587000754
+      },
+      {
+        "pair": 6,
+        "base_tps": 49.24632608835787,
+        "candidate_tps": 54.03558923977711,
+        "ratio": 1.0972511765207893
+      },
+      {
+        "pair": 7,
+        "base_tps": 49.21704299500019,
+        "candidate_tps": 54.434491311760375,
+        "ratio": 1.1060089757381444
+      },
+      {
+        "pair": 8,
+        "base_tps": 49.480058768409016,
+        "candidate_tps": 54.123260104525784,
+        "ratio": 1.0938398508750613
+      }
+    ],
+    "code": [
+      {
+        "pair": 1,
+        "base_tps": 45.614688453110446,
+        "candidate_tps": 48.546282867992026,
+        "ratio": 1.0642686492947355
+      },
+      {
+        "pair": 2,
+        "base_tps": 45.34669847725286,
+        "candidate_tps": 48.31968187372408,
+        "ratio": 1.0655611873919013
+      },
+      {
+        "pair": 3,
+        "base_tps": 45.55931853973022,
+        "candidate_tps": 48.53544977986351,
+        "ratio": 1.0653243142242776
+      },
+      {
+        "pair": 4,
+        "base_tps": 45.493331395203676,
+        "candidate_tps": 48.418079567980435,
+        "ratio": 1.0642896020818804
+      },
+      {
+        "pair": 5,
+        "base_tps": 45.47357740625637,
+        "candidate_tps": 48.48023738990602,
+        "ratio": 1.0661188354896396
+      },
+      {
+        "pair": 6,
+        "base_tps": 45.30122849803822,
+        "candidate_tps": 48.46130269817452,
+        "ratio": 1.0697569206158095
+      },
+      {
+        "pair": 7,
+        "base_tps": 45.38889916409645,
+        "candidate_tps": 48.535019318162426,
+        "ratio": 1.0693147490246826
+      },
+      {
+        "pair": 8,
+        "base_tps": 45.44487820251268,
+        "candidate_tps": 48.459419055937914,
+        "ratio": 1.0663340066616913
+      }
+    ]
+  },
+  "scope": "TP1 native MTP; eval defaults;4slots/1active;262144 capacity;128 generated tokens/case;3 fixed prompts per process. Equal choices and token/draft/cache/lookup work per pair. Trace disabled. Balanced alternating AB/BA order. Exploratory study.",
+  "aggregate": {
+    "geometric_speedup_percent": 8.80932030014701,
+    "paired_bootstrap_95_percent": [
+      8.531156207167589,
+      9.088686465164274
+    ],
+    "two_sided_exact_sign_flip_p": 0.0078125,
+    "base_tps_median": 48.33064717860009,
+    "candidate_tps_median": 52.56716440458557,
+    "endpoint": "Completed384 tokens divided by summed engine decode time for the same3prompts per process; each process pair is one sample, not individual tokens."
+  }
+}

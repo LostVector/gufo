@@ -28,3 +28,8 @@ from `ggml-org/llama.cpp` at
 its packed-code mapping, DP4A grouping and scale order; the CUDA-only arm is
 omitted and the DP4A call uses the local HIP name. This is a scoped import,
 not a replacement of the original vendoring pin.
+
+Local packed dense verification shares weight unpacking across2–8 token
+accumulators. It retains the vendored format-specific vector dot, K traversal
+and wave reduction; Q8 and routed dispatch are unchanged. See the GSQ-RCO TP1
+quality/performance evidence under docs/internal/models/qwen3.8-flash-next/.

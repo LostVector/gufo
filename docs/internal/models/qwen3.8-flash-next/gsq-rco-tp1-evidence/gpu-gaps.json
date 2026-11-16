@@ -1,0 +1,425 @@
+{
+  "baseline-profile-v1": [
+    {
+      "start": 383382650540835,
+      "end": 383382653716221,
+      "ms": 3.175386,
+      "previous_kernel": "__amd_rocclr_copyBuffer",
+      "next_kernel": "__amd_rocclr_copyBuffer",
+      "apis": [
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 1.872555,
+          "start_relative_ms": -1.866214
+        },
+        {
+          "name": "hipMalloc",
+          "duration_ms": 2.618623,
+          "start_relative_ms": 0.01667
+        },
+        {
+          "name": "hipMalloc",
+          "duration_ms": 0.148296,
+          "start_relative_ms": 2.638633
+        },
+        {
+          "name": "hipMalloc",
+          "duration_ms": 0.160885,
+          "start_relative_ms": 2.788379
+        },
+        {
+          "name": "hipMalloc",
+          "duration_ms": 0.145995,
+          "start_relative_ms": 2.950664
+        }
+      ]
+    },
+    {
+      "start": 383385236033399,
+      "end": 383385237532355,
+      "ms": 1.498956,
+      "previous_kernel": "__amd_rocclr_copyBuffer",
+      "next_kernel": "__amd_rocclr_copyBuffer",
+      "apis": [
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 0.190205,
+          "start_relative_ms": -0.178664
+        },
+        {
+          "name": "hipGraphInstantiate",
+          "duration_ms": 0.458436,
+          "start_relative_ms": 0.763709
+        },
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 0.202654,
+          "start_relative_ms": 1.275243
+        },
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 1.983972,
+          "start_relative_ms": 1.479457
+        }
+      ]
+    },
+    {
+      "start": 383382636392654,
+      "end": 383382637886539,
+      "ms": 1.493885,
+      "previous_kernel": "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)",
+      "next_kernel": "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)",
+      "apis": []
+    },
+    {
+      "start": 383383584238444,
+      "end": 383383585604013,
+      "ms": 1.365569,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 4.76221,
+          "start_relative_ms": 0.880414
+        }
+      ]
+    },
+    {
+      "start": 383384013285430,
+      "end": 383384014567382,
+      "ms": 1.281952,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 4.651483,
+          "start_relative_ms": 0.68591
+        }
+      ]
+    },
+    {
+      "start": 383382314728596,
+      "end": 383382315996458,
+      "ms": 1.267862,
+      "previous_kernel": "request begin",
+      "next_kernel": "__amd_rocclr_fillBufferAligned",
+      "apis": []
+    },
+    {
+      "start": 383384739603103,
+      "end": 383384740847446,
+      "ms": 1.244343,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 4.853807,
+          "start_relative_ms": 0.750319
+        }
+      ]
+    },
+    {
+      "start": 383382640909150,
+      "end": 383382642141594,
+      "ms": 1.232444,
+      "previous_kernel": "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)",
+      "next_kernel": "__amd_rocclr_fillBufferAligned",
+      "apis": []
+    }
+  ],
+  "candidate-profile-v1": [
+    {
+      "start": 384868339664629,
+      "end": 384868429192349,
+      "ms": 89.52772,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": []
+    },
+    {
+      "start": 384870063968628,
+      "end": 384870146519103,
+      "ms": 82.550475,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 5.38795,
+          "start_relative_ms": 81.476756
+        }
+      ]
+    },
+    {
+      "start": 384869735608191,
+      "end": 384869800784098,
+      "ms": 65.175907,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 4.923475,
+          "start_relative_ms": 64.353451
+        }
+      ]
+    },
+    {
+      "start": 384870192380057,
+      "end": 384870257473577,
+      "ms": 65.09352,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 5.834918,
+          "start_relative_ms": 64.262774
+        }
+      ]
+    },
+    {
+      "start": 384870396709785,
+      "end": 384870455972598,
+      "ms": 59.262813,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 4.74968,
+          "start_relative_ms": 58.526403
+        }
+      ]
+    },
+    {
+      "start": 384868770777963,
+      "end": 384868825831459,
+      "ms": 55.053496,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 5.818858,
+          "start_relative_ms": 53.919579
+        }
+      ]
+    },
+    {
+      "start": 384869170251740,
+      "end": 384869220841378,
+      "ms": 50.589638,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 4.999023,
+          "start_relative_ms": 49.791951
+        }
+      ]
+    },
+    {
+      "start": 384868574974233,
+      "end": 384868623634496,
+      "ms": 48.660263,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 5.291594,
+          "start_relative_ms": 47.735822
+        }
+      ]
+    },
+    {
+      "start": 384868880783735,
+      "end": 384868926481048,
+      "ms": 45.697313,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 6.180348,
+          "start_relative_ms": 44.719781
+        }
+      ]
+    },
+    {
+      "start": 384869647235629,
+      "end": 384869690055507,
+      "ms": 42.819878,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 4.802618,
+          "start_relative_ms": 41.990242
+        }
+      ]
+    },
+    {
+      "start": 384867409454929,
+      "end": 384867412151999,
+      "ms": 2.69707,
+      "previous_kernel": "__amd_rocclr_copyBuffer",
+      "next_kernel": "__amd_rocclr_copyBuffer",
+      "apis": [
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 1.870355,
+          "start_relative_ms": -1.863554
+        },
+        {
+          "name": "hipMalloc",
+          "duration_ms": 2.149547,
+          "start_relative_ms": 0.03395
+        },
+        {
+          "name": "hipMalloc",
+          "duration_ms": 0.138826,
+          "start_relative_ms": 2.187426
+        },
+        {
+          "name": "hipMalloc",
+          "duration_ms": 0.128006,
+          "start_relative_ms": 2.327912
+        },
+        {
+          "name": "hipMalloc",
+          "duration_ms": 0.154646,
+          "start_relative_ms": 2.457808
+        }
+      ]
+    },
+    {
+      "start": 384868228634618,
+      "end": 384868230218491,
+      "ms": 1.583873,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": [
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 5.038441,
+          "start_relative_ms": 1.00336
+        }
+      ]
+    },
+    {
+      "start": 384867525905151,
+      "end": 384867527157064,
+      "ms": 1.251913,
+      "previous_kernel": "__amd_rocclr_copyBuffer",
+      "next_kernel": "__amd_rocclr_copyBuffer",
+      "apis": [
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 0.169745,
+          "start_relative_ms": -0.163334
+        },
+        {
+          "name": "hipGraphInstantiate",
+          "duration_ms": 0.423798,
+          "start_relative_ms": 0.439678
+        },
+        {
+          "name": "hipGraphDestroy",
+          "duration_ms": 0.165855,
+          "start_relative_ms": 0.864876
+        },
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 0.200784,
+          "start_relative_ms": 1.032341
+        },
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 1.955492,
+          "start_relative_ms": 1.234155
+        }
+      ]
+    },
+    {
+      "start": 384867783381471,
+      "end": 384867784500988,
+      "ms": 1.119517,
+      "previous_kernel": "__amd_rocclr_copyBuffer",
+      "next_kernel": "__amd_rocclr_copyBuffer",
+      "apis": [
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 0.282321,
+          "start_relative_ms": -0.273601
+        },
+        {
+          "name": "hipGraphInstantiate",
+          "duration_ms": 0.34946,
+          "start_relative_ms": 0.498686
+        },
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 0.188404,
+          "start_relative_ms": 0.908494
+        },
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 1.995941,
+          "start_relative_ms": 1.098078
+        }
+      ]
+    },
+    {
+      "start": 384867395817742,
+      "end": 384867396933609,
+      "ms": 1.115867,
+      "previous_kernel": "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)",
+      "next_kernel": "gufo::hip::(anonymous namespace)::CopyAlignedSnapshot(unsigned char*, unsigned char const*, unsigned long)",
+      "apis": []
+    },
+    {
+      "start": 384868520329716,
+      "end": 384868521423464,
+      "ms": 1.093748,
+      "previous_kernel": "void gufo::models::qwen38_flash_next::rocm::(anonymous namespace)::HcCombineKernel<float>(float*, float const*, float const*, unsigned int, float const*, float*, void*, unsigned int, unsigned int, float, void*)",
+      "next_kernel": "qfn_mmq::quantize_q8_1(float const*, void*, long, long, long, long, long, unsigned int, HIP_vector_type<unsigned int, 3u>)",
+      "apis": []
+    },
+    {
+      "start": 384868224343514,
+      "end": 384868225382204,
+      "ms": 1.03869,
+      "previous_kernel": "__amd_rocclr_copyBuffer",
+      "next_kernel": "__amd_rocclr_copyBuffer",
+      "apis": [
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 0.614222,
+          "start_relative_ms": -0.608922
+        },
+        {
+          "name": "hipGraphInstantiate",
+          "duration_ms": 0.467066,
+          "start_relative_ms": 0.298102
+        },
+        {
+          "name": "hipGraphLaunch",
+          "duration_ms": 0.153956,
+          "start_relative_ms": 0.859215
+        },
+        {
+          "name": "hipStreamSynchronize",
+          "duration_ms": 2.208254,
+          "start_relative_ms": 1.014141
+        }
+      ]
+    }
+  ]
+}
