@@ -2126,14 +2126,16 @@ int RunServe(std::span<const char* const> args) {
     }
     load_log.Complete(
         "model=" + backend->model_id() +
-        " sessions=" + std::to_string(session_count) + " context_tokens=" +
-        std::to_string(backend->max_context()) + " speculative=" + speculation +
-        " draft_limit=" + std::to_string(loaded_speculative.max_draft_tokens) +
-        (loaded_speculative.draft_policy.empty()
-             ? std::string()
-             : " draft_policy=" + loaded_speculative.draft_policy) +
-        " disk_cache=" + (cache_disk_directory.empty() ? "off" : "enabled") +
-        served_names, provider_uses_hip);
+            " sessions=" + std::to_string(session_count) +
+            " context_tokens=" + std::to_string(backend->max_context()) +
+            " speculative=" + speculation + " draft_limit=" +
+            std::to_string(loaded_speculative.max_draft_tokens) +
+            (loaded_speculative.draft_policy.empty()
+                 ? std::string()
+                 : " draft_policy=" + loaded_speculative.draft_policy) +
+            " disk_cache=" +
+            (cache_disk_directory.empty() ? "off" : "enabled") + served_names,
+        provider_uses_hip);
 #if defined(ENGINE_ENABLE_HIP)
     if (tp_world_size == 2 && tp_rank == 1) {
       std::string worker_error;
