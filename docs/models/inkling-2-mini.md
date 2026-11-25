@@ -27,6 +27,10 @@ Pass `--mmproj PATH` to accept images. Requests name the model
 context of 1,048,576 tokens; state for the eight full-attention layer visits
 takes 32 KiB per token and is mapped only as a conversation grows.
 
+To serve a local `Inkling-2-Mini-Q8_0.gguf`, pass its path to `--model`.
+Multiple requests can share autoregressive decode steps with `--sessions`
+set above one.
+
 ## Decoding modes
 
 | Mode | Options | What happens |

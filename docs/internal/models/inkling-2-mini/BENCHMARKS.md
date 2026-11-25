@@ -85,6 +85,19 @@ above.
 
 ![Multiple users, DSpark](artifacts/charts/multi-dspark.svg)
 
+## Q8_0 autoregressive batching
+
+On November 25, 2026, `inkling2_bench` measured the same Inkling 2 Mini Q8_0
+GGUF on Strix Halo gfx1151 with ROCm 7.14.1 and a 262,144-token context limit.
+Each session prefilled 2,048 tokens before the timed 128-token greedy decode.
+The table reports aggregate decode throughput from one matched run.
+
+| Active sessions | Baseline (tok/s) | Batched Q8_0 (tok/s) |
+| ---: | ---: | ---: |
+| 1 | 36.12 | 36.12 |
+| 2 | 36.16 | 48.07 |
+| 3 | 36.15 | 55.89 |
+
 ## Loading time
 
 C1, capacity 262,144, DSpark. Cold model files (`POSIX_FADV_DONTNEED`) to HTTP

@@ -34,6 +34,10 @@ changes are in Git history; current speeds are in [benchmarks](BENCHMARKS.md).
 | Verification attention with the split reduction in its last block | +0.3 ms per step |
 | Controller gates of 2 to 8 tokens per block | verification +0.1 to +0.3 ms |
 
+Retained on November 25, 2026. Strided Q8_0 sink and dynamic convolution
+projections enable batched decode with the original packed weights. See
+[Q8_0 throughput](BENCHMARKS.md#q8_0-autoregressive-batching).
+
 ## DSpark
 
 | Variant | Result |
