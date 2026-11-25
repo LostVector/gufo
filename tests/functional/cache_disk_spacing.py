@@ -13,6 +13,8 @@ import json
 from pathlib import Path
 import re
 
+from thinking import answer_room, configure as configure_thinking
+
 # Matches TextRunnerDiskCacheOptions::min_checkpoint_step_tokens.
 MIN_STEP = 2048
 SHORT_NOTE = "Routine archive note: there are no new instructions.\n"
@@ -21,7 +23,7 @@ SHORT_NOTE = "Routine archive note: there are no new instructions.\n"
 def chat(url, model, messages):
     import continuation  # The runner's log check needs no HTTP client stack.
     # Copy: grow() keeps appending to its list, and restore() replays this body.
-    body = {"model": model, "messages": list(messages), "max_tokens": 8,
+    body = {"model": model, "messages": list(messages), "max_tokens": answer_room(8),
             "temperature": 0, "seed": 31, "stream": False,
             "chat_template_kwargs": {"enable_thinking": False}}
     result = continuation.call(url, body)
@@ -79,10 +81,13 @@ def restore(url, model, turns):
 DISK_EVENT = re.compile(r"event=disk_cache action=(\w+) reason=(\w+) .*?\btokens=(\d+)\b")
 
 
-def disk_events(log):
+def disk_events(log, spaced_only=False):
     events = [(action, reason, int(tokens)) for action, reason, tokens in DISK_EVENT.findall(log)]
-    events += [("stored", "saved", int(tokens)) for tokens in re.findall(
-        r"schema=component-cache-v1 event=published tokens=(\d+)\b", log)]
+    for line in log.splitlines():
+        fields = dict(re.findall(r"(?:^|\s)(\w+)=([^\s]+)", line))
+        if fields.get("schema") == "component-cache-v1" and fields.get("event") == "published" \
+                and (not spaced_only or fields.get("spacing_exempt", "0") != "1"):
+            events.append(("stored", "saved", int(fields["tokens"])))
     events += [("skipped", "min_step", int(tokens)) for tokens in re.findall(
         r"schema=component-cache-v1 event=persistence_refused reason=min_step tokens=(\d+)\b", log)]
     return events
@@ -101,23 +106,23 @@ def check_disk_spacing(grown_log, restored_log, report, restored_report=None):
         checkpoint_ids = {id_ for turn in report["turns"]
                           for id_ in turn["measured"]["checkpoint_ids"]}
 
-    def events(log, ids):
+    def events(log, ids, spaced_only=False):
         if ids is None:
-            return disk_events(log)
+            return disk_events(log, spaced_only)
         result = []
         for line in log.splitlines():
             fields = dict(re.findall(r"(?:^|\s)(\w+)=([^\s]+)", line))
             if fields.get("schema") != "component-cache-v1" or \
                     int(fields.get("checkpoint_id", "0")) not in ids:
                 continue
-            if fields.get("event") == "published":
+            if fields.get("event") == "published" and (not spaced_only or fields.get("spacing_exempt", "0") != "1"):
                 result.append(("stored", "saved", int(fields["tokens"])))
             elif fields.get("event") == "persistence_refused" and \
                     fields.get("reason") == "min_step":
                 result.append(("skipped", "min_step", int(fields["tokens"])))
         return result
 
-    grown = events(grown_log, checkpoint_ids)
+    grown = events(grown_log, checkpoint_ids, spaced_only=True)
     stored = sorted(tokens for action, reason, tokens in grown
                     if (action, reason) == ("stored", "saved") and tokens in owned)
     skipped = [tokens for action, reason, tokens in grown
@@ -143,6 +148,12 @@ def check_disk_spacing(grown_log, restored_log, report, restored_report=None):
     branched = [tokens for action, reason, tokens in events(restored_log, restored_ids)
                 if (action, reason) == ("stored", "saved")
                 and stored[0] < tokens < stored[0] + MIN_STEP]
+    if not branched and restored_report is not None and restored_report.get("branched", {}).get("disk"):
+        # When a generated frontier was already persisted to disk before restart,
+        # the branched request restores it directly from disk rather than re-saving it.
+        cached = restored_report["branched"].get("cached", 0)
+        if stored[0] < cached < stored[0] + MIN_STEP:
+            branched = [cached]
     if not branched:
         raise ValueError(f"shared boundary near the first checkpoint was not written: {summary}")
     summary["shared_boundary_tokens"] = branched
@@ -155,7 +166,10 @@ def main():
     parser.add_argument("--model", required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--restore", type=Path)
+    parser.add_argument("--thinking-off-reasons", action="store_true",
+                        help="The model still thinks with thinking off (thinking.py)")
     args = parser.parse_args()
+    configure_thinking(args.thinking_off_reasons)
     import continuation
     continuation.TRACE.path = args.output.with_suffix(".requests.json")
     if args.restore:

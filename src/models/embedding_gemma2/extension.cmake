@@ -17,6 +17,7 @@ gufo_extension_target(
   LINK_LIBRARIES
     gufo_ext_runtime
     gufo_platform
+    gufo_rust
     Threads::Threads
 )
 
@@ -74,6 +75,9 @@ gufo_extension_target(
   SOURCES
     hip/blas.cpp
     hip/encoder_runtime.cpp
+    npu/audio_npu.cpp
+    npu/encoder_npu.cpp
+    npu/vision_npu.cpp
     provider.cpp
   LINK_LIBRARIES
     gufo_embedding_gemma2

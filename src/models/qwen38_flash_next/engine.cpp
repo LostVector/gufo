@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstring>
+#include <gufo/ext/families/qwen/draft_vocab/draft_vocab.hpp>
 #include <gufo/ext/gguf_reader.hpp>
 #include <limits>
 #include <optional>
@@ -24,19 +25,33 @@
 #include "src/models/qwen38_flash_next/mtp_sampling.hpp"
 #include "src/models/qwen38_flash_next/ngram.hpp"
 #include "src/models/qwen38_flash_next/prefill_rows.hpp"
+#include "src/models/qwen38_flash_next/stages.hpp"
+#include "src/models/qwen38_flash_next/weight_source.hpp"
 #include "src/models/qwen38_flash_next/weights.hpp"
 
 namespace gufo::models::qwen38_flash_next {
 namespace {
 
-// gfx1151, served repository prompts: 4096-token chunks prefill 24K-102K
-// tokens 6-11% faster than 2048 (pp4096 +5% at d0, +6% at d32K). 16,384-row
-// passes prefill long prompts 3-5% faster, but their scratch holds 4.1 GiB
-// more device memory from load (#952). Each chunk's n-gram gather grows with
-// it; next-chunk prefetch overlaps that read. Prefill logits do not depend on
-// the chunk size (pre-budget queries always take the dense attention tiles).
-// PlanPrefillRows preserves the upstream 4,096-row local default and caps
-// TP batches to the communicator's actual exchange capacity.
+// The narrow prompt pass is the weight source's PreferredPrefillChunk():
+// 4096 rows for GGUF. gfx1151, served repository prompts: 4096-token chunks
+// prefill 24K-102K tokens 6-11% faster than 2048 (pp4096 +5% at d0, +6% at
+// d32K). Each chunk's n-gram gather grows with it; next-chunk prefetch
+// overlaps that read. Prefill logits do not depend on the chunk size
+// (pre-budget queries always take the dense attention tiles).
+// A prompt pass the scheduler leaves unbounded (no session decoding beside
+// it, none free to admit an arrival) takes up to this many rows when the
+// host has the memory: served prompts of 28K-85K tokens
+// prefill 2-7% faster than in 4096-row passes (#952). Those passes run on a
+// second set of the row buffers (4.6 GiB), mapped only while they run and
+// freed at the next decode step, so loading costs no more memory than
+// before. Passes beside decoders stay narrow: a decoder would wait for every
+// layer group of a wider pass (1.4 s instead of 0.6 s between tokens). With
+// the tail rows, the widest pass plus the indexer's top-k rows fills a
+// 16,384-row ring.
+constexpr std::uint32_t kWidePrefillChunkTokens = 14208;
+// A prompt ending this close past a chunk finishes in that chunk: a separate
+// tail pass costs about as much as this many more chunk rows.
+constexpr std::uint32_t kPrefillTailTokens = 128;
 
 void AssignError(std::string* error_msg, std::string_view message) {
   if (error_msg != nullptr) {
@@ -216,6 +231,14 @@ Model::~Model() = default;
 std::shared_ptr<Model> Model::Load(const std::string& model_path,
                                    const ModelOptions& options,
                                    std::string* error_msg) {
+  return Load(model_path, options, nullptr, nullptr, error_msg);
+}
+
+std::shared_ptr<Model> Model::Load(
+    const std::string& model_path, const ModelOptions& options,
+    std::unique_ptr<ext::qwen::flash_next::Stages> stages,
+    std::unique_ptr<ext::qwen::flash_next::WeightSource> weights,
+    std::string* error_msg) {
   std::shared_ptr<Model> m(new Model());
   if (!options.mtp_model_path.empty() && !options.dflash_model_path.empty()) {
     AssignError(error_msg, "choose either native MTP or external DFlash2");
@@ -264,16 +287,27 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
                 "Flash-Next verification supports at most seven draft tokens");
     return nullptr;
   }
+  if (options.tp_world_size > 1 && (stages || weights)) {
+    AssignError(error_msg, "TP2 requires the built-in GGUF stages and weights");
+    return nullptr;
+  }
   m->options_ = options;
-  m->reader_ = core::GgufReader::OpenFile(model_path, error_msg);
-  if (!m->reader_) {
+  m->source_ = weights ? std::move(weights)
+                       : ext::qwen::flash_next::CreateGgufWeightSource();
+  m->stages_ = stages ? std::move(stages)
+                      : std::make_unique<ext::qwen::flash_next::Stages>();
+  m->prefill_chunk_ = m->source_->PreferredPrefillChunk();
+  if (m->prefill_chunk_ == 0) {
+    AssignError(error_msg, "weight source prefill chunk must be positive");
     return nullptr;
   }
-  auto weights = ModelWeights::Bind(*m->reader_, error_msg);
-  if (!weights) {
+  if (!m->source_->Open(model_path, options.mtp_model_path, error_msg)) {
     return nullptr;
   }
-  m->weights_ = std::make_unique<ModelWeights>(std::move(*weights));
+  m->weights_ = std::make_unique<ModelWeights>();
+  if (!m->source_->BindTrunk(m->weights_.get(), error_msg)) {
+    return nullptr;
+  }
   if (options.rope_scaling.has_value()) {
     if (!ValidateRopeScaling(*options.rope_scaling,
                              m->weights_->config.context_length, error_msg)) {
@@ -300,43 +334,42 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
   }
   // Under TP2 each rank runs the whole (replicated) vision encoder itself.
   try {
-    m->vision_ = qwen::vision::Encoder::Open(
-        model_path, options.vision_model_path, c.hidden_size);
+    m->vision_ =
+        qwen::vision::Encoder::Open(m->source_->VisionPath(model_path),
+                                    options.vision_model_path, c.hidden_size);
   } catch (const std::exception& e) {
     AssignError(error_msg, e.what());
     return nullptr;
   }
-  m->tokenizer_ =
-      tokenization::QwenTokenizer::CreateFromGguf(*m->reader_, error_msg);
+  m->tokenizer_ = m->source_->Tokenizer(c, error_msg);
   if (!m->tokenizer_) {
     return nullptr;
   }
   if (c.ple_layer >= 0) {
-    const auto& t = m->weights_->ple_table;
-    m->ngram_ = NgramTable::Open(
-        m->reader_->GetMappedRegions()[t.shard].file_descriptor, t.file_offset,
-        t.rows, c.ple_head_dim, t.type, error_msg);
+    m->ngram_ = m->source_->Ngram(*m->weights_, error_msg);
     if (!m->ngram_) {
       return nullptr;
     }
   }
   if (!options.mtp_model_path.empty()) {
-    m->mtp_reader_ =
-        core::GgufReader::OpenFile(options.mtp_model_path, error_msg);
-    if (!m->mtp_reader_) {
+    m->mtp_weights_ = std::make_unique<MtpWeights>();
+    if (!m->source_->BindMtp(c, m->mtp_weights_.get(), error_msg)) {
       return nullptr;
     }
-    auto mtp = MtpWeights::Bind(*m->mtp_reader_, c, error_msg);
-    if (!mtp) {
-      return nullptr;
-    }
-    m->mtp_weights_ = std::make_unique<MtpWeights>(std::move(*mtp));
   }
-  m->device_ = rocm::DeviceModel::Upload(
-      *m->weights_, *m->reader_, m->mtp_weights_.get(), m->mtp_reader_.get(),
-      error_msg, partition_ptr);
+  m->device_ = rocm::DeviceModel::Upload(*m->weights_, m->mtp_weights_.get(),
+                                         *m->source_, error_msg, partition_ptr);
   if (!m->device_) {
     return nullptr;
+  }
+  if (m->mtp_weights_ && m->device_->output().format_state != nullptr) {
+    // Draft tables copy head rows, which only a GGUF matrix addresses.
+    ext::qwen::flash_next::Tensor head;
+    if (!m->source_->DraftHead(rocm::ToTensor(m->device_->output()), &head,
+                               error_msg) ||
+        (!head.empty() &&
+         !m->device_->UseDraftSource(rocm::FromTensor(head), error_msg)))
+      return nullptr;
   }
   if (m->mtp_weights_ &&
       m->device_->output().rows > speculative::kDraftVocabPrefix) {
@@ -357,7 +390,11 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
   }
   rocm::Executor::Options exec;
   exec.device_index = options.hip_device;
-  exec.max_batch = m->PrefillThroughCapacity();
+  exec.max_batch = std::min(kWidePrefillChunkTokens + kPrefillTailTokens,
+                            options.max_context);
+  exec.narrow_batch = m->PrefillThroughCapacity();
+  if (partition_ptr != nullptr)
+    exec.max_batch = exec.narrow_batch;
   exec.max_logit_rows =
       (m->mtp_weights_ || !options.dflash_model_path.empty())
           ? static_cast<std::uint32_t>(std::min<std::uint64_t>(
@@ -427,6 +464,7 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
   }
   exec.moe_observer = options.moe_observer;
   exec.max_context = options.max_context;
+  exec.stages = m->stages_.get();
   m->executor_ =
       rocm::Executor::Create(*m->device_, m->ngram_.get(), exec, error_msg);
   if (!m->executor_) {
@@ -692,6 +730,8 @@ std::uint32_t Model::VocabSize() const noexcept {
 }
 
 std::uint32_t Model::PrefillCapacity() const noexcept {
+  if (options_.communicator == nullptr)
+    return std::min(prefill_chunk_, options_.max_context);
   // Whole chunks per trunk batch: two batches per step under TP2.
   const std::uint32_t batches =
       executor_->PrefillChunk() / executor_->max_batch();
@@ -708,12 +748,55 @@ std::uint32_t Model::PrefillPairLead(std::uint32_t tokens) const noexcept {
 }
 
 std::uint32_t Model::PrefillThroughCapacity() const noexcept {
+  if (options_.communicator == nullptr)
+    return std::min(prefill_chunk_ + kPrefillTailTokens, options_.max_context);
   const auto rows =
       options_.communicator
           ? PlanPrefillRows(options_.max_context, weights_->config.hidden_size,
                             options_.communicator->MaxPartialBytes())
           : PlanPrefillRows(options_.max_context, weights_->config.hidden_size);
   return rows.through;
+}
+
+std::size_t Model::StepThrough(std::size_t remaining,
+                               std::size_t budget) const {
+  const std::size_t narrow = PrefillThroughCapacity();
+  const bool wide =
+      budget > narrow && remaining > narrow && executor_->AcquireWidePasses();
+  return wide ? std::size_t{executor_->pass_rows()} : narrow;
+}
+
+std::size_t Model::StepCapacity(std::size_t remaining,
+                                std::size_t budget) const {
+  const std::size_t through = StepThrough(remaining, budget);
+  if (remaining <= through)
+    return through;
+  return through > PrefillThroughCapacity() ? through - kPrefillTailTokens
+                                            : PrefillCapacity();
+}
+
+std::size_t Model::PlannedThrough() const noexcept {
+  return executor_->max_batch();
+}
+
+std::size_t Model::PlannedChunk() const noexcept {
+  const std::size_t through = PlannedThrough();
+  return through > PrefillThroughCapacity() ? through - kPrefillTailTokens
+                                            : PrefillCapacity();
+}
+
+std::size_t Model::PassThrough() const noexcept {
+  return executor_->pass_rows();
+}
+
+std::size_t Model::PassChunk() const noexcept {
+  const std::size_t through = executor_->pass_rows();
+  return through > PrefillThroughCapacity() ? through - kPrefillTailTokens
+                                            : PrefillCapacity();
+}
+
+void Model::ReleaseWidePasses() const {
+  executor_->ReleaseWidePasses();
 }
 
 bool Model::HasMtp() const noexcept {
@@ -736,8 +819,15 @@ bool Model::InDraftSubset(std::int32_t token) const {
 }
 
 std::string Model::ModelName() const {
-  return std::string(reader_->GetMetadataString("general.name")
-                         .value_or("Qwen3.8-Flash-Next"));
+  return source_->ModelName();
+}
+
+std::string Model::ArtifactIdentity() const {
+  return source_->Identity();
+}
+
+std::string Model::DraftIdentity() const {
+  return source_->DraftIdentity();
 }
 
 const Config& Model::config() const noexcept {
@@ -749,7 +839,7 @@ std::size_t Model::ResidentBytes() const noexcept {
 }
 
 std::size_t Model::SessionBytes(core::SessionMode mode,
-                                std::uint32_t context) const noexcept {
+                                std::uint32_t context) const {
   const std::size_t vision =
       vision_ ? std::size_t{context} * (config().hidden_size * sizeof(float) +
                                         3 * sizeof(std::int32_t)) +
@@ -760,6 +850,11 @@ std::size_t Model::SessionBytes(core::SessionMode mode,
                                      ? executor_->max_speculative() - 1
                                      : 0) +
          vision;
+}
+
+std::size_t Model::DemandMappedBytes(core::SessionMode mode,
+                                     std::uint32_t context) const {
+  return executor_->DemandMappedBytes(mode, context);
 }
 
 std::size_t Model::DeferredScratchBytes() const {
@@ -778,6 +873,10 @@ void Model::SetPrefillYield(std::size_t groups,
   }
   executor_->SetLayerHook(executor_->LayerHookBoundaries(groups),
                           std::move(yield));
+}
+
+std::shared_ptr<mem::StateAccount> Session::StateAccount() const {
+  return session_->state_account();
 }
 
 std::size_t Session::AllocatedBytes() const noexcept {
@@ -1271,13 +1370,16 @@ bool Session::Feed(std::span<const std::int32_t> tokens, std::string* error_msg,
   rocm::Executor& exec = *model_->executor_;
   const std::size_t ratio =
       std::max<std::uint32_t>(1, model_->config().compress_ratio);
+  // A prompt longer than one narrow pass takes wide passes when the host can
+  // spare their scratch (the runner already asked when its step allows it).
+  if (prefill && tokens.size() > exec.narrow_batch())
+    (void)exec.AcquireWidePasses();
   for (std::size_t off = 0; off < tokens.size();) {
     const auto remaining = tokens.size() - off;
     const auto capacity =
-        target_feature_capture_
-            ? exec.max_batch()
-            : (remaining <= exec.max_batch() ? exec.max_batch()
-                                             : model_->PrefillCapacity());
+        target_feature_capture_ || remaining <= exec.pass_rows()
+            ? std::size_t{exec.pass_rows()}
+            : model_->PassChunk();
     std::size_t n = std::min<std::size_t>(capacity, remaining);
     // A following pass starts on a selection block (WmmaCausalAttention).
     if (const auto end = tokens_.size() + n;
@@ -1367,13 +1469,11 @@ bool Session::Feed(std::span<const std::int32_t> tokens, std::string* error_msg,
     const auto chunk_rows = tokens.subspan(off, n);
     // The chunk this loop, or the following Sync, takes next.
     const auto rest = off + n < tokens.size() ? tokens.subspan(off + n) : after;
-    const auto next_capacity =
-        target_feature_capture_
-            ? exec.max_batch()
-            : (rest.size() <= exec.max_batch() ? exec.max_batch()
-                                               : model_->PrefillCapacity());
-    const auto next =
-        rest.first(std::min<std::size_t>(next_capacity, rest.size()));
+    const auto next = rest.first(std::min<std::size_t>(
+        target_feature_capture_ || rest.size() <= exec.pass_rows()
+            ? std::size_t{exec.pass_rows()}
+            : model_->PassChunk(),
+        rest.size()));
     if (!exec.Forward(*session_, chunk_rows, 1, logits_.data(), mode, error_msg,
                       views, next)) {
       return false;
@@ -1539,6 +1639,7 @@ bool Session::SyncImpl(
 }
 
 bool Session::Evaluate(std::int32_t token, std::string* error_msg) {
+  model_->ReleaseWidePasses();
   if (continuation_hooks_)
     continuation_hooks_->BeforeExecution();
   if (!valid_) {
@@ -1965,13 +2066,25 @@ bool Session::FinishDecode(const DecodeRequest& request,
                       false};
         }
       } else {
+        std::optional<MtpVerification> compact;
+        if (gpu_verification && !cpu_rows) {
+          compact = TryVerifyMtpProposal(candidates[keep - 1], kMtpCandidates,
+                                         vocab, proposals[keep - 1], sampler);
+          if (!compact) {
+            verify_logits_.resize(
+                std::max<std::size_t>(exec.max_speculative(), k) * vocab);
+            auto row =
+                std::span(verify_logits_).subspan((keep - 1) * vocab, vocab);
+            if (!exec.ReadVerificationRows(keep - 1, row, error_msg))
+              return false;
+            compact = VerifyMtpProposal(row, proposals[keep - 1], sampler);
+          }
+        }
         verified =
-            gpu_verification && !cpu_rows
-                ? VerifyMtpProposal(candidates[keep - 1], vocab,
-                                    proposals[keep - 1], sampler)
-                : VerifyMtpProposal(std::span<const float>(verify_logits_)
-                                        .subspan((keep - 1) * vocab, vocab),
-                                    proposals[keep - 1], sampler);
+            compact ? *compact
+                    : VerifyMtpProposal(std::span<const float>(verify_logits_)
+                                            .subspan((keep - 1) * vocab, vocab),
+                                        proposals[keep - 1], sampler);
       }
       const auto token = static_cast<std::int32_t>(verified.token);
       const bool accepted = verified.accepted;
@@ -2099,6 +2212,9 @@ bool Session::DecodeStep(std::size_t max_tokens,
                          std::string* error_msg, bool stop_at_eos,
                          std::uint32_t occupancy,
                          std::optional<std::uint32_t> forced_drafts) {
+  // Decoding means the wide passes are over: their scratch goes back to the
+  // host before this step, as later passes run beside a decoder.
+  model_->ReleaseWidePasses();
   if (continuation_hooks_)
     continuation_hooks_->BeforeExecution();
   if (!valid_) {
@@ -2624,6 +2740,8 @@ bool Session::RunIsolatedBatch(std::span<const Request> requests,
 bool Session::DecodeBatch(std::span<const DecodeRequest> requests,
                           std::string* error_msg,
                           const std::optional<std::uint32_t>* plan) {
+  if (!requests.empty() && requests.front().session != nullptr)
+    requests.front().session->model_->ReleaseWidePasses();
   return RunIsolatedBatch(requests, error_msg, plan);
 }
 
@@ -2662,6 +2780,8 @@ std::optional<std::uint32_t> Session::PlanBatch(
 
 bool Session::EvaluateBatch(std::span<const AdvanceRequest> requests,
                             std::string* error_msg) {
+  if (!requests.empty())
+    requests.front().session->model_->ReleaseWidePasses();
   return RunIsolatedBatch(requests, error_msg);
 }
 

@@ -1,9 +1,6 @@
-#include <png.h>
-
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <cstring>
 #include <gufo/ext/image.hpp>
 #include <gufo/ext/sha256.hpp>
 #include <limits>
@@ -28,19 +25,6 @@ struct Filter {
   int begin{0};
   std::vector<std::int32_t> weights;
 };
-
-struct PngOutput {
-  std::vector<std::uint8_t> bytes;
-  std::size_t used{0};
-};
-
-void WritePng(png_structp png, png_bytep data, png_size_t size) {
-  auto& output = *static_cast<PngOutput*>(png_get_io_ptr(png));
-  if (size > output.bytes.size() - output.used)
-    png_error(png, "output PNG exceeds its allocation");
-  std::memcpy(output.bytes.data() + output.used, data, size);
-  output.used += size;
-}
 
 std::vector<Filter> LanczosFilters(int input, int output) {
   std::vector<Filter> result(output);
@@ -72,14 +56,9 @@ std::vector<Filter> LanczosFilters(int input, int output) {
   return result;
 }
 
-}  // namespace
-
-std::uint64_t InitialNoiseSeed(std::uint64_t seed,
-                               std::span<const Image> images) {
-  if (images.empty())
-    return seed;
+std::uint64_t HashSeed(std::span<const std::uint8_t> domain, std::uint64_t seed,
+                       std::span<const Image> images) {
   crypto::Sha256Hasher hash;
-  constexpr std::uint8_t domain[] = "Qwen-Image-2.1 edit noise v1";
   hash.Update(domain);
   const auto append = [&](std::uint64_t value) {
     std::array<std::uint8_t, 8> bytes{};
@@ -102,78 +81,35 @@ std::uint64_t InitialNoiseSeed(std::uint64_t seed,
   return result;
 }
 
+}  // namespace
+
+std::uint64_t InitialNoiseSeed(std::uint64_t seed,
+                               std::span<const Image> images,
+                               const Image* init_image) {
+  if (init_image) {
+    constexpr std::uint8_t domain[] = "Qwen-Image-2.1 img2img noise v1";
+    return HashSeed(domain, InitialNoiseSeed(seed, images),
+                    std::span(init_image, 1));
+  }
+  if (images.empty())
+    return seed;
+  constexpr std::uint8_t domain[] = "Qwen-Image-2.1 edit noise v1";
+  return HashSeed(domain, seed, images);
+}
+
 Image DecodeImage(std::span<const std::uint8_t> bytes) {
   if (bytes.size() > core::kMaxEncodedImageBytes || bytes.size() < 8)
     throw std::invalid_argument("invalid or oversized input image");
-  if (png_sig_cmp(bytes.data(), 0, 8) != 0) {
-    const auto rgb = core::DecodeImage(bytes);
-    Image image{static_cast<int>(rgb.width), static_cast<int>(rgb.height), {}};
-    image.rgba.resize(static_cast<std::size_t>(rgb.width) * rgb.height * 4);
-    for (std::size_t i = 0; i < image.rgba.size() / 4; ++i) {
-      std::memcpy(image.rgba.data() + 4 * i, rgb.pixels.data() + 3 * i, 3);
-      image.rgba[4 * i + 3] = 255;
-    }
-    return image;
-  }
-  png_image png{};
-  png.version = PNG_IMAGE_VERSION;
-  if (!png_image_begin_read_from_memory(&png, bytes.data(), bytes.size()))
-    throw std::invalid_argument("cannot decode PNG image");
-  const auto cleanup = std::unique_ptr<png_image, decltype(&png_image_free)>(
-      &png, png_image_free);
-  if (!png.width || !png.height ||
-      static_cast<std::uint64_t>(png.width) * png.height >
-          core::kMaxImagePixels)
-    throw std::invalid_argument("PNG image dimensions exceed limits");
-  png.format = PNG_FORMAT_RGBA;
-  Image image{static_cast<int>(png.width), static_cast<int>(png.height), {}};
-  image.rgba.resize(PNG_IMAGE_SIZE(png));
-  if (!png_image_finish_read(&png, nullptr, image.rgba.data(), 0, nullptr))
-    throw std::invalid_argument("invalid PNG image data");
-  return image;
+  auto image = core::DecodeImageRgba(bytes);
+  return {static_cast<int>(image.width), static_cast<int>(image.height),
+          std::move(image.rgba)};
 }
 
 std::vector<std::uint8_t> EncodePng(const Image& image) {
   CheckImage(image);
-  png_image geometry{};
-  geometry.width = image.width;
-  geometry.height = image.height;
-  geometry.format = PNG_FORMAT_RGBA;
-  // Allocate before setjmp; callbacks only mutate heap state and cannot throw.
-  const auto output = std::make_unique<PngOutput>();
-  output->bytes.resize(PNG_IMAGE_PNG_SIZE_MAX(geometry));
-  auto png = png_create_write_struct(
-      PNG_LIBPNG_VER_STRING, nullptr,
-      [](png_structp p, png_const_charp) { png_longjmp(p, 1); }, nullptr);
-  if (!png)
-    throw std::runtime_error("cannot allocate PNG encoder");
-  auto info = png_create_info_struct(png);
-  if (!info) {
-    png_destroy_write_struct(&png, nullptr);
-    throw std::runtime_error("cannot allocate PNG metadata");
-  }
-  if (setjmp(png_jmpbuf(png))) {
-    png_destroy_write_struct(&png, &info);
-    throw std::runtime_error("cannot encode output PNG");
-  }
-  png_set_write_fn(png, output.get(), WritePng, nullptr);
-  png_set_IHDR(png, info, image.width, image.height, 8, PNG_COLOR_TYPE_RGBA,
-               PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
-               PNG_FILTER_TYPE_DEFAULT);
-  png_set_sRGB(png, info, PNG_sRGB_INTENT_PERCEPTUAL);
-  // Low compression avoids blocking the response on an expensive zlib search.
-  // Adaptive filtering and every RGBA byte are preserved.
-  png_set_compression_level(png, 1);
-  png_set_filter(png, PNG_FILTER_TYPE_BASE, PNG_ALL_FILTERS);
-  png_write_info(png, info);
-  for (int row = 0; row < image.height; ++row)
-    png_write_row(png, const_cast<png_bytep>(image.rgba.data() +
-                                             static_cast<std::size_t>(row) *
-                                                 image.width * 4));
-  png_write_end(png, info);
-  png_destroy_write_struct(&png, &info);
-  output->bytes.resize(output->used);
-  return std::move(output->bytes);
+  return core::EncodePngRgba(static_cast<std::uint32_t>(image.width),
+                             static_cast<std::uint32_t>(image.height),
+                             image.rgba);
 }
 
 Image ResizeImage(const Image& image, int width, int height) {
@@ -239,12 +175,14 @@ Image ResizeImage(const Image& image, int width, int height) {
 void ValidateRequest(const Request& request) {
   if (request.prompt.size() > (64U << 10U))
     throw std::invalid_argument("image prompt exceeds 64 KiB");
+  // 4.5 MiP admits every Qwen-Image-2.1 recommended size; the largest,
+  // 2400 x 1792, is 4.1 MiP (#1324).
   if (request.width < 32 || request.height < 32 || request.width % 32 ||
       request.height % 32 || request.width > 4096 || request.height > 4096 ||
-      static_cast<std::uint64_t>(request.width) * request.height > 4194304)
+      static_cast<std::uint64_t>(request.width) * request.height > 4718592)
     throw std::invalid_argument(
-        "image size must be multiples of 32, at most 4096 per side and 4 "
-        "megapixels");
+        "image size must be multiples of 32, at most 4096 per side and "
+        "4.5 megapixels");
   if (request.steps != 0 && (request.steps < 2 || request.steps > 100))
     throw std::invalid_argument("image steps must be between 2 and 100");
   if (request.images.size() > 10)
@@ -271,6 +209,21 @@ void ValidateRequest(const Request& request) {
       throw std::invalid_argument(
           "LoRA scale must be finite and at most 10 in magnitude");
   }
+  if (request.negative_prompt.size() > (64U << 10U))
+    throw std::invalid_argument("negative prompt exceeds 64 KiB");
+  if (request.guidance_scale &&
+      !(*request.guidance_scale >= 0 && *request.guidance_scale <= 100))
+    throw std::invalid_argument("guidance_scale must be between 0 and 100");
+  if (!(request.strength >= 0.01 && request.strength <= 1))
+    throw std::invalid_argument("strength must be between 0.01 and 1");
+  if (request.strength < 1 && !request.init_image)
+    throw std::invalid_argument("strength below 1 requires an input image");
+  if (request.init_image)
+    CheckImage(*request.init_image);
+}
+
+float ResolveGuidance(const Request& request) {
+  return request.guidance_scale.value_or(1.0F);
 }
 
 std::string ConditionPrompt(std::string_view prompt,
@@ -283,9 +236,9 @@ std::string ConditionPrompt(std::string_view prompt,
          " The image has alpha channel and the background is transparent.";
 }
 
-std::vector<float> FlowSigmas(int steps, int image_tokens) {
-  if (steps < 2 || steps > 100 || image_tokens < 1)
-    throw std::invalid_argument("invalid image flow schedule");
+namespace {
+
+std::vector<float> Schedule(int steps, int image_tokens) {
   const double mu = 0.5 + (image_tokens - 256) * (0.9 - 0.5) / (8192 - 256);
   const float shift = static_cast<float>(std::exp(mu));
   std::vector<float> sigmas(steps + 1);
@@ -297,6 +250,26 @@ std::vector<float> FlowSigmas(int steps, int image_tokens) {
   for (int i = 0; i < steps; ++i)
     sigmas[i] = 1.0F - (1.0F - sigmas[i]) / scale;
   sigmas[steps] = 0;
+  return sigmas;
+}
+
+}  // namespace
+
+std::vector<float> FlowSigmas(int steps, int image_tokens) {
+  if (steps < 2 || steps > 100 || image_tokens < 1)
+    throw std::invalid_argument("invalid image flow schedule");
+  return Schedule(steps, image_tokens);
+}
+
+std::vector<float> StrengthTail(std::vector<float> sigmas, double strength) {
+  if (!(strength > 0 && strength <= 1))
+    throw std::invalid_argument("invalid image denoise strength");
+  // Diffusers img2img get_timesteps: run the last steps * strength steps of
+  // the full schedule (at least one), in the same double arithmetic.
+  const auto steps = static_cast<double>(sigmas.size() - 1);
+  const auto start = static_cast<std::ptrdiff_t>(
+      std::max(steps - std::min(steps * strength, steps), 0.0));
+  sigmas.erase(sigmas.begin(), sigmas.begin() + start);
   return sigmas;
 }
 
@@ -318,6 +291,11 @@ std::vector<float> SamplingConfig::Sigmas(int requested,
   auto result = sample_sigmas;
   result.push_back(0);
   return result;
+}
+
+std::vector<float> SamplingConfig::DenoiseSigmas(int requested, double strength,
+                                                 int image_tokens) const {
+  return StrengthTail(Sigmas(requested, image_tokens), strength);
 }
 
 }  // namespace gufo::models::qwen_image_21

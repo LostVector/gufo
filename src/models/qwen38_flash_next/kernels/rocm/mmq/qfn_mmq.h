@@ -50,6 +50,12 @@ int qfn_mmq_moe_vec(int weight_type, const void* W, const float* X_f32,
 
 // Q4_K/Q5_K/Q8_0/IQ2_S/IQ3_XXS/IQ3_S/IQ4_XS gate/up for 1–8 tokens,
 // with the SwiGLU result in out.
+
+// Q4_K dense projection (the MTP draft head) of 1-8 caller-quantized rows.
+int qfn_mmq_q4_K_dense_vec_preq(const void* W, const void* X_q8, float* out,
+                                int M, int N, int K, hipStream_t stream);
+
+// Q4_K/Q5_K/Q8_0 gate/up for 1–8 tokens, with the SwiGLU result in out.
 // Q4_K also accepts up to 64 independent rows, grouped by expert.
 int qfn_mmq_moe_gated_vec(int weight_type, const void* gate, const void* up,
                           const float* x, const int32_t* ids, float* out, int m,

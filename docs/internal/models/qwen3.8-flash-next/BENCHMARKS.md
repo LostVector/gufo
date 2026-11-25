@@ -294,3 +294,20 @@ GSQ-RCO IQ3_S TP1/native MTP,eval defaults,C1:48.33→52.57 tokens/s aggregate m
 ## GSQ-RCO TP1 routed fusion (November15,2026)
 
 Fusion for the four IQ routed gate/up formats improves TP1 C1 decode52.56→54.30 tokens/s aggregate median;paired gain3.298%,95%marginal interval[3.090,3.521]%,Holm p=.02344 across eight three-variant blocks. Prefill unchanged. [Matched scope and data](gsq-rco-tp1-routed.md).
+
+## Cache cost calibration (November 12, 2026)
+
+Diagnostic least-squares fits of the retained single-user pp2048 depth sweeps
+above, using `tools/cache/fit_cost.py`. These reuse the dated measurements;
+they are not a new speed qualification. For interval `[a,b)`, seconds are
+`d*(b-a) + e*(b-a)*(b+a)/200000`. Policy thresholds remain unchanged.
+
+| Sweep | d (s/token) | e (s/token) | Maximum fit error |
+| --- | ---: | ---: | ---: |
+| [single-ar](artifacts/cache-cost-single-ar.csv) | 0.000573457239 | 0.000058015348 | 3.39% |
+| [single-mtp](artifacts/cache-cost-single-mtp.csv) | 0.000591766466 | 0.000067029640 | 2.79% |
+
+Restore estimates use the [measured 96 GB/s RAM control](../../design/cache-redesign/RFC.md#measured-constants)
+and the [3.3 GB/s disk observation](../../cache.md). Both are approximate hardware
+controls. Other quantizations, cold files and concurrent work can differ; inspect
+the `cost_estimate` event beside actual request timings before using the estimates.

@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <span>
 #include <sstream>
@@ -18,6 +19,7 @@
 #include "src/core/diagnostics/fingerprint.h"
 #include "src/core/diagnostics/linux_sysfs.h"
 #include "src/core/diagnostics/system_inventory.h"
+#include "src/core/npu/npu.hpp"
 
 #if defined(ENGINE_ENABLE_HIP)
 #include <hip/hip_runtime.h>
@@ -57,7 +59,7 @@ void PrintDiagnoseHelp(std::string_view program_name) {
       << "  --output <path>              Write command output to specified "
          "file\n"
       << "  --section <name>             Diagnostic section to run: all, "
-         "inventory, platform, gpu, extensions\n"
+         "inventory, platform, gpu, npu, extensions\n"
       << "  -h, --help                   Print help information\n";
 }
 
@@ -87,6 +89,13 @@ std::vector<std::string> SplitCommaSeparated(std::string_view csv) {
     start = end + 1;
   }
   return result;
+}
+
+std::string FormatGib(std::uint64_t bytes) {
+  std::ostringstream out;
+  out << std::fixed << std::setprecision(1)
+      << static_cast<double>(bytes) / static_cast<double>(1ull << 30);
+  return out.str();
 }
 
 }  // namespace
@@ -179,9 +188,70 @@ diagnostics::DiagnosticReport CollectDiagnostics(
                       inventory.gpu.architecture);
     }
     report.AddCheck(std::move(check));
+
+    // The GTT pool caps how much system memory the GPU can map. The amdgpu
+    // default is half of RAM; docs/install.md recommends RAM less 4 GiB.
+    if (inventory.gpu.gtt && inventory.memory.total_bytes != 0) {
+      diagnostics::DiagnosticCheck gtt_check;
+      gtt_check.name = "gtt";
+      const auto& gtt = *inventory.gpu.gtt;
+      const auto recommended =
+          diagnostics::RecommendedGttBytes(inventory.memory.total_bytes);
+      gtt_check.details["totalBytes"] = std::to_string(gtt.total_bytes);
+      gtt_check.details["usedBytes"] = std::to_string(gtt.used_bytes);
+      gtt_check.details["recommendedBytes"] = std::to_string(recommended);
+      if (diagnostics::GttBelowRecommended(gtt.total_bytes,
+                                           inventory.memory.total_bytes)) {
+        const auto recommended_mib = recommended >> 20;
+        gtt_check.status = diagnostics::DiagnosticStatus::kWarn;
+        gtt_check.message =
+            "GTT limit " + FormatGib(gtt.total_bytes) +
+            " GiB is well below RAM less 4 GiB (" + FormatGib(recommended) +
+            " GiB); boot with amdgpu.gttsize=" +
+            std::to_string(recommended_mib) +
+            " ttm.pages_limit=" + std::to_string(recommended_mib * 256) +
+            " (see docs/install.md)";
+      } else {
+        gtt_check.status = diagnostics::DiagnosticStatus::kPass;
+        gtt_check.message = "GTT limit " + FormatGib(gtt.total_bytes) +
+                            " GiB reaches RAM less 4 GiB (" +
+                            FormatGib(recommended) + " GiB)";
+      }
+      report.AddCheck(std::move(gtt_check));
+    }
   }
 
-  // 4. Toolchain Check
+  // 4. NPU Check: XDNA accel nodes (sysfs) and whether XRT opens the device.
+  // An absent NPU is a warning: GPU paths do not need it.
+  if (section == "all" || section == "npu" || section == "inventory") {
+    diagnostics::DiagnosticCheck check;
+    check.name = "npu";
+    const auto devices = npu::ProbeDevices();
+    check.details["devices"] = std::to_string(devices.size());
+    if (devices.empty()) {
+      check.status = diagnostics::DiagnosticStatus::kWarn;
+      check.message = "No XDNA NPU found (no amdxdna accel node)";
+    } else {
+      const auto& d = devices.front();
+      check.details["node"] = d.node;
+      check.details["driver"] = d.driver;
+      check.details["pciId"] = d.pci_id;
+      check.details["firmware"] = d.firmware;
+      try {
+        auto device = npu::Device::Open();
+        check.details["xrtDevice"] = device.name();
+        check.status = diagnostics::DiagnosticStatus::kPass;
+        check.message = "XDNA NPU " + d.node + " opens through XRT";
+      } catch (const std::exception& e) {
+        check.status = diagnostics::DiagnosticStatus::kWarn;
+        check.message = "XDNA NPU " + d.node +
+                        " found, but XRT cannot open it: " + e.what();
+      }
+    }
+    report.AddCheck(std::move(check));
+  }
+
+  // 5. Toolchain Check
   if (section == "all" || section == "inventory") {
     diagnostics::DiagnosticCheck check;
     check.name = "toolchain";
@@ -325,7 +395,7 @@ int RunDiagnose(std::span<const char* const> args) {
   }
 
   if (section != "all" && section != "inventory" && section != "platform" &&
-      section != "gpu" && section != "extensions") {
+      section != "gpu" && section != "npu" && section != "extensions") {
     std::cerr << "Error: unknown diagnostic section '" << section << "'\n";
     return 2;
   }

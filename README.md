@@ -34,12 +34,14 @@ matching builds, transport requirements and validation limits.
 | [Qwen3.8 Flash-Next](docs/models/qwen3.8-flash-next.md) | Text and images | [Qwen Community License 1.0](https://huggingface.co/Qwen/Qwen3.8-Flash-Next/blob/main/LICENSE) |
 | [Qwen3.8 27B](docs/models/qwen3.8-27b.md) | Text and images | Apache 2.0 |
 | [DeepSeek V4 Flash](docs/models/deepseek-v4-flash.md) | Text | MIT |
+| [Inkling 2 Mini](docs/models/inkling-2-mini.md) | Text and images | Apache 2.0 |
 | [EmbeddingGemma 2](docs/models/embeddinggemma-2.md) | Embeddings for text, images, audio and video | Apache 2.0 |
 | [Qwen3-ASR 1.7B](docs/models/qwen3-asr.md) | Speech to text | Apache 2.0 |
 | [Qwen3-TTS 1.7B](docs/models/qwen3-tts.md) | Text to speech and voice cloning | Apache 2.0 |
 | [Qwen-Image-2.1](docs/models/qwen-image-2.1.md) | Image generation and editing | [Qwen Research License](https://huggingface.co/Qwen/Qwen-Image-2.1/blob/main/LICENSE), non-commercial |
 | [Qwen-Image-2.1-Turbo](docs/models/qwen-image-2.1.md#qwen-image-21-turbo) | Eight-step image generation and editing | [Qwen Research License](https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo/blob/main/LICENSE), non-commercial |
 | [MiniMax H3](docs/models/minimax-h3.md) | Video with sound | [MiniMax H3 Community License](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE) |
+| [Loom packages](docs/models/loom.md) | Every [loom-fun](https://huggingface.co/loom-fun) text package on AMD Loom kernels | Each model's own |
 
 Each model page lists the files to download, the modes and the measured speed.
 Gufo's own code is MIT; the weights keep their publishers' terms.
@@ -80,7 +82,8 @@ Define `gufo` to run in the container, with the GPU and the models folder:
 gufo() {
   podman run --rm -it --network host \
     --userns=keep-id:uid=1000,gid=1000 --group-add keep-groups \
-    --device /dev/kfd --device /dev/dri --ulimit memlock=-1 \
+    --device /dev/kfd --device /dev/dri --device /dev/accel/accel0 \
+    --ulimit memlock=-1 \
     -v ./models:/models:ro \
     -v gufo-extensions:/home/gufo/.local/share/gufo/extensions \
     ghcr.io/gufo-org/toolboxes/gufo-runtime:latest gufo "$@"
@@ -138,9 +141,8 @@ list what changed.
 ## Contributing
 
 Contributions are welcome: Gufo needs the Strix Halo community to keep
-improving. Start with [development](docs/internal/development.md) and
-[testing](docs/internal/testing.md); [AGENTS.md](AGENTS.md) holds the rules
-that people and coding agents follow. To add a model without changing Gufo,
+improving. [CONTRIBUTING.md](CONTRIBUTING.md) explains what belongs in Gufo
+and what belongs in an extension. To add a model without changing Gufo,
 [write an extension](docs/writing-extensions.md).
 
 Community projects built on Gufo include
