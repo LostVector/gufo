@@ -258,9 +258,10 @@ struct Engine::Impl {
   // ---- decode (T = 1) state: separate small buffers, a device slot table and
   // HIP graphs ----
   struct LayerFast {
-    bool proj = false;   // q, gate, rel, k, v are Q8_0 with K = 2304
-    bool oproj = false;  // attn_output Q8_0, K = 3072
-    bool tiny = false;   // sink / conv projections are F32 / F16 / BF16
+    bool proj = false;        // q, gate, rel, k, v are Q8_0 with K = 2304
+    bool oproj = false;       // attn_output Q8_0, K = 3072
+    bool tiny = false;        // sink / conv projections are F32 / F16 / BF16
+    bool tiny_batch = false;  // fused float or strided Q8_0 projections
     int moe =
         -1;  // fast MoE format (fs::kFmtQ8 / kFmtNvfp4) or -1 (generic kernels)
     void* bt = nullptr;     // f16 [1024][16] relative bias table
@@ -804,9 +805,15 @@ struct Engine::Impl {
                IsType(L.attn_gate, kk::kTQ8_0) &&
                IsType(L.attn_rel, kk::kTQ8_0);
       f.oproj = IsType(L.attn_output, kk::kTQ8_0);
-      f.tiny = SmallType(L.attn_sink_proj) &&
-               (!L.is_global || (SmallType(L.attn_k_conv_proj) &&
-                                 SmallType(L.attn_v_conv_proj)));
+      const auto all_tiny = [&](auto supported) {
+        return supported(L.attn_sink_proj) &&
+               (!L.is_global || (supported(L.attn_k_conv_proj) &&
+                                 supported(L.attn_v_conv_proj)));
+      };
+      f.tiny = all_tiny(SmallType);
+      f.tiny_batch = all_tiny([](const TensorRef& t) {
+        return SmallType(t) || IsType(t, kk::kTQ8_0);
+      });
       const int tg = static_cast<int>(L.ffn_gate_up_exps.type),
                 td = static_cast<int>(L.ffn_down_exps.type);
       if (tg == td && kEmbd == 2304 && ff == 1152) {
@@ -1515,10 +1522,17 @@ struct Engine::Impl {
       }
       fs::Tiny(ds, tj, nb);
     } else {
-      GenericG(L.attn_sink_proj, iq, d_sink);
+      // Keep the native packed weights and the same dot product as scalar
+      // decode. Each row uses its own input and disjoint sink / tap outputs.
+      const auto project = [&](const TensorRef& t, const float* x, float* y,
+                               int stride) {
+        kk::Gemm(ds, static_cast<int>(t.type), D(t), static_cast<int>(t.ne[1]),
+                 kEmbd, x, kSIn, y, stride, nb);
+      };
+      project(L.attn_sink_proj, iq, d_sink, 24);
       if (!swa) {
-        GenericG(L.attn_k_conv_proj, ik, dynK);
-        GenericG(L.attn_v_conv_proj, iv, dynV);
+        project(L.attn_k_conv_proj, ik, dynK, 64);
+        project(L.attn_v_conv_proj, iv, dynV, 64);
       }
     }
 
@@ -1879,7 +1893,7 @@ struct Engine::Impl {
     if (!head_fast)
       return false;
     for (const auto& f : lf)
-      if (!f.proj || !f.oproj || !f.tiny || f.moe < 0)
+      if (!f.proj || !f.oproj || !f.tiny_batch || f.moe < 0)
         return false;
     return true;
   }

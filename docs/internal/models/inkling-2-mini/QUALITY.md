@@ -62,6 +62,12 @@ while a whole zero column leaves C exact. So each row's own causal step and
 its window's first step are summed on the VALU with masked V zeroed. A
 one-token prompt chunk takes the prompt path; decoding uses `Engine::Decode`.
 
+On November 25, 2026, `inkling2_bench --verify` on the Q8_0 GGUF matched
+every logit and argmax across 240 decode rows. The check used two and three
+sessions at prompt lengths 33 and 2,048. An independent CPU dot product also
+matched the strided HIP projections for three distinct inputs and verified
+the neighboring output rows stayed untouched.
+
 ## Functional suites
 
 `tests/functional/run.py --sampling-preset provider --thinking-off-reasons`,
